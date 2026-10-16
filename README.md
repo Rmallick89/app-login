@@ -20,10 +20,10 @@ Stretch + Flip motion as the new screen opens (the grey wash stretches across, t
 Reduce Motion on).
 Swiping back inside Docket › Expired or My Jobs › Saved › Expired returns to the list (shared sub-view helper
 `App-login/app-components/sub-view`).
-The top bar is the shared top-app-bar component `App-login/app-components/top-app-bar` (v1.0.0): Home's floating brand
+The top bar is the shared top-app-bar component `App-login/app-components/top-app-bar` (v1.0.1): Home's floating brand
 bar and the title bar on My Jobs / Docket share one frame, so the menu (menu-button v1.1.0, always first), the logo /
-title and the right edge sit on the same spot on every tab. On iPhone the title bar compacts from 64 to the standard
-44 pt bar as a list scrolls; the title stays start-aligned in place (the menu itself isn't built yet).
+title and the right edge sit on the same spot on every tab. On iPhone the title bar closes the space above its row and
+compacts to the standard 44 pt bar as a list scrolls; the title and its gap to the segment stay in place (the menu itself isn't built yet).
 The Searches / Actions switcher on Home and the Docket / My Jobs tabs are the shared segment-control component
 `App-login/app-components/segment-control` (one 40 px control everywhere; v1.1 stretch switch motion —
 the thumb stretches to the tapped option, none with Reduce Motion on).

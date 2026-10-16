@@ -1442,10 +1442,10 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
 }
 </style>
 <!-- ▲ COMPONENT · bottom-tab-bar -->
-<!-- ▼ COMPONENT · top-app-bar v1.0.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v1.0.1 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
 <style data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v1.0.0
+   SHINE · TOP APP BAR  (app component · App-login)              v1.0.1
    One top bar for every logged-in screen, in two variants that share one
    frame, so the menu, the brand/title anchor and the trailing action sit
    on exactly the same spot on every tab.
@@ -1471,9 +1471,11 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
    Platform (html / ancestor [data-platform="ios"]; Android is the default)
      Android  title bar = M3 small top app bar: 64, pinned, start-aligned;
               on scroll it lifts (frosted surface + hairline under the slot)
-     iPhone   title bar: 64 at rest, compacts to the standard 44 bar as the
-              list scrolls (scroll-linked, 40 px); the title never moves — it
-              stays start-aligned at 62, same size — hairline at the edge
+     iPhone   title bar: 64 at rest; as the list scrolls (scroll-linked, 40 px)
+              the space ABOVE the row closes and the row compacts to the
+              standard 44 bar. The gap between the title row and the slot
+              below (segment) never changes; the title stays start-aligned at
+              62, same size; hairline at the edge
      brand    floating pill on both; it already sits on its own surface
 
    ▶ BEFORE ADDING OR CHANGING IT: read README.md in this folder.
@@ -1482,6 +1484,10 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
    ═══════════════════════════════════════════════════════════════════════ */
 
 :root { --stp-safe-top: env(safe-area-inset-top, 0px); }
+/* Android app shell: the WebView is laid out BELOW the status bar but still reports the status bar as
+   safe-area-inset-top — adding it doubled the space above the bar (same family as the tab bar's bottom
+   inset). html.in-app is set by the app shell's native.js. */
+html.in-app { --stp-safe-top: 0px; }
 
 .stp {
   /* COLOUR — §2.2 (light) */
@@ -1629,8 +1635,11 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
 
 /* ── iPhone: the bar compacts into the standard 44 bar; the title stays put ── */
 [data-platform="ios"] .stp--title .stp-row {
+  /* compacts from the TOP only: 8 above → 0, row 48 → 44. The space under the row grows by half the
+     row's shrink (8 → 10) so the title / menu keep exactly the same distance to the segment below. */
   height: calc(var(--stp-row) - (var(--stp-row) - var(--stp-row-ios-compact)) * var(--stp-p));
-  margin: calc(var(--stp-pad-y) * (1 - var(--stp-p))) 0;
+  margin-top: calc(var(--stp-pad-y) * (1 - var(--stp-p)));
+  margin-bottom: calc(var(--stp-pad-y) + (var(--stp-row) - var(--stp-row-ios-compact)) / 2 * var(--stp-p));
 }
 [data-platform="ios"] .stp--title.is-scrolled::after { opacity: var(--stp-p); }
 [data-platform="ios"] .stp--title.is-scrolled { background: var(--stp-surface-neutral-raised-translucent); }
@@ -2373,10 +2382,10 @@ html.in-app .bs { --bs-safe: 0px; }
         <!-- ▲ COMPONENT · segment-control -->
         </div>
       </header>
-<!-- ▼ COMPONENT · top-app-bar v1.0.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v1.0.1 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
 <script data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v1.0.0
+   SHINE · TOP APP BAR  (app component · App-login)              v1.0.1
    Pair with top-app-bar.css and the menu-button component.
 
    Markup — brand (Home):
@@ -2403,7 +2412,8 @@ html.in-app .bs { --bs-safe: 0px; }
    Platform: sets <html data-platform="ios|android"> once (iPhone / iPad →
    ios, anything else → android) unless the page already set it.
    Behaviour: .is-scrolled when the content is scrolled; on iOS --stp-p runs
-   0 → 1 over the first 40 px (64 bar → standard 44 bar; the title stays put).
+   0 → 1 over the first 40 px (space above the row closes, row 48 → 44;
+   the title and its gap to the slot below stay put).
    API: ShineTopBar.mount(el) · ShineTopBar.update() · ShineTopBar.version
    ═══════════════════════════════════════════════════════════════════════ */
 (function (global) {
@@ -2452,7 +2462,7 @@ html.in-app .bs { --bs-safe: 0px; }
     return el;
   }
   function init() { doc.querySelectorAll('[data-shine-topbar]:not(style):not(script)').forEach(mount); }
-  global.ShineTopBar = { version: '1.0.0', mount: mount, update: function () { bars.forEach(function (b) { if (b.__stpT) paint(b); }); } };
+  global.ShineTopBar = { version: '1.0.1', mount: mount, update: function () { bars.forEach(function (b) { if (b.__stpT) paint(b); }); } };
   init();
   if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', init);
 })(window);
