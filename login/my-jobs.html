@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#FAF9F6" />
 <!-- SHINE APP · MY JOBS — App-login/My Jobs/
-     The Jobs tab: "My Jobs." heading + Docket-style segment Recommended · Saved · Applied (flat lists, newest first;
+     The Jobs tab: top bar = shared top-app-bar component (title "My Jobs." + segment slot); Docket-style segment Recommended · Saved · Applied (flat lists, newest first;
      Saved ends with Docket's expired panel → "Expired." view).
      Recommended = matches for the profile + job preferences · Saved = jobs bookmarked anywhere (JSRP, JD, similar jobs)
      · Applied = jobs applied to from any page. Job cards = the App-logout JSRP mobile card (same CSS + markup).
@@ -876,10 +876,10 @@ h1, h2, h3, h4, p { overflow-wrap:break-word; word-wrap:break-word; }
 .toast { bottom: calc(var(--stb-bar-h) + 12px); white-space: nowrap; }
 .toast svg { flex-shrink: 0; }
 </style>
-<!-- ▼ COMPONENT · menu-button v1.0.0 — verbatim copy of App-login/app-components/menu-button/menu-button.css (read README.md there before changing; resync every copy) -->
+<!-- ▼ COMPONENT · menu-button v1.1.0 — verbatim copy of App-login/app-components/menu-button/menu-button.css (read README.md there before changing; resync every copy) -->
 <style data-component="menu-button">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · MENU BUTTON  (app component · App-login)              v1.0.0
+   SHINE · MENU BUTTON  (app component · App-login)              v1.1.0
    The one hamburger in the logged-in app. Same button on every tab:
      Home      — in the top bar, before Search Jobs
      My Jobs   — before the page title "My Jobs."
@@ -912,8 +912,10 @@ h1, h2, h3, h4, p { overflow-wrap:break-word; word-wrap:break-word; }
   /* COLOUR — §2.2 (light) */
   --mb-content-neutral-base: var(--mb-p-cn-black);
   --mb-surface-neutral-state-hover: var(--mb-p-cn-100);
+  --mb-surface-neutral-muted: var(--mb-p-cn-100);     /* surface.neutral.muted — .mb--filled at rest */
   --mb-surface-neutral-state-pressed: var(--mb-p-cn-200);
   --mb-elevation-focus-default: 0 0 0 4px rgba(var(--mb-p-brand-rgb),.10);
+  --mb-stroke-neutral-focus: #1A56FF;       /* stroke.neutral.focus — DS: focus rings pair with it */
 
   /* SIZE — §2.4 */
   --mb-control-sm: 40px;      /* size.control.sm — hit area (A.02)       */
@@ -963,7 +965,7 @@ h1, h2, h3, h4, p { overflow-wrap:break-word; word-wrap:break-word; }
 }
 .mb:active { background: var(--mb-surface-neutral-state-pressed); }
 .mb:focus { outline: none; }
-.mb:focus-visible { box-shadow: var(--mb-elevation-focus-default); }
+.mb:focus-visible { outline: 2px solid var(--mb-stroke-neutral-focus); outline-offset: 0; box-shadow: var(--mb-elevation-focus-default); }
 
 /* placement · leading — first thing in a title row (My Jobs, Docket):
    the icon, not the round hover area, sits on the screen gutter, and the
@@ -972,6 +974,13 @@ h1, h2, h3, h4, p { overflow-wrap:break-word; word-wrap:break-word; }
   margin-left: var(--mb-optical-offset);
   margin-block: calc((var(--mb-control-sm) - 28px) / -2);   /* 28 = Display / sm line height */
 }
+
+/* filled · a subtle resting fill, for a menu on a raised surface (the Home brand pill). Touch screens have no
+   hover, so the button shows it is a button at rest: surface.neutral.muted; hover and pressed step to
+   surface.neutral-state.pressed (A.02 Secondary hover → pressed ramp). */
+.mb--filled { background: var(--mb-surface-neutral-muted); }
+@media (hover: hover) { .mb--filled:hover { background: var(--mb-surface-neutral-state-pressed); } }
+.mb--filled:active { background: var(--mb-surface-neutral-state-pressed); }
 
 @media (prefers-reduced-motion: reduce) { .mb { transition: none; } }
 </style>
@@ -1433,6 +1442,205 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
 }
 </style>
 <!-- ▲ COMPONENT · bottom-tab-bar -->
+<!-- ▼ COMPONENT · top-app-bar v1.0.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
+<style data-component="top-app-bar">
+/* ═══════════════════════════════════════════════════════════════════════
+   SHINE · TOP APP BAR  (app component · App-login)              v1.0.0
+   One top bar for every logged-in screen, in two variants that share one
+   frame, so the menu, the brand/title anchor and the trailing action sit
+   on exactly the same spot on every tab.
+
+     brand  ╭──────────────────────────────────────────╮   Home
+            │ ☰  shine                 [ 🔍 Search Jobs ] │   floating pill
+            ╰──────────────────────────────────────────╯
+     title    ☰  My Jobs.                                  My Jobs · Docket
+              [ Recommended | Saved | Applied ]            (slot below)
+
+   Shared frame (both variants, both platforms)
+     gutter G 24 (spacing.layout.sm): glyphs and text start / end on it
+     row 48 (size.control.lg) · 8 above / below (spacing.inset.md) → bar 64
+     leading slot = menu-button (icon on G, button 14 → 54) — or, on a
+     sub-view (Docket › Expired), the back button .stp-back in the same slot
+     anchor (logo / title) at 62 = menu hit area 54 + 8 (spacing.inline.md) — 18 after the icon (spacing.inline.xl)
+     trailing hit areas end at screen − 14 (icon / text on G)
+     brand pill wraps the hit areas with ONE inset all round — 6 (spacing.inset.sm)
+     above, below and at both ends — so the menu and Search Jobs sit concentric
+     in the pill (radius 26 = 20 + 6): pill 52 = 40 + 6 + 6, 6 above / below it
+     (bar still 64, menu centre still 32), 8 from the screen (spacing.inset.md)
+
+   Platform (html / ancestor [data-platform="ios"]; Android is the default)
+     Android  title bar = M3 small top app bar: 64, pinned, start-aligned;
+              on scroll it lifts (frosted surface + hairline under the slot)
+     iPhone   title bar: 64 at rest, compacts to the standard 44 bar as the
+              list scrolls (scroll-linked, 40 px); the title never moves — it
+              stays start-aligned at 62, same size — hairline at the edge
+     brand    floating pill on both; it already sits on its own surface
+
+   ▶ BEFORE ADDING OR CHANGING IT: read README.md in this folder.
+   • Semantic tokens only (DESIGN-SYSTEM.md §2); the scoped layer names them.
+   • Pair with top-app-bar.js (ShineTopBar) and menu-button.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:root { --stp-safe-top: env(safe-area-inset-top, 0px); }
+
+.stp {
+  /* COLOUR — §2.2 (light) */
+  --stp-content-neutral-base: #0D1117;                     /* content.neutral.base — title, icons */
+  --stp-surface-neutral-base: #FAF9F6;                     /* surface.neutral.base — bar at rest = page */
+  --stp-surface-neutral-raised-translucent: rgba(255, 255, 255, .96);
+                                                           /* surface.neutral.raised-translucent (PROPOSED, same as the tab bar) */
+  --stp-stroke-neutral-muted: #EEF1F5;                     /* stroke.neutral.muted — scroll hairline */
+  --stp-surface-brand-intense: #1A56FF;                    /* surface.brand.brand-intense — Search Jobs */
+  --stp-surface-brand-intense-hover: #0B3FCC;              /* surface.brand.brand-intense-hover */
+  --stp-surface-brand-intense-pressed: #0A33A6;            /* surface.brand.brand-intense-pressed */
+  --stp-content-on-fill-dark-base: #FFFFFF;                /* content.on-fill-dark.base — CTA label */
+  --stp-elevation-neutral-lifted: 0 4px 12px rgba(13, 17, 23, .08), 0 2px 4px rgba(13, 17, 23, .04);
+                                                           /* elevation.neutral.lifted — "sticky headers, floating groups" */
+  --stp-elevation-brand-raised: 0 6px 14px -4px rgba(26, 86, 255, .45);   /* elevation.brand.raised — CTA at rest */
+  --stp-elevation-brand-lifted: 0 16px 40px -12px rgba(26, 86, 255, .40); /* elevation.brand.lifted — CTA hover */
+  --stp-elevation-brand-subtle: 0 8px 24px -10px rgba(26, 86, 255, .18);  /* elevation.brand.subtle — CTA pressed */
+  --stp-elevation-focus-default: 0 0 0 4px rgba(26, 86, 255, .10);        /* elevation.focus.default */
+  --stp-stroke-neutral-focus: #1A56FF;                     /* stroke.neutral.focus */
+  --stp-surface-neutral-state-hover: #EEF1F5;              /* surface.neutral-state.hover — back button */
+  --stp-surface-neutral-state-pressed: #E4E7EC;            /* surface.neutral-state.pressed — back button */
+  --stp-blur: blur(24px) saturate(180%);
+
+  /* SPACE · SIZE — §2.3 / §2.4 */
+  --stp-gutter: 24px;              /* spacing.layout.sm — glyphs + text on it */
+  --stp-pad-y: 8px;                /* spacing.inset.md — above / below the row */
+  --stp-row: 48px;                 /* size.control.lg */
+  --stp-row-ios-compact: 44px;     /* iOS standard navigation bar */
+  --stp-hit: 40px;                 /* size.control.sm — menu / icon buttons, CTA */
+  --stp-icon: 20px;                /* size.icon.lg — menu glyph */
+  --stp-hit-edge: calc(var(--stp-gutter) - (var(--stp-hit) - var(--stp-icon)) / 2);   /* 14 */
+  --stp-pill-margin: 8px;          /* spacing.inset.md — pill to screen edge */
+  --stp-pill-inset: calc(var(--stp-hit-edge) - var(--stp-pill-margin));                 /* 6 = spacing.inset.sm — all four sides */
+  --stp-pill-h: calc(var(--stp-hit) + var(--stp-pill-inset) * 2);                        /* 52 */
+  --stp-pill-pad-y: calc((var(--stp-row) + var(--stp-pad-y) * 2 - var(--stp-pill-h)) / 2); /* 6 — keeps the bar at 64 */
+  --stp-anchor: calc(var(--stp-hit-edge) + var(--stp-hit) + 8px);                       /* 62 — logo / title start (spacing.inline.md after the menu) */
+  --stp-logo-h: 36px;              /* brand asset — the DS has no logo size (proposed size.logo.md) */
+  --stp-radius-full: 1024px;       /* size.radius.full */
+
+  /* TYPE — §2.1 */
+  --stp-font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;   /* typeface.family.brand */
+  /* Heading / md (mobile) bold: 18 / 22, −0.2 — title at rest */
+  /* Label / md bold: 12 / 12 — Search Jobs (A.02 btn--sm) */
+
+  /* MOTION — proposed */
+  --stp-dur: 200ms; --stp-ease: ease;
+
+  --stp-p: 0;                      /* iOS collapse progress 0 → 1, set by the script */
+
+  position: sticky; top: 0; z-index: 80;
+  box-sizing: border-box;
+  display: flow-root;              /* keeps the row's 8 / 8 inside the bar */
+  padding-top: var(--stp-safe-top);
+  font-family: var(--stp-font); -webkit-font-smoothing: antialiased;
+  color: var(--stp-content-neutral-base);
+  background: transparent;
+  -webkit-tap-highlight-color: transparent;
+}
+.stp *, .stp *::before, .stp *::after { box-sizing: border-box; }
+
+/* ── Row (shared frame) ────────────────────────────────────────────── */
+.stp-row {
+  position: relative;
+  display: flex; align-items: center;
+  height: var(--stp-row);
+  margin: var(--stp-pad-y) 0;
+  padding: 0 var(--stp-hit-edge);
+}
+.stp-row > .mb, .stp-row > .stp-back { margin: 0; position: relative; }   /* the frame places them; no optical offsets */
+.stp-row > .mb::after, .stp-row > .stp-back::after { content: ""; position: absolute; inset: -4px; }   /* 48 touch target (Android) */
+
+/* back button — takes the menu's slot on a sub-view; same 40 round ghost button as the menu (A.02 icon-only) */
+.stp-back {
+  flex: none; display: inline-grid; place-items: center;
+  width: var(--stp-hit); height: var(--stp-hit); padding: 0; border: none; border-radius: var(--stp-radius-full);
+  background: transparent; color: var(--stp-content-neutral-base); cursor: pointer;
+  -webkit-appearance: none; appearance: none; -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  transition: background-color 140ms ease, box-shadow 140ms ease;
+}
+.stp-back[hidden] { display: none !important; }
+.stp-back svg { display: block; width: var(--stp-icon); height: var(--stp-icon); fill: none; stroke: currentColor; stroke-width: 2px; stroke-linecap: round; stroke-linejoin: round; }   /* size.icon.lg · size.stroke.thick */
+@media (hover: hover) { .stp-back:hover { background: var(--stp-surface-neutral-state-hover); } }
+.stp-back:active { background: var(--stp-surface-neutral-state-pressed); }
+.stp-back:focus { outline: none; }
+.stp-back:focus-visible { outline: 2px solid var(--stp-stroke-neutral-focus); outline-offset: 0; box-shadow: var(--stp-elevation-focus-default); }
+.stp-anchor {                                     /* logo or title — starts at 62 */
+  position: absolute; left: var(--stp-anchor); top: 50%; transform: translateY(-50%);
+  display: flex; align-items: center; min-width: 0; max-width: calc(100% - var(--stp-anchor) - var(--stp-hit-edge));
+}
+.stp-end { margin-left: auto; display: flex; align-items: center; gap: 8px; }   /* spacing.inline.md */
+
+/* ── Brand variant · floating pill (Home) ─────────────────────────── */
+.stp--brand .stp-row {
+  height: var(--stp-pill-h);
+  margin: var(--stp-pill-pad-y) var(--stp-pill-margin);
+  padding: 0 var(--stp-pill-inset);                 /* = the vertical inset: (52 − 40) / 2 */
+  border-radius: var(--stp-radius-full);
+  background: var(--stp-surface-neutral-raised-translucent);
+  -webkit-backdrop-filter: var(--stp-blur); backdrop-filter: var(--stp-blur);
+  box-shadow: var(--stp-elevation-neutral-lifted);
+}
+.stp--brand .stp-anchor { left: calc(var(--stp-anchor) - var(--stp-pill-margin)); }
+.stp-logo { display: block; height: var(--stp-logo-h); line-height: 0; text-decoration: none; border-radius: 8px; }
+.stp-logo img { display: block; height: 100%; width: auto; }
+.stp-logo:focus-visible { outline: 2px solid var(--stp-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--stp-elevation-focus-default); }   /* radius.md 8 */
+
+/* Search Jobs — DS A.02 Button · brand · sm · shape-full */
+.stp-cta {
+  display: inline-flex; align-items: center; gap: 8px;          /* spacing.inline.md — A.02 icon ↔ label */
+  height: var(--stp-hit); padding: 0 16px;                       /* spacing.inset.xl */
+  border: none; border-radius: var(--stp-radius-full);
+  background: var(--stp-surface-brand-intense); color: var(--stp-content-on-fill-dark-base);
+  box-shadow: var(--stp-elevation-brand-raised);
+  font: 700 12px/12px var(--stp-font);                           /* Label / md bold */
+  text-decoration: none; white-space: nowrap; cursor: pointer;
+  transition: background-color var(--stp-dur) var(--stp-ease), box-shadow var(--stp-dur) var(--stp-ease);
+}
+.stp-cta svg { width: 14px; height: 14px; flex: none; stroke-width: 2px; }   /* size.icon.sm · size.stroke.thick */
+@media (hover: hover) { .stp-cta:hover { background: var(--stp-surface-brand-intense-hover); box-shadow: var(--stp-elevation-brand-lifted); } }
+.stp-cta:active { background: var(--stp-surface-brand-intense-pressed); box-shadow: var(--stp-elevation-brand-subtle); }
+.stp-cta:focus-visible { outline: 2px solid var(--stp-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--stp-elevation-focus-default); }
+
+/* ── Title variant (My Jobs, Docket) ──────────────────────────────── */
+.stp--title { background: var(--stp-surface-neutral-base); }
+.stp-title {
+  margin: 0;
+  font-size: 18px; line-height: 22px; font-weight: 700; letter-spacing: -0.2px;   /* Heading / md bold (mobile) */
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.stp-below { padding: 0 var(--stp-gutter) 16px; } /* slot: segment control etc., on the gutter · 16 under (spacing.inset.xl) */
+.stp-below[hidden] { display: none !important; }
+
+/* lift on scroll (Android) / scroll edge (iOS) — under the whole header, slot included */
+.stp--title::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+  background: var(--stp-stroke-neutral-muted); opacity: 0;
+  transition: opacity var(--stp-dur) var(--stp-ease);
+}
+.stp--title { transition: background-color var(--stp-dur) var(--stp-ease); }
+.stp--title.is-scrolled {
+  background: var(--stp-surface-neutral-raised-translucent);
+  -webkit-backdrop-filter: var(--stp-blur); backdrop-filter: var(--stp-blur);
+}
+.stp--title.is-scrolled::after { opacity: 1; }
+
+/* ── iPhone: the bar compacts into the standard 44 bar; the title stays put ── */
+[data-platform="ios"] .stp--title .stp-row {
+  height: calc(var(--stp-row) - (var(--stp-row) - var(--stp-row-ios-compact)) * var(--stp-p));
+  margin: calc(var(--stp-pad-y) * (1 - var(--stp-p))) 0;
+}
+[data-platform="ios"] .stp--title.is-scrolled::after { opacity: var(--stp-p); }
+[data-platform="ios"] .stp--title.is-scrolled { background: var(--stp-surface-neutral-raised-translucent); }
+[data-platform="ios"] .stp-row > .mb::after, [data-platform="ios"] .stp-row > .stp-back::after { inset: -2px; }    /* 44 touch target */
+
+@media (prefers-reduced-motion: reduce) {
+  .stp--title, .stp--title::after, .stp-cta, .stp-back { transition: none; }
+}
+</style>
+<!-- ▲ COMPONENT · top-app-bar -->
 <!-- ▼ COMPONENT · bottom-sheet v2.4.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
 <style data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
@@ -1911,50 +2119,48 @@ html.in-app .bs { --bs-safe: 0px; }
 
   <div class="view view-in active" id="viewIn">
     <section class="mr-sheet is-open" id="mrSheet" aria-label="My Jobs">
-      <div class="mr-page-hd">
-        <button class="mb mb--lead" type="button" data-shine-menu data-page="jobs" aria-label="Menu">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-        </button>
-        <!-- ▼ COMPONENT · menu-button v1.0.0 — verbatim copy of App-login/app-components/menu-button/menu-button.js -->
-                <script data-component="menu-button">
-        /* ═══════════════════════════════════════════════════════════════════════
-           SHINE · MENU BUTTON  (app component · App-login)              v1.0.0
-           Pair with menu-button.css. Zero dependencies.
-        
-           Markup (the same everywhere — copy it exactly):
-             <button class="mb" type="button" data-shine-menu aria-label="Menu">
-               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-             </button>
-           Leading a title row (My Jobs, Docket): add .mb--lead.
-        
-           Behaviour: a tap fires `shine:menu` on document, detail { button, page }.
-           The menu itself isn't built yet — pages show a placeholder on that event.
-           API: window.ShineMenu.version
-           ═══════════════════════════════════════════════════════════════════════ */
-        (function () {
-          'use strict';
-          if (window.ShineMenu) return;
-          window.ShineMenu = { version: '1.0.0' };
-          document.addEventListener('click', function (e) {
-            var b = e.target.closest && e.target.closest('[data-shine-menu]');
-            if (!b || b.tagName === 'STYLE' || b.tagName === 'SCRIPT') return;
-            e.preventDefault();
-            document.dispatchEvent(new CustomEvent('shine:menu', { detail: { button: b, page: b.getAttribute('data-page') || '' } }));
-          });
-        })();
-        </script>
-                <!-- ▲ COMPONENT · menu-button -->
-        <button class="mr-back" data-mj="backlist" aria-label="Back to Saved" hidden>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
-        </button>
-        <h2 id="mrTitleM">My Jobs.</h2>
-      </div>
-      <div class="mr-seg-wrap">
-        <div class="seg seg--block seg--sm" id="mjSeg" data-shine-seg role="tablist" aria-label="My Jobs">
-          <button class="seg-item is-active" role="tab" aria-selected="true" data-value="recommended">Recommended</button>
-          <button class="seg-item" role="tab" aria-selected="false" data-value="saved">Saved</button>
-          <button class="seg-item" role="tab" aria-selected="false" data-value="applied">Applied</button>
+      <!-- Top bar · top-app-bar component (title variant): menu, or the back arrow in Saved › Expired, + title + segment slot -->
+      <header class="stp stp--title" data-shine-topbar data-stp-scroll="#mjList">
+        <div class="stp-row">
+          <button class="mb" type="button" data-shine-menu data-page="jobs" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+          <!-- ▼ COMPONENT · menu-button v1.1.0 — verbatim copy of App-login/app-components/menu-button/menu-button.js -->
+        <script data-component="menu-button">
+/* ═══════════════════════════════════════════════════════════════════════
+   SHINE · MENU BUTTON  (app component · App-login)              v1.1.0
+   Pair with menu-button.css. Zero dependencies.
+
+   Markup (the same everywhere — copy it exactly):
+     <button class="mb" type="button" data-shine-menu aria-label="Menu">
+       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+     </button>
+   Leading a title row (My Jobs, Docket): add .mb--lead.
+
+   Behaviour: a tap fires `shine:menu` on document, detail { button, page }.
+   The menu itself isn't built yet — pages show a placeholder on that event.
+   API: window.ShineMenu.version
+   ═══════════════════════════════════════════════════════════════════════ */
+(function () {
+  'use strict';
+  if (window.ShineMenu) return;
+  window.ShineMenu = { version: '1.1.0' };
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-shine-menu]');
+    if (!b || b.tagName === 'STYLE' || b.tagName === 'SCRIPT') return;
+    e.preventDefault();
+    document.dispatchEvent(new CustomEvent('shine:menu', { detail: { button: b, page: b.getAttribute('data-page') || '' } }));
+  });
+})();
+</script>
+        <!-- ▲ COMPONENT · menu-button -->
+          <button class="stp-back" type="button" data-mj="backlist" aria-label="Back to Saved" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg></button>
+          <div class="stp-anchor"><h1 class="stp-title" id="mrTitleM">My Jobs.</h1></div>
         </div>
+        <div class="stp-below">
+          <div class="seg seg--block seg--sm" id="mjSeg" data-shine-seg role="tablist" aria-label="My Jobs">
+            <button class="seg-item is-active" role="tab" aria-selected="true" data-value="recommended">Recommended</button>
+            <button class="seg-item" role="tab" aria-selected="false" data-value="saved">Saved</button>
+            <button class="seg-item" role="tab" aria-selected="false" data-value="applied">Applied</button>
+          </div>
 <!-- ▼ COMPONENT · segment-control v1.1.0 — verbatim copy of App-login/app-components/segment-control/segment-control.js -->
         <script data-component="segment-control">
 /* ═══════════════════════════════════════════════════════════════════════
@@ -2165,7 +2371,93 @@ html.in-app .bs { --bs-safe: 0px; }
 })();
 </script>
         <!-- ▲ COMPONENT · segment-control -->
-      </div>
+        </div>
+      </header>
+<!-- ▼ COMPONENT · top-app-bar v1.0.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
+<script data-component="top-app-bar">
+/* ═══════════════════════════════════════════════════════════════════════
+   SHINE · TOP APP BAR  (app component · App-login)              v1.0.0
+   Pair with top-app-bar.css and the menu-button component.
+
+   Markup — brand (Home):
+     <header class="stp stp--brand" data-shine-topbar>
+       <div class="stp-row">
+         <button class="mb" type="button" data-shine-menu data-page="home" aria-label="Menu">…</button>
+         <a class="stp-anchor stp-logo" href="#"><img src="…" alt="Shine.com"></a>
+         <div class="stp-end"><a class="stp-cta" href="#">…Search Jobs</a></div>
+       </div>
+     </header>
+   Markup — title (My Jobs, Docket):
+     <header class="stp stp--title" data-shine-topbar data-stp-scroll="#mjList">
+       <div class="stp-row">
+         <button class="mb" …></button>
+         <button class="stp-back" type="button" aria-label="Back" hidden><svg viewBox="0 0 24 24"><path d="M19 12H5M11 18l-6-6 6-6"/></svg></button>
+         <div class="stp-anchor"><h1 class="stp-title">My Jobs.</h1></div>
+       </div>
+       <div class="stp-below">…segment control…</div>
+     </header>
+
+   data-stp-scroll   the element whose scroll drives the bar (default: the page).
+                     It may come later in the page than the bar — the script
+                     waits for it (DOMContentLoaded) before listening.
+   Platform: sets <html data-platform="ios|android"> once (iPhone / iPad →
+   ios, anything else → android) unless the page already set it.
+   Behaviour: .is-scrolled when the content is scrolled; on iOS --stp-p runs
+   0 → 1 over the first 40 px (64 bar → standard 44 bar; the title stays put).
+   API: ShineTopBar.mount(el) · ShineTopBar.update() · ShineTopBar.version
+   ═══════════════════════════════════════════════════════════════════════ */
+(function (global) {
+  'use strict';
+  if (global.ShineTopBar) return;
+  var doc = global.document, html = doc.documentElement, RANGE = 40, bars = [];
+
+  if (!html.getAttribute('data-platform')) {
+    var ua = global.navigator.userAgent || '';
+    var ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && 'ontouchend' in doc);
+    html.setAttribute('data-platform', ios ? 'ios' : 'android');
+  }
+
+  function target(el) {
+    var sel = el.getAttribute('data-stp-scroll');
+    if (!sel) return global;
+    return el.ownerDocument.querySelector(sel);           // null until it is parsed
+  }
+  function y(t) { return t === global ? (global.scrollY || doc.documentElement.scrollTop || 0) : t.scrollTop; }
+  function paint(el) {
+    var v = Math.max(0, y(el.__stpT));
+    el.classList.toggle('is-scrolled', v > 0);
+    el.style.setProperty('--stp-p', Math.min(1, v / RANGE).toFixed(3));
+  }
+  function listen(el) {
+    var t = target(el);
+    if (!t) {                                              // scroller not parsed yet
+      if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', function () { listen(el); }, { once: true });
+      else { el.__stpT = global; listen2(el); }
+      return;
+    }
+    el.__stpT = t; listen2(el);
+  }
+  function listen2(el) {
+    var raf = 0;
+    el.__stpT.addEventListener('scroll', function () {
+      if (raf) return;
+      raf = global.requestAnimationFrame(function () { raf = 0; paint(el); });
+    }, { passive: true });
+    paint(el);
+  }
+  function mount(el) {
+    if (!el || el.__stp || /^(STYLE|SCRIPT)$/.test(el.tagName)) return el;
+    el.__stp = true; bars.push(el);
+    listen(el);
+    return el;
+  }
+  function init() { doc.querySelectorAll('[data-shine-topbar]:not(style):not(script)').forEach(mount); }
+  global.ShineTopBar = { version: '1.0.0', mount: mount, update: function () { bars.forEach(function (b) { if (b.__stpT) paint(b); }); } };
+  init();
+  if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', init);
+})(window);
+</script>
+<!-- ▲ COMPONENT · top-app-bar -->
       <div class="mr-scroll" id="mjList"></div>
     </section>
     <nav data-shine-tabbar data-active="jobs" data-dot="docket" data-href-home="index.html" data-href-docket="docket.html"></nav>
@@ -3167,10 +3459,10 @@ html.in-app .bs { --bs-safe: 0px; }
   // header for the Expired view: back arrow in the menu's slot, title "Expired.", segment out (as Docket)
   function header(){
     var gone = (view === 'expired');
-    var back = document.querySelector('.mr-page-hd .mr-back'), menu = document.querySelector('.mr-page-hd [data-shine-menu]');
+    var back = document.querySelector('.stp .stp-back'), menu = document.querySelector('.stp [data-shine-menu]');
     if (back) back.hidden = !gone;
     if (menu) menu.hidden = gone;
-    var segw = document.querySelector('.mr-seg-wrap'); if (segw) segw.hidden = gone;
+    var segw = document.querySelector('.stp-below'); if (segw) segw.hidden = gone;
     sheet.classList.toggle('is-expired', gone);
     document.getElementById('mrTitleM').textContent = gone ? 'Expired.' : 'My Jobs.';
   }
@@ -3205,7 +3497,7 @@ html.in-app .bs { --bs-safe: 0px; }
   }
   document.getElementById('mjSeg').addEventListener('shine:segment', function(e){ setTab(e.detail.value); });
 
-  function syncScroll(){ sheet.classList.toggle('is-scrolled', list.scrollTop > 2); }
+  function syncScroll(){ sheet.classList.toggle('is-scrolled', list.scrollTop > 2); if (window.ShineTopBar) ShineTopBar.update(); }
   list.addEventListener('scroll', syncScroll, { passive: true });
 
   function say(t){ if (typeof showToast === 'function') showToast(t); }

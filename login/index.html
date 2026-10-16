@@ -2535,10 +2535,10 @@ h1, h2, h3, h4, p { overflow-wrap:break-word; word-wrap:break-word; }
 /* Searches / Actions = shared segment control; the page only places it (24 to the chart head = spacing.stack.xxl) */
 .lipa-graph .lipa-seg { margin: 0 0 24px; }
 </style>
-<!-- ▼ COMPONENT · menu-button v1.0.0 — verbatim copy of App-login/app-components/menu-button/menu-button.css (read README.md there before changing; resync every copy) -->
+<!-- ▼ COMPONENT · menu-button v1.1.0 — verbatim copy of App-login/app-components/menu-button/menu-button.css (read README.md there before changing; resync every copy) -->
 <style data-component="menu-button">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · MENU BUTTON  (app component · App-login)              v1.0.0
+   SHINE · MENU BUTTON  (app component · App-login)              v1.1.0
    The one hamburger in the logged-in app. Same button on every tab:
      Home      — in the top bar, before Search Jobs
      My Jobs   — before the page title "My Jobs."
@@ -2571,8 +2571,10 @@ h1, h2, h3, h4, p { overflow-wrap:break-word; word-wrap:break-word; }
   /* COLOUR — §2.2 (light) */
   --mb-content-neutral-base: var(--mb-p-cn-black);
   --mb-surface-neutral-state-hover: var(--mb-p-cn-100);
+  --mb-surface-neutral-muted: var(--mb-p-cn-100);     /* surface.neutral.muted — .mb--filled at rest */
   --mb-surface-neutral-state-pressed: var(--mb-p-cn-200);
   --mb-elevation-focus-default: 0 0 0 4px rgba(var(--mb-p-brand-rgb),.10);
+  --mb-stroke-neutral-focus: #1A56FF;       /* stroke.neutral.focus — DS: focus rings pair with it */
 
   /* SIZE — §2.4 */
   --mb-control-sm: 40px;      /* size.control.sm — hit area (A.02)       */
@@ -2622,7 +2624,7 @@ h1, h2, h3, h4, p { overflow-wrap:break-word; word-wrap:break-word; }
 }
 .mb:active { background: var(--mb-surface-neutral-state-pressed); }
 .mb:focus { outline: none; }
-.mb:focus-visible { box-shadow: var(--mb-elevation-focus-default); }
+.mb:focus-visible { outline: 2px solid var(--mb-stroke-neutral-focus); outline-offset: 0; box-shadow: var(--mb-elevation-focus-default); }
 
 /* placement · leading — first thing in a title row (My Jobs, Docket):
    the icon, not the round hover area, sits on the screen gutter, and the
@@ -2631,6 +2633,13 @@ h1, h2, h3, h4, p { overflow-wrap:break-word; word-wrap:break-word; }
   margin-left: var(--mb-optical-offset);
   margin-block: calc((var(--mb-control-sm) - 28px) / -2);   /* 28 = Display / sm line height */
 }
+
+/* filled · a subtle resting fill, for a menu on a raised surface (the Home brand pill). Touch screens have no
+   hover, so the button shows it is a button at rest: surface.neutral.muted; hover and pressed step to
+   surface.neutral-state.pressed (A.02 Secondary hover → pressed ramp). */
+.mb--filled { background: var(--mb-surface-neutral-muted); }
+@media (hover: hover) { .mb--filled:hover { background: var(--mb-surface-neutral-state-pressed); } }
+.mb--filled:active { background: var(--mb-surface-neutral-state-pressed); }
 
 @media (prefers-reduced-motion: reduce) { .mb { transition: none; } }
 </style>
@@ -3092,23 +3101,218 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
 }
 </style>
 <!-- ▲ COMPONENT · bottom-tab-bar -->
+<!-- ▼ COMPONENT · top-app-bar v1.0.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
+<style data-component="top-app-bar">
+/* ═══════════════════════════════════════════════════════════════════════
+   SHINE · TOP APP BAR  (app component · App-login)              v1.0.0
+   One top bar for every logged-in screen, in two variants that share one
+   frame, so the menu, the brand/title anchor and the trailing action sit
+   on exactly the same spot on every tab.
+
+     brand  ╭──────────────────────────────────────────╮   Home
+            │ ☰  shine                 [ 🔍 Search Jobs ] │   floating pill
+            ╰──────────────────────────────────────────╯
+     title    ☰  My Jobs.                                  My Jobs · Docket
+              [ Recommended | Saved | Applied ]            (slot below)
+
+   Shared frame (both variants, both platforms)
+     gutter G 24 (spacing.layout.sm): glyphs and text start / end on it
+     row 48 (size.control.lg) · 8 above / below (spacing.inset.md) → bar 64
+     leading slot = menu-button (icon on G, button 14 → 54) — or, on a
+     sub-view (Docket › Expired), the back button .stp-back in the same slot
+     anchor (logo / title) at 62 = menu hit area 54 + 8 (spacing.inline.md) — 18 after the icon (spacing.inline.xl)
+     trailing hit areas end at screen − 14 (icon / text on G)
+     brand pill wraps the hit areas with ONE inset all round — 6 (spacing.inset.sm)
+     above, below and at both ends — so the menu and Search Jobs sit concentric
+     in the pill (radius 26 = 20 + 6): pill 52 = 40 + 6 + 6, 6 above / below it
+     (bar still 64, menu centre still 32), 8 from the screen (spacing.inset.md)
+
+   Platform (html / ancestor [data-platform="ios"]; Android is the default)
+     Android  title bar = M3 small top app bar: 64, pinned, start-aligned;
+              on scroll it lifts (frosted surface + hairline under the slot)
+     iPhone   title bar: 64 at rest, compacts to the standard 44 bar as the
+              list scrolls (scroll-linked, 40 px); the title never moves — it
+              stays start-aligned at 62, same size — hairline at the edge
+     brand    floating pill on both; it already sits on its own surface
+
+   ▶ BEFORE ADDING OR CHANGING IT: read README.md in this folder.
+   • Semantic tokens only (DESIGN-SYSTEM.md §2); the scoped layer names them.
+   • Pair with top-app-bar.js (ShineTopBar) and menu-button.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:root { --stp-safe-top: env(safe-area-inset-top, 0px); }
+
+.stp {
+  /* COLOUR — §2.2 (light) */
+  --stp-content-neutral-base: #0D1117;                     /* content.neutral.base — title, icons */
+  --stp-surface-neutral-base: #FAF9F6;                     /* surface.neutral.base — bar at rest = page */
+  --stp-surface-neutral-raised-translucent: rgba(255, 255, 255, .96);
+                                                           /* surface.neutral.raised-translucent (PROPOSED, same as the tab bar) */
+  --stp-stroke-neutral-muted: #EEF1F5;                     /* stroke.neutral.muted — scroll hairline */
+  --stp-surface-brand-intense: #1A56FF;                    /* surface.brand.brand-intense — Search Jobs */
+  --stp-surface-brand-intense-hover: #0B3FCC;              /* surface.brand.brand-intense-hover */
+  --stp-surface-brand-intense-pressed: #0A33A6;            /* surface.brand.brand-intense-pressed */
+  --stp-content-on-fill-dark-base: #FFFFFF;                /* content.on-fill-dark.base — CTA label */
+  --stp-elevation-neutral-lifted: 0 4px 12px rgba(13, 17, 23, .08), 0 2px 4px rgba(13, 17, 23, .04);
+                                                           /* elevation.neutral.lifted — "sticky headers, floating groups" */
+  --stp-elevation-brand-raised: 0 6px 14px -4px rgba(26, 86, 255, .45);   /* elevation.brand.raised — CTA at rest */
+  --stp-elevation-brand-lifted: 0 16px 40px -12px rgba(26, 86, 255, .40); /* elevation.brand.lifted — CTA hover */
+  --stp-elevation-brand-subtle: 0 8px 24px -10px rgba(26, 86, 255, .18);  /* elevation.brand.subtle — CTA pressed */
+  --stp-elevation-focus-default: 0 0 0 4px rgba(26, 86, 255, .10);        /* elevation.focus.default */
+  --stp-stroke-neutral-focus: #1A56FF;                     /* stroke.neutral.focus */
+  --stp-surface-neutral-state-hover: #EEF1F5;              /* surface.neutral-state.hover — back button */
+  --stp-surface-neutral-state-pressed: #E4E7EC;            /* surface.neutral-state.pressed — back button */
+  --stp-blur: blur(24px) saturate(180%);
+
+  /* SPACE · SIZE — §2.3 / §2.4 */
+  --stp-gutter: 24px;              /* spacing.layout.sm — glyphs + text on it */
+  --stp-pad-y: 8px;                /* spacing.inset.md — above / below the row */
+  --stp-row: 48px;                 /* size.control.lg */
+  --stp-row-ios-compact: 44px;     /* iOS standard navigation bar */
+  --stp-hit: 40px;                 /* size.control.sm — menu / icon buttons, CTA */
+  --stp-icon: 20px;                /* size.icon.lg — menu glyph */
+  --stp-hit-edge: calc(var(--stp-gutter) - (var(--stp-hit) - var(--stp-icon)) / 2);   /* 14 */
+  --stp-pill-margin: 8px;          /* spacing.inset.md — pill to screen edge */
+  --stp-pill-inset: calc(var(--stp-hit-edge) - var(--stp-pill-margin));                 /* 6 = spacing.inset.sm — all four sides */
+  --stp-pill-h: calc(var(--stp-hit) + var(--stp-pill-inset) * 2);                        /* 52 */
+  --stp-pill-pad-y: calc((var(--stp-row) + var(--stp-pad-y) * 2 - var(--stp-pill-h)) / 2); /* 6 — keeps the bar at 64 */
+  --stp-anchor: calc(var(--stp-hit-edge) + var(--stp-hit) + 8px);                       /* 62 — logo / title start (spacing.inline.md after the menu) */
+  --stp-logo-h: 36px;              /* brand asset — the DS has no logo size (proposed size.logo.md) */
+  --stp-radius-full: 1024px;       /* size.radius.full */
+
+  /* TYPE — §2.1 */
+  --stp-font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;   /* typeface.family.brand */
+  /* Heading / md (mobile) bold: 18 / 22, −0.2 — title at rest */
+  /* Label / md bold: 12 / 12 — Search Jobs (A.02 btn--sm) */
+
+  /* MOTION — proposed */
+  --stp-dur: 200ms; --stp-ease: ease;
+
+  --stp-p: 0;                      /* iOS collapse progress 0 → 1, set by the script */
+
+  position: sticky; top: 0; z-index: 80;
+  box-sizing: border-box;
+  display: flow-root;              /* keeps the row's 8 / 8 inside the bar */
+  padding-top: var(--stp-safe-top);
+  font-family: var(--stp-font); -webkit-font-smoothing: antialiased;
+  color: var(--stp-content-neutral-base);
+  background: transparent;
+  -webkit-tap-highlight-color: transparent;
+}
+.stp *, .stp *::before, .stp *::after { box-sizing: border-box; }
+
+/* ── Row (shared frame) ────────────────────────────────────────────── */
+.stp-row {
+  position: relative;
+  display: flex; align-items: center;
+  height: var(--stp-row);
+  margin: var(--stp-pad-y) 0;
+  padding: 0 var(--stp-hit-edge);
+}
+.stp-row > .mb, .stp-row > .stp-back { margin: 0; position: relative; }   /* the frame places them; no optical offsets */
+.stp-row > .mb::after, .stp-row > .stp-back::after { content: ""; position: absolute; inset: -4px; }   /* 48 touch target (Android) */
+
+/* back button — takes the menu's slot on a sub-view; same 40 round ghost button as the menu (A.02 icon-only) */
+.stp-back {
+  flex: none; display: inline-grid; place-items: center;
+  width: var(--stp-hit); height: var(--stp-hit); padding: 0; border: none; border-radius: var(--stp-radius-full);
+  background: transparent; color: var(--stp-content-neutral-base); cursor: pointer;
+  -webkit-appearance: none; appearance: none; -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  transition: background-color 140ms ease, box-shadow 140ms ease;
+}
+.stp-back[hidden] { display: none !important; }
+.stp-back svg { display: block; width: var(--stp-icon); height: var(--stp-icon); fill: none; stroke: currentColor; stroke-width: 2px; stroke-linecap: round; stroke-linejoin: round; }   /* size.icon.lg · size.stroke.thick */
+@media (hover: hover) { .stp-back:hover { background: var(--stp-surface-neutral-state-hover); } }
+.stp-back:active { background: var(--stp-surface-neutral-state-pressed); }
+.stp-back:focus { outline: none; }
+.stp-back:focus-visible { outline: 2px solid var(--stp-stroke-neutral-focus); outline-offset: 0; box-shadow: var(--stp-elevation-focus-default); }
+.stp-anchor {                                     /* logo or title — starts at 62 */
+  position: absolute; left: var(--stp-anchor); top: 50%; transform: translateY(-50%);
+  display: flex; align-items: center; min-width: 0; max-width: calc(100% - var(--stp-anchor) - var(--stp-hit-edge));
+}
+.stp-end { margin-left: auto; display: flex; align-items: center; gap: 8px; }   /* spacing.inline.md */
+
+/* ── Brand variant · floating pill (Home) ─────────────────────────── */
+.stp--brand .stp-row {
+  height: var(--stp-pill-h);
+  margin: var(--stp-pill-pad-y) var(--stp-pill-margin);
+  padding: 0 var(--stp-pill-inset);                 /* = the vertical inset: (52 − 40) / 2 */
+  border-radius: var(--stp-radius-full);
+  background: var(--stp-surface-neutral-raised-translucent);
+  -webkit-backdrop-filter: var(--stp-blur); backdrop-filter: var(--stp-blur);
+  box-shadow: var(--stp-elevation-neutral-lifted);
+}
+.stp--brand .stp-anchor { left: calc(var(--stp-anchor) - var(--stp-pill-margin)); }
+.stp-logo { display: block; height: var(--stp-logo-h); line-height: 0; text-decoration: none; border-radius: 8px; }
+.stp-logo img { display: block; height: 100%; width: auto; }
+.stp-logo:focus-visible { outline: 2px solid var(--stp-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--stp-elevation-focus-default); }   /* radius.md 8 */
+
+/* Search Jobs — DS A.02 Button · brand · sm · shape-full */
+.stp-cta {
+  display: inline-flex; align-items: center; gap: 8px;          /* spacing.inline.md — A.02 icon ↔ label */
+  height: var(--stp-hit); padding: 0 16px;                       /* spacing.inset.xl */
+  border: none; border-radius: var(--stp-radius-full);
+  background: var(--stp-surface-brand-intense); color: var(--stp-content-on-fill-dark-base);
+  box-shadow: var(--stp-elevation-brand-raised);
+  font: 700 12px/12px var(--stp-font);                           /* Label / md bold */
+  text-decoration: none; white-space: nowrap; cursor: pointer;
+  transition: background-color var(--stp-dur) var(--stp-ease), box-shadow var(--stp-dur) var(--stp-ease);
+}
+.stp-cta svg { width: 14px; height: 14px; flex: none; stroke-width: 2px; }   /* size.icon.sm · size.stroke.thick */
+@media (hover: hover) { .stp-cta:hover { background: var(--stp-surface-brand-intense-hover); box-shadow: var(--stp-elevation-brand-lifted); } }
+.stp-cta:active { background: var(--stp-surface-brand-intense-pressed); box-shadow: var(--stp-elevation-brand-subtle); }
+.stp-cta:focus-visible { outline: 2px solid var(--stp-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--stp-elevation-focus-default); }
+
+/* ── Title variant (My Jobs, Docket) ──────────────────────────────── */
+.stp--title { background: var(--stp-surface-neutral-base); }
+.stp-title {
+  margin: 0;
+  font-size: 18px; line-height: 22px; font-weight: 700; letter-spacing: -0.2px;   /* Heading / md bold (mobile) */
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.stp-below { padding: 0 var(--stp-gutter) 16px; } /* slot: segment control etc., on the gutter · 16 under (spacing.inset.xl) */
+.stp-below[hidden] { display: none !important; }
+
+/* lift on scroll (Android) / scroll edge (iOS) — under the whole header, slot included */
+.stp--title::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+  background: var(--stp-stroke-neutral-muted); opacity: 0;
+  transition: opacity var(--stp-dur) var(--stp-ease);
+}
+.stp--title { transition: background-color var(--stp-dur) var(--stp-ease); }
+.stp--title.is-scrolled {
+  background: var(--stp-surface-neutral-raised-translucent);
+  -webkit-backdrop-filter: var(--stp-blur); backdrop-filter: var(--stp-blur);
+}
+.stp--title.is-scrolled::after { opacity: 1; }
+
+/* ── iPhone: the bar compacts into the standard 44 bar; the title stays put ── */
+[data-platform="ios"] .stp--title .stp-row {
+  height: calc(var(--stp-row) - (var(--stp-row) - var(--stp-row-ios-compact)) * var(--stp-p));
+  margin: calc(var(--stp-pad-y) * (1 - var(--stp-p))) 0;
+}
+[data-platform="ios"] .stp--title.is-scrolled::after { opacity: var(--stp-p); }
+[data-platform="ios"] .stp--title.is-scrolled { background: var(--stp-surface-neutral-raised-translucent); }
+[data-platform="ios"] .stp-row > .mb::after, [data-platform="ios"] .stp-row > .stp-back::after { inset: -2px; }    /* 44 touch target */
+
+@media (prefers-reduced-motion: reduce) {
+  .stp--title, .stp--title::after, .stp-cta, .stp-back { transition: none; }
+}
+</style>
+<!-- ▲ COMPONENT · top-app-bar -->
 <link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Shine Login"><meta name="apple-mobile-web-app-status-bar-style" content="default"><link rel="apple-touch-icon" href="icons/icon-180.png"><link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png"><link rel="apple-touch-startup-image" href="icons/launch-640x1136.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-750x1334.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1242x2208.png" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1125x2436.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-828x1792.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1242x2688.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1170x2532.png" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1284x2778.png" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1179x2556.png" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1290x2796.png" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1206x2622.png" media="(device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1320x2868.png" media="(device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1260x2736.png" media="(device-width: 420px) and (device-height: 912px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><script>if("serviceWorker" in navigator)addEventListener("load",function(){navigator.serviceWorker.register("sw.js")})</script>
 </head>
 <body>
 
   <div class="view view-in active" id="viewIn">
-    <nav class="li-nav">
-      <a href="#" class="logo" id="liLogoBack">
-        <img class="logo-img" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDI0MCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0zOC44MTY0IDEwNC4wNzlDNDMuMzkyIDEwNC4wNzkgNDcuMzk1NCAxMDUuMTY3IDUwLjgyNzEgMTA3LjM0MUM1NC4zMTYyIDEwOS40NTggNTYuNzc2MSAxMTIuNDYyIDU4LjIwNjEgMTE2LjM1M0w0OC42ODI2IDEyMC44MTVDNDcuOTk2MyAxMTguODcgNDYuNzM3NSAxMTcuMzI1IDQ0LjkwNzIgMTE2LjE4MUM0My4xMzQzIDExNC45NzkgNDEuMTA0IDExNC4zNzggMzguODE2NCAxMTQuMzc4QzM3LjE1NzcgMTE0LjM3OCAzNS44NDE1IDExNC43MjIgMzQuODY5MSAxMTUuNDA4QzMzLjk1NDIgMTE2LjA5NSAzMy40OTcyIDExNy4wMzkgMzMuNDk3MSAxMTguMjRDMzMuNDk3MSAxMTguODcgMzMuNjY4NSAxMTkuNDQyIDM0LjAxMTcgMTE5Ljk1N0MzNC4zNTQ5IDEyMC40NzIgMzQuODk4MSAxMjAuOTMgMzUuNjQxNiAxMjEuMzNDMzYuNDQyNCAxMjEuNzMxIDM3LjQxNDcgMTIyLjEwMyAzOC41NTg2IDEyMi40NDZMNDYuMDIyNSAxMjQuNjc4QzQ5LjkxMTggMTI1LjgyMiA1Mi44ODYyIDEyNy41NjcgNTQuOTQ1MyAxMjkuOTEzQzU3LjAwNDMgMTMyLjIwMiA1OC4wMzQxIDEzNS4wMzQgNTguMDM0MiAxMzguNDA5QzU4LjAzNDIgMTQxLjMyNyA1Ny4yNjIgMTQzLjg3NCA1NS43MTc4IDE0Ni4wNDhDNTQuMjMwNyAxNDguMjIyIDUyLjE0MzEgMTQ5LjkzOSA0OS40NTUxIDE1MS4xOTdDNDYuNzY2OSAxNTIuMzk5IDQzLjU5MjIgMTUzIDM5LjkzMTYgMTUzQzM0Ljc4NDEgMTUzIDMwLjI5NCAxNTEuNzk4IDI2LjQ2MTkgMTQ5LjM5NkMyMi42ODY5IDE0Ni45MzUgMjAuMTEzIDE0My42NDUgMTguNzQwMiAxMzkuNTI1TDI4LjE3NzcgMTM1LjA2MkMyOS4zNzg4IDEzNy41OCAzMS4wMDg1IDEzOS41NTQgMzMuMDY3NCAxNDAuOTg0QzM1LjEyNjUgMTQyLjQxNSAzNy40MTUgMTQzLjEzIDM5LjkzMTYgMTQzLjEzQzQxLjc2MTggMTQzLjEzIDQzLjE2MzQgMTQyLjc1OCA0NC4xMzU3IDE0Mi4wMTVDNDUuMTA4IDE0MS4yNzEgNDUuNTkzNyAxNDAuMjQxIDQ1LjU5MzggMTM4LjkyNUM0NS41OTM4IDEzOC4yMzggNDUuNDIyMyAxMzcuNjY2IDQ1LjA3OTEgMTM3LjIwOEM0NC43MzYgMTM2LjY5MyA0NC4yMjEzIDEzNi4yMzUgNDMuNTM1MiAxMzUuODM1QzQyLjg0ODggMTM1LjQzNCA0MS45OTA1IDEzNS4wOTEgNDAuOTYwOSAxMzQuODA1TDMyLjk4MjQgMTMyLjU3M0MyOS4xNTAzIDEzMS40ODYgMjYuMjA0NiAxMjkuNzQxIDI0LjE0NTUgMTI3LjMzOEMyMi4wODY1IDEyNC44NzggMjEuMDU2NyAxMjEuOTg4IDIxLjA1NjYgMTE4LjY3QzIxLjA1NjYgMTE1Ljc1MiAyMS44IDExMy4yMDYgMjMuMjg3MSAxMTEuMDMxQzI0Ljc3NDIgMTA4Ljg1NyAyNi44NjE3IDEwNy4xNjkgMjkuNTQ5OCAxMDUuOTY4QzMyLjIzODEgMTA0LjcwOSAzNS4zMjc0IDEwNC4wNzkgMzguODE2NCAxMDQuMDc5WiIgZmlsbD0iYmxhY2siLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yMDEuOTc2IDEwNC4wNzlDMjA1LjY5MyAxMDQuMDc5IDIwOC45ODIgMTA0LjY4IDIxMS44NDIgMTA1Ljg4MkMyMTQuNzAyIDEwNy4wMjYgMjE3LjEwNCAxMDguNjU2IDIxOS4wNDkgMTEwLjc3M0MyMjEuMDUxIDExMi44OSAyMjIuNTY2IDExNS4zNTEgMjIzLjU5NiAxMTguMTU0QzIyNC42MjUgMTIwLjkwMSAyMjUuMTQgMTIzLjkwNSAyMjUuMTQgMTI3LjE2NkMyMjUuMTQgMTI4LjA4MSAyMjUuMDgzIDEyOC45OTggMjI0Ljk2OSAxMjkuOTEzQzIyNC45MTIgMTMwLjc3MSAyMjQuNzY4IDEzMS41MTUgMjI0LjUzOSAxMzIuMTQ1SDE5MS43MzFDMTkxLjg4NSAxMzMuMzQ0IDE5Mi4xODEgMTM0LjQ1OSAxOTIuNjIzIDEzNS40OTFDMTkzLjQ4MSAxMzcuNDk0IDE5NC43OTcgMTM5LjA2OCAxOTYuNTcgMTQwLjIxMkMxOTguMzQzIDE0MS4yOTkgMjAwLjQ4OCAxNDEuODQzIDIwMy4wMDUgMTQxLjg0M0MyMDUuMjkzIDE0MS44NDMgMjA3LjIzNyAxNDEuMzg1IDIwOC44MzkgMTQwLjQ3QzIxMC40OTcgMTM5LjU1NCAyMTEuNzg0IDEzOC4yOTUgMjEyLjY5OSAxMzYuNjkzTDIyMi45OTUgMTQxLjU4NUMyMjIuMDggMTQzLjg3NCAyMjAuNjIxIDE0NS44NzYgMjE4LjYxOSAxNDcuNTkzQzIxNi42NzQgMTQ5LjMwOSAyMTQuMzU4IDE1MC42NTQgMjExLjY3IDE1MS42MjdDMjA4Ljk4MiAxNTIuNTQyIDIwNi4wMzYgMTUzIDIwMi44MzMgMTUzQzE5Ny44NTcgMTUzIDE5My41MzkgMTUxLjkxMyAxODkuODc4IDE0OS43MzhDMTg2LjIxNyAxNDcuNTA3IDE4My4zODYgMTQ0LjUzMiAxODEuMzg0IDE0MC44MTJDMTc5LjM4MiAxMzcuMDk0IDE3OC4zODEgMTMyLjk3NCAxNzguMzgxIDEyOC40NTRDMTc4LjM4MSAxMjMuNzYyIDE3OS40MTEgMTE5LjU4NSAxODEuNDcgMTE1LjkyM0MxODMuNTg2IDExMi4yNjEgMTg2LjQxOCAxMDkuMzcyIDE4OS45NjQgMTA3LjI1NUMxOTMuNTEgMTA1LjEzOCAxOTcuNTE0IDEwNC4wNzkgMjAxLjk3NiAxMDQuMDc5Wk0yMDEuOTc2IDExNC4zNzhDMTk5Ljc0NSAxMTQuMzc4IDE5Ny44MjggMTE0LjkyMiAxOTYuMjI3IDExNi4wMDlDMTk0LjYyNSAxMTcuMDk2IDE5My40MjQgMTE4LjY5OCAxOTIuNjIzIDEyMC44MTVDMTkyLjM5OSAxMjEuNDA5IDE5Mi4yMTQgMTIyLjAzOCAxOTIuMDY2IDEyMi43MDNIMjExLjUwNUMyMTEuNDMxIDEyMS45ODMgMjExLjI4NyAxMjEuMjk2IDIxMS4wNjkgMTIwLjY0NEMyMTAuNDQgMTE4LjY5OCAyMDkuMzI1IDExNy4xODIgMjA3LjcyNCAxMTYuMDk1QzIwNi4xNzkgMTE0Ljk1IDIwNC4yNjMgMTE0LjM3OCAyMDEuOTc2IDExNC4zNzhaIiBmaWxsPSJibGFjayIvPgo8cGF0aCBkPSJNNzUuNjc4NyAxMDkuNDE4Qzc2LjY1OTMgMTA4LjA0MyA3Ny44ODg1IDEwNi45NDkgNzkuMzY4MiAxMDYuMTM5QzgxLjgyNzYgMTA0Ljc2NSA4NC42ODggMTA0LjA3OSA4Ny45NDgyIDEwNC4wNzlDOTEuNDk0MyAxMDQuMDc5IDk0LjU4MjkgMTA0LjgyMyA5Ny4yMTM5IDEwNi4zMTFDOTkuOTAyMSAxMDcuNzk4IDEwMS45ODkgMTA5Ljg4NyAxMDMuNDc3IDExMi41NzZDMTA0Ljk2NCAxMTUuMjA4IDEwNS43MDggMTE4LjI5OCAxMDUuNzA4IDEyMS44NDZWMTUxLjk3SDkyLjgzNzlWMTI0LjU5MkM5Mi44Mzc5IDEyMi43NjEgOTIuNDY2MiAxMjEuMTg3IDkxLjcyMjcgMTE5Ljg3MUM5MS4wMzYzIDExOC41NTUgOTAuMDM1MiAxMTcuNTI1IDg4LjcxOTcgMTE2Ljc4MUM4Ny40NjE1IDExNi4wMzggODUuOTc0NSAxMTUuNjY2IDg0LjI1ODggMTE1LjY2NkM4Mi42MDAxIDExNS42NjYgODEuMTEyNCAxMTYuMDM3IDc5Ljc5NjkgMTE2Ljc4MUM3OC40ODE1IDExNy41MjUgNzcuNDUyNSAxMTguNTU1IDc2LjcwOSAxMTkuODcxQzc2LjAyMjYgMTIxLjE4NyA3NS42Nzg3IDEyMi43NjEgNzUuNjc4NyAxMjQuNTkyVjE1MS45N0g2Mi44MDk2Vjg3SDc1LjY3ODdWMTA5LjQxOFoiIGZpbGw9ImJsYWNrIi8+CjxwYXRoIGQ9Ik0xMjQuMTIzIDE1MS45N0gxMTEuMjU0VjEwNS4xMDlIMTI0LjEyM1YxNTEuOTdaIiBmaWxsPSJibGFjayIvPgo8cGF0aCBkPSJNMTU1Ljc2MyAxMDQuMDc5QzE1OS4zMDkgMTA0LjA3OSAxNjIuMzk3IDEwNC44MjMgMTY1LjAyOCAxMDYuMzExQzE2Ny43MTcgMTA3Ljc5OCAxNjkuODA1IDEwOS44ODcgMTcxLjI5MiAxMTIuNTc2QzE3Mi43NzkgMTE1LjIwOCAxNzMuNTIyIDExOC4yOTggMTczLjUyMiAxMjEuODQ2VjE1MS45N0gxNjAuNjUzVjEyNC41OTJDMTYwLjY1MyAxMjIuNzYxIDE2MC4yODIgMTIxLjE4NyAxNTkuNTM4IDExOS44NzFDMTU4Ljg1MiAxMTguNTU1IDE1Ny44NTEgMTE3LjUyNSAxNTYuNTM1IDExNi43ODFDMTU1LjI3NyAxMTYuMDM3IDE1My43ODkgMTE1LjY2NiAxNTIuMDczIDExNS42NjZDMTUwLjQxNSAxMTUuNjY2IDE0OC45MjggMTE2LjAzOCAxNDcuNjEyIDExNi43ODFDMTQ2LjI5NyAxMTcuNTI1IDE0NS4yNjcgMTE4LjU1NSAxNDQuNTIzIDExOS44NzFDMTQzLjgzNyAxMjEuMTg3IDE0My40OTQgMTIyLjc2MSAxNDMuNDk0IDEyNC41OTJWMTUxLjk3SDEzMC42MjVWMTA1LjEwOUgxNDIuNjM2VjExMC44MTFDMTQzLjcxOSAxMDguNzY0IDE0NS4yMzUgMTA3LjIwNiAxNDcuMTg0IDEwNi4xMzlDMTQ5LjY0MyAxMDQuNzY2IDE1Mi41MDMgMTA0LjA3OSAxNTUuNzYzIDEwNC4wNzlaIiBmaWxsPSJibGFjayIvPgo8cGF0aCBkPSJNMTE3LjM1MyA4OEMxMjAuOTM2IDg4LjAwMDIgMTIzLjg0IDkwLjg5MzYgMTIzLjg0IDk0LjQ4ODNDMTIzLjg0IDk4LjA3OTEgMTIwLjkzNiAxMDAuOTcyIDExNy4zNTMgMTAwLjk3M0MxMTMuNzY3IDEwMC45NzMgMTEwLjg2NyA5OC4wNzkzIDExMC44NjcgOTQuNDg4M0MxMTAuODY3IDkwLjg5MzQgMTEzLjc2NyA4OCAxMTcuMzUzIDg4WiIgZmlsbD0iYmxhY2siLz4KPHBhdGggZD0iTTExMS4zNjcgMzhDMTUxLjU2MyAzOCAxODYuMDc2IDYyLjMyMzkgMjAwLjk5MyA5Ny4wNTQ3QzE5Ni41MjMgOTcuMTc5OSAxOTIuMzk3IDk4LjEwMDcgMTg4LjYxNCA5OS44MTc0QzE3NC4xODYgNjguMjUxNiAxNDIuMzM1IDQ2LjMxNzUgMTA1LjM2IDQ2LjMxNzRDNjEuOTg4OSA0Ni4zMTc0IDI1LjY2NjcgNzYuNDk2MiAxNi4yNDUxIDExN0gxNS42MjAxQzI0LjI2MzUgNzEuOTk5MSA2My44NDQ5IDM4IDExMS4zNjcgMzhaIiBmaWxsPSIjRkFDQTIyIi8+CjxwYXRoIGQ9Ik0xMTkuMzY3IDI3QzE2Ny4wMiAyNyAyMDcuMjkxIDU4LjU5MzcgMjIwLjM4MiAxMDEuOTc3QzIxOC44OTYgMTAxLjAyNCAyMTcuMjg5IDEwMC4yIDIxNS41NTkgOTkuNTA3OEMyMTIuMjQ0IDk4LjExNDQgMjA4LjUwOCA5Ny4zMTMxIDIwNC4zNTIgOTcuMDk5NkMxODkuNDc1IDYxLjIyOTggMTU0LjExOCAzNiAxMTIuODY3IDM2QzY0LjMzOCAzNiAyMy45NjU4IDcwLjkxOCAxNS41MDEgMTE3SDE1QzIyLjQ5NyA2Ni4wODI1IDY2LjM2NjkgMjcgMTE5LjM2NyAyN1oiIGZpbGw9IiMxQTU2RkYiLz4KPC9zdmc+Cg==" alt="Shine.com" />
-      </a>
-      <div class="li-nav-spacer"></div>
-      <button class="mb" type="button" data-shine-menu data-page="home" aria-label="Menu">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-      </button>
-      <!-- ▼ COMPONENT · menu-button v1.0.0 — verbatim copy of App-login/app-components/menu-button/menu-button.js -->
+    <!-- Top bar · top-app-bar component (brand variant): menu · logo · Search Jobs -->
+    <header class="stp stp--brand" data-shine-topbar>
+      <div class="stp-row">
+        <button class="mb mb--filled" type="button" data-shine-menu data-page="home" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+        <!-- ▼ COMPONENT · menu-button v1.1.0 — verbatim copy of App-login/app-components/menu-button/menu-button.js -->
       <script data-component="menu-button">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · MENU BUTTON  (app component · App-login)              v1.0.0
+   SHINE · MENU BUTTON  (app component · App-login)              v1.1.0
    Pair with menu-button.css. Zero dependencies.
 
    Markup (the same everywhere — copy it exactly):
@@ -3124,7 +3328,7 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
 (function () {
   'use strict';
   if (window.ShineMenu) return;
-  window.ShineMenu = { version: '1.0.0' };
+  window.ShineMenu = { version: '1.1.0' };
   document.addEventListener('click', function (e) {
     var b = e.target.closest && e.target.closest('[data-shine-menu]');
     if (!b || b.tagName === 'STYLE' || b.tagName === 'SCRIPT') return;
@@ -3134,11 +3338,97 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
 })();
 </script>
       <!-- ▲ COMPONENT · menu-button -->
-      <a href="#" id="liNavSearch" class="li-nav-search">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
-        Search Jobs
-      </a>
-    </nav>
+        <a href="#" class="stp-anchor stp-logo" id="liLogoBack"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDI0MCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0zOC44MTY0IDEwNC4wNzlDNDMuMzkyIDEwNC4wNzkgNDcuMzk1NCAxMDUuMTY3IDUwLjgyNzEgMTA3LjM0MUM1NC4zMTYyIDEwOS40NTggNTYuNzc2MSAxMTIuNDYyIDU4LjIwNjEgMTE2LjM1M0w0OC42ODI2IDEyMC44MTVDNDcuOTk2MyAxMTguODcgNDYuNzM3NSAxMTcuMzI1IDQ0LjkwNzIgMTE2LjE4MUM0My4xMzQzIDExNC45NzkgNDEuMTA0IDExNC4zNzggMzguODE2NCAxMTQuMzc4QzM3LjE1NzcgMTE0LjM3OCAzNS44NDE1IDExNC43MjIgMzQuODY5MSAxMTUuNDA4QzMzLjk1NDIgMTE2LjA5NSAzMy40OTcyIDExNy4wMzkgMzMuNDk3MSAxMTguMjRDMzMuNDk3MSAxMTguODcgMzMuNjY4NSAxMTkuNDQyIDM0LjAxMTcgMTE5Ljk1N0MzNC4zNTQ5IDEyMC40NzIgMzQuODk4MSAxMjAuOTMgMzUuNjQxNiAxMjEuMzNDMzYuNDQyNCAxMjEuNzMxIDM3LjQxNDcgMTIyLjEwMyAzOC41NTg2IDEyMi40NDZMNDYuMDIyNSAxMjQuNjc4QzQ5LjkxMTggMTI1LjgyMiA1Mi44ODYyIDEyNy41NjcgNTQuOTQ1MyAxMjkuOTEzQzU3LjAwNDMgMTMyLjIwMiA1OC4wMzQxIDEzNS4wMzQgNTguMDM0MiAxMzguNDA5QzU4LjAzNDIgMTQxLjMyNyA1Ny4yNjIgMTQzLjg3NCA1NS43MTc4IDE0Ni4wNDhDNTQuMjMwNyAxNDguMjIyIDUyLjE0MzEgMTQ5LjkzOSA0OS40NTUxIDE1MS4xOTdDNDYuNzY2OSAxNTIuMzk5IDQzLjU5MjIgMTUzIDM5LjkzMTYgMTUzQzM0Ljc4NDEgMTUzIDMwLjI5NCAxNTEuNzk4IDI2LjQ2MTkgMTQ5LjM5NkMyMi42ODY5IDE0Ni45MzUgMjAuMTEzIDE0My42NDUgMTguNzQwMiAxMzkuNTI1TDI4LjE3NzcgMTM1LjA2MkMyOS4zNzg4IDEzNy41OCAzMS4wMDg1IDEzOS41NTQgMzMuMDY3NCAxNDAuOTg0QzM1LjEyNjUgMTQyLjQxNSAzNy40MTUgMTQzLjEzIDM5LjkzMTYgMTQzLjEzQzQxLjc2MTggMTQzLjEzIDQzLjE2MzQgMTQyLjc1OCA0NC4xMzU3IDE0Mi4wMTVDNDUuMTA4IDE0MS4yNzEgNDUuNTkzNyAxNDAuMjQxIDQ1LjU5MzggMTM4LjkyNUM0NS41OTM4IDEzOC4yMzggNDUuNDIyMyAxMzcuNjY2IDQ1LjA3OTEgMTM3LjIwOEM0NC43MzYgMTM2LjY5MyA0NC4yMjEzIDEzNi4yMzUgNDMuNTM1MiAxMzUuODM1QzQyLjg0ODggMTM1LjQzNCA0MS45OTA1IDEzNS4wOTEgNDAuOTYwOSAxMzQuODA1TDMyLjk4MjQgMTMyLjU3M0MyOS4xNTAzIDEzMS40ODYgMjYuMjA0NiAxMjkuNzQxIDI0LjE0NTUgMTI3LjMzOEMyMi4wODY1IDEyNC44NzggMjEuMDU2NyAxMjEuOTg4IDIxLjA1NjYgMTE4LjY3QzIxLjA1NjYgMTE1Ljc1MiAyMS44IDExMy4yMDYgMjMuMjg3MSAxMTEuMDMxQzI0Ljc3NDIgMTA4Ljg1NyAyNi44NjE3IDEwNy4xNjkgMjkuNTQ5OCAxMDUuOTY4QzMyLjIzODEgMTA0LjcwOSAzNS4zMjc0IDEwNC4wNzkgMzguODE2NCAxMDQuMDc5WiIgZmlsbD0iYmxhY2siLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yMDEuOTc2IDEwNC4wNzlDMjA1LjY5MyAxMDQuMDc5IDIwOC45ODIgMTA0LjY4IDIxMS44NDIgMTA1Ljg4MkMyMTQuNzAyIDEwNy4wMjYgMjE3LjEwNCAxMDguNjU2IDIxOS4wNDkgMTEwLjc3M0MyMjEuMDUxIDExMi44OSAyMjIuNTY2IDExNS4zNTEgMjIzLjU5NiAxMTguMTU0QzIyNC42MjUgMTIwLjkwMSAyMjUuMTQgMTIzLjkwNSAyMjUuMTQgMTI3LjE2NkMyMjUuMTQgMTI4LjA4MSAyMjUuMDgzIDEyOC45OTggMjI0Ljk2OSAxMjkuOTEzQzIyNC45MTIgMTMwLjc3MSAyMjQuNzY4IDEzMS41MTUgMjI0LjUzOSAxMzIuMTQ1SDE5MS43MzFDMTkxLjg4NSAxMzMuMzQ0IDE5Mi4xODEgMTM0LjQ1OSAxOTIuNjIzIDEzNS40OTFDMTkzLjQ4MSAxMzcuNDk0IDE5NC43OTcgMTM5LjA2OCAxOTYuNTcgMTQwLjIxMkMxOTguMzQzIDE0MS4yOTkgMjAwLjQ4OCAxNDEuODQzIDIwMy4wMDUgMTQxLjg0M0MyMDUuMjkzIDE0MS44NDMgMjA3LjIzNyAxNDEuMzg1IDIwOC44MzkgMTQwLjQ3QzIxMC40OTcgMTM5LjU1NCAyMTEuNzg0IDEzOC4yOTUgMjEyLjY5OSAxMzYuNjkzTDIyMi45OTUgMTQxLjU4NUMyMjIuMDggMTQzLjg3NCAyMjAuNjIxIDE0NS44NzYgMjE4LjYxOSAxNDcuNTkzQzIxNi42NzQgMTQ5LjMwOSAyMTQuMzU4IDE1MC42NTQgMjExLjY3IDE1MS42MjdDMjA4Ljk4MiAxNTIuNTQyIDIwNi4wMzYgMTUzIDIwMi44MzMgMTUzQzE5Ny44NTcgMTUzIDE5My41MzkgMTUxLjkxMyAxODkuODc4IDE0OS43MzhDMTg2LjIxNyAxNDcuNTA3IDE4My4zODYgMTQ0LjUzMiAxODEuMzg0IDE0MC44MTJDMTc5LjM4MiAxMzcuMDk0IDE3OC4zODEgMTMyLjk3NCAxNzguMzgxIDEyOC40NTRDMTc4LjM4MSAxMjMuNzYyIDE3OS40MTEgMTE5LjU4NSAxODEuNDcgMTE1LjkyM0MxODMuNTg2IDExMi4yNjEgMTg2LjQxOCAxMDkuMzcyIDE4OS45NjQgMTA3LjI1NUMxOTMuNTEgMTA1LjEzOCAxOTcuNTE0IDEwNC4wNzkgMjAxLjk3NiAxMDQuMDc5Wk0yMDEuOTc2IDExNC4zNzhDMTk5Ljc0NSAxMTQuMzc4IDE5Ny44MjggMTE0LjkyMiAxOTYuMjI3IDExNi4wMDlDMTk0LjYyNSAxMTcuMDk2IDE5My40MjQgMTE4LjY5OCAxOTIuNjIzIDEyMC44MTVDMTkyLjM5OSAxMjEuNDA5IDE5Mi4yMTQgMTIyLjAzOCAxOTIuMDY2IDEyMi43MDNIMjExLjUwNUMyMTEuNDMxIDEyMS45ODMgMjExLjI4NyAxMjEuMjk2IDIxMS4wNjkgMTIwLjY0NEMyMTAuNDQgMTE4LjY5OCAyMDkuMzI1IDExNy4xODIgMjA3LjcyNCAxMTYuMDk1QzIwNi4xNzkgMTE0Ljk1IDIwNC4yNjMgMTE0LjM3OCAyMDEuOTc2IDExNC4zNzhaIiBmaWxsPSJibGFjayIvPgo8cGF0aCBkPSJNNzUuNjc4NyAxMDkuNDE4Qzc2LjY1OTMgMTA4LjA0MyA3Ny44ODg1IDEwNi45NDkgNzkuMzY4MiAxMDYuMTM5QzgxLjgyNzYgMTA0Ljc2NSA4NC42ODggMTA0LjA3OSA4Ny45NDgyIDEwNC4wNzlDOTEuNDk0MyAxMDQuMDc5IDk0LjU4MjkgMTA0LjgyMyA5Ny4yMTM5IDEwNi4zMTFDOTkuOTAyMSAxMDcuNzk4IDEwMS45ODkgMTA5Ljg4NyAxMDMuNDc3IDExMi41NzZDMTA0Ljk2NCAxMTUuMjA4IDEwNS43MDggMTE4LjI5OCAxMDUuNzA4IDEyMS44NDZWMTUxLjk3SDkyLjgzNzlWMTI0LjU5MkM5Mi44Mzc5IDEyMi43NjEgOTIuNDY2MiAxMjEuMTg3IDkxLjcyMjcgMTE5Ljg3MUM5MS4wMzYzIDExOC41NTUgOTAuMDM1MiAxMTcuNTI1IDg4LjcxOTcgMTE2Ljc4MUM4Ny40NjE1IDExNi4wMzggODUuOTc0NSAxMTUuNjY2IDg0LjI1ODggMTE1LjY2NkM4Mi42MDAxIDExNS42NjYgODEuMTEyNCAxMTYuMDM3IDc5Ljc5NjkgMTE2Ljc4MUM3OC40ODE1IDExNy41MjUgNzcuNDUyNSAxMTguNTU1IDc2LjcwOSAxMTkuODcxQzc2LjAyMjYgMTIxLjE4NyA3NS42Nzg3IDEyMi43NjEgNzUuNjc4NyAxMjQuNTkyVjE1MS45N0g2Mi44MDk2Vjg3SDc1LjY3ODdWMTA5LjQxOFoiIGZpbGw9ImJsYWNrIi8+CjxwYXRoIGQ9Ik0xMjQuMTIzIDE1MS45N0gxMTEuMjU0VjEwNS4xMDlIMTI0LjEyM1YxNTEuOTdaIiBmaWxsPSJibGFjayIvPgo8cGF0aCBkPSJNMTU1Ljc2MyAxMDQuMDc5QzE1OS4zMDkgMTA0LjA3OSAxNjIuMzk3IDEwNC44MjMgMTY1LjAyOCAxMDYuMzExQzE2Ny43MTcgMTA3Ljc5OCAxNjkuODA1IDEwOS44ODcgMTcxLjI5MiAxMTIuNTc2QzE3Mi43NzkgMTE1LjIwOCAxNzMuNTIyIDExOC4yOTggMTczLjUyMiAxMjEuODQ2VjE1MS45N0gxNjAuNjUzVjEyNC41OTJDMTYwLjY1MyAxMjIuNzYxIDE2MC4yODIgMTIxLjE4NyAxNTkuNTM4IDExOS44NzFDMTU4Ljg1MiAxMTguNTU1IDE1Ny44NTEgMTE3LjUyNSAxNTYuNTM1IDExNi43ODFDMTU1LjI3NyAxMTYuMDM3IDE1My43ODkgMTE1LjY2NiAxNTIuMDczIDExNS42NjZDMTUwLjQxNSAxMTUuNjY2IDE0OC45MjggMTE2LjAzOCAxNDcuNjEyIDExNi43ODFDMTQ2LjI5NyAxMTcuNTI1IDE0NS4yNjcgMTE4LjU1NSAxNDQuNTIzIDExOS44NzFDMTQzLjgzNyAxMjEuMTg3IDE0My40OTQgMTIyLjc2MSAxNDMuNDk0IDEyNC41OTJWMTUxLjk3SDEzMC42MjVWMTA1LjEwOUgxNDIuNjM2VjExMC44MTFDMTQzLjcxOSAxMDguNzY0IDE0NS4yMzUgMTA3LjIwNiAxNDcuMTg0IDEwNi4xMzlDMTQ5LjY0MyAxMDQuNzY2IDE1Mi41MDMgMTA0LjA3OSAxNTUuNzYzIDEwNC4wNzlaIiBmaWxsPSJibGFjayIvPgo8cGF0aCBkPSJNMTE3LjM1MyA4OEMxMjAuOTM2IDg4LjAwMDIgMTIzLjg0IDkwLjg5MzYgMTIzLjg0IDk0LjQ4ODNDMTIzLjg0IDk4LjA3OTEgMTIwLjkzNiAxMDAuOTcyIDExNy4zNTMgMTAwLjk3M0MxMTMuNzY3IDEwMC45NzMgMTEwLjg2NyA5OC4wNzkzIDExMC44NjcgOTQuNDg4M0MxMTAuODY3IDkwLjg5MzQgMTEzLjc2NyA4OCAxMTcuMzUzIDg4WiIgZmlsbD0iYmxhY2siLz4KPHBhdGggZD0iTTExMS4zNjcgMzhDMTUxLjU2MyAzOCAxODYuMDc2IDYyLjMyMzkgMjAwLjk5MyA5Ny4wNTQ3QzE5Ni41MjMgOTcuMTc5OSAxOTIuMzk3IDk4LjEwMDcgMTg4LjYxNCA5OS44MTc0QzE3NC4xODYgNjguMjUxNiAxNDIuMzM1IDQ2LjMxNzUgMTA1LjM2IDQ2LjMxNzRDNjEuOTg4OSA0Ni4zMTc0IDI1LjY2NjcgNzYuNDk2MiAxNi4yNDUxIDExN0gxNS42MjAxQzI0LjI2MzUgNzEuOTk5MSA2My44NDQ5IDM4IDExMS4zNjcgMzhaIiBmaWxsPSIjRkFDQTIyIi8+CjxwYXRoIGQ9Ik0xMTkuMzY3IDI3QzE2Ny4wMiAyNyAyMDcuMjkxIDU4LjU5MzcgMjIwLjM4MiAxMDEuOTc3QzIxOC44OTYgMTAxLjAyNCAyMTcuMjg5IDEwMC4yIDIxNS41NTkgOTkuNTA3OEMyMTIuMjQ0IDk4LjExNDQgMjA4LjUwOCA5Ny4zMTMxIDIwNC4zNTIgOTcuMDk5NkMxODkuNDc1IDYxLjIyOTggMTU0LjExOCAzNiAxMTIuODY3IDM2QzY0LjMzOCAzNiAyMy45NjU4IDcwLjkxOCAxNS41MDEgMTE3SDE1QzIyLjQ5NyA2Ni4wODI1IDY2LjM2NjkgMjcgMTE5LjM2NyAyN1oiIGZpbGw9IiMxQTU2RkYiLz4KPC9zdmc+Cg==" alt="Shine.com"></a>
+        <div class="stp-end">
+          <a href="#" id="liNavSearch" class="stp-cta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>Search Jobs</a>
+        </div>
+      </div>
+    </header>
+<!-- ▼ COMPONENT · top-app-bar v1.0.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
+<script data-component="top-app-bar">
+/* ═══════════════════════════════════════════════════════════════════════
+   SHINE · TOP APP BAR  (app component · App-login)              v1.0.0
+   Pair with top-app-bar.css and the menu-button component.
+
+   Markup — brand (Home):
+     <header class="stp stp--brand" data-shine-topbar>
+       <div class="stp-row">
+         <button class="mb" type="button" data-shine-menu data-page="home" aria-label="Menu">…</button>
+         <a class="stp-anchor stp-logo" href="#"><img src="…" alt="Shine.com"></a>
+         <div class="stp-end"><a class="stp-cta" href="#">…Search Jobs</a></div>
+       </div>
+     </header>
+   Markup — title (My Jobs, Docket):
+     <header class="stp stp--title" data-shine-topbar data-stp-scroll="#mjList">
+       <div class="stp-row">
+         <button class="mb" …></button>
+         <button class="stp-back" type="button" aria-label="Back" hidden><svg viewBox="0 0 24 24"><path d="M19 12H5M11 18l-6-6 6-6"/></svg></button>
+         <div class="stp-anchor"><h1 class="stp-title">My Jobs.</h1></div>
+       </div>
+       <div class="stp-below">…segment control…</div>
+     </header>
+
+   data-stp-scroll   the element whose scroll drives the bar (default: the page).
+                     It may come later in the page than the bar — the script
+                     waits for it (DOMContentLoaded) before listening.
+   Platform: sets <html data-platform="ios|android"> once (iPhone / iPad →
+   ios, anything else → android) unless the page already set it.
+   Behaviour: .is-scrolled when the content is scrolled; on iOS --stp-p runs
+   0 → 1 over the first 40 px (64 bar → standard 44 bar; the title stays put).
+   API: ShineTopBar.mount(el) · ShineTopBar.update() · ShineTopBar.version
+   ═══════════════════════════════════════════════════════════════════════ */
+(function (global) {
+  'use strict';
+  if (global.ShineTopBar) return;
+  var doc = global.document, html = doc.documentElement, RANGE = 40, bars = [];
+
+  if (!html.getAttribute('data-platform')) {
+    var ua = global.navigator.userAgent || '';
+    var ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && 'ontouchend' in doc);
+    html.setAttribute('data-platform', ios ? 'ios' : 'android');
+  }
+
+  function target(el) {
+    var sel = el.getAttribute('data-stp-scroll');
+    if (!sel) return global;
+    return el.ownerDocument.querySelector(sel);           // null until it is parsed
+  }
+  function y(t) { return t === global ? (global.scrollY || doc.documentElement.scrollTop || 0) : t.scrollTop; }
+  function paint(el) {
+    var v = Math.max(0, y(el.__stpT));
+    el.classList.toggle('is-scrolled', v > 0);
+    el.style.setProperty('--stp-p', Math.min(1, v / RANGE).toFixed(3));
+  }
+  function listen(el) {
+    var t = target(el);
+    if (!t) {                                              // scroller not parsed yet
+      if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', function () { listen(el); }, { once: true });
+      else { el.__stpT = global; listen2(el); }
+      return;
+    }
+    el.__stpT = t; listen2(el);
+  }
+  function listen2(el) {
+    var raf = 0;
+    el.__stpT.addEventListener('scroll', function () {
+      if (raf) return;
+      raf = global.requestAnimationFrame(function () { raf = 0; paint(el); });
+    }, { passive: true });
+    paint(el);
+  }
+  function mount(el) {
+    if (!el || el.__stp || /^(STYLE|SCRIPT)$/.test(el.tagName)) return el;
+    el.__stp = true; bars.push(el);
+    listen(el);
+    return el;
+  }
+  function init() { doc.querySelectorAll('[data-shine-topbar]:not(style):not(script)').forEach(mount); }
+  global.ShineTopBar = { version: '1.0.0', mount: mount, update: function () { bars.forEach(function (b) { if (b.__stpT) paint(b); }); } };
+  init();
+  if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', init);
+})(window);
+</script>
+<!-- ▲ COMPONENT · top-app-bar -->
     <section class="li-band li-band-cream li-band-greet">
       <div class="li-band-inner">
         <p class="li-greet">Good morning, <span class="name">Rahul</span> 👋</p>
