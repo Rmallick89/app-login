@@ -1,0 +1,23 @@
+{
+  "name": "Shine Login",
+  "short_name": "Shine Login",
+  "description": "Shine logged-in app preview",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0C1731",
+  "theme_color": "#FAF9F6",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -1,0 +1,3262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#FAF9F6" />
+<!-- SHINE APP · MY JOBS — App-login/My Jobs/
+     The Jobs tab: "My Jobs." heading + Docket-style segment Recommended · Saved · Applied (flat lists, newest first;
+     Saved ends with Docket's expired panel → "Expired." view).
+     Recommended = matches for the profile + job preferences · Saved = jobs bookmarked anywhere (JSRP, JD, similar jobs)
+     · Applied = jobs applied to from any page. Job cards = the App-logout JSRP mobile card (same CSS + markup).
+     Shell (header, empty states, toast) = the App-login Docket page; the segment is the shared segment-control component. Unsave asks in the shared bottom sheet.
+     Bottom tab bar = shared component (Jobs active). Not built yet (taps stay here): job details, share sheet. -->
+<title>Shine — My Jobs</title>
+<link rel="preload" href="fonts/plus-jakarta-sans-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="fonts/plus-jakarta-sans-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="fonts/fonts.css"><script src="native.js"></script>
+
+<style>
+:root {
+    /* ───── CONTENT (text & icons) ───── */
+    --content-base: #0D1117;
+    --content-muted: #344054;
+    --content-faded: #667085;
+    --content-disabled: rgba(13, 17, 23, 0.36);
+    --content-base-inverse: #FFFFFF;
+    --content-on-fill-dark: #FFFFFF;
+    --content-on-fill-light: #0D1117;
+    --content-brand: #0B3FCC;
+    --content-brand-hover: #0A33A6;
+    --content-negative: #B42318;
+    --content-positive: #027A48;
+    --content-notice: #A35A04;
+    --content-violet: #6F46E0;
+    --content-pink: #BE185D;
+    --content-aqua: #0F766A;
+    --content-cyan: #0E7490;
+    --content-lime: #56770B;
+    --content-electric-yellow: #5F5200;  /* electric-yellow/800 — required for AA */
+
+    /* ───── BRAND FONT (lifted from .view-jsrp-d scope so it resolves globally) */
+    --font-brand: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+    /* ───── STROKE WIDTHS (size.stroke.* from DESIGN-SYSTEM.md §2.4) ─────
+       These were referenced throughout JD/JSRP CSS but never defined —
+       borders were silently falling back to `medium`=3px. Now matched to
+       the DS canonical values (1 / 1.5 / 2). */
+    --stroke-thin: 1px;
+    --stroke-default: 1.5px;
+    --stroke-thick: 2px;
+    --stroke-base: #E4E7EC;
+    --stroke-muted: #EEF1F5;
+    --stroke-faded: #F7F9FB;
+    --stroke-disabled: rgba(13, 17, 23, 0.08);
+    --stroke-focus: #1A56FF;
+    --stroke-negative: #B42318;
+    --stroke-positive: #0E9A5A;
+    --stroke-notice: #D97706;
+    --stroke-violet: #7A5AF8;
+    --stroke-pink: #E31B8F;
+    --stroke-aqua: #14B8A6;
+    --stroke-cyan: #06B6D4;
+    --stroke-lime: #8DBF18;
+    --stroke-electric-yellow: #E0C500;
+
+    /* ───── SURFACE (backgrounds & fills) ───── */
+    --surface-base: #FAF9F6;
+    --surface-raised: #FFFFFF;
+    --surface-muted: #F7F9FB;
+    --surface-sunken: #EEF1F5;
+    --surface-hover: #EEF1F5;
+    --surface-pressed: #E4E7EC;
+    --surface-selected: #F0F5FF;
+    --surface-overlay: rgba(13, 17, 23, 0.24);
+    --surface-brand-intense: #1A56FF;
+    --surface-brand-intense-hover: #0B3FCC;
+    --surface-brand-intense-pressed: #0A33A6;
+    --surface-brand-subtle: #EBF0FF;
+    --surface-negative-intense: #B42318;
+    --surface-negative-intense-hover: #8B1A14;
+    --surface-negative-subtle: #FEF2F2;
+    --surface-positive-intense: #027A48;
+    --surface-positive-subtle: #EAFAF0;
+    --surface-notice-intense: #FAB663;
+    --surface-notice-subtle: #FFF4ED;
+    --surface-violet-intense: #6F46E0;
+    --surface-violet-subtle: #F3EEFE;
+    --surface-pink-intense: #BE185D;
+    --surface-pink-subtle: #FCE7F3;
+    --surface-aqua-intense: #0F766A;
+    --surface-aqua-subtle: #CCFBEE;
+    --surface-cyan-intense: #0E7490;
+    --surface-cyan-subtle: #CFFAFE;
+    --surface-electric-yellow-intense: #FFE419;
+    --surface-electric-yellow-subtle: #FFFCC0;
+    --surface-lime-intense: #C4FF38;
+    --surface-lime-subtle: #EBFFB0;
+    /* Note: no --surface-hot-pink-intense — use accent/hot-pink primitive directly */
+
+    /* ───── ACCENT (single-value primitives, no semantic wrapper) ───── */
+    --accent-hot-pink: #FF4B8F;
+    --accent-orange-deep: #B93815;
+
+    /* ───── EFFECT TOKENS ───── */
+    --shadow-raised: 0 1px 3px rgba(13,17,23,.08), 0 1px 2px rgba(13,17,23,.04);
+    --shadow-lifted: 0 4px 12px rgba(13,17,23,.08), 0 2px 4px rgba(13,17,23,.04);
+    --shadow-sunken: inset 0 1px 2px rgba(13,17,23,.06);
+
+    /* ═══════════════════════════════════════════════════════════════════════ */
+    /* LEGACY BRIDGE — existing CSS continues to work, now references semantics */
+    /* Do NOT add new code using these; use the semantic tokens above           */
+    /* ═══════════════════════════════════════════════════════════════════════ */
+    --shine-blue: var(--surface-brand-intense);
+    --shine-blue-deep: var(--surface-brand-intense-hover);
+    --light-blue-fill: var(--surface-brand-subtle);
+    --blue-tint: #F0F4FF;  /* close to blue/50 — kept for back-compat */
+    --success-green: #12B76A;  /* green/500 primitive — used in success indicators */
+    --green-bg: var(--surface-positive-subtle);
+    --green-text: var(--content-positive);
+    --warning-amber: #F79009;  /* amber/500 primitive */
+    --orange-bg: var(--surface-notice-subtle);
+    --orange-text: var(--accent-orange-deep);
+    --red: #DC2626;  /* red/500 primitive */
+    --yellow-amber: #F59E0B;
+    --text-primary: var(--content-base);
+    --text-secondary: var(--content-muted);
+    --text-muted: var(--content-faded);
+    --text-subtle: #98A2B3;  /* cool-neutral/400 primitive */
+    --border: var(--stroke-base);
+    --hairline: var(--stroke-muted);
+    --card-bg: var(--surface-raised);
+    --cream: var(--surface-base);
+    --dark-bg: var(--content-base);
+    --dark-card: var(--surface-inverse-raised);
+    --dark-border: var(--stroke-inverse-base);
+    --dark-text-muted: var(--content-on-inverse-muted);
+    --dark-text-subtle: var(--content-on-inverse-faded);
+    --it-bg: var(--surface-brand-subtle);
+    --it-ink: var(--surface-brand-intense);
+    --bpo-bg: var(--surface-violet-subtle);
+    --bpo-ink: #7A5AF8;  /* violet/500 primitive (note: content/violet is violet/600) */
+    --bank-bg: #E8F7EF;  /* close to green/100, not a semantic */
+    --bank-ink: var(--success-green);
+    --insurance-bg: #FEF1E6;  /* close to amber/100, not a semantic */
+    --insurance-ink: var(--warning-amber);
+    --find-dark-bg: rgba(26,86,255,0.18);
+    --find-dark-ink: #7EA3FF;  /* blue/300 primitive */
+    --check-dark-bg: rgba(18,183,106,0.18);
+    --check-dark-ink: #5DD4A1;  /* green/300 primitive */
+    --apply-dark-bg: rgba(247,144,9,0.18);
+    --apply-dark-ink: var(--surface-notice-intense);
+    --pink-ink: #E31B8F;  /* pink/500 primitive */
+    --brut-yellow: var(--surface-electric-yellow-intense);
+    --brut-blue: var(--surface-brand-intense);
+    --brut-lime: var(--surface-lime-intense);
+    --brut-pink: var(--accent-hot-pink);
+
+    /* ═══════════════════════════════════════════════════════════════════════ */
+    /* DESIGN SYSTEM v1.0.0 — Primitive + Semantic Tokens                       */
+    /* Source of truth: DESIGN-SYSTEM.md (Plus Jakarta Sans, 4px base grid)     */
+    /* Names mirror DS dotted paths (e.g. surface.brand.brand-intense) using    */
+    /* CSS custom-property kebab-case (--surface-brand-brand-intense).          */
+    /* Existing flat tokens above remain as legacy aliases — not removed.       */
+    /* ═══════════════════════════════════════════════════════════════════════ */
+
+    /* ── PRIMITIVE · COLOR · Brand / Primary ── */
+    --color-brand-primary-50:  #F0F5FF;
+    --color-brand-primary-100: #EBF0FF;
+    --color-brand-primary-200: #C9DBFF;
+    --color-brand-primary-300: #7EA3FF;
+    --color-brand-primary-400: #4D7CFF;
+    --color-brand-primary-500: #1A56FF;
+    --color-brand-primary-600: #0B3FCC;
+    --color-brand-primary-700: #0A33A6;
+    --color-brand-primary-800: #082478;
+    --color-brand-primary-900: #06184F;
+    --color-brand-primary-950: #040D2A;
+
+    /* ── PRIMITIVE · COLOR · System / Red ── */
+    --color-system-red-50:  #FEF2F2;
+    --color-system-red-100: #FEE4E4;
+    --color-system-red-200: #FECDCA;
+    --color-system-red-300: #FCA5A0;
+    --color-system-red-400: #F87171;
+    --color-system-red-500: #DC2626;
+    --color-system-red-600: #B42318;
+    --color-system-red-700: #8B1A14;
+    --color-system-red-800: #62110D;
+    --color-system-red-900: #380808;
+    --color-system-red-950: #1C0404;
+
+    /* ── PRIMITIVE · COLOR · System / Amber ── */
+    --color-system-amber-50:  #FFFAF2;
+    --color-system-amber-100: #FFF4ED;
+    --color-system-amber-200: #FFE0BD;
+    --color-system-amber-300: #FFC489;
+    --color-system-amber-400: #FAB663;
+    --color-system-amber-500: #F79009;
+    --color-system-amber-600: #D97706;
+    --color-system-amber-700: #A35A04;
+    --color-system-amber-800: #6F3D02;
+    --color-system-amber-900: #422301;
+    --color-system-amber-950: #211100;
+
+    /* ── PRIMITIVE · COLOR · System / Green ── */
+    --color-system-green-50:  #EAFAF0;
+    --color-system-green-100: #DEF7E5;
+    --color-system-green-200: #A8F5C8;
+    --color-system-green-300: #5DD4A1;
+    --color-system-green-400: #34D77F;
+    --color-system-green-500: #12B76A;
+    --color-system-green-600: #0E9A5A;
+    --color-system-green-700: #027A48;
+    --color-system-green-800: #045A36;
+    --color-system-green-900: #023320;
+    --color-system-green-950: #011A10;
+
+    /* ── PRIMITIVE · COLOR · System / Cool Neutral ── */
+    --color-system-cool-neutral-50:  #F7F9FB;
+    --color-system-cool-neutral-100: #EEF1F5;
+    --color-system-cool-neutral-200: #E4E7EC;
+    --color-system-cool-neutral-300: #C8CED7;
+    --color-system-cool-neutral-400: #98A2B3;
+    --color-system-cool-neutral-500: #667085;
+    --color-system-cool-neutral-600: #4A5260;
+    --color-system-cool-neutral-700: #344054;
+    --color-system-cool-neutral-800: #232A38;
+    --color-system-cool-neutral-900: #161B22;
+    --color-system-cool-neutral-black: #0D1117;
+    --color-system-cool-neutral-white: #FFFFFF;
+
+    /* ── PRIMITIVE · COLOR · System / Warm Neutral ── */
+    --color-system-warm-neutral-50:  #FFFDF8;
+    --color-system-warm-neutral-100: #FAF9F6;
+    --color-system-warm-neutral-200: #F5F1E8;
+    --color-system-warm-neutral-300: #E8E5DD;
+    --color-system-warm-neutral-400: #D4CCB8;
+    --color-system-warm-neutral-500: #A89A7C;
+    --color-system-warm-neutral-600: #847459;
+    --color-system-warm-neutral-700: #5F4E37;
+    --color-system-warm-neutral-800: #3F3324;
+    --color-system-warm-neutral-900: #221B12;
+    --color-system-warm-neutral-black: #110D08;
+
+    /* ── PRIMITIVE · COLOR · Utility ramps ── */
+    --color-utility-pink-500:   #E31B8F;
+    --color-utility-violet-500: #7A5AF8;
+    --color-utility-aqua-500:   #14B8A6;
+    --color-utility-cyan-500:   #06B6D4;
+    --color-utility-lime-500:   #8DBF18;
+    --color-utility-electric-yellow-500: #E0C500;
+
+    /* ── PRIMITIVE · UNIT (4px base grid) ── */
+    --unit-0: 0px;   --unit-1: 1px;   --unit-1-5: 1.5px; --unit-2: 2px;   --unit-3: 3px;
+    --unit-4: 4px;   --unit-6: 6px;   --unit-8: 8px;     --unit-10: 10px; --unit-12: 12px;
+    --unit-14: 14px; --unit-16: 16px; --unit-18: 18px;   --unit-20: 20px; --unit-22: 22px;
+    --unit-24: 24px; --unit-26: 26px; --unit-28: 28px;   --unit-32: 32px; --unit-36: 36px;
+    --unit-40: 40px; --unit-44: 44px; --unit-48: 48px;   --unit-56: 56px; --unit-64: 64px;
+    --unit-72: 72px; --unit-80: 80px; --unit-88: 88px;   --unit-96: 96px; --unit-104: 104px;
+    --unit-120: 120px; --unit-136: 136px; --unit-160: 160px; --unit-240: 240px;
+    --unit-320: 320px; --unit-512: 512px; --unit-1024: 1024px;
+
+    /* ── PRIMITIVE · TYPEFACE ── */
+    --typeface-family-brand: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --typeface-weight-light: 300;
+    --typeface-weight-regular: 400;
+    --typeface-weight-medium: 500;
+    --typeface-weight-semibold: 600;
+    --typeface-weight-bold: 700;
+    --typeface-weight-extrabold: 800;
+
+    /* ═══════════════════════════════════════════════════════════════════════ */
+    /* SEMANTIC TOKENS — components should consume these                        */
+    /* ═══════════════════════════════════════════════════════════════════════ */
+
+    /* ── SEMANTIC · CONTENT ── */
+    --content-neutral-base:        var(--color-system-cool-neutral-black);
+    --content-neutral-muted:       var(--color-system-cool-neutral-700);
+    --content-neutral-faded:       var(--color-system-cool-neutral-500);
+    --content-neutral-disabled:    rgba(13, 17, 23, 0.36);
+    --content-neutral-brand:       var(--color-brand-primary-600);
+    --content-neutral-brand-hover: var(--color-brand-primary-700);
+    --content-inverse-base:        var(--color-system-cool-neutral-white);
+    --content-inverse-muted:       var(--color-system-cool-neutral-300);
+    --content-inverse-faded:       var(--color-system-cool-neutral-400);
+    --content-on-fill-dark-base:   var(--color-system-cool-neutral-white);
+    --content-on-fill-dark-muted:  var(--color-system-cool-neutral-300);
+    --content-on-fill-dark-faded:  var(--color-system-cool-neutral-400);
+    --content-on-fill-light-base:  var(--color-system-cool-neutral-black);
+    --content-on-fill-light-muted: var(--color-system-cool-neutral-700);
+    --content-on-fill-light-faded: var(--color-system-cool-neutral-500);
+    --content-status-negative:     var(--color-system-red-600);
+    --content-status-positive:     var(--color-system-green-700);
+    --content-status-notice:       var(--color-system-amber-700);
+
+    /* ── SEMANTIC · STROKE ── */
+    --stroke-neutral-base:     var(--color-system-cool-neutral-200);
+    --stroke-neutral-muted:    var(--color-system-cool-neutral-100);
+    --stroke-neutral-faded:    var(--color-system-cool-neutral-50);
+    --stroke-neutral-disabled: rgba(13, 17, 23, 0.08);
+    --stroke-neutral-focus:    var(--color-brand-primary-500);
+    --stroke-status-negative:  var(--color-system-red-600);
+    --stroke-status-positive:  var(--color-system-green-600);
+    --stroke-status-notice:    var(--color-system-amber-600);
+
+    /* ── SEMANTIC · SURFACE ── */
+    --surface-neutral-base:    var(--color-system-warm-neutral-100);
+    --surface-neutral-raised:  var(--color-system-cool-neutral-white);
+    --surface-neutral-muted:   var(--color-system-cool-neutral-100);
+    --surface-neutral-sunken:  var(--color-system-cool-neutral-200);
+    /* Inverse surfaces — used by the dark site footer and inverse cards.
+       Per DESIGN-SYSTEM.md: surface.inverse.base maps to cool-neutral/black. */
+    --surface-inverse-base:    var(--color-system-cool-neutral-black);
+    --surface-inverse-raised:  var(--color-system-cool-neutral-800);
+    --surface-inverse-muted:   var(--color-system-cool-neutral-900);
+    --stroke-inverse-base:     var(--color-system-cool-neutral-600);
+    --stroke-inverse-muted:    var(--color-system-cool-neutral-700);
+    /* Content tokens on inverse (dark) surfaces — legacy aliases used by
+       .site-footer (--ft-ink, --ft-muted) and dark sections. */
+    --content-on-inverse:        var(--color-system-cool-neutral-white);
+    --content-on-inverse-muted:  var(--color-system-cool-neutral-300);
+    --content-on-inverse-faded:  var(--color-system-cool-neutral-400);
+    --content-brand-on-inverse:  var(--color-brand-primary-300);
+    --surface-brand-brand-intense:         var(--color-brand-primary-500);
+    --surface-brand-brand-intense-hover:   var(--color-brand-primary-600);
+    --surface-brand-brand-intense-pressed: var(--color-brand-primary-700);
+    --surface-brand-brand-subtle:          var(--color-brand-primary-100);
+
+    /* ── SEMANTIC · SPACING (mobile defaults; desktop overridden via @media) ── */
+    --spacing-inset-none: var(--unit-0);
+    --spacing-inset-xs:   var(--unit-4);
+    --spacing-inset-sm:   var(--unit-6);
+    --spacing-inset-md:   var(--unit-8);
+    --spacing-inset-lg:   var(--unit-12);
+    --spacing-inset-xl:   var(--unit-16);
+    --spacing-inset-xxl:  var(--unit-22);
+    --spacing-inline-xs:  var(--unit-2);
+    --spacing-inline-sm:  var(--unit-4);
+    --spacing-inline-md:  var(--unit-8);
+    --spacing-inline-lg:  var(--unit-12);
+    --spacing-inline-xl:  var(--unit-18);
+    --spacing-stack-3xs:  var(--unit-2);
+    --spacing-stack-xxs:  var(--unit-4);
+    --spacing-stack-xs:   var(--unit-8);
+    --spacing-stack-md:   var(--unit-12);
+    --spacing-stack-lg:   var(--unit-14);
+    --spacing-stack-xl:   var(--unit-20);
+    --spacing-stack-xxl:  var(--unit-24);
+    --spacing-section-xs: var(--unit-16);
+    --spacing-section-sm: var(--unit-20);
+    --spacing-section-md: var(--unit-24);
+    --spacing-section-lg: var(--unit-32);
+    --spacing-section-xl: var(--unit-48);
+    --spacing-layout-xs:  var(--unit-16);
+    --spacing-layout-sm:  var(--unit-24);
+    --spacing-layout-md:  var(--unit-32);
+    --spacing-layout-lg:  var(--unit-48);
+    --spacing-layout-xl:  var(--unit-64);
+
+    /* ── SEMANTIC · SIZE (non-responsive) ── */
+    --size-stroke-thin:    var(--unit-1);
+    --size-stroke-default: var(--unit-1-5);
+    --size-stroke-thick:   var(--unit-2);
+    --size-radius-none: var(--unit-0);
+    --size-radius-xs:   var(--unit-2);
+    --size-radius-sm:   var(--unit-4);
+    --size-radius-md:   var(--unit-8);
+    --size-radius-lg:   var(--unit-12);
+    --size-radius-xl:   var(--unit-16);
+    --size-radius-2xl:  var(--unit-24);
+    --size-radius-3xl:  var(--unit-32);
+    --size-radius-4xl:  var(--unit-40);
+    --size-radius-full: var(--unit-1024);
+    --size-icon-xs:  var(--unit-12);
+    --size-icon-sm:  var(--unit-14);
+    --size-icon-md:  var(--unit-16);
+    --size-icon-lg:  var(--unit-20);
+    --size-icon-xl:  var(--unit-24);
+    --size-icon-2xl: var(--unit-32);
+    --size-icon-3xl: var(--unit-40);
+
+    /* ── SEMANTIC · TYPOGRAPHY (mobile defaults; desktop overridden via @media) ── */
+    --type-display-2xl-size: var(--unit-64); --type-display-2xl-line: var(--unit-64); --type-display-2xl-track: -1.6px;
+    --type-display-xl-size:  var(--unit-48); --type-display-xl-line:  var(--unit-48); --type-display-xl-track: -1.2px;
+    --type-display-lg-size:  var(--unit-40); --type-display-lg-line:  var(--unit-40); --type-display-lg-track: -1px;
+    --type-display-md-size:  var(--unit-32); --type-display-md-line:  var(--unit-36); --type-display-md-track: -0.4px;
+    --type-display-sm-size:  var(--unit-24); --type-display-sm-line:  var(--unit-28); --type-display-sm-track: -0.3px;
+    --type-heading-lg-size:  var(--unit-22); --type-heading-lg-line:  var(--unit-26); --type-heading-lg-track: -0.3px;
+    --type-heading-md-size:  var(--unit-18); --type-heading-md-line:  var(--unit-22); --type-heading-md-track: -0.2px;
+    --type-heading-sm-size:  var(--unit-16); --type-heading-sm-line:  var(--unit-20); --type-heading-sm-track: 0px;
+    --type-body-lg-size: var(--unit-16); --type-body-lg-line: var(--unit-24);
+    --type-body-md-size: var(--unit-14); --type-body-md-line: var(--unit-20);
+    --type-body-sm-size: var(--unit-12); --type-body-sm-line: var(--unit-18);
+    --type-eyebrow-md-size: var(--unit-12); --type-eyebrow-md-line: var(--unit-12); --type-eyebrow-md-track: 1.5px;
+    --type-eyebrow-sm-size: var(--unit-10); --type-eyebrow-sm-line: var(--unit-10); --type-eyebrow-sm-track: 1px;
+
+    /* Short radius aliases (canonical: --size-radius-*) — promoted to :root so
+       components outside .view-jsrp-d resolve them. Previously these lived
+       only inside .view-jsrp-d which was removed when this file was split out. */
+    --radius-xs:  2px;
+    --radius-sm:  4px;
+    --radius-md:  8px;
+    --radius-lg:  12px;
+    --radius-xl:  16px;
+    --radius-2xl: 24px;
+    --radius-3xl: 32px;
+    --radius-4xl: 40px;
+    --radius-full: 9999px;
+
+    /* ───── LABEL TYPOGRAPHY (DESIGN-SYSTEM.md §2.1 — added v1.1) ─────
+       Compact UI markers — badges, chips, tags, pills, small action labels.
+       Render in sentence case (unlike Eyebrow which is uppercase). */
+    --type-label-lg-size: var(--unit-14); --type-label-lg-line: var(--unit-14); --type-label-lg-track: 0;
+    --type-label-md-size: var(--unit-12); --type-label-md-line: var(--unit-12); --type-label-md-track: 0;
+    --type-label-sm-size: var(--unit-10); --type-label-sm-line: var(--unit-10); --type-label-sm-track: 0;
+
+    /* ───── CONTROL HEIGHTS (Button · Input · Chip — proposed in §1.9/2.9) ─────
+       Single shared scale across all interactive controls. */
+    --size-control-sm: var(--unit-40);
+    --size-control-md: var(--unit-44);
+    --size-control-lg: var(--unit-48);
+    --size-control-xl: var(--unit-56);
+
+    /* ───── OVERLAY SURFACES (proposed — used by Tag × hover, Chip × hover) ───── */
+    --surface-overlay-subtle: rgba(13, 17, 23, .06);
+    --surface-overlay-brand:  rgba(26, 86, 255, .18);
+
+    /* ───── PULSING-DOT HALOS (Badge — proposed) ───── */
+    --elevation-halo-brand:    0 0 0 3px rgba(26, 86, 255, .18);
+    --elevation-halo-positive: 0 0 0 3px rgba(2, 122, 72, .18);
+    --elevation-halo-negative: 0 0 0 3px rgba(180, 35, 24, .18);
+}
+* { box-sizing:border-box; -webkit-font-smoothing:antialiased; }
+html, body { margin:0; padding:0; }
+body {
+    font-family:var(--font-brand);
+    background:var(--surface-base);
+    color:var(--content-base);
+    min-width:1100px;
+}
+::selection { background:var(--surface-brand-intense); color:var(--content-on-fill-dark) }
+button { font-family:inherit; cursor:pointer }
+.view { display:none; }
+.view.active { display:block; }
+.toast {
+    position:fixed; bottom:32px; left:50%;
+    transform:translateX(-50%) translateY(40px);
+    background:var(--content-base); color:var(--content-on-fill-dark);
+    padding:12px 20px; border-radius:100px;
+    font-size:14px; font-weight:600;
+    box-shadow:0 10px 24px rgba(16,24,40,.20);
+    opacity:0; transition:all .25s ease;
+    pointer-events:none; z-index:1000;
+    display:inline-flex; align-items:center; gap:8px;
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+.toast svg { width:14px; height:14px; color:var(--success-green); }
+.view-in {
+    background:var(--surface-base); min-height:100vh;
+    /* IMPORTANT: do NOT set overflow-x:hidden here — it would break position:sticky on .li-nav. */
+    /* Full-bleed bands use width:100% (not 100vw) so they don't overflow horizontally. */
+    /* The dark Tools band has its own overflow:hidden to clip its ambient glows. */
+}
+html, body {
+      min-width:0 !important;
+      max-width:100vw !important;
+      overflow-x:clip !important;
+}
+*, *::before, *::after { box-sizing:border-box; }
+img, svg, video, canvas { max-width:100%; height:auto; }
+h1, h2, h3, h4, p { overflow-wrap:break-word; word-wrap:break-word; }
+.mr-scroll { overflow-y:auto; flex:1; }
+.mr-scroll::-webkit-scrollbar { width:7px; }
+.mr-scroll::-webkit-scrollbar-thumb { background:var(--stroke-base); border-radius:var(--radius-full); }
+.mr-list { padding:2px 14px 16px; display:flex; flex-direction:column; gap:12px; }
+.mr-seg-wrap { padding:14px 22px 16px; border-bottom:1px solid var(--stroke-muted); }
+.mr-grp { font-size:11px; font-weight:700; letter-spacing:.8px; text-transform:uppercase;
+    color:var(--content-faded); padding:14px 4px 0;
+}
+.mr-card {
+    background:var(--surface-raised);
+    border:1px solid var(--stroke-muted);
+    border-radius:20px;
+    padding:0 18px 18px;
+    overflow:hidden;
+    cursor:pointer;
+    box-shadow:0 6px 22px -8px rgba(16,24,40,.10), 0 2px 4px -1px rgba(16,24,40,.04);
+    transition:border-color 160ms ease, box-shadow 160ms ease;
+}
+.mr-card:hover {
+    border-color:var(--content-brand);
+    box-shadow:0 8px 24px -10px rgba(26,86,255,.18);
+}
+.mr-card.is-read { box-shadow:none; border-color:var(--stroke-faded); }
+.mr-card.is-read:hover { border-color:var(--content-brand);
+    box-shadow:0 8px 24px -10px rgba(26,86,255,.18);
+}
+.mr-banner {
+    display:flex; align-items:flex-start; gap:9px;
+    margin:0 -18px 16px; padding:12px 18px;
+    font-size:12px; line-height:16px; font-weight:700; letter-spacing:-.05px;
+}
+.mr-banner svg { width:15px; height:15px; flex:none; margin-top:1px; }
+.mr-banner.is-note { background:var(--surface-notice-subtle); color:var(--content-notice); }
+.mr-banner.is-match { background:var(--surface-brand-subtle);  color:var(--content-brand); }
+.mr-banner.is-saved { background:var(--surface-violet-subtle); color:var(--content-violet); }
+.mr-c-top {
+    display:flex; align-items:center; gap:12px;
+    padding-bottom:14px; margin-bottom:14px;
+    border-bottom:1px solid var(--stroke-muted);
+}
+.mr-c-who { flex:1; min-width:0; }
+.mr-c-name {
+    display:block; font-size:14px; font-weight:var(--typeface-weight-extrabold);
+    letter-spacing:-.1px; line-height:1.2; color:var(--content-base);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.mr-c-sub { display:block; font-size:11.5px; line-height:1.2; font-weight:500;
+    color:var(--content-faded); margin-top:3px;
+}
+.mr-c-logo {
+    width:40px; height:40px; border-radius:12px; flex-shrink:0;
+    display:grid; place-items:center;
+    font-size:13px; font-weight:var(--typeface-weight-extrabold); letter-spacing:.02em;
+}
+.mr-c-title { margin:0 0 12px; font-size:18px; line-height:24px; letter-spacing:-.4px;
+    font-weight:var(--typeface-weight-extrabold); color:var(--content-base);
+}
+.mr-chips { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+.mr-chip {
+    font-family:var(--font-brand);
+    font-size:11.5px; line-height:1.4;
+    font-weight:var(--typeface-weight-extrabold); letter-spacing:0;
+    padding:6px 12px; border-radius:100px;
+    display:inline-flex; align-items:center; gap:5px;
+}
+.mr-chip.is-urgent { background:var(--surface-negative-subtle); color:var(--content-negative); }
+.mr-chip.is-early { background:var(--surface-pink-subtle);     color:var(--content-pink); }
+.mr-c-body { margin:0 0 14px; font-size:13px; line-height:1.55; color:var(--content-muted); }
+.mr-c-meta { display:flex; flex-direction:column; gap:8px; padding-bottom:14px; }
+.mr-c-meta-item {
+    display:flex; align-items:center; gap:10px;
+    font-size:13px; color:var(--content-base);
+    font-weight:var(--typeface-weight-semibold);
+}
+.mr-c-meta-item .ico {
+    width:24px; height:24px; border-radius:8px; flex-shrink:0;
+    display:grid; place-items:center;
+    background:var(--surface-base); color:var(--content-faded);
+}
+.mr-c-meta-item .ico svg { width:14px; height:14px; }
+.mr-c-skills {
+    display:flex; align-items:baseline; gap:8px; flex-wrap:nowrap; min-width:0;
+    padding:13px 0; margin:0 0 14px;
+    border-top:1px solid var(--stroke-muted);
+    border-bottom:1px solid var(--stroke-muted);
+}
+.mr-c-skills > span {
+    font-size:11.5px; font-weight:var(--typeface-weight-semibold);
+    color:var(--content-faded); letter-spacing:.02em; text-transform:uppercase;
+    flex-shrink:0;
+}
+.mr-c-skills > b {
+    font-size:12.5px; font-weight:var(--typeface-weight-extrabold);
+    letter-spacing:-.1px; color:var(--content-base);
+    min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.mr-card.no-skills .mr-c-actions {
+    padding-top:14px; border-top:1px solid var(--stroke-muted);
+}
+.mr-c-actions { display:flex; align-items:center; gap:10px; }
+.mr-c-actions.is-pair { display:grid; grid-template-columns:1fr 1fr; }
+.mr-pri, .mr-sec, .mr-ico {
+    appearance:none; font-family:var(--font-brand); cursor:pointer; border:none;
+    -webkit-tap-highlight-color:transparent;
+}
+.mr-pri {
+    flex:1 1 0; min-width:0; height:48px; border-radius:12px;
+    background:var(--content-base); color:var(--content-on-fill-dark);
+    font-size:14px; font-weight:var(--typeface-weight-extrabold); letter-spacing:-.1px;
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    transition:background 150ms ease;
+}
+.mr-pri:hover { background:var(--content-muted); }
+.mr-pri svg { width:16px; height:16px; }
+.mr-sec {
+    /* pairs with .mr-pri on invite cards — both take an equal share of the row */
+    flex:1 1 0; min-width:0;
+    display:inline-flex; align-items:center; justify-content:center;
+    height:48px; padding:0 12px; border-radius:12px;
+    background:var(--surface-base); border:1px solid var(--stroke-muted);
+    color:var(--content-muted); font-size:13.5px;
+    font-weight:var(--typeface-weight-extrabold); letter-spacing:-.1px;
+    transition:background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+.mr-sec:hover { background:var(--surface-raised); border-color:var(--content-faded);
+    color:var(--content-base);
+}
+.mr-ico {
+    width:48px; height:48px; border-radius:12px; flex-shrink:0;
+    background:var(--surface-base); border:1px solid var(--stroke-muted);
+    display:grid; place-items:center; color:var(--content-muted);
+    transition:background 120ms ease, border-color 120ms ease;
+}
+.mr-ico:hover { background:var(--surface-raised); border-color:var(--content-faded); }
+.mr-ico svg { width:18px; height:18px; }
+.mr-ico.is-saved { background:var(--surface-brand-subtle); border-color:transparent;
+    color:var(--content-brand);
+}
+.mr-ico.is-saved svg { fill:currentColor; }
+.mr-done { display:inline-flex; align-items:center; gap:8px; height:48px;
+    font-size:13.5px; font-weight:var(--typeface-weight-extrabold);
+    color:var(--content-positive);
+}
+.mr-done svg { width:16px; height:16px; }
+.mr-done.is-neg { color:var(--content-faded); }
+.mr-empty { padding:52px 0 0; }
+.mr-empty-tx { padding:0 26px; }
+.mr-empty h3 {
+    margin:0; font-size:46px; line-height:.96; letter-spacing:-2.6px;
+    font-weight:var(--typeface-weight-extrabold); color:var(--content-base);
+}
+.mr-empty h3 em { font-style:normal; color:var(--stroke-base); }
+.mr-empty-rule { height:1px; background:var(--stroke-base); margin:26px 26px 16px; }
+.mr-empty p {
+    margin:0; font-size:13.5px; line-height:1.6; font-weight:500;
+    color:var(--content-faded); max-width:31ch;
+}
+.mr-empty .mr-exp { margin-top:28px; margin-bottom:26px; }
+
+
+
+
+
+
+
+
+
+.mr-ico.is-saved {
+    background:var(--surface-base); border-color:var(--stroke-muted);
+    color:var(--content-base);
+}
+.mr-ico.is-saved svg { fill:currentColor; }
+.mr-back {
+    flex:none; width:32px; height:32px; margin-left:-6px;
+    display:grid; place-items:center;
+    border:none; background:none; cursor:pointer;
+    border-radius:10px; color:var(--content-base);
+    transition:background 140ms ease;
+}
+.mr-back:hover { background:var(--surface-muted); }
+.mr-back svg { width:19px; height:19px; }
+.mr-back[hidden], .mr-seg-wrap[hidden] { display:none !important; }
+.mr-tray.is-expired .mr-hd,
+  .mr-page-hd h2 { margin:0; }
+.mr-sheet.is-expired .mr-page-hd {
+    padding-bottom:18px; border-bottom:1px solid var(--stroke-base);
+}
+.mr-exp {
+    display:flex; align-items:center; gap:13px; width:100%;
+    margin:18px 14px 26px; padding:16px 18px;
+    box-sizing:border-box; width:calc(100% - 28px);
+    background:var(--surface-muted); border:none; border-radius:14px;
+    text-align:left; cursor:pointer; font-family:var(--font-brand);
+    transition:background 140ms ease;
+}
+.mr-exp:hover { background:var(--stroke-muted); }
+.mr-exp-ic {
+    flex:none; width:34px; height:34px; border-radius:11px;
+    display:grid; place-items:center;
+    background:var(--surface-raised); color:var(--content-faded);
+}
+.mr-exp-ic svg { width:17px; height:17px; }
+.mr-exp-tx { flex:1; min-width:0; }
+.mr-exp-tx b {
+    display:block; font-size:13.5px; line-height:18px;
+    font-weight:var(--typeface-weight-extrabold); letter-spacing:-.2px;
+    color:var(--content-base);
+}
+.mr-exp-tx span {
+    display:block; margin-top:2px; font-size:11.5px; line-height:15px;
+    font-weight:var(--typeface-weight-semibold); color:var(--content-faded);
+}
+.mr-exp-chev { flex:none; display:grid; place-items:center; color:var(--content-faded); }
+.mr-exp-chev svg { width:16px; height:16px; }
+.mr-xnote {
+    display:flex; align-items:flex-start; gap:10px;
+    margin:18px 26px 4px; padding:12px 14px;
+    border-radius:var(--radius-lg);
+    background:var(--surface-notice-subtle); color:var(--content-notice);
+    border:1px solid color-mix(in srgb, currentColor 22%, #fff);
+    font-size:12.5px; line-height:1.5;
+    font-weight:var(--typeface-weight-semibold);
+}
+.mr-xnote svg { width:15px; height:15px; flex:none; margin-top:1px; }
+.mr-xwrap { filter:grayscale(1); opacity:.66; }
+.mr-xwrap * { pointer-events:none; }
+.mr-jd {
+    display:inline-flex; align-items:center; gap:5px;
+    padding:0; background:none; border:none; cursor:pointer;
+    font-family:var(--font-brand); font-size:13px; line-height:18px;
+    font-weight:var(--typeface-weight-extrabold); letter-spacing:-.1px;
+    color:var(--content-base);
+    transition:color 120ms ease;
+}
+.mr-jd svg { width:13px; height:13px; }
+.mr-jd:hover { color:var(--content-brand); }
+.mr-card .mr-jd { margin:0 0 16px; }
+.mr-sheet { display:none; }
+.mr-sheet {
+      position:fixed; left:0; right:0; top:0;
+      bottom:var(--stb-bar-h);                    /* bottom-tab-bar v1.3: 80 · 104 */
+      z-index:95; background:var(--surface-base);
+      flex-direction:column;
+}
+.mr-sheet.is-open { display:flex; }
+/* toast sits 12 above the bottom tab bar (spacing.stack.md) */
+.toast { bottom: calc(var(--stb-bar-h) + 12px); white-space: nowrap; }
+.toast svg { flex-shrink: 0; }
+.mr-sheet .mr-scroll { padding-bottom:16px; }
+.mr-page-hd {
+      display:flex; align-items:center; gap:10px;
+      padding:18px 20px 2px;
+}
+.mr-xnote { margin:18px 20px 4px; }
+.mr-page-hd, .mr-seg-wrap { background:var(--surface-base); position:relative; z-index:2; }
+.mr-seg-wrap {
+      padding:14px 20px 16px;
+      transition:box-shadow 220ms ease;
+}
+.mr-sheet.is-scrolled .mr-seg-wrap {
+      box-shadow:0 6px 14px -10px rgba(16,24,40,.24), 0 1px 0 rgba(16,24,40,.05);
+}
+.mr-sheet .mr-scroll { scrollbar-width:none; -ms-overflow-style:none; }
+.mr-sheet .mr-scroll::-webkit-scrollbar { width:0; height:0; display:none; }
+.mr-page-hd h2 { margin:0; font-size:var(--type-display-sm-size);
+      font-weight:var(--typeface-weight-extrabold); letter-spacing:-.6px;
+}
+.mr-list { padding:2px 16px 20px; gap:20px; }   /* between cards: spacing.stack.xl (20 · mobile) — was 14 (stack.lg) */
+.mr-empty { padding:44px 0 0; }
+.mr-empty-tx { padding:0 20px; }
+.mr-empty-rule { margin:26px 20px 16px; }
+.mr-exp {
+      margin:0 16px 24px; width:calc(100% - 32px);
+      background:var(--surface-raised); border:1px solid var(--stroke-muted);
+      border-radius:16px; padding:16px;
+}
+.mr-exp:hover { background:var(--surface-raised); }
+.mr-exp-ic { background:var(--surface-muted); }
+.mr-grp { padding:28px 4px 2px; }
+.mr-list > .mr-grp:first-child { padding-top:22px; }
+.mr-card {
+      padding:0 18px 18px; border-radius:22px; gap:0;
+      border:1px solid var(--stroke-muted);
+      box-shadow:0 6px 22px -8px rgba(16,24,40,.10), 0 2px 4px -1px rgba(16,24,40,.04);
+      transition:transform .15s ease;
+}
+.mr-card:hover { border-color:var(--stroke-muted);
+      box-shadow:0 6px 22px -8px rgba(16,24,40,.10), 0 2px 4px -1px rgba(16,24,40,.04);
+}
+.mr-card:active { transform:scale(.99); }
+.mr-card.is-read { box-shadow:0 1px 2px rgba(13,17,23,.06); }
+.mr-banner { margin:0 -18px 16px; padding:13px 18px; font-size:12.5px; line-height:17px; }
+.mr-c-title { font-size:20px; line-height:26px; letter-spacing:-.4px; margin-bottom:14px; }
+.mr-chips { margin-bottom:16px; }
+.mr-c-body { font-size:13.5px; margin-bottom:14px; }
+.mr-c-meta { padding-bottom:16px; }
+.mr-c-meta-item { font-size:13.5px; }
+.mr-c-skills { padding:14px 0; margin-bottom:14px; }
+.mr-c-skills > b { font-size:13px; }
+.mr-card.no-skills .mr-c-actions { padding-top:14px; }
+.mr-c-actions { padding-top:2px; }
+.mr-pri, .mr-sec, .mr-ico { height:52px; border-radius:14px; }
+.mr-ico { width:52px; }
+.mr-pri { font-size:15px; }
+.mr-done { height:52px; }
+/* leading slot (menu button · back arrow) — both 40 round, icon centred 30 from the edge, title at 60 */
+.mr-page-hd .mr-back { width: 40px; height: 40px; margin: -6px 0 -6px -10px; border-radius: 1024px; }
+</style>
+<style data-page="my-jobs">
+/* ── Job card · verbatim rules from App-logout/App JSRP/jsrp-logout.html (mobile .jsrp-m-jc) ── */
+.jsrp-m-jc {
+  /* JSRP tokens the Docket shell doesn't define (same DS values) */
+  --surface-decorative-pink-intense: #BE185D; --surface-decorative-violet-intense: #6F46E0;
+  --surface-decorative-aqua-intense: #0F766A; --surface-decorative-cyan-intense: #0E7490;
+  --surface-decorative-lime-intense: #C4FF38; --surface-decorative-electric-yellow-intense: #FFE419;
+  --type-label-lg-bold: 700 14px/14px "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --type-body-sm-medium: 500 12px/18px "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --type-heading-md-bold: 700 18px/22px "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --type-body-md-medium: 500 14px/20px "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --type-label-md-bold: 700 12px/12px "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --shadow-neutral-subtle: 0 1px 2px rgba(13,17,23,.04);
+  --radius-full: 1024px;
+}
+.jsrp-m-jc, .jsrp-m-jc *, .jsrp-m-jc ::before, .jsrp-m-jc ::after { box-sizing: border-box; }
+.jsrp-m-jc button { font-family: inherit; }
+.job-card-logo.job-card-logo--pink { background: var(--surface-decorative-pink-intense); color: var(--content-on-fill-dark); }
+.job-card-logo.job-card-logo--violet { background: var(--surface-decorative-violet-intense); color: var(--content-on-fill-dark); }
+.job-card-logo.job-card-logo--aqua { background: var(--surface-decorative-aqua-intense); color: var(--content-on-fill-dark); }
+.job-card-logo.job-card-logo--cyan { background: var(--surface-decorative-cyan-intense); color: var(--content-on-fill-dark); }
+.job-card-logo.job-card-logo--lime { background: var(--surface-decorative-lime-intense); color: var(--content-on-fill-light); }
+.job-card-logo.job-card-logo--ey { background: var(--surface-decorative-electric-yellow-intense); color: var(--content-on-fill-light); }
+.job-card-co-name { font: var(--type-label-lg-bold); color: var(--content-base); }
+.job-card-co-time { font: var(--type-body-sm-medium); color: var(--content-faded); }
+.job-card-co-chips { display: inline-flex; align-items: center; gap: 4px; }
+.job-card-role { font: var(--type-heading-md-bold); color: var(--content-base); margin: 0px; letter-spacing: -0.2px; }
+.job-card-skills-row { flex: 1 1 0%; min-width: 0px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font: var(--type-body-md-medium); color: var(--content-muted); }
+.job-card-skills-label { font: var(--type-label-md-bold); color: var(--content-faded); }
+.job-card-skills-list { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.job-card-skill-dot { color: var(--content-faded); font-weight: 700; }
+.job-card-share { width: 44px; height: 44px; border-radius: var(--radius-lg); background: var(--surface-base); border: var(--stroke-thin) solid var(--stroke-base); color: var(--content-muted); display: grid; place-items: center; cursor: pointer; transition: background 140ms, color 140ms; flex-shrink: 0; }
+.job-card-share:hover { background: var(--surface-hover); color: var(--content-base); }
+.job-card-share svg { width: var(--size-icon-md); height: var(--size-icon-md); }
+.jsrp-m-jc { margin: 0px 0px 14px; background: var(--surface-raised); border-radius: var(--radius-2xl); padding: var(--spacing-inset-xl); display: flex; flex-direction: column; box-shadow: 0 6px 8px -4px rgba(16,24,40,.08), var(--shadow-neutral-subtle); cursor: pointer; -webkit-tap-highlight-color: transparent; transition: transform 0.15s; }
+.jsrp-m-jc:active { transform: scale(0.99); }
+.jsrp-m-jc-top { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--spacing-inline-md); padding-bottom: var(--spacing-stack-lg); border-bottom: var(--stroke-thin) solid rgba(13,17,23,.06); margin-bottom: var(--spacing-stack-lg); }
+.jsrp-m-jc-co { flex: 1 1 0%; min-width: 0px; padding-top: 2px; }
+.jsrp-m-jc-co-name { font-family: var(--font-brand); font-weight: 700; font-size: 14px; color: var(--content-base); letter-spacing: 0px; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.jsrp-m-jc-time { font-family: var(--font-brand); font-size: 12px; color: var(--content-faded); font-weight: 500; line-height: 18px; margin-top: var(--spacing-stack-3xs); }
+.jsrp-m-jc-logo { width: 40px; height: 40px; border-radius: var(--radius-md); display: grid; place-items: center; font: var(--type-label-md-bold); letter-spacing: 0px; text-transform: uppercase; flex-shrink: 0; }
+.jsrp-m-jc-role { font-family: var(--font-brand); font-weight: 700; font-size: 22px; line-height: 26px; color: var(--content-base); margin: 0 0 var(--spacing-stack-lg); letter-spacing: -0.3px; }
+.jsrp-m-jc-chips { display: flex; gap: var(--spacing-inline-sm); margin-bottom: var(--spacing-stack-lg); flex-wrap: wrap; }
+.jsrp-m-jc-chip { font-family: var(--font-brand); font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: var(--radius-full); line-height: 1.4; white-space: nowrap; letter-spacing: 0px; }
+.jsrp-m-jc-chip.actively { background: var(--surface-brand-subtle); color: var(--content-brand); }
+.jsrp-m-jc-chip.early { background: var(--surface-pink-subtle, var(--surface-pink-subtle)); color: var(--content-pink, var(--content-pink)); }
+.jsrp-m-jc-meta { display: flex; flex-direction: column; gap: var(--spacing-stack-md); padding-bottom: var(--spacing-stack-lg); border-bottom: var(--stroke-thin) solid rgba(13,17,23,.06); }
+.jsrp-m-jc-row { display: flex; align-items: center; gap: 12px; font-family: var(--font-brand); font-size: 14px; color: var(--content-muted); font-weight: 500; min-width: 0px; }
+.jsrp-m-jc-row .ico { width: 28px; height: 28px; border-radius: 50%; border: var(--stroke-thin) solid var(--stroke-base); display: grid; place-items: center; flex-shrink: 0; background: var(--surface-raised); }
+.jsrp-m-jc-row .ico svg { width: var(--size-icon-xs); height: var(--size-icon-xs); color: var(--content-faded); }
+.jsrp-m-jc-row .text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1 1 0%; min-width: 0px; }
+.jsrp-m-jc-skills-row { display: flex; align-items: baseline; gap: var(--spacing-inline-md); flex-wrap: nowrap; min-width: 0px; padding: var(--spacing-stack-lg) 0; border-bottom: var(--stroke-thin) solid rgba(13,17,23,.06); }
+.jsrp-m-jc-skills-label { font: 600 13px/1.4 var(--font-brand); color: var(--content-faded); flex-shrink: 0; }
+.jsrp-m-jc-skills-list { font: 700 13px/1.4 var(--font-brand); color: var(--content-base); letter-spacing: -0.005em; display: block; flex: 1 1 0%; min-width: 0px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.jsrp-m-jc-skills-list .jsrp-m-jc-skill, .jsrp-m-jc-skills-list .job-card-skill-dot { display: inline; }
+.jsrp-m-jc-skill { white-space: nowrap; }
+.jsrp-m-jc-skills-list .job-card-skill-dot { margin: 0px 8px; }
+.jsrp-m-jc-actions { display: flex; gap: var(--spacing-inline-md); margin-top: auto; padding-top: var(--spacing-stack-lg); }
+.jsrp-m-jc-share { width: 56px; height: 56px; border-radius: var(--radius-xl); background: var(--color-system-warm-neutral-200, var(--surface-base)); border: none; display: grid; place-items: center; cursor: pointer; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+.jsrp-m-jc-share svg { width: var(--size-icon-lg); height: var(--size-icon-lg); color: var(--content-muted); }
+.jsrp-m-jc-save { width: 56px; height: 56px; border-radius: var(--radius-xl); background: var(--color-system-warm-neutral-200, var(--surface-base)); border: none; display: grid; place-items: center; cursor: pointer; flex-shrink: 0; color: var(--content-muted); -webkit-tap-highlight-color: transparent; transition: background 150ms, color 150ms; }
+.jsrp-m-jc-save svg { width: var(--size-icon-lg); height: var(--size-icon-lg); }
+.jsrp-m-jc-save.is-saved { color: var(--content-brand); background: var(--surface-brand-subtle); }
+.jsrp-m-jc-save.is-saved svg { fill: currentcolor; stroke: currentcolor; }
+.jsrp-m-jc-apply { flex: 1 1 0%; height: 56px; border-radius: var(--radius-xl); background: var(--content-base); color: var(--content-on-fill-dark); border: none; font: 700 14px/1 var(--font-brand); letter-spacing: -0.005em; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; -webkit-tap-highlight-color: transparent; white-space: nowrap; }
+.jsrp-m-jc-apply svg { width: var(--size-icon-md); height: var(--size-icon-md); }
+
+/* ── My Jobs page ── */
+.mj-list { padding: 20px 24px 8px; }                    /* JSRP card column: 24px gutter · 20 (spacing.stack.xl) under the header */
+.mj-list > .jsrp-m-jc { margin-bottom: 20px; }          /* between cards: spacing.stack.xl (20) — the card itself stays JSRP's (its own rule says 14) */
+/* Saved › expired panel (Docket's .mr-exp) closes the list, in the card column, 24 below the last card (spacing.stack.xxl).
+   Vertical margins collapse with the card's 20, so the panel's own 24 is the gap. */
+.mj-list > .mr-exp { margin: 24px 0 0; width: 100%; }
+#mjList .mr-empty .mr-exp { margin-left: 20px; margin-right: 20px; width: calc(100% - 40px); }   /* empty state: line up with its text (20) */
+/* Saved › Expired view: Docket's notice + greyed read-only list, aligned to the card column */
+#mjList > .mr-xnote { margin: 20px 24px 0; }
+.mr-xwrap > .mj-list { padding-top: 16px; }
+/* Applied status pill — replaces the Apply button (DS Badge · positive: surface.status.positive-subtle +
+   content.status.positive, Label / md bold, radius.full, icon.sm, spacing.inline.sm) */
+.mj-applied {
+  margin-left: auto; align-self: center;
+  display: inline-flex; align-items: center; gap: 4px;
+  height: 32px; padding: 0 12px; border-radius: 1024px;
+  background: #EAFAF0; color: #027A48;
+  font: 700 12px/12px var(--font-brand); white-space: nowrap;
+}
+.mj-applied svg { width: 14px; height: 14px; flex-shrink: 0; }
+/* Expired status — replaces the actions on a closed job (DS Badge · neutral: surface.neutral.muted + content.neutral.faded,
+   same geometry as the Applied pill) */
+.mj-expired {
+  margin-left: auto; align-self: center;
+  display: inline-flex; align-items: center; gap: 4px;
+  height: 32px; padding: 0 12px; border-radius: 1024px;
+  background: #EEF1F5; color: #667085;
+  font: 700 12px/12px var(--font-brand); white-space: nowrap;
+}
+.mj-expired svg { width: 14px; height: 14px; flex-shrink: 0; }
+/* toast sits 12 above the bottom tab bar (spacing.stack.md) */
+.toast { bottom: calc(var(--stb-bar-h) + 12px); white-space: nowrap; }
+.toast svg { flex-shrink: 0; }
+</style>
+<!-- ▼ COMPONENT · menu-button v1.0.0 — verbatim copy of App-login/app-components/menu-button/menu-button.css (read README.md there before changing; resync every copy) -->
+<style data-component="menu-button">
+/* ═══════════════════════════════════════════════════════════════════════
+   SHINE · MENU BUTTON  (app component · App-login)              v1.0.0
+   The one hamburger in the logged-in app. Same button on every tab:
+     Home      — in the top bar, before Search Jobs
+     My Jobs   — before the page title "My Jobs."
+     Docket    — before the page title "Docket."
+
+     ╭────────╮
+     │  ═══   │   40 × 40 tap target · round · transparent at rest
+     ╰────────╯   20 px three-line icon · 2 px stroke
+
+   ▶ BEFORE ADDING OR CHANGING IT: read README.md in this folder.
+
+   • DESIGN SYSTEM: component-system.md A.02 Button — icon-only sub-variant
+     (icon size.icon.lg 20, stroke size.stroke.thick 2, focus elevation.focus.default)
+     with the Ghost variant's transparent surface and .btn--shape-full (nav pill)
+     radius; hit area size.control.sm 40. Rules use semantic tokens only.
+   • Colour content.neutral.base (the menu is primary navigation, like the active
+     tab), hover surface.neutral-state.hover on pointer devices only, pressed
+     surface.neutral-state.pressed.
+   • Light by default; dark when an ancestor sets [data-theme="dark"].
+   • Pair with menu-button.js (ShineMenu): taps fire `shine:menu` on document.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Token layer ───────────────────────────────────────────────────── */
+.mb {
+  /* PRIMITIVES — DESIGN-SYSTEM.md §1 (backing values only) */
+  --mb-p-cn-50: #F7F9FB; --mb-p-cn-100: #EEF1F5; --mb-p-cn-200: #E4E7EC;
+  --mb-p-cn-600: #4A5260; --mb-p-cn-700: #344054; --mb-p-cn-black: #0D1117;
+  --mb-p-brand-rgb: 26,86,255;
+
+  /* COLOUR — §2.2 (light) */
+  --mb-content-neutral-base: var(--mb-p-cn-black);
+  --mb-surface-neutral-state-hover: var(--mb-p-cn-100);
+  --mb-surface-neutral-state-pressed: var(--mb-p-cn-200);
+  --mb-elevation-focus-default: 0 0 0 4px rgba(var(--mb-p-brand-rgb),.10);
+
+  /* SIZE — §2.4 */
+  --mb-control-sm: 40px;      /* size.control.sm — hit area (A.02)       */
+  --mb-icon-lg: 20px;         /* size.icon.lg   — icon in btn--icon       */
+  --mb-stroke-thick: 2px;     /* size.stroke.thick                        */
+  --mb-radius-full: 1024px;   /* size.radius.full — .btn--shape-full      */
+
+  /* SPACING — §2.3 — pulls the button out so its ICON lines up with the
+     screen gutter: −(hit area − icon) / 2 = −10 */
+  --mb-optical-offset: calc((var(--mb-control-sm) - var(--mb-icon-lg)) / -2);
+
+  /* motion — PROPOSED (DS has no motion section yet) */
+  --mb-dur: 140ms; --mb-ease: ease;
+}
+[data-theme="dark"] .mb {
+  --mb-content-neutral-base: var(--mb-p-cn-50);
+  --mb-surface-neutral-state-hover: var(--mb-p-cn-700);
+  --mb-surface-neutral-state-pressed: var(--mb-p-cn-600);
+  --mb-elevation-focus-default: 0 0 0 4px rgba(var(--mb-p-brand-rgb),.20);
+}
+
+/* ── Button ────────────────────────────────────────────────────────── */
+.mb {
+  box-sizing: border-box;
+  flex: none;
+  display: inline-grid; place-items: center;
+  width: var(--mb-control-sm); height: var(--mb-control-sm);
+  margin: 0; padding: 0;
+  border: none; border-radius: var(--mb-radius-full);
+  background: transparent;
+  color: var(--mb-content-neutral-base);
+  cursor: pointer;
+  -webkit-appearance: none; appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: background-color var(--mb-dur) var(--mb-ease), box-shadow var(--mb-dur) var(--mb-ease);
+}
+.mb[hidden] { display: none !important; }
+.mb svg {
+  display: block;
+  width: var(--mb-icon-lg); height: var(--mb-icon-lg);
+  fill: none; stroke: currentColor; stroke-width: var(--mb-stroke-thick);
+  stroke-linecap: round; stroke-linejoin: round;
+}
+@media (hover: hover) {
+  .mb:hover { background: var(--mb-surface-neutral-state-hover); }
+}
+.mb:active { background: var(--mb-surface-neutral-state-pressed); }
+.mb:focus { outline: none; }
+.mb:focus-visible { box-shadow: var(--mb-elevation-focus-default); }
+
+/* placement · leading — first thing in a title row (My Jobs, Docket):
+   the icon, not the round hover area, sits on the screen gutter, and the
+   button doesn't make the row taller than the title */
+.mb--lead {
+  margin-left: var(--mb-optical-offset);
+  margin-block: calc((var(--mb-control-sm) - 28px) / -2);   /* 28 = Display / sm line height */
+}
+
+@media (prefers-reduced-motion: reduce) { .mb { transition: none; } }
+</style>
+<!-- ▲ COMPONENT · menu-button -->
+<!-- ▼ COMPONENT · segment-control v1.1.0 — verbatim copy of App-login/app-components/segment-control/segment-control.css (read README.md + segment-control-spec.html there before changing; resync every copy) -->
+<style data-component="segment-control">
+/* ═══════════════════════════════════════════════════════════════════════
+   SHINE · SEGMENT CONTROL  (app component · App-login)          v1.1.0
+   The one single-select switcher in the logged-in app: a muted track with
+   2–4 options, the selected one lifted onto a raised "thumb". It switches
+   the view, list or chart shown right below it — never the page (page
+   navigation is the bottom tab bar).
+
+     ╭──────────────────────────────────────────╮
+     │ ╭────────────╮                           │   .seg          track
+     │ │  Selected  │   Option      Option      │   .seg-item     options
+     │ ╰────────────╯                           │   .seg-thumb    thumb (added by JS)
+     ╰──────────────────────────────────────────╯
+
+   ▶ BEFORE BUILDING OR CHANGING A SEGMENT: read segment-control-spec.html
+     + README.md in this folder (anatomy, every token, placements, do / don't).
+
+   • DESIGN SYSTEM: implements design-system/component-system.md M.01 Segment
+     Control (v1.0) — class API, sizes, shapes, states and token audit. Every
+     value is a semantic token of DESIGN-SYSTEM.md (§2.1 type · §2.2 colour ·
+     §2.3 spacing · §2.4 size · §2.5 elevation). Primitives live only in the
+     token layer and back the semantic tokens; rules use semantic tokens only.
+     The only raw values are the DS item heights 32 / 36 / 40.
+   • App default = .seg .seg--block .seg--sm (full width, 32px options): the
+     same control in a screen header (Docket, My Jobs) and inside a card (Home).
+   • One app addition to M.01: in a block track the option side padding is
+     spacing.inset.sm (labels are centred in equal shares; see .seg--block).
+   • Both modes: light by default; dark when [data-theme="dark"] is set on an
+     ancestor (DS dark mappings). Both breakpoints: desktop (≥768px) values
+     for the responsive spacing tokens.
+   • Pair with segment-control.js (ShineSegment). Zero dependencies. Classes `seg`.
+   • Motion (v1.1, app decision 2026-10-16 — overrides M.01.6 "the thumb never
+     slides" for App-login): STRETCH. One thumb (.seg-thumb, added by
+     segment-control.js) moves to the tapped option: its leading edge leaps
+     there (170ms), the trailing edge follows (300ms, 70ms later), so the thumb
+     stretches across and settles. Labels fade colour (180ms). Instant when the
+     selection is restored silently, on resize, and with reduced motion.
+     Without JS (or while the track is hidden) each option paints its own thumb.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Token layer ───────────────────────────────────────────────────── */
+.seg {
+  /* PRIMITIVES — DESIGN-SYSTEM.md §1 (backing values only; never used in rules) */
+  --seg-p-white: #FFFFFF;
+  --seg-p-cn-50: #F7F9FB; --seg-p-cn-100: #EEF1F5; --seg-p-cn-400: #98A2B3; --seg-p-cn-500: #667085;
+  --seg-p-cn-800: #232A38; --seg-p-cn-900: #161B22; --seg-p-cn-black: #0D1117;
+  --seg-p-cn-black-75: rgba(13,17,23,.36); --seg-p-cn-white-75: rgba(255,255,255,.36);
+  --seg-p-shadow: 13,17,23;      /* cool-neutral/black — elevation colour source */
+  --seg-p-brand-rgb: 26,86,255;  /* brand/primary/500 — focus ring              */
+
+  /* COLOUR — §2.2 (light mode) */
+  --seg-surface-neutral-muted: var(--seg-p-cn-100);       /* track  */
+  --seg-surface-neutral-raised: var(--seg-p-white);       /* thumb  */
+  --seg-content-neutral-base: var(--seg-p-cn-black);      /* selected · hover */
+  --seg-content-neutral-faded: var(--seg-p-cn-500);       /* rest   */
+  --seg-content-neutral-disabled: var(--seg-p-cn-black-75);
+
+  /* ELEVATION — §2.5 (light α) */
+  --seg-elevation-neutral-subtle: 0 1px 2px rgba(var(--seg-p-shadow),.04);
+  --seg-elevation-focus-default: 0 0 0 4px rgba(var(--seg-p-brand-rgb),.10);
+
+  /* TYPOGRAPHY — §1.3 + §2.1 (Label / md bold · Label / sm semibold; not responsive) */
+  --seg-typeface-brand: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --seg-weight-semibold: 600; --seg-weight-bold: 700;
+  --seg-label-md-size: 12px; --seg-label-md-lh: 12px;
+  --seg-label-sm-size: 10px; --seg-label-sm-lh: 10px;
+  --seg-label-ls: 0px;
+
+  /* SPACING — §2.3 (mobile) */
+  --seg-spacing-inset-xs: 4px;    /* track padding, all four sides */
+  --seg-spacing-inset-sm: 6px;    /* option padding left / right in a block track */
+  --seg-spacing-inset-lg: 12px;   /* option padding left / right   */
+  --seg-spacing-inline-xs: 2px;   /* between options · before a count */
+  --seg-spacing-inline-sm: 4px;   /* icon ↔ label                  */
+
+  /* SIZE — §2.4 */
+  --seg-radius-lg: 12px;          /* size.radius.lg   — track    */
+  --seg-radius-md: 8px;           /* size.radius.md   — thumb    */
+  --seg-radius-full: 1024px;      /* size.radius.full — .seg--pill */
+  --seg-icon-sm: 14px;            /* size.icon.sm      */
+  --seg-stroke-thick: 2px;        /* size.stroke.thick */
+  --seg-item-sm: 32px; --seg-item-md: 36px; --seg-item-lg: 40px;   /* M.01.4 item heights (raw, as in the DS) */
+
+  /* motion — PROPOSED motion tokens (the DS has no motion section yet).
+     Stretch: the edge on the side you are moving to leads, the other trails. */
+  --seg-dur: 180ms; --seg-ease: ease;                                   /* label colour · fallback thumb fade */
+  --seg-dur-lead: 170ms;  --seg-ease-lead: cubic-bezier(.3, .8, .3, 1);    /* leading edge — fast, decelerating */
+  --seg-dur-trail: 300ms; --seg-ease-trail: cubic-bezier(.5, 0, .2, 1);   /* trailing edge — slower, eased     */
+  --seg-delay-trail: 70ms;                                              /* trailing edge waits, so the thumb stretches */
+}
+
+/* desktop breakpoint (≥768px) — responsive spacing per §2.3 */
+@media (min-width: 768px) {
+  .seg {
+    --seg-spacing-inset-xs: 6px; --seg-spacing-inset-sm: 8px; --seg-spacing-inset-lg: 14px;
+    --seg-spacing-inline-xs: 4px; --seg-spacing-inline-sm: 6px;
+  }
+}
+
+/* dark mode — DS dark mappings; only when an ancestor sets data-theme="dark" */
+[data-theme="dark"] .seg {
+  --seg-surface-neutral-muted: var(--seg-p-cn-900);
+  --seg-surface-neutral-raised: var(--seg-p-cn-800);
+  --seg-content-neutral-base: var(--seg-p-cn-50);
+  --seg-content-neutral-faded: var(--seg-p-cn-400);
+  --seg-content-neutral-disabled: var(--seg-p-cn-white-75);
+  --seg-elevation-neutral-subtle: 0 1px 2px rgba(0,0,0,.30);
+  --seg-elevation-focus-default: 0 0 0 4px rgba(var(--seg-p-brand-rgb),.20);
+}
+
+/* ── Track ─────────────────────────────────────────────────────────── */
+.seg {
+  box-sizing: border-box;
+  position: relative; isolation: isolate;         /* the thumb sits under the labels */
+  display: inline-flex; align-items: center;
+  width: max-content; max-width: 100%;           /* hugs its options, even as a grid / flex-column child */
+  margin: 0;
+  padding: var(--seg-spacing-inset-xs);
+  gap: var(--seg-spacing-inline-xs);
+  background: var(--seg-surface-neutral-muted);
+  border: none;
+  border-radius: var(--seg-radius-lg);
+  -webkit-tap-highlight-color: transparent;
+}
+.seg[hidden] { display: none !important; }
+
+/* layout · full width, options split equally (the app default).
+   Each label is centred in its equal share, so the side padding only keeps it clear of the thumb's edge:
+   spacing.inset.sm (6 · 8) instead of inset.lg — three labels fit a 360px phone ("Recommended" included). */
+.seg--block { display: flex; width: 100%; }
+.seg--block .seg-item { flex: 1 1 0; min-width: 0; padding: 0 var(--seg-spacing-inset-sm); }
+
+/* shape · pill */
+.seg--pill, .seg--pill .seg-item { border-radius: var(--seg-radius-full); }
+
+/* ── Option ────────────────────────────────────────────────────────── */
+.seg-item {
+  box-sizing: border-box;
+  flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: var(--seg-spacing-inline-sm);
+  height: var(--seg-item-md);                    /* md default */
+  margin: 0;
+  padding: 0 var(--seg-spacing-inset-lg);
+  background: transparent;
+  border: none;
+  border-radius: var(--seg-radius-md);
+  box-shadow: none;
+  cursor: pointer;
+  font-family: var(--seg-typeface-brand);
+  font-size: var(--seg-label-md-size);
+  line-height: var(--seg-label-md-lh);
+  font-weight: var(--seg-weight-bold);
+  letter-spacing: var(--seg-label-ls);
+  text-transform: none;
+  color: var(--seg-content-neutral-faded);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  -webkit-appearance: none; appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  -webkit-user-select: none; user-select: none;
+  transition: background-color var(--seg-dur) var(--seg-ease), color var(--seg-dur) var(--seg-ease), box-shadow var(--seg-dur) var(--seg-ease);
+}
+/* sizes — set on the track */
+.seg--sm .seg-item { height: var(--seg-item-sm); }
+.seg--md .seg-item { height: var(--seg-item-md); }
+.seg--lg .seg-item { height: var(--seg-item-lg); }
+
+/* hover (pointer devices only, so a tap doesn't leave a sticky hover on phones) */
+@media (hover: hover) {
+  .seg-item:hover { color: var(--seg-content-neutral-base); }
+}
+.seg-item:focus { outline: none; }
+.seg-item:focus-visible { outline: none; box-shadow: var(--seg-elevation-focus-default); }
+
+/* selected — the thumb (aria-selected for tabs, aria-pressed for toggles, .is-active either way) */
+.seg-item.is-active,
+.seg-item[aria-selected="true"],
+.seg-item[aria-pressed="true"] {
+  background: var(--seg-surface-neutral-raised);
+  color: var(--seg-content-neutral-base);
+  box-shadow: var(--seg-elevation-neutral-subtle);
+}
+.seg-item.is-active:focus-visible,
+.seg-item[aria-selected="true"]:focus-visible,
+.seg-item[aria-pressed="true"]:focus-visible {
+  box-shadow: var(--seg-elevation-neutral-subtle), var(--seg-elevation-focus-default);
+}
+
+/* ── Thumb · stretch motion (v1.1) ─────────────────────────────────
+   segment-control.js inserts <span class="seg-thumb"> and adds .seg--glide once it has
+   placed it. From then on the options are transparent and the thumb carries the
+   selected look. It is positioned with left / right (px) so each edge can move on
+   its own timing: data-seg-dir="right" | "left" picks which edge leads; "none"
+   (first paint, resize, silent restore) places it instantly. */
+.seg-thumb {
+  position: absolute; z-index: 0; pointer-events: none;
+  top: var(--seg-spacing-inset-xs); bottom: var(--seg-spacing-inset-xs);
+  left: 0; right: auto;
+  background: var(--seg-surface-neutral-raised);
+  border-radius: var(--seg-radius-md);
+  box-shadow: var(--seg-elevation-neutral-subtle);
+  opacity: 0;                                     /* shown once placed (.seg--glide) */
+}
+.seg--pill .seg-thumb { border-radius: var(--seg-radius-full); }
+.seg--glide .seg-thumb { opacity: 1; }
+.seg[data-seg-dir="none"] .seg-thumb { transition: none; }
+.seg[data-seg-dir="right"] .seg-thumb {
+  transition: right var(--seg-dur-lead) var(--seg-ease-lead),
+              left var(--seg-dur-trail) var(--seg-ease-trail) var(--seg-delay-trail);
+}
+.seg[data-seg-dir="left"] .seg-thumb {
+  transition: left var(--seg-dur-lead) var(--seg-ease-lead),
+              right var(--seg-dur-trail) var(--seg-ease-trail) var(--seg-delay-trail);
+}
+.seg--glide .seg-item { position: relative; z-index: 1; transition: color var(--seg-dur) var(--seg-ease), box-shadow var(--seg-dur) var(--seg-ease); }
+.seg--glide .seg-item.is-active,
+.seg--glide .seg-item[aria-selected="true"],
+.seg--glide .seg-item[aria-pressed="true"] { background: transparent; box-shadow: none; }
+.seg--glide .seg-item:focus-visible { box-shadow: var(--seg-elevation-focus-default); }
+
+/* disabled */
+.seg-item:disabled,
+.seg-item[aria-disabled="true"] {
+  color: var(--seg-content-neutral-disabled);
+  cursor: not-allowed;
+}
+@media (hover: hover) {
+  .seg-item:disabled:hover,
+  .seg-item[aria-disabled="true"]:hover { color: var(--seg-content-neutral-disabled); }
+}
+
+/* icon — always paired with a label (M.01.6) */
+.seg-item svg {
+  flex-shrink: 0;
+  width: var(--seg-icon-sm); height: var(--seg-icon-sm);
+  fill: none; stroke: currentColor; stroke-width: var(--seg-stroke-thick);
+  stroke-linecap: round; stroke-linejoin: round;
+}
+
+/* label wrapper (optional) — lets a long label ellipsize while an icon / count stays whole */
+.seg-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+
+/* count — "Saved 12" */
+.seg-item-count {
+  flex-shrink: 0;
+  margin-left: var(--seg-spacing-inline-xs);
+  font-size: var(--seg-label-sm-size);
+  line-height: var(--seg-label-sm-lh);
+  font-weight: var(--seg-weight-semibold);
+  opacity: .6;
+}
+.seg-item.is-active .seg-item-count,
+.seg-item[aria-selected="true"] .seg-item-count,
+.seg-item[aria-pressed="true"] .seg-item-count { opacity: .75; }
+
+/* panes switched by the control (ShineSegment sets [hidden]) */
+[data-seg-pane][hidden] { display: none !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .seg-item, .seg--glide .seg-item, .seg .seg-thumb { transition: none !important; }
+}
+</style>
+<!-- ▲ COMPONENT · segment-control -->
+<!-- ▼ COMPONENT · bottom-tab-bar v1.3.0 · verbatim copy of App-login/app-components/bottom-tab-bar/bottom-tab-bar.css — do not edit here -->
+<style data-component="bottom-tab-bar">
+/* ═══════════════════════════════════════════════════════════════════════
+   SHINE · BOTTOM TAB BAR  (app component)                      v1.3.0
+   The logged-in app's primary navigation — Home · Jobs · Docket · Me —
+   fixed to the bottom of the screen on a frosted white surface.
+
+     • Each tab = outline icon (inactive) / filled icon (active) + label.
+       Active tab: content-base colour on a 6% ink wash, radius.xl.
+     • Optional unread dot per tab (brand, 7 px) — e.g. Docket.
+     • Reserves its own space at the end of the page (body padding),
+       so content never hides behind the bar.
+
+   Size (v1.3): 12 top · 56 tab · bottom = max(12, safe area + 2), 12 sides
+     Android / browser          12 + 56 + 12 = 80
+     iPhone with home indicator 12 + 56 + 36 = 104  (34 safe area + 2)
+   Inside the Android app the WebView already sits above the system
+   navigation bar but still reports that bar as a safe-area inset, so
+   there the inset is ignored (html.in-app is set by the app shell's
+   native.js).
+
+   Tab change (v1.2 · "Stretch + Flip"): one wash element under the tabs
+   stretches to the new tab — the edge on the side it moves towards leads
+   (170 ms), the other trails (300 ms after 70 ms), same timing as the
+   segment control. As it lands (90 ms in) the new icon turns over from
+   outline to filled (460 ms, slight overshoot) and its label lifts 1 px;
+   the old icon turns back (300 ms). No motion on first paint, resize or
+   with reduced motion.
+
+   • Every class is prefixed `stb-`; the component carries its OWN scoped
+     token layer (values from design-system/DESIGN-SYSTEM.md, light) so it
+     renders the same on any page, whatever token vocabulary the host uses.
+   • Pages that sit against the bar use var(--stb-bar-h) — never a number.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Scoped tokens ─────────────────────────────────────────────────── */
+:root {
+  --stb-safe: env(safe-area-inset-bottom, 0px);       /* device bottom inset (home indicator) */
+  /* the bar's full height, for pages: 12 + 56 + max(12, safe + 2) → 80 · 104 */
+  --stb-bar-h: calc(68px + max(12px, var(--stb-safe) + 2px));
+}
+html.in-app { --stb-safe: 0px; }                     /* Android app shell: already above the system nav bar */
+
+.stb {
+  /* palette */
+  --stb-black: #0D1117; --stb-white: #FFFFFF;
+  --stb-cn-200: #E4E7EC; --stb-cn-500: #667085;
+  --stb-brand-500: #1A56FF;
+
+  /* semantic */
+  --stb-content-base: var(--stb-black);               /* active tab */
+  --stb-content-faded: var(--stb-cn-500);             /* inactive tab */
+  --stb-surface: rgba(255, 255, 255, .94);            /* surface.raised @ 94% — frosted glass */
+  --stb-stroke: rgba(228, 231, 236, .7);              /* stroke.base (cool-neutral 200) @ 70% */
+  --stb-active-wash: rgba(13, 17, 23, .06);           /* content.base @ 6% */
+  --stb-dot: var(--stb-brand-500);                    /* surface.brand.intense */
+
+  /* type · size · space */
+  --stb-font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --stb-label: 10px; --stb-label-lh: 1;               /* Label / sm (unit/10) */
+  --stb-w-bold: 700;
+  --stb-tab-h: 56px;                                  /* size.control.xl — tab (and wash) height */
+  --stb-inset: 12px;                                  /* spacing.inset.lg — top, sides, minimum bottom */
+  --stb-safe-gap: 2px;                                /* spacing.stack.3xs — above the home indicator */
+  --stb-bottom: max(var(--stb-inset), var(--stb-safe) + var(--stb-safe-gap));
+  --stb-gap: 4px;                                     /* spacing.inline.sm — between tabs */
+  --stb-tab-gap: 2px;                                 /* spacing.stack.3xs — icon → label */
+  --stb-icon: 24px;                                   /* size.icon.xl */
+  --stb-stroke-w: 1.7;                                /* outline icon stroke */
+  --stb-radius: 16px;                                 /* size.radius.xl */
+  --stb-radius-full: 1024px;                          /* size.radius.full */
+  --stb-dot-size: 7px;
+  --stb-blur: blur(24px) saturate(180%);
+  --stb-z: 90;
+
+  /* motion · Stretch + Flip (proposed tokens — the DS has no motion section yet) */
+  --stb-dur-lead: 170ms;  --stb-ease-lead: cubic-bezier(.3, .8, .3, 1);     /* wash · leading edge */
+  --stb-dur-trail: 300ms; --stb-ease-trail: cubic-bezier(.5, 0, .2, 1);     /* wash · trailing edge */
+  --stb-delay-trail: 70ms;
+  --stb-dur-flip: 460ms;  --stb-ease-flip: cubic-bezier(.3, 1.35, .5, 1);   /* new icon turns over (overshoot) */
+  --stb-delay-flip: 90ms;                                                   /* …as the wash lands */
+  --stb-dur-unflip: 300ms; --stb-ease-unflip: cubic-bezier(.4, 0, .2, 1);   /* old icon turns back */
+  --stb-dur-color: 200ms;
+  --stb-dur-press: 120ms;
+}
+
+/* ── Bar ───────────────────────────────────────────────────────────── */
+.stb {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: var(--stb-z);
+  box-sizing: border-box; isolation: isolate;
+  display: grid; grid-template-columns: repeat(var(--stb-count, 4), minmax(0, 1fr));
+  column-gap: var(--stb-gap); align-items: center;
+  height: calc(var(--stb-inset) + var(--stb-tab-h) + var(--stb-bottom));
+  padding: var(--stb-inset) var(--stb-inset) var(--stb-bottom);
+  margin: 0;
+  background: var(--stb-surface);
+  -webkit-backdrop-filter: var(--stb-blur); backdrop-filter: var(--stb-blur);
+  box-shadow: inset 0 1px 0 var(--stb-stroke);        /* top hairline — drawn inside, takes no height */
+  font-family: var(--stb-font); -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+.stb *, .stb *::before, .stb *::after { box-sizing: border-box; }
+
+/* ── Wash (the active tab's background, one element that travels) ──── */
+.stb-wash {
+  position: absolute; z-index: 0; top: var(--stb-inset);
+  height: var(--stb-tab-h); left: 0; right: 100%;
+  border-radius: var(--stb-radius); background: var(--stb-active-wash);
+  pointer-events: none;
+}
+.stb[data-stb-dir="right"] .stb-wash {
+  transition: right var(--stb-dur-lead) var(--stb-ease-lead),
+              left var(--stb-dur-trail) var(--stb-ease-trail) var(--stb-delay-trail);
+}
+.stb[data-stb-dir="left"] .stb-wash {
+  transition: left var(--stb-dur-lead) var(--stb-ease-lead),
+              right var(--stb-dur-trail) var(--stb-ease-trail) var(--stb-delay-trail);
+}
+/* until the script has measured the bar (or while it is hidden) each active tab paints its own wash */
+.stb:not(.stb--placed) .stb-wash { display: none; }
+.stb:not(.stb--placed) .stb-tab.is-active { background: var(--stb-active-wash); }
+
+/* ── Tab ───────────────────────────────────────────────────────────── */
+.stb-tab {
+  appearance: none; -webkit-appearance: none; border: none; margin: 0; background: transparent;
+  position: relative; z-index: 1; min-width: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--stb-tab-gap);
+  height: var(--stb-tab-h); padding: 0;
+  border-radius: var(--stb-radius);
+  color: var(--stb-content-faded);
+  font-family: var(--stb-font);
+  cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  transition: color var(--stb-dur-color) ease, transform var(--stb-dur-press) ease;
+}
+.stb-tab:active { transform: scale(.96); }
+.stb-tab.is-active { color: var(--stb-content-base); }
+.stb-tab:focus-visible { outline: 2px solid var(--stb-content-base); outline-offset: -2px; }
+
+/* icon = a card: outline on the front, filled on the back */
+.stb-icon { position: relative; width: var(--stb-icon); height: var(--stb-icon); perspective: 120px; }
+.stb-card {
+  position: absolute; inset: 0; transform-style: preserve-3d;
+  transition: transform var(--stb-dur-unflip) var(--stb-ease-unflip);
+}
+.stb-tab.is-active .stb-card {
+  transform: rotateY(180deg);
+  transition: transform var(--stb-dur-flip) var(--stb-ease-flip) var(--stb-delay-flip);
+}
+.stb-card svg {
+  position: absolute; inset: 0; width: var(--stb-icon); height: var(--stb-icon); display: block;
+  -webkit-backface-visibility: hidden; backface-visibility: hidden;
+}
+.stb-card .stb-fill { transform: rotateY(180deg); }
+
+.stb-lbl {
+  font-family: var(--stb-font); font-weight: var(--stb-w-bold);
+  font-size: var(--stb-label); line-height: var(--stb-label-lh); letter-spacing: 0;
+  transition: transform var(--stb-dur-trail) var(--stb-ease-flip);
+}
+.stb-tab.is-active .stb-lbl { transform: translateY(-1px); transition-delay: var(--stb-delay-flip); }
+
+/* unread dot — top-right of the icon */
+.stb-dot {
+  /* 4 px above the icon's top edge, wherever the tab height puts the icon (icon 24 + 2 + label 10 = 36, centred) */
+  position: absolute; top: calc((var(--stb-tab-h) - var(--stb-icon) - var(--stb-tab-gap) - var(--stb-label)) / 2 - 4px);
+  left: calc(50% + 9px); z-index: 2;
+  width: var(--stb-dot-size); height: var(--stb-dot-size);
+  border-radius: var(--stb-radius-full); background: var(--stb-dot);
+}
+.stb-dot[hidden] { display: none; }
+
+/* no motion: first paint, resize, a silent restore */
+.stb--still .stb-wash, .stb--still .stb-tab, .stb--still .stb-card, .stb--still .stb-lbl { transition: none !important; }
+
+/* ── Page space ────────────────────────────────────────────────────── */
+/* end of the page clears the bar (bar height + 4 px) */
+body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .stb-wash, .stb-tab, .stb-card, .stb-lbl { transition: none !important; }
+  .stb-tab:active { transform: none; }
+}
+</style>
+<!-- ▲ COMPONENT · bottom-tab-bar -->
+<!-- ▼ COMPONENT · bottom-sheet v2.4.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
+<style data-component="bottom-sheet">
+/* ═══════════════════════════════════════════════════════════════════════
+   SHINE · BOTTOM SHEET  (app component · App-login)            v2.4.0
+   The one container behind every slide-up panel in the logged-in app.
+   Built on App-logout's bottom sheet (v1.2.1 — same ShineSheet engine:
+   stacking, focus trap, scroll lock, drag-to-dismiss, keyboard-aware,
+   iOS 26 status-bar tint) and refined into THREE SECTIONS:
+
+     ┌──────────────────────────────┐
+     │ 1 · TOP       .bs-top        │  handle · heading · close
+     ├──────────────────────────────┤
+     │ 2 · BODY      .bs-body       │  the content — scrolls
+     ├──────────────────────────────┤
+     │ 3 · BOTTOM    .bs-bottom     │  buttons · terms · trust marker
+     └──────────────────────────────┘
+
+   The bottom section has two behaviours (data-bs-cta on .bs):
+     INLINE  — it follows the body's content and scrolls with it
+               (short read-then-act sheets: confirmations, nudges, OTP).
+     STICKY  — it is pinned to the bottom while the body scrolls under it
+               (lists, pickers, filters, long forms).
+     AUTO    — inline while everything fits, sticky once the body overflows.
+
+   ▶ BEFORE BUILDING ANY SHEET: read bottom-sheet-spec.html + README.md in
+     this folder (anatomy, every token, inline/sticky rules, do / don't).
+
+   • DESIGN SYSTEM (v2.1): every value below is a semantic token from
+     design-system/DESIGN-SYSTEM.md (§2.1 type · §2.2 colour · §2.3 spacing ·
+     §2.4 size · §2.5 elevation) and component-system.md A.02 Button /
+     A.11 Separator. Primitives live only in the token layer and back the
+     semantic tokens. Rules consume semantic tokens only. Values the DS has
+     no token for are listed as PROPOSED (README → "Proposed tokens").
+   • Both modes: light by default; dark when [data-theme="dark"] is set on
+     an ancestor (DS dark mappings). Both breakpoints: desktop (≥768px)
+     values for responsive spacing and type.
+   • Pair with bottom-sheet.js (ShineSheet). Zero dependencies. Classes `bs-`.
+   • Closed sheets are [hidden] → display:none (nothing parked off-screen).
+   • Bottom inset: max(own padding, device safe area). Inside the Android app
+     (html.in-app, set by native.js) the inset is ignored: the WebView sits
+     above the system nav bar but still reports it as a safe area.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Token layer ───────────────────────────────────────────────────── */
+.bs, .bs-scrim {
+  /* PRIMITIVES — DESIGN-SYSTEM.md §1 (backing values only; never used in rules) */
+  --bs-p-white: #FFFFFF;
+  --bs-p-cn-50: #F7F9FB;  --bs-p-cn-100: #EEF1F5; --bs-p-cn-200: #E4E7EC; --bs-p-cn-300: #C8CED7;
+  --bs-p-cn-400: #98A2B3; --bs-p-cn-500: #667085; --bs-p-cn-600: #4A5260; --bs-p-cn-700: #344054;
+  --bs-p-cn-800: #232A38; --bs-p-cn-900: #161B22; --bs-p-cn-black: #0D1117;
+  --bs-p-cn-black-25: rgba(13,17,23,.08); --bs-p-cn-black-50: rgba(13,17,23,.24); --bs-p-cn-black-75: rgba(13,17,23,.36);
+  --bs-p-cn-white-25: rgba(255,255,255,.08); --bs-p-cn-white-75: rgba(255,255,255,.36);
+  --bs-p-wn-100: #FAF9F6;
+  --bs-p-brand-200: #C9DBFF; --bs-p-brand-300: #7EA3FF; --bs-p-brand-400: #4D7CFF; --bs-p-brand-500: #1A56FF;
+  --bs-p-brand-600: #0B3FCC; --bs-p-brand-700: #0A33A6;
+  --bs-p-red-600: #B42318; --bs-p-red-700: #8B1A14;
+  --bs-p-green-400: #34D77F; --bs-p-green-700: #027A48;
+  --bs-p-shadow: 13,17,23;      /* cool-neutral/black — elevation colour source */
+  --bs-p-brand-rgb: 26,86,255;  /* brand/primary/500 — brand + focus shadows    */
+
+  /* COLOUR — §2.2 (light mode) */
+  --bs-content-neutral-base: var(--bs-p-cn-black);
+  --bs-content-neutral-muted: var(--bs-p-cn-700);
+  --bs-content-neutral-faded: var(--bs-p-cn-500);
+  --bs-content-neutral-disabled: var(--bs-p-cn-black-75);
+  --bs-content-neutral-brand: var(--bs-p-brand-600);
+  --bs-content-on-fill-dark-base: var(--bs-p-white);
+  --bs-content-inverse-base: var(--bs-p-white);
+  --bs-content-inverse-muted: var(--bs-p-cn-300);
+  --bs-content-inverse-faded: var(--bs-p-cn-400);
+  --bs-content-inverse-brand: var(--bs-p-brand-400);
+  --bs-content-status-positive: var(--bs-p-green-700);
+  --bs-stroke-neutral-base: var(--bs-p-cn-200);
+  --bs-stroke-neutral-muted: var(--bs-p-cn-100);
+  --bs-stroke-neutral-disabled: var(--bs-p-cn-black-25);
+  --bs-stroke-neutral-focus: var(--bs-p-brand-500);
+  --bs-stroke-inverse-base: var(--bs-p-cn-600);
+  --bs-stroke-inverse-muted: var(--bs-p-cn-700);
+  --bs-surface-neutral-raised: var(--bs-p-white);
+  --bs-surface-neutral-muted: var(--bs-p-cn-100);
+  --bs-surface-neutral-state-hover: var(--bs-p-cn-100);
+  --bs-surface-neutral-state-pressed: var(--bs-p-cn-200);
+  --bs-surface-neutral-state-overlay: var(--bs-p-cn-black-50);
+  --bs-surface-neutral-state-overlay-strong: var(--bs-p-cn-black-75);   /* PROPOSED */
+  --bs-surface-inverse-base: var(--bs-p-cn-black);
+  --bs-surface-inverse-raised: var(--bs-p-cn-800);
+  --bs-surface-inverse-state-hover: var(--bs-p-cn-700);
+  --bs-surface-inverse-state-pressed: var(--bs-p-cn-600);
+  --bs-surface-brand-intense: var(--bs-p-brand-500);
+  --bs-surface-brand-intense-hover: var(--bs-p-brand-600);
+  --bs-surface-brand-intense-pressed: var(--bs-p-brand-700);
+  --bs-surface-status-negative-intense: var(--bs-p-red-600);
+  --bs-surface-status-negative-intense-hover: var(--bs-p-red-700);
+  --bs-btn-primary-content: var(--bs-content-on-fill-dark-base);        /* A.02: on-fill-dark (light) · inverse.base (dark) */
+
+  /* ELEVATION — §2.5 (light α) */
+  --bs-elevation-neutral-raised: 0 1px 3px rgba(var(--bs-p-shadow),.08), 0 1px 2px rgba(var(--bs-p-shadow),.04);
+  --bs-elevation-neutral-lifted: 0 4px 12px rgba(var(--bs-p-shadow),.08), 0 2px 4px rgba(var(--bs-p-shadow),.04);
+  --bs-elevation-neutral-modal: 0 24px 60px -12px rgba(var(--bs-p-shadow),.20), 0 6px 16px -6px rgba(var(--bs-p-shadow),.10);
+  --bs-elevation-brand-subtle: 0 8px 24px -10px rgba(var(--bs-p-brand-rgb),.18);
+  --bs-elevation-brand-raised: 0 6px 14px -4px rgba(var(--bs-p-brand-rgb),.45);
+  --bs-elevation-brand-lifted: 0 16px 40px -12px rgba(var(--bs-p-brand-rgb),.40);
+  --bs-elevation-focus-default: 0 0 0 4px rgba(var(--bs-p-brand-rgb),.10);
+
+  /* TYPOGRAPHY — §1.3 + §2.1 (mobile) */
+  --bs-typeface-brand: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --bs-weight-medium: 500; --bs-weight-semibold: 600; --bs-weight-bold: 700;
+  --bs-display-sm-size: 24px; --bs-display-sm-lh: 28px; --bs-display-sm-ls: -0.3px;   /* Display / sm  */
+  --bs-heading-lg-size: 22px; --bs-heading-lg-lh: 26px; --bs-heading-lg-ls: -0.3px;   /* Heading / lg  */
+  --bs-heading-sm-size: 16px; --bs-heading-sm-lh: 20px; --bs-heading-sm-ls: 0px;      /* Heading / sm  */
+  --bs-body-md-size: 14px;    --bs-body-md-lh: 20px;                                   /* Body / md     */
+  --bs-body-sm-size: 12px;    --bs-body-sm-lh: 18px;                                   /* Body / sm     */
+  --bs-label-lg-size: 14px;   --bs-label-lg-lh: 14px;                                  /* Label / lg    */
+  --bs-eyebrow-sm-size: 10px; --bs-eyebrow-sm-lh: 10px; --bs-eyebrow-sm-ls: 1px; --bs-eyebrow-sm-para: 8px;   /* Eyebrow / sm */
+
+  /* SPACING — §2.3 (mobile) */
+  --bs-spacing-inset-md: 8px;   --bs-spacing-inset-xl: 16px;  --bs-spacing-inset-xxl: 22px; --bs-spacing-inset-lg: 12px;
+  --bs-spacing-inline-sm: 4px;  --bs-spacing-inline-md: 8px;
+  --bs-spacing-stack-3xs: 2px;  --bs-spacing-stack-xs: 8px;   --bs-spacing-stack-md: 12px;
+  --bs-spacing-stack-xl: 20px;  --bs-spacing-stack-xxl: 24px;
+  --bs-spacing-section-xl: 48px;
+  --bs-spacing-layout-sm: 24px;
+
+  /* SIZE — §2.4 */
+  --bs-radius-2xl: 24px;     /* size.radius.2xl — sheet top corners (v2.2: 16 → 24, design decision) */
+  --bs-radius-lg: 12px;      /* size.radius.lg — buttons               */
+  --bs-radius-full: 1024px;
+  --bs-stroke-thin: 1px; --bs-stroke-default: 1.5px; --bs-stroke-thick: 2px;
+  --bs-icon-xs: 12px; --bs-icon-sm: 14px; --bs-icon-md: 16px;
+  --bs-control-sm: 40px;     /* size.control.sm (proposed in A.02) — minimum hit area */
+  --bs-control-lg: 48px;     /* size.control.lg (proposed in A.02) — button height    */
+  --bs-sheet-handle-w: 40px; --bs-sheet-handle-h: 4px;     /* PROPOSED size.sheet.handle-* (unit/40 · unit/4)  */
+  --bs-sheet-close-sm: 28px; --bs-sheet-close-md: 32px;    /* PROPOSED size.sheet.close-*  (unit/28 · unit/32) */
+
+  /* HEADING SIZES (v2.3) — two title sizes, independent of the heading layout.
+     Large 24/28 bold = Display / sm on mobile, Heading / lg on desktop (both 24/28 there) → 24 at every width.
+     Medium 16/20 bold = Heading / sm (not responsive). */
+  --bs-title-lg-size: var(--bs-display-sm-size); --bs-title-lg-lh: var(--bs-display-sm-lh); --bs-title-lg-ls: var(--bs-display-sm-ls);
+  --bs-title-md-size: var(--bs-heading-sm-size); --bs-title-md-lh: var(--bs-heading-sm-lh); --bs-title-md-ls: var(--bs-heading-sm-ls);
+
+  /* COMPONENT ALIASES — the sheet's rhythm, each pointing at one semantic token */
+  --bs-gutter: var(--bs-spacing-layout-sm);              /* sides                          */
+  --bs-handle-top: var(--bs-spacing-inset-lg);           /* sheet edge → handle (v2.4: 8 → 12) */
+  --bs-head-pad-top: var(--bs-spacing-inset-xl);         /* handle → heading               */
+  --bs-head-pad-bottom: var(--bs-spacing-stack-xl);      /* title bar → content            */
+  --bs-display-pad-top: var(--bs-spacing-inset-xxl);     /* handle → display heading (v2.4: 16 → 22) */
+  --bs-display-to-body: var(--bs-spacing-stack-xxl);     /* display heading → content      */
+  --bs-close-offset: var(--bs-spacing-inset-xl);         /* display close from top / right */
+  --bs-bottom-gap: var(--bs-spacing-stack-md);           /* buttons · terms · trust        */
+  --bs-btn-gap: var(--bs-spacing-stack-xs);              /* between buttons (A.02 stack)   */
+  --bs-inline-top: var(--bs-spacing-stack-xxl);          /* content → inline bottom        */
+  --bs-inline-end: var(--bs-spacing-stack-xxl);          /* under the inline bottom (v2.4: 48 → 24) */
+  --bs-sticky-pad: var(--bs-spacing-inset-xl);           /* sticky bottom padding          */
+  --bs-max-h: 90vh;
+
+  /* bottom inset: device safe area; ignored inside the Android app (see header) */
+  --bs-safe: env(safe-area-inset-bottom, 0px);
+
+  /* motion — PROPOSED motion.sheet-* (DS has no motion section yet) */
+  --bs-ease: cubic-bezier(.32,.72,0,1);
+  --bs-dur-in: 320ms; --bs-dur-out: 260ms; --bs-dur-scrim: 240ms; --bs-dur-kb: 240ms;
+  --bs-lift-up: -1px;                                    /* motion.lift.up (proposed in A.02) */
+  --bs-blur-overlay: 4px;                                /* PROPOSED effect.blur.overlay      */
+
+  /* stacking — ShineSheet assigns z = --bs-z + 2·depth (+1 for the sheet) */
+  --bs-z: 100;
+}
+html.in-app .bs { --bs-safe: 0px; }
+
+/* desktop breakpoint (≥768px) — responsive tokens per §2.1 / §2.3 */
+@media (min-width: 768px) {
+  .bs, .bs-scrim {
+    --bs-display-sm-size: 32px; --bs-display-sm-lh: 36px; --bs-display-sm-ls: -0.4px;
+    --bs-heading-lg-size: 24px; --bs-heading-lg-lh: 28px; --bs-heading-lg-ls: -0.3px;
+    --bs-title-lg-size: var(--bs-heading-lg-size); --bs-title-lg-lh: var(--bs-heading-lg-lh); --bs-title-lg-ls: var(--bs-heading-lg-ls);
+    --bs-eyebrow-sm-size: 12px; --bs-eyebrow-sm-lh: 12px; --bs-eyebrow-sm-ls: 1.5px;
+    --bs-spacing-inset-md: 10px; --bs-spacing-inset-xl: 20px; --bs-spacing-inset-xxl: 32px; --bs-spacing-inset-lg: 14px;
+    --bs-spacing-inline-sm: 6px; --bs-spacing-inline-md: 10px;
+    --bs-spacing-stack-3xs: 4px; --bs-spacing-stack-xs: 10px; --bs-spacing-stack-md: 16px;
+    --bs-spacing-stack-xl: 32px; --bs-spacing-stack-xxl: 28px;
+    --bs-spacing-section-xl: 64px; --bs-spacing-layout-sm: 32px;
+  }
+}
+
+/* dark mode — DS dark mappings; only when an ancestor sets data-theme="dark" */
+[data-theme="dark"] .bs, [data-theme="dark"] .bs-scrim {
+  --bs-content-neutral-base: var(--bs-p-cn-50);
+  --bs-content-neutral-muted: var(--bs-p-cn-300);
+  --bs-content-neutral-faded: var(--bs-p-cn-400);
+  --bs-content-neutral-disabled: var(--bs-p-cn-white-75);
+  --bs-content-neutral-brand: var(--bs-p-brand-300);
+  --bs-content-inverse-base: var(--bs-p-cn-black);
+  --bs-content-inverse-muted: var(--bs-p-cn-700);
+  --bs-content-inverse-faded: var(--bs-p-cn-500);
+  --bs-content-inverse-brand: var(--bs-p-brand-600);
+  --bs-content-status-positive: var(--bs-p-green-400);
+  --bs-stroke-neutral-base: var(--bs-p-cn-600);
+  --bs-stroke-neutral-muted: var(--bs-p-cn-700);
+  --bs-stroke-neutral-disabled: var(--bs-p-cn-white-25);
+  --bs-stroke-neutral-focus: var(--bs-p-brand-300);
+  --bs-stroke-inverse-base: var(--bs-p-cn-200);
+  --bs-stroke-inverse-muted: var(--bs-p-cn-100);
+  --bs-surface-neutral-raised: var(--bs-p-cn-800);
+  --bs-surface-neutral-muted: var(--bs-p-cn-900);
+  --bs-surface-neutral-state-hover: var(--bs-p-cn-700);
+  --bs-surface-neutral-state-pressed: var(--bs-p-cn-600);
+  --bs-surface-inverse-base: var(--bs-p-wn-100);
+  --bs-surface-inverse-raised: var(--bs-p-white);
+  --bs-surface-inverse-state-hover: var(--bs-p-cn-100);
+  --bs-surface-inverse-state-pressed: var(--bs-p-cn-200);
+  --bs-btn-primary-content: var(--bs-content-inverse-base);
+  --bs-elevation-neutral-raised: 0 1px 3px rgba(var(--bs-p-shadow),.40), 0 1px 2px rgba(var(--bs-p-shadow),.25);
+  --bs-elevation-neutral-lifted: 0 4px 12px rgba(var(--bs-p-shadow),.45), 0 2px 4px rgba(var(--bs-p-shadow),.30);
+  --bs-elevation-neutral-modal: 0 24px 60px -12px rgba(var(--bs-p-shadow),.65), 0 6px 16px -6px rgba(var(--bs-p-shadow),.40);
+  --bs-elevation-brand-subtle: 0 8px 24px -10px rgba(var(--bs-p-brand-rgb),.30);
+  --bs-elevation-brand-raised: 0 6px 14px -4px rgba(var(--bs-p-brand-rgb),.55);
+  --bs-elevation-brand-lifted: 0 16px 40px -12px rgba(var(--bs-p-brand-rgb),.50);
+  --bs-elevation-focus-default: 0 0 0 4px rgba(var(--bs-p-brand-rgb),.20);
+}
+
+/* ── Scrim (one per stack level, created by ShineSheet) ───────────── */
+.bs-scrim {
+  position: fixed; inset: 0;
+  /* colour as an image layer, never background-color: iOS 26 Safari tints the status bar from the
+     background-color of a fixed element at the top edge (ignoring its opacity) */
+  --bs-scrim-c: var(--bs-surface-neutral-state-overlay);
+  background: linear-gradient(var(--bs-scrim-c), var(--bs-scrim-c));
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--bs-dur-scrim) ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.bs-scrim[hidden] { display: none !important; }
+.bs-scrim.is-open { opacity: 1; pointer-events: auto; }
+.bs-scrim--strong { --bs-scrim-c: var(--bs-surface-neutral-state-overlay-strong); -webkit-backdrop-filter: blur(var(--bs-blur-overlay)); backdrop-filter: blur(var(--bs-blur-overlay)); }
+.bs-scrim--nested { position: absolute; border-radius: var(--bs-radius-2xl) var(--bs-radius-2xl) 0 0; }
+
+/* ── Sheet ─────────────────────────────────────────────────────────── */
+.bs {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  z-index: calc(var(--bs-z) + 1);
+  display: flex; flex-direction: column;
+  max-height: var(--bs-max-h); max-height: min(var(--bs-max-h), 90dvh);
+  background: var(--bs-surface-neutral-raised); color: var(--bs-content-neutral-base);
+  border-radius: var(--bs-radius-2xl) var(--bs-radius-2xl) 0 0;
+  box-shadow: var(--bs-elevation-neutral-modal);
+  font-family: var(--bs-typeface-brand); -webkit-font-smoothing: antialiased;
+  overflow: hidden; outline: none;
+  transform: translate3d(0, 100%, 0);
+  transition: transform var(--bs-dur-out) var(--bs-ease), padding-bottom var(--bs-dur-kb) var(--bs-ease), max-height var(--bs-dur-kb) var(--bs-ease);
+  will-change: transform; touch-action: pan-y;
+}
+.bs *, .bs *::before, .bs *::after { box-sizing: border-box; }
+.bs[hidden] { display: none !important; }
+.bs.is-open { transform: translate3d(0, 0, 0); transition-duration: var(--bs-dur-in), var(--bs-dur-kb), var(--bs-dur-kb); }
+.bs.is-dragging { transition: none; }
+
+/* inverse (dark surface in light mode) — quick checks, feedback: neutral roles re-pointed at inverse tokens */
+.bs.bs--inverse {
+  --bs-content-neutral-base: var(--bs-content-inverse-base);
+  --bs-content-neutral-muted: var(--bs-content-inverse-muted);
+  --bs-content-neutral-faded: var(--bs-content-inverse-faded);
+  --bs-content-neutral-brand: var(--bs-content-inverse-brand);
+  --bs-stroke-neutral-base: var(--bs-stroke-inverse-base);
+  --bs-surface-neutral-muted: var(--bs-surface-inverse-raised);
+  --bs-surface-neutral-state-hover: var(--bs-surface-inverse-state-hover);
+  --bs-surface-neutral-state-pressed: var(--bs-surface-inverse-state-pressed);
+  background: var(--bs-surface-inverse-base); color: var(--bs-content-neutral-base);
+  border-top: var(--bs-stroke-thin) solid var(--bs-stroke-inverse-muted);
+}
+
+/* nested — a sheet that opens INSIDE another sheet and covers it (e.g. "See all") */
+.bs--nested { position: absolute; top: 0; max-height: none; height: 100%; box-shadow: none; transform: translate3d(0, 110%, 0); transition: transform 280ms ease; }
+.bs--nested.is-open { transition-duration: 280ms; }
+
+/* ══ 1 · TOP SECTION ══════════════════════════════════════════════════ */
+.bs-top {
+  flex-shrink: 0; position: relative; z-index: 2;
+  display: flex; flex-direction: column;              /* flex keeps the handle's margin from collapsing */
+  touch-action: none;                                 /* drag-to-dismiss handle zone */
+  transition: box-shadow 160ms ease;
+}
+.bs-handle {
+  flex-shrink: 0;
+  width: var(--bs-sheet-handle-w); height: var(--bs-sheet-handle-h);
+  margin: var(--bs-handle-top) auto 0;
+  border-radius: var(--bs-radius-full);
+  background: var(--bs-stroke-neutral-base);
+  cursor: grab; touch-action: none;
+}
+.bs-handle::before { content: ""; display: block; height: 24px; margin: -10px -24px 0; }   /* 88 × 24 drag target */
+
+/* ── Heading LAYOUT (where things sit) and heading SIZE (how big the title is) are separate choices ──
+   Layout:  .bs-head            title bar — title + close in one row, 28px close (lists, pickers, forms)
+            .bs-head--display   display   — stacked eyebrow · title · sub, 32px close in the corner (confirmations, nudges, OTP)
+   Size:    .bs-head--lg        Large  24/28 bold + Body / md sub (content.neutral.muted, 8 above)
+            .bs-head--md        Medium 16/20 bold + Body / sm sub (content.neutral.faded, 2 above)
+   Defaults: title bar = Medium, display = Large. Add the size class to override either way. */
+.bs-head {
+  --bs-h-size: var(--bs-title-md-size); --bs-h-lh: var(--bs-title-md-lh); --bs-h-ls: var(--bs-title-md-ls);
+  --bs-h-sub-size: var(--bs-body-sm-size); --bs-h-sub-lh: var(--bs-body-sm-lh);
+  --bs-h-sub-color: var(--bs-content-neutral-faded); --bs-h-sub-gap: var(--bs-spacing-stack-3xs);
+  display: flex; align-items: center; gap: var(--bs-spacing-inline-md);
+  padding: var(--bs-head-pad-top) var(--bs-gutter) var(--bs-head-pad-bottom);
+}
+.bs-head--display, .bs-head.bs-head--lg {
+  --bs-h-size: var(--bs-title-lg-size); --bs-h-lh: var(--bs-title-lg-lh); --bs-h-ls: var(--bs-title-lg-ls);
+  --bs-h-sub-size: var(--bs-body-md-size); --bs-h-sub-lh: var(--bs-body-md-lh);
+  --bs-h-sub-color: var(--bs-content-neutral-muted); --bs-h-sub-gap: var(--bs-spacing-stack-xs);
+}
+.bs-head.bs-head--md {
+  --bs-h-size: var(--bs-title-md-size); --bs-h-lh: var(--bs-title-md-lh); --bs-h-ls: var(--bs-title-md-ls);
+  --bs-h-sub-size: var(--bs-body-sm-size); --bs-h-sub-lh: var(--bs-body-sm-lh);
+  --bs-h-sub-color: var(--bs-content-neutral-faded); --bs-h-sub-gap: var(--bs-spacing-stack-3xs);
+}
+.bs-heading { flex: 1; min-width: 0; }
+.bs-title {
+  margin: 0; color: inherit;
+  font: var(--bs-weight-bold) var(--bs-h-size, var(--bs-title-md-size))/var(--bs-h-lh, var(--bs-title-md-lh)) var(--bs-typeface-brand);
+  letter-spacing: var(--bs-h-ls, var(--bs-title-md-ls));
+}
+.bs-title .accent { color: var(--bs-content-neutral-brand); }
+.bs-sub {
+  margin: var(--bs-h-sub-gap, var(--bs-spacing-stack-3xs)) 0 0;
+  font: var(--bs-weight-medium) var(--bs-h-sub-size, var(--bs-body-sm-size))/var(--bs-h-sub-lh, var(--bs-body-sm-lh)) var(--bs-typeface-brand);
+  color: var(--bs-h-sub-color, var(--bs-content-neutral-faded));
+}
+.bs-eyebrow {
+  margin: 0 0 var(--bs-eyebrow-sm-para);
+  font: var(--bs-weight-bold) var(--bs-eyebrow-sm-size)/var(--bs-eyebrow-sm-lh) var(--bs-typeface-brand);
+  letter-spacing: var(--bs-eyebrow-sm-ls); text-transform: uppercase;
+  color: var(--bs-content-neutral-brand);
+}
+.bs-close {
+  position: relative; flex-shrink: 0; width: var(--bs-sheet-close-sm); height: var(--bs-sheet-close-sm);
+  display: grid; place-items: center; padding: 0;
+  border: none; border-radius: var(--bs-radius-full);
+  background: var(--bs-surface-neutral-muted); color: var(--bs-content-neutral-muted);
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: background 140ms ease, color 140ms ease;
+}
+.bs-close::after { content: ""; position: absolute; inset: -6px; }   /* 28 + 2·6 = size.control.sm (40) hit area */
+.bs-close svg { width: var(--bs-icon-xs); height: var(--bs-icon-xs); }
+.bs-close:active { background: var(--bs-surface-neutral-state-pressed); color: var(--bs-content-neutral-base); }
+@media (hover: hover) { .bs-close:hover { background: var(--bs-surface-neutral-state-hover); color: var(--bs-content-neutral-base); } }
+
+/* display layout — stacked heading, inset.xxl above it, close 32px at 16/16, stack.xxl to the content */
+.bs-head--display { display: block; position: static; padding: var(--bs-display-pad-top) var(--bs-gutter) var(--bs-display-to-body); }
+.bs-head--display .bs-close {
+  position: absolute; top: var(--bs-close-offset); right: var(--bs-close-offset);
+  width: var(--bs-sheet-close-md); height: var(--bs-sheet-close-md);
+}
+.bs-head--display .bs-close::after { inset: -4px; }   /* 32 + 2·4 = 40 */
+.bs-head--display .bs-close svg { width: var(--bs-icon-sm); height: var(--bs-icon-sm); }
+/* keep the heading clear of the close: close + its offset − gutter + inline gap */
+.bs-head--display:has(.bs-close) .bs-heading { padding-right: calc(var(--bs-sheet-close-md) + var(--bs-close-offset) - var(--bs-gutter) + var(--bs-spacing-inline-md)); }
+
+/* focus — stroke.neutral.focus outline + elevation.focus.default ring */
+.bs :focus-visible { outline: var(--bs-stroke-thick) solid var(--bs-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--bs-elevation-focus-default); }
+.bs:focus-visible { outline: none; box-shadow: var(--bs-elevation-neutral-modal); }   /* the sheet itself takes focus on open: no ring */
+
+/* ══ 2 · BODY ═════════════════════════════════════════════════════════ */
+.bs-body {
+  flex: 1 1 auto; min-height: 0;
+  overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+}
+.bs-body--gutter { padding-left: var(--bs-gutter); padding-right: var(--bs-gutter); }
+
+/* ══ 3 · BOTTOM SECTION ═══════════════════════════════════════════════
+   One per sheet: buttons (.bs-actions) and any of terms (.bs-terms) and a
+   trust marker (.bs-trust), in the order written. Where it sits decides how
+   it behaves — ShineSheet moves it for data-bs-cta="inline|sticky|auto". */
+.bs-bottom {
+  flex-shrink: 0; position: relative; z-index: 2;
+  display: flex; flex-direction: column; gap: var(--bs-bottom-gap);
+  transition: box-shadow 160ms ease;
+}
+.bs-bottom[hidden] { display: none !important; }
+/* sticky: pinned after the body; a Separator (A.11 default) only while more content sits below */
+.bs > .bs-bottom { padding: var(--bs-sticky-pad) var(--bs-gutter) max(var(--bs-sticky-pad), var(--bs-safe)); }
+.bs.has-more > .bs-bottom { box-shadow: inset 0 var(--bs-stroke-thin) 0 var(--bs-stroke-neutral-muted); }
+/* inline: the last thing in the body — stack.xxl above and below; with a home indicator: safe area + inset.xl */
+.bs-body > .bs-bottom {
+  padding: var(--bs-inline-top) var(--bs-gutter) max(var(--bs-inline-end), calc(var(--bs-safe) + var(--bs-sticky-pad)));
+}
+.bs-body--gutter > .bs-bottom { padding-left: 0; padding-right: 0; }
+.bs-body > .bs-bottom:first-child { padding-top: 0; }   /* nothing above it in the body: the heading's spacing is enough */
+
+/* buttons — A.02: stacked with spacing.stack.xs, or a row with spacing.inline.md */
+.bs-actions { display: flex; flex-direction: column; gap: var(--bs-btn-gap); }
+.bs-actions--row { flex-direction: row; gap: var(--bs-spacing-inline-md); }
+.bs-actions--row > * { flex: 1 1 0; min-width: 0; }
+
+/* Button · DS A.02, size lg (control.lg 48 · radius.lg · inset.xxl · Label / lg bold) */
+.bs-btn {
+  appearance: none; -webkit-appearance: none; margin: 0;
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--bs-spacing-inline-md);
+  height: var(--bs-control-lg); padding: 0 var(--bs-spacing-inset-xxl); border-radius: var(--bs-radius-lg);
+  border: var(--bs-stroke-default) solid transparent;
+  font: var(--bs-weight-bold) var(--bs-label-lg-size)/var(--bs-label-lg-lh) var(--bs-typeface-brand);
+  letter-spacing: 0; text-decoration: none; white-space: nowrap;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transform: translateY(0);
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+}
+.bs-btn svg { width: var(--bs-icon-md); height: var(--bs-icon-md); flex-shrink: 0; }
+.bs-btn--primary { background: var(--bs-surface-inverse-base); color: var(--bs-btn-primary-content); }
+.bs-btn--brand { background: var(--bs-surface-brand-intense); color: var(--bs-content-on-fill-dark-base); box-shadow: var(--bs-elevation-brand-raised); }
+.bs-btn--secondary { background: transparent; color: var(--bs-content-neutral-base); border-color: var(--bs-stroke-neutral-base); }
+.bs-btn--ghost { background: transparent; color: var(--bs-content-neutral-faded); padding: 0 var(--bs-spacing-inset-lg); }
+.bs-btn--destructive { background: var(--bs-surface-status-negative-intense); color: var(--bs-content-on-fill-dark-base); }
+/* pressed (touch + pointer) */
+.bs-btn--primary:active { background: var(--bs-surface-inverse-state-pressed); box-shadow: var(--bs-elevation-neutral-raised); }
+.bs-btn--brand:active { background: var(--bs-surface-brand-intense-pressed); box-shadow: var(--bs-elevation-brand-subtle); }
+.bs-btn--secondary:active { background: var(--bs-surface-neutral-state-pressed); }
+.bs-btn--ghost:active { background: var(--bs-surface-neutral-state-hover); color: var(--bs-content-neutral-base); }
+.bs-btn--destructive:active { background: var(--bs-surface-status-negative-intense-hover); box-shadow: var(--bs-elevation-neutral-raised); }
+/* hover (pointer devices): hover surface + motion.lift.up + lifted elevation on filled */
+@media (hover: hover) {
+  .bs-btn--primary:hover:not(:active) { background: var(--bs-surface-inverse-state-hover); box-shadow: var(--bs-elevation-neutral-lifted); transform: translateY(var(--bs-lift-up)); }
+  .bs-btn--brand:hover:not(:active) { background: var(--bs-surface-brand-intense-hover); box-shadow: var(--bs-elevation-brand-lifted); transform: translateY(var(--bs-lift-up)); }
+  .bs-btn--secondary:hover:not(:active) { background: var(--bs-surface-neutral-state-hover); }
+  .bs-btn--ghost:hover:not(:active) { background: var(--bs-surface-neutral-state-hover); color: var(--bs-content-neutral-base); }
+  .bs-btn--destructive:hover:not(:active) { background: var(--bs-surface-status-negative-intense-hover); box-shadow: var(--bs-elevation-neutral-lifted); transform: translateY(var(--bs-lift-up)); }
+}
+.bs-btn:disabled, .bs-btn[aria-disabled="true"] {
+  background: var(--bs-stroke-neutral-disabled); color: var(--bs-content-neutral-disabled);
+  border-color: transparent; box-shadow: none; cursor: default; transform: none;
+}
+.bs-btn--secondary:disabled, .bs-btn--secondary[aria-disabled="true"] { background: transparent; border-color: var(--bs-stroke-neutral-disabled); }
+.bs-btn--ghost:disabled, .bs-btn--ghost[aria-disabled="true"] { background: transparent; }
+
+/* terms — Body / sm medium, faded, centred; links muted semibold, underlined */
+.bs-terms {
+  margin: 0; text-align: center; text-wrap: balance;
+  font: var(--bs-weight-medium) var(--bs-body-sm-size)/var(--bs-body-sm-lh) var(--bs-typeface-brand);
+  color: var(--bs-content-neutral-faded);
+}
+.bs-terms a { color: var(--bs-content-neutral-muted); font-weight: var(--bs-weight-semibold); text-decoration: underline; text-underline-offset: 2px; }
+
+/* trust marker — Body / sm semibold + icon.xs in content.status.positive, spacing.inline.sm gap */
+.bs-trust {
+  margin: 0; display: flex; align-items: center; justify-content: center; gap: var(--bs-spacing-inline-sm);
+  font: var(--bs-weight-semibold) var(--bs-body-sm-size)/var(--bs-body-sm-lh) var(--bs-typeface-brand);
+  color: var(--bs-content-neutral-faded);
+}
+.bs-trust svg { width: var(--bs-icon-xs); height: var(--bs-icon-xs); flex-shrink: 0; color: var(--bs-content-status-positive); }
+
+/* top section lifts (elevation.neutral.lifted — "sticky headers") only once content scrolls under it */
+.bs.is-scrolled > .bs-top { box-shadow: var(--bs-elevation-neutral-lifted); }
+
+/* sheets without a bottom section still clear the home indicator */
+.bs--pad-bottom { padding-bottom: max(var(--bs-spacing-stack-xxl), var(--bs-safe)); }
+
+/* ── On-screen keyboard — ShineSheet sets html.bs-kb + --bs-kb / --bs-vvh ──
+   The sheet keeps its place at the bottom edge and its surface continues
+   behind the keyboard (native iOS look); the content is padded up by the
+   keyboard height. The home indicator sits under the keyboard → no safe area. */
+.bs-kb .bs:not(.bs--nested) { padding-bottom: var(--bs-kb, 0px); max-height: calc(var(--bs-vvh, 100vh) - 16px + var(--bs-kb, 0px)); }
+.bs-kb .bs-body > .bs-bottom { padding-bottom: var(--bs-gutter); }
+.bs-kb .bs > .bs-bottom { padding-bottom: var(--bs-sticky-pad); }
+.bs-kb .bs--pad-bottom:not(.bs--nested) { padding-bottom: calc(var(--bs-spacing-stack-xxl) + var(--bs-kb, 0px)); }
+
+/* page scroll lock (set on <html> by ShineSheet) */
+.bs-lock, .bs-lock body { overflow: hidden !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .bs, .bs--nested, .bs-scrim { transition-duration: 1ms !important; }
+  .bs-btn { transition: none; }
+  .bs-btn:hover { transform: none !important; }
+}
+</style>
+<!-- ▲ COMPONENT · bottom-sheet -->
+<link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Shine Login"><meta name="apple-mobile-web-app-status-bar-style" content="default"><link rel="apple-touch-icon" href="icons/icon-180.png"><link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png"><link rel="apple-touch-startup-image" href="icons/launch-640x1136.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-750x1334.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1242x2208.png" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1125x2436.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-828x1792.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1242x2688.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1170x2532.png" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1284x2778.png" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1179x2556.png" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1290x2796.png" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1206x2622.png" media="(device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1320x2868.png" media="(device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1260x2736.png" media="(device-width: 420px) and (device-height: 912px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><script>if("serviceWorker" in navigator)addEventListener("load",function(){navigator.serviceWorker.register("sw.js")})</script>
+</head>
+<body>
+
+  <div class="view view-in active" id="viewIn">
+    <section class="mr-sheet is-open" id="mrSheet" aria-label="My Jobs">
+      <div class="mr-page-hd">
+        <button class="mb mb--lead" type="button" data-shine-menu data-page="jobs" aria-label="Menu">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+        <!-- ▼ COMPONENT · menu-button v1.0.0 — verbatim copy of App-login/app-components/menu-button/menu-button.js -->
+                <script data-component="menu-button">
+        /* ═══════════════════════════════════════════════════════════════════════
+           SHINE · MENU BUTTON  (app component · App-login)              v1.0.0
+           Pair with menu-button.css. Zero dependencies.
+        
+           Markup (the same everywhere — copy it exactly):
+             <button class="mb" type="button" data-shine-menu aria-label="Menu">
+               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+             </button>
+           Leading a title row (My Jobs, Docket): add .mb--lead.
+        
+           Behaviour: a tap fires `shine:menu` on document, detail { button, page }.
+           The menu itself isn't built yet — pages show a placeholder on that event.
+           API: window.ShineMenu.version
+           ═══════════════════════════════════════════════════════════════════════ */
+        (function () {
+          'use strict';
+          if (window.ShineMenu) return;
+          window.ShineMenu = { version: '1.0.0' };
+          document.addEventListener('click', function (e) {
+            var b = e.target.closest && e.target.closest('[data-shine-menu]');
+            if (!b || b.tagName === 'STYLE' || b.tagName === 'SCRIPT') return;
+            e.preventDefault();
+            document.dispatchEvent(new CustomEvent('shine:menu', { detail: { button: b, page: b.getAttribute('data-page') || '' } }));
+          });
+        })();
+        </script>
+                <!-- ▲ COMPONENT · menu-button -->
+        <button class="mr-back" data-mj="backlist" aria-label="Back to Saved" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+        </button>
+        <h2 id="mrTitleM">My Jobs.</h2>
+      </div>
+      <div class="mr-seg-wrap">
+        <div class="seg seg--block seg--sm" id="mjSeg" data-shine-seg role="tablist" aria-label="My Jobs">
+          <button class="seg-item is-active" role="tab" aria-selected="true" data-value="recommended">Recommended</button>
+          <button class="seg-item" role="tab" aria-selected="false" data-value="saved">Saved</button>
+          <button class="seg-item" role="tab" aria-selected="false" data-value="applied">Applied</button>
+        </div>
+<!-- ▼ COMPONENT · segment-control v1.1.0 — verbatim copy of App-login/app-components/segment-control/segment-control.js -->
+        <script data-component="segment-control">
+/* ═══════════════════════════════════════════════════════════════════════
+   SHINE · SEGMENT CONTROL  (app component · App-login)          v1.1.0
+   Pair with segment-control.css. Zero dependencies, no build step.
+   Implements design-system/component-system.md M.01 Segment Control.
+
+   ▶ BEFORE BUILDING OR CHANGING A SEGMENT: read segment-control-spec.html
+     + README.md in this folder.
+
+   Markup — tabs (the segment switches what is shown below it):
+
+     <div class="seg seg--block seg--sm" data-shine-seg role="tablist" aria-label="My Jobs">
+       <button class="seg-item is-active" role="tab" aria-selected="true"  data-value="recommended">Recommended</button>
+       <button class="seg-item"           role="tab" aria-selected="false" data-value="saved">Saved</button>
+       <button class="seg-item"           role="tab" aria-selected="false" data-value="applied">Applied</button>
+     </div>
+
+     • Panes: give an option aria-controls="<pane id>" and ShineSegment shows that pane and
+       hides the panes of the other options ([hidden]). Without aria-controls, listen to the
+       event and render the view yourself.
+     • Toggle (no tabs/panes): leave out role="tablist" / role="tab"; ShineSegment then uses
+       aria-pressed instead of aria-selected.
+     • Exactly one option is selected at all times; if none is marked, the first enabled one is.
+     • data-value is the option's value (falls back to its text).
+
+   Behaviour
+     • Tap / click selects. Keyboard (tabs): ← → move and select (wrap), Home / End, one tab
+       stop (roving tabindex). Toggles: every option is a button in the tab order.
+     • Disabled options ([disabled] or aria-disabled="true") are skipped.
+     • Motion (v1.1) — STRETCH: ShineSegment inserts one <span class="seg-thumb"> per track and
+       adds .seg--glide. On a change it sets data-seg-dir="right" | "left" (towards the new option)
+       and moves the thumb's left / right edges; the CSS transitions make the leading edge leap and
+       the trailing edge follow. Silent selection, resize and first paint use data-seg-dir="none"
+       (instant). A track that is hidden (0 wide) keeps the per-option thumb until it is shown.
+     • Event `shine:segment` bubbles from the track on every change:
+         detail { value, previous, item, source: 'user' | 'api' }
+       It is cancelable — preventDefault() keeps the previous option selected.
+       Re-selecting the current option fires `shine:segment-reselect` (e.g. scroll the list to top).
+
+   API (window.ShineSegment)
+     ShineSegment.mount(el)                   wire one track (done automatically for [data-shine-seg])
+     ShineSegment.init(root?)                 mount every [data-shine-seg] under root (default document)
+     ShineSegment.set(elOrSel, value, opts?)  select by value; opts.silent = no event. Returns true if it changed.
+     ShineSegment.get(elOrSel)                current value
+     ShineSegment.refresh(elOrSel?)           re-place the thumb(s) instantly after a layout change the
+                                              component can't see (it already follows resizes)
+
+   Inlining: pages carry verbatim copies between ▼/▲ COMPONENT · segment-control markers as
+   <style data-component="segment-control"> / <script data-component="segment-control">.
+   Never put data-shine-seg on those tags (the mount query would match them).
+   ═══════════════════════════════════════════════════════════════════════ */
+(function () {
+  'use strict';
+  if (window.ShineSegment) return;
+  var VERSION = '1.1.0';
+
+  function $(x) { return typeof x === 'string' ? document.querySelector(x) : x; }
+  function items(seg) {
+    var out = [], k = seg.children;
+    for (var i = 0; i < k.length; i++) if (k[i].classList && k[i].classList.contains('seg-item')) out.push(k[i]);
+    return out;
+  }
+  function isTabs(seg) { return seg.getAttribute('role') === 'tablist'; }
+  function disabled(it) { return it.disabled || it.getAttribute('aria-disabled') === 'true'; }
+  function val(it) { return it.getAttribute('data-value') || (it.textContent || '').trim(); }
+  function current(seg) {
+    var a = items(seg);
+    for (var i = 0; i < a.length; i++) if (a[i].classList.contains('is-active')) return a[i];
+    return null;
+  }
+  function pane(it) {
+    var id = it.getAttribute('aria-controls');
+    return id ? document.getElementById(id) : null;
+  }
+
+  // paint the selection: class + ARIA + roving tabindex + panes
+  function paint(seg, on) {
+    var tabs = isTabs(seg), a = items(seg);
+    for (var i = 0; i < a.length; i++) {
+      var it = a[i], sel = it === on;
+      it.classList.toggle('is-active', sel);
+      if (tabs) {
+        it.setAttribute('aria-selected', sel ? 'true' : 'false');
+        it.removeAttribute('aria-pressed');
+        it.setAttribute('tabindex', sel ? '0' : '-1');
+      } else {
+        it.setAttribute('aria-pressed', sel ? 'true' : 'false');
+        it.removeAttribute('aria-selected');
+        it.removeAttribute('tabindex');
+      }
+      var p = pane(it);
+      if (p) { p.setAttribute('data-seg-pane', ''); p.hidden = !sel; if (tabs && it.id) p.setAttribute('aria-labelledby', it.id); }
+    }
+  }
+
+  // ── stretch thumb ──
+  function thumb(seg) {
+    var t = seg.__segThumb;
+    if (!t) {
+      t = document.createElement('span'); t.className = 'seg-thumb'; t.setAttribute('aria-hidden', 'true');
+      seg.insertBefore(t, seg.firstChild); seg.__segThumb = t;
+    }
+    return t;
+  }
+  // dir: 'right' | 'left' (animate, that edge leads) · 'none' (instant)
+  function place(seg, dir) {
+    var on = current(seg), t = thumb(seg);
+    if (!on || !seg.clientWidth || !on.offsetWidth) { seg.classList.remove('seg--glide'); return false; }   // hidden: per-option thumb
+    var tr = seg.getBoundingClientRect(), ir = on.getBoundingClientRect();
+    var bl = seg.clientLeft, br = seg.offsetWidth - seg.clientWidth - seg.clientLeft;
+    var left = ir.left - tr.left - bl, right = tr.right - ir.right - br;
+    if (!seg.classList.contains('seg--glide')) dir = 'none';     // first placement never animates
+    seg.setAttribute('data-seg-dir', dir);
+    t.style.left = left + 'px'; t.style.right = right + 'px';
+    if (dir === 'none') { void t.offsetWidth; seg.classList.add('seg--glide'); }
+    return true;
+  }
+  function idx(seg, it) { return items(seg).indexOf(it); }
+
+  function choose(seg, it, source) {
+    var prev = current(seg);
+    if (!it || disabled(it)) return false;
+    if (it === prev) {
+      if (source === 'user') seg.dispatchEvent(new CustomEvent('shine:segment-reselect', { bubbles: true, detail: { value: val(it), item: it } }));
+      return false;
+    }
+    if (source !== 'silent') {
+      var ev = new CustomEvent('shine:segment', { bubbles: true, cancelable: true,
+        detail: { value: val(it), previous: prev ? val(prev) : null, item: it, source: source } });
+      paint(seg, it);
+      if (!seg.dispatchEvent(ev)) { paint(seg, prev); return false; }   // cancelled → put it back (thumb never moved)
+      place(seg, prev && idx(seg, it) < idx(seg, prev) ? 'left' : 'right');
+      return true;
+    }
+    paint(seg, it);
+    place(seg, 'none');
+    return true;
+  }
+
+  function mount(seg) {
+    seg = $(seg);
+    if (!seg || seg.__shineSeg || seg.tagName === 'STYLE' || seg.tagName === 'SCRIPT') return seg;
+    seg.__shineSeg = true;
+    var a = items(seg);
+    for (var i = 0; i < a.length; i++) if (a[i].tagName === 'BUTTON' && !a[i].hasAttribute('type')) a[i].setAttribute('type', 'button');
+    // exactly one selected: the marked one (class or ARIA), else the first enabled
+    var on = null;
+    for (i = 0; i < a.length && !on; i++)
+      if (a[i].classList.contains('is-active') || a[i].getAttribute('aria-selected') === 'true' || a[i].getAttribute('aria-pressed') === 'true') on = a[i];
+    for (i = 0; i < a.length && !on; i++) if (!disabled(a[i])) on = a[i];
+    paint(seg, on);
+    place(seg, 'none');
+    if (window.ResizeObserver) new ResizeObserver(function () { place(seg, 'none'); }).observe(seg);
+    else window.addEventListener('resize', function () { place(seg, 'none'); });
+
+    seg.addEventListener('click', function (e) {
+      var it = e.target.closest && e.target.closest('.seg-item');
+      if (!it || it.parentNode !== seg) return;
+      if (disabled(it)) { e.preventDefault(); return; }
+      choose(seg, it, 'user');
+    });
+    seg.addEventListener('keydown', function (e) {
+      if (!isTabs(seg)) return;
+      var it = e.target.closest && e.target.closest('.seg-item');
+      if (!it || it.parentNode !== seg) return;
+      var en = items(seg).filter(function (x) { return !disabled(x); });
+      var i = en.indexOf(it), n = en.length, to = null;
+      if (e.key === 'ArrowRight') to = en[(i + 1) % n];
+      else if (e.key === 'ArrowLeft') to = en[(i - 1 + n) % n];
+      else if (e.key === 'Home') to = en[0];
+      else if (e.key === 'End') to = en[n - 1];
+      if (!to) return;
+      e.preventDefault();
+      to.focus();
+      choose(seg, to, 'user');
+    });
+    return seg;
+  }
+
+  function init(root) {
+    var list = (root || document).querySelectorAll('[data-shine-seg]');
+    for (var i = 0; i < list.length; i++) mount(list[i]);
+  }
+  function find(seg, value) {
+    var a = items(seg);
+    for (var i = 0; i < a.length; i++) if (val(a[i]) === String(value)) return a[i];
+    return null;
+  }
+
+  window.ShineSegment = {
+    version: VERSION,
+    mount: mount,
+    init: init,
+    set: function (el, value, opts) {
+      var seg = mount($(el)); if (!seg) return false;
+      return choose(seg, find(seg, value), opts && opts.silent ? 'silent' : 'api');
+    },
+    get: function (el) { var seg = mount($(el)); var c = seg && current(seg); return c ? val(c) : null; },
+    refresh: function (el) {
+      var list = el ? [mount($(el))] : document.querySelectorAll('[data-shine-seg]');
+      for (var i = 0; i < list.length; i++) if (list[i] && list[i].__shineSeg) place(list[i], 'none');
+    }
+  };
+
+  init();   // tracks already in the page (place this script after the first segment)
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { init(); });
+})();
+</script>
+        <!-- ▲ COMPONENT · segment-control -->
+      </div>
+      <div class="mr-scroll" id="mjList"></div>
+    </section>
+    <nav data-shine-tabbar data-active="jobs" data-dot="docket" data-href-home="index.html" data-href-docket="docket.html"></nav>
+<!-- ▼ COMPONENT · bottom-tab-bar v1.3.0 · verbatim copy of App-login/app-components/bottom-tab-bar/bottom-tab-bar.js — do not edit here -->
+<script data-component="bottom-tab-bar">
+/* ═══════════════════════════════════════════════════════════════════════
+   SHINE · BOTTOM TAB BAR  (app component)                      v1.3.0
+   Pair with bottom-tab-bar.css. Zero dependencies, no build step.
+
+   Markup — one empty mount, the component renders the tabs:
+     <nav data-shine-tabbar data-active="home" data-dot="docket"></nav>
+       data-active   home · jobs · docket · me            (default home)
+       data-dot      tab ids with an unread dot, space-separated
+       data-href-<tab>="…"   page to open for that tab (optional)
+
+   API (window.ShineTabBar)
+     ShineTabBar.setActive('jobs')            — animated; { animate: false } to jump,
+                                                { el: bar } for one bar only
+     ShineTabBar.setDot('docket', false)
+     ShineTabBar.configure({ routes: { jobs: '../App Jobs/jobs.html' } })
+     ShineTabBar.mount(el)        — for a mount added after load
+
+   Behaviour: tapping a tab fires `shine:tab` on document
+   ({ tab, active, bar }) — call preventDefault() to handle it yourself.
+   Otherwise: the current tab scrolls the page to the top; another tab
+   opens its route when it has one and does nothing when it hasn't
+   (screens not built yet).
+   History (v1.1): like a native bottom bar, the stack is never deeper
+   than Home → one tab. Home → tab pushes; tab → tab replaces; tab → Home
+   goes back to the Home entry (or replaces when there is none) — so the
+   phone's Back button from any tab lands on Home, and Back on Home
+   leaves the app.
+   Tab change (v1.2 · Stretch + Flip): the wash stretches to the new tab
+   and the new icon turns over from outline to filled (timing in the CSS).
+   Each tab is its own page, so the move plays on ARRIVAL: the tap stores
+   the tab it left (sessionStorage 'shine-tabbar:prev', valid 4 s, only for
+   the page it opened); the new page paints the bar on that tab, still,
+   then animates to its own tab. Also on a back-forward-cache restore.
+   No motion on first paint without a stored tab, resize, or with
+   prefers-reduced-motion (the CSS drops the transitions).
+   ═══════════════════════════════════════════════════════════════════════ */
+(function (global) {
+  'use strict';
+  var doc = global.document;
+  var TABS = [
+    { id: 'home', label: 'Home',
+      out: '<path d="M3 11.5L12 4l9 7.5V20a1.5 1.5 0 01-1.5 1.5H4.5A1.5 1.5 0 013 20v-8.5z"/><path d="M9.5 21.5v-6.5a1 1 0 011-1h3a1 1 0 011 1v6.5"/>',
+      fill: '<path d="M11.36 4.36a1 1 0 011.28 0l8.5 7.07a1 1 0 01.36.77V20a1.5 1.5 0 01-1.5 1.5H15v-6a1 1 0 00-1-1h-4a1 1 0 00-1 1v6H4.5A1.5 1.5 0 013 20v-7.8a1 1 0 01.36-.77z"/>' },
+    { id: 'jobs', label: 'Jobs',
+      out: '<rect x="2.5" y="7.5" width="19" height="13" rx="2.5"/><path d="M8 7.5V5.5A2 2 0 0110 3.5h4a2 2 0 012 2v2"/><path d="M2.5 13h19"/>',
+      fill: '<path d="M10 3.5a2 2 0 00-2 2v2H4.5A2 2 0 002.5 9.5v3a.5.5 0 00.5.5h7v-1a1 1 0 011-1h2a1 1 0 011 1v1h7a.5.5 0 00.5-.5v-3a2 2 0 00-2-2H16v-2a2 2 0 00-2-2h-4zm0 1.5h4a.5.5 0 01.5.5v2h-5v-2a.5.5 0 01.5-.5z"/><path d="M14 13.5h-2a.5.5 0 00-.5.5v.5h-9v6a2 2 0 002 2h15a2 2 0 002-2v-6h-9V14a.5.5 0 00-.5-.5z"/>' },
+    { id: 'docket', label: 'Docket',
+      out: '<rect x="2.5" y="4.75" width="19" height="14.5" rx="2.5"/><path d="M3.2 6.6l7.7 5.13a2 2 0 002.2 0l7.7-5.13"/>',
+      fill: '<path d="M4.5 4h15a2.5 2.5 0 012.24 1.39l-8.63 5.75a2 2 0 01-2.22 0L2.26 5.39A2.5 2.5 0 014.5 4z"/><path d="M22 7.79V17a2.5 2.5 0 01-2.5 2.5h-15A2.5 2.5 0 012 17V7.79l7.78 5.19a3.5 3.5 0 003.88 0L22 7.79z"/>' },
+    { id: 'me', label: 'Me',
+      out: '<circle cx="12" cy="8.5" r="4"/><path d="M4.5 20.5c0-4.1 3.4-7.5 7.5-7.5s7.5 3.4 7.5 7.5"/>',
+      fill: '<circle cx="12" cy="8.5" r="4.5"/><path d="M12 13c-4.4 0-8 3.4-8 7.5 0 .3.2.5.5.5h15c.3 0 .5-.2.5-.5 0-4.1-3.6-7.5-8-7.5z"/>' }
+  ];
+  var routes = {};
+  var bars = [];
+  var KEY = 'shine-tabbar:from-home';          // the tab page that was pushed on top of Home
+  var PREV = 'shine-tabbar:prev';              // { from, to, t } — the tab just left, for the arrival motion
+  function order(id) { for (var i = 0; i < TABS.length; i++) if (TABS[i].id === id) return i; return -1; }
+  function bare(u) { return String(u).split('#')[0]; }
+
+  function navigate(cur, id, url) {
+    var to = new URL(url, global.location.href).href, here = bare(global.location.href);
+    try {
+      var ss = global.sessionStorage;
+      ss.setItem(PREV, JSON.stringify({ from: cur, to: id, t: Date.now() }));
+      if (id === 'home') {                              // back to Home
+        if (ss.getItem(KEY) === here) { ss.removeItem(KEY); global.history.back(); return; }
+        global.location.replace(to); return;
+      }
+      if (cur === 'home') { ss.setItem(KEY, bare(to)); global.location.href = to; return; }
+      if (ss.getItem(KEY) === here) ss.setItem(KEY, bare(to));   // tab → tab keeps one entry above Home
+      global.location.replace(to);
+    } catch (e) { global.location.href = to; }
+  }
+
+  function tabHTML(t, active, dot) {
+    return '<button type="button" class="stb-tab' + (active ? ' is-active' : '') + '" data-tab="' + t.id + '"' +
+             (active ? ' aria-current="page"' : '') + '>' +
+             '<span class="stb-icon" aria-hidden="true"><span class="stb-card">' +
+               '<svg class="stb-out" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' + t.out + '</svg>' +
+               '<svg class="stb-fill" viewBox="0 0 24 24" fill="currentColor">' + t.fill + '</svg>' +
+             '</span></span>' +
+             '<span class="stb-lbl">' + t.label + '</span>' +
+             (t.id === 'docket' || dot ? '<span class="stb-dot" aria-hidden="true"' + (dot ? '' : ' hidden') + '></span>' : '') +
+           '</button>';
+  }
+
+  // ── wash + active tab ────────────────────────────────────────────
+  function place(el) {                                  // put the wash under the active tab
+    var on = el.querySelector('.stb-tab.is-active'), w = el.querySelector('.stb-wash');
+    if (!on || !w) return;
+    var W = el.clientWidth;
+    if (!W || !on.offsetWidth) { el.classList.remove('stb--placed'); return; }   // hidden: tabs paint their own wash
+    w.style.left = on.offsetLeft + 'px';
+    w.style.right = (W - on.offsetLeft - on.offsetWidth) + 'px';
+    el.classList.add('stb--placed');
+  }
+  function still(el, fn) { el.classList.add('stb--still'); el.setAttribute('data-stb-dir', 'none'); fn(); void el.offsetWidth; el.classList.remove('stb--still'); }
+  function show(el, id, animate) {                      // make `id` the active tab, with or without the motion
+    var cur = el.querySelector('.stb-tab.is-active'), to = el.querySelector('.stb-tab[data-tab="' + id + '"]');
+    if (!to) return;
+    var apply = function () {
+      el.querySelectorAll('.stb-tab').forEach(function (b) { b.classList.toggle('is-active', b === to); });
+      place(el);
+    };
+    if (!animate || !cur || cur === to || !el.classList.contains('stb--placed')) { still(el, apply); return; }
+    el.setAttribute('data-stb-dir', order(id) > order(cur.getAttribute('data-tab')) ? 'right' : 'left');
+    apply();
+  }
+  function current(el, id) {                            // semantics follow the page at once
+    el.querySelectorAll('.stb-tab').forEach(function (b) {
+      if (b.getAttribute('data-tab') === id) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+    });
+  }
+  function takePrev(active) {                           // the tab we just came from, if this page is where it led
+    try {
+      var ss = global.sessionStorage, v = JSON.parse(ss.getItem(PREV) || 'null');
+      ss.removeItem(PREV);
+      if (v && v.to === active && v.from !== active && order(v.from) > -1 && Date.now() - v.t < 4000) return v.from;
+    } catch (e) {}
+    return null;
+  }
+  function arrive(el) {                                 // paint the tab we left, then move to this page's tab
+    var active = el.getAttribute('data-active') || 'home', from = takePrev(active);
+    if (!from) return;
+    show(el, from, false);
+    if (!el.classList.contains('stb--placed')) { show(el, active, false); return; }
+    var go = function () { show(el, active, true); };
+    if (global.requestAnimationFrame) global.requestAnimationFrame(function () { global.requestAnimationFrame(go); }); else setTimeout(go, 32);
+  }
+
+  function mount(el) {
+    if (!el || el.__stb || /^(STYLE|SCRIPT)$/.test(el.tagName)) return el;
+    var active = el.getAttribute('data-active') || 'home';
+    var dots = (el.getAttribute('data-dot') || '').split(/\s+/).filter(Boolean);
+    TABS.forEach(function (t) { var h = el.getAttribute('data-href-' + t.id); if (h) routes[t.id] = h; });
+    el.classList.add('stb');
+    if (!el.getAttribute('aria-label')) el.setAttribute('aria-label', 'Primary');
+    el.style.setProperty('--stb-count', TABS.length);
+    el.innerHTML = '<span class="stb-wash" aria-hidden="true"></span>' +
+      TABS.map(function (t) { return tabHTML(t, t.id === active, dots.indexOf(t.id) > -1); }).join('');
+    el.addEventListener('click', function (e) {
+      var b = e.target.closest('.stb-tab'); if (!b || !el.contains(b)) return;
+      var id = b.getAttribute('data-tab'), isActive = b.classList.contains('is-active');
+      var ev; try { ev = new CustomEvent('shine:tab', { detail: { tab: id, active: isActive, bar: el }, cancelable: true }); } catch (x) { ev = null; }
+      if (ev && !doc.dispatchEvent(ev)) return;
+      if (isActive) { global.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+      if (routes[id]) navigate(el.getAttribute('data-active') || 'home', id, routes[id]);
+    });
+    el.__stb = true; bars.push(el);
+    if (doc.body) doc.body.classList.add('stb-host');
+    still(el, function () { place(el); });
+    arrive(el);
+    if (global.ResizeObserver) new global.ResizeObserver(function () { still(el, function () { place(el); }); }).observe(el);
+    else global.addEventListener('resize', function () { still(el, function () { place(el); }); });
+    return el;
+  }
+
+  function each(fn) { bars.forEach(fn); }
+  var api = {
+    mount: mount,
+    setActive: function (id) {
+      var o = arguments[1] || {}, animate = o.animate !== false;
+      each(function (el) { if (o.el && o.el !== el) return; el.setAttribute('data-active', id); current(el, id); show(el, id, animate); });
+    },
+    setDot: function (id, on) {
+      each(function (el) {
+        var b = el.querySelector('.stb-tab[data-tab="' + id + '"]'); if (!b) return;
+        var d = b.querySelector('.stb-dot');
+        if (!d) { d = doc.createElement('span'); d.className = 'stb-dot'; d.setAttribute('aria-hidden', 'true'); b.appendChild(d); }
+        d.hidden = !on;
+      });
+    },
+    configure: function (o) { if (o && o.routes) for (var k in o.routes) routes[k] = o.routes[k]; }
+  };
+  global.ShineTabBar = api;
+
+  function init() { doc.querySelectorAll('[data-shine-tabbar]:not(style):not(script)').forEach(mount); }
+  init();                                                     // renders now if the mount is already parsed
+  if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', init);
+  global.addEventListener('pageshow', function (e) {          // back-forward cache: replay the arrival
+    if (e.persisted) each(function (el) { show(el, el.getAttribute('data-active') || 'home', false); arrive(el); });
+  });
+})(window);
+</script>
+<!-- ▲ COMPONENT · bottom-tab-bar -->
+  </div>
+
+  <!-- Remove-saved confirmation · bottom-sheet component: strong scrim, display layout, Large heading, inline buttons -->
+  <div class="bs" id="mjCf" data-bs-cta="inline" data-bs-scrim="strong" hidden>
+    <div class="bs-top">
+      <div class="bs-handle" aria-hidden="true"></div>
+      <div class="bs-head bs-head--display bs-head--lg">
+        <div class="bs-heading">
+          <h2 class="bs-title" id="mjCfT">Remove this saved job?</h2>
+          <p class="bs-sub">It moves out of your Saved list. You can save it again anytime from the job.</p>
+        </div>
+      </div>
+    </div>
+    <div class="bs-body bs-body--gutter">
+      <div class="bs-bottom">
+        <div class="bs-actions bs-actions--row">
+          <button class="bs-btn bs-btn--secondary" data-mj="cfno" type="button">Keep it</button>
+          <button class="bs-btn bs-btn--destructive" data-mj="cfyes" type="button">Remove</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- ▼ COMPONENT · bottom-sheet v2.4.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.js — do not edit here -->
+<script data-component="bottom-sheet">
+/* ═══════════════════════════════════════════════════════════════════════
+   SHINE · BOTTOM SHEET  (app component · App-login)            v2.4.0
+   Pair with bottom-sheet.css. Zero dependencies, no build step.
+   Engine = App-logout's ShineSheet v1.2.1; v2.0 adds the three-section anatomy;
+   v2.1 aligns every value with design-system/DESIGN-SYSTEM.md.
+
+   ▶ BEFORE BUILDING ANY SHEET: read bottom-sheet-spec.html + README.md in
+     this folder — anatomy, tokens, inline/sticky rules, do / don't.
+
+   Markup — three sections (the sheet starts closed via [hidden]):
+
+     <div class="bs" id="confirmSheet" data-bs-cta="inline" data-bs-scrim="strong" hidden>
+       <div class="bs-top">                                   1 · TOP
+         <div class="bs-handle"></div>
+         <div class="bs-head bs-head--display">               (title bar: .bs-head alone; size: + bs-head--lg | bs-head--md)
+           <div class="bs-heading">
+             <p class="bs-eyebrow">…</p>                      optional
+             <h2 class="bs-title">Remove this saved job?</h2>
+             <p class="bs-sub">…</p>                          optional
+           </div>
+           <button class="bs-close" data-bs-close aria-label="Close">…</button>   optional
+         </div>
+       </div>
+       <div class="bs-body">…content, scrolls…</div>          2 · BODY
+       <div class="bs-bottom">                                3 · BOTTOM
+         <div class="bs-actions bs-actions--row"><button class="bs-btn bs-btn--secondary">…</button>…</div>
+         <p class="bs-terms">…</p>                            optional
+         <p class="bs-trust"><svg…/>…</p>                     optional
+       </div>
+     </div>
+
+   Bottom section behaviour (data-bs-cta on .bs; ShineSheet moves it wherever you wrote it):
+     inline   — last thing in .bs-body: follows the content, scrolls with it
+                (confirmations, nudges, OTP — read, then act)
+     sticky   — after .bs-body: pinned while the body scrolls under it
+                (lists, pickers, filters, long forms — the action stays reachable)
+     auto     — inline while everything fits, sticky as soon as the body overflows
+     Live state: data-bs-cta-state="inline|sticky" + event shine:sheet-cta.
+
+   Open / close:
+     <button data-bs-open="#confirmSheet">…</button>          declarative
+     ShineSheet.open('#confirmSheet', { trigger: btn })       programmatic
+     ShineSheet.close('#confirmSheet')   ·   ShineSheet.close() (top)   ·   ShineSheet.closeAll()
+     ShineSheet.isOpen(el)   ·   ShineSheet.top()   ·   ShineSheet.refresh(el)
+
+   Per-sheet options (attributes on .bs):
+     data-bs-dismiss="false"   no backdrop / Escape / drag dismissal
+     data-bs-drag="false"      no drag-to-dismiss
+     data-bs-scrim="strong"    overlay-strong (36%) + blur (interruptive)  ·  "none" = no scrim
+     data-bs-autofocus         on a child → focused on open (default: the sheet)
+     data-bs-cta="…"           inline | sticky | auto
+     .bs--nested               opens inside its parent .bs and covers it
+     .bs--inverse              dark sheet
+
+   Events (dispatched on the sheet, bubbling):
+     shine:sheet-open    cancelable   detail { trigger }
+     shine:sheet-opened
+     shine:sheet-close   cancelable   detail { reason }   reason: close-button
+                                      | backdrop | escape | drag | api | parent
+     shine:sheet-closed               detail { reason }
+     shine:sheet-cta                  detail { state }    inline ⇄ sticky (auto)
+
+   Behaviour (WAI-ARIA dialog pattern + platform sheet conventions):
+     role="dialog" + aria-modal + aria-labelledby (from .bs-title) · focus
+     moves in, Tab is trapped, focus returns to the trigger · Escape closes
+     the top sheet · page scroll locked while any sheet is open · stacking
+     (a sheet over a sheet gets its own scrim level) · drag the top section
+     down to dismiss (velocity- or distance-based) · trigger gets
+     aria-expanded · reduced motion respected · closed = [hidden] ·
+     keyboard-aware (content padded above the on-screen keyboard, surface runs
+     on behind it) · status-bar tint (html/body dimmed while a scrim is up,
+     so iOS 26 Safari's status bar dims with the page).
+   ═══════════════════════════════════════════════════════════════════════ */
+(function (global) {
+  'use strict';
+  if (global.ShineSheet) return;
+  var doc = global.document;
+
+  var stack = [];                    // open sheets, bottom → top
+  var uid = 0;
+  var FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+  var reduced = global.matchMedia && global.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function $(t) { return typeof t === 'string' ? doc.querySelector(t) : t; }
+  function emit(el, name, detail, cancelable) {
+    var ev;
+    try { ev = new CustomEvent(name, { bubbles: true, cancelable: !!cancelable, detail: detail || {} }); }
+    catch (e) { ev = doc.createEvent('CustomEvent'); ev.initCustomEvent(name, true, !!cancelable, detail || {}); }
+    return el.dispatchEvent(ev);
+  }
+  function attr(el, name, val) { return el.getAttribute(name) === val; }
+  function isNested(el) { return el.classList.contains('bs--nested'); }
+  function dismissible(el) { return !attr(el, 'data-bs-dismiss', 'false'); }
+  function durationOf(el) {
+    if (reduced && reduced.matches) return 0;
+    var d = getComputedStyle(el).transitionDuration.split(',')[0];
+    return (parseFloat(d) || 0) * (d.indexOf('ms') > -1 ? 1 : 1000);
+  }
+
+  /* ── one-time wiring of a sheet ─────────────────────────────────── */
+  function prepare(el) {
+    if (el.__bs) return el.__bs;
+    var st = el.__bs = { id: el.id || ('bs-' + (++uid)), scrim: null, trigger: null, timer: 0, reason: null };
+    el.id = st.id;
+    el.setAttribute('role', el.getAttribute('role') || 'dialog');
+    el.setAttribute('aria-modal', 'true');
+    el.setAttribute('tabindex', '-1');
+    var title = el.querySelector('.bs-title');
+    if (title && !el.hasAttribute('aria-labelledby') && !el.hasAttribute('aria-label')) {
+      title.id = title.id || st.id + '-title';
+      el.setAttribute('aria-labelledby', title.id);
+    }
+    if (!el.classList.contains('is-open')) el.hidden = true;
+
+    // 2 · body — scroll-aware elevation of the top / sticky bottom section
+    var body = el.querySelector(':scope > .bs-body');
+    if (body) {
+      st.body = body;
+      body.addEventListener('scroll', function () { syncScroll(el); }, { passive: true });
+    }
+    // 3 · bottom section — inline (last child of the body) or sticky (after the body)
+    var bottom = body && el.querySelector(':scope > .bs-body > .bs-bottom, :scope > .bs-bottom');
+    if (bottom) {
+      st.bottom = bottom;
+      st.cta = el.getAttribute('data-bs-cta');
+      var wrote = bottom.parentNode === body ? 'inline' : 'sticky';
+      placeCta(el, st.cta === 'inline' || st.cta === 'sticky' ? st.cta : st.cta === 'auto' ? 'inline' : wrote, true);
+    }
+    // 1 · top section — drag to dismiss from here only, so body scrolling is never hijacked
+    if (!attr(el, 'data-bs-drag', 'false')) {
+      Array.prototype.forEach.call(el.querySelectorAll(':scope > .bs-top, :scope > .bs-handle, :scope > .bs-head'), function (h) { dragify(el, h); });
+    }
+    return st;
+  }
+
+  /* ── bottom section placement (inline ⇄ sticky) ───────────────── */
+  function placeCta(el, state, silent) {
+    var st = el.__bs, bt = st.bottom, body = st.body;
+    if (!bt || !body) return;
+    var prev = el.getAttribute('data-bs-cta-state');
+    var had = bt.contains(doc.activeElement) ? doc.activeElement : null;    // keep focus across the move
+    if (state === 'sticky') { if (bt.parentNode !== el || bt.previousElementSibling !== body) body.parentNode.insertBefore(bt, body.nextSibling); }
+    else if (bt.parentNode !== body || bt !== body.lastElementChild) body.appendChild(bt);
+    if (had && doc.activeElement !== had) { try { had.focus({ preventScroll: true }); } catch (e) { had.focus(); } }
+    el.setAttribute('data-bs-cta-state', state);
+    if (!silent && prev && prev !== state) emit(el, 'shine:sheet-cta', { state: state });
+  }
+  // auto: inline while everything fits, sticky once the body overflows. The inline bottom is taller than
+  // the sticky one (24 above + 24 below vs 16 + 16 — the token values), so returning to inline needs that much spare room → no flip-flop.
+  function px(el, name, fb) { var v = parseFloat(getComputedStyle(el).getPropertyValue(name)); return isNaN(v) ? fb : v; }
+  function maxSheetHeight(el) {
+    var vh = global.visualViewport ? Math.min(global.visualViewport.height, global.innerHeight) : global.innerHeight;
+    var m = parseFloat(getComputedStyle(el).maxHeight);
+    return isNaN(m) ? vh * 0.9 : Math.min(m, isNested(el) ? m : vh * 0.9);
+  }
+  function syncCta(el) {
+    var st = el.__bs;
+    if (!st || !st.bottom || st.cta !== 'auto' || el.hidden) return;
+    var b = st.body, bt = st.bottom, state = el.getAttribute('data-bs-cta-state');
+    if (state !== 'sticky') {
+      if (b.scrollHeight > b.clientHeight + 1) placeCta(el, 'sticky');
+    } else {
+      var cs = getComputedStyle(bt), pt = parseFloat(cs.paddingTop), pb = parseFloat(cs.paddingBottom);
+      var content = bt.offsetHeight - pt - pb;
+      var g = px(el, '--bs-gutter', 24), top = px(el, '--bs-inline-top', 24), end = px(el, '--bs-inline-end', 24), pad = px(el, '--bs-sticky-pad', 16);
+      var safe = pb > pad ? pb : 0;                                                // home-indicator inset in use
+      var below = doc.documentElement.classList.contains('bs-kb') ? g : Math.max(end, safe + pad);
+      var inlineH = content + top + below;
+      var room = b.clientHeight + bt.offsetHeight + Math.max(0, maxSheetHeight(el) - el.offsetHeight);
+      if (b.scrollHeight + inlineH <= room - 1) placeCta(el, 'inline');
+    }
+  }
+  function watchCta(el, on) {
+    var st = el.__bs;
+    if (!st || !st.bottom || st.cta !== 'auto') return;
+    if (on) {
+      if (st.watch) return;
+      var raf = 0, run = function () { cancelAnimationFrame(raf); raf = requestAnimationFrame(function () { syncCta(el); syncScroll(el); }); };
+      st.watch = { run: run, ro: global.ResizeObserver ? new ResizeObserver(run) : null, mo: global.MutationObserver ? new MutationObserver(run) : null };
+      if (st.watch.ro) { st.watch.ro.observe(st.body); Array.prototype.forEach.call(st.body.children, function (c) { st.watch.ro.observe(c); }); }
+      if (st.watch.mo) st.watch.mo.observe(st.body, { childList: true, subtree: true, characterData: true });
+      global.addEventListener('resize', run);
+      if (global.visualViewport) global.visualViewport.addEventListener('resize', run);
+      syncCta(el);
+    } else if (st.watch) {
+      if (st.watch.ro) st.watch.ro.disconnect();
+      if (st.watch.mo) st.watch.mo.disconnect();
+      global.removeEventListener('resize', st.watch.run);
+      if (global.visualViewport) global.visualViewport.removeEventListener('resize', st.watch.run);
+      st.watch = null;
+    }
+  }
+
+  function syncScroll(el) {
+    var b = el.__bs && el.__bs.body; if (!b) return;
+    el.classList.toggle('is-scrolled', b.scrollTop > 2);
+    el.classList.toggle('has-more', b.scrollHeight - b.clientHeight - b.scrollTop > 2);
+  }
+
+  /* ── scrim ──────────────────────────────────────────────────────── */
+  function scrimFor(el) {
+    var st = el.__bs;
+    if (attr(el, 'data-bs-scrim', 'none')) return null;
+    if (!st.scrim) {
+      var s = doc.createElement('div');
+      s.className = 'bs-scrim' + (isNested(el) ? ' bs-scrim--nested' : '') + (attr(el, 'data-bs-scrim', 'strong') ? ' bs-scrim--strong' : '');
+      s.setAttribute('aria-hidden', 'true');
+      s.addEventListener('click', function () { if (dismissible(el)) close(el, 'backdrop'); });
+      el.parentNode.insertBefore(s, el);           // sibling → nested scrims stay inside the parent sheet
+      st.scrim = s;
+    }
+    return st.scrim;
+  }
+
+  /* ── scroll lock (ref-counted via the stack) ────────────────────── */
+  function lock(on) { doc.documentElement.classList.toggle('bs-lock', on); }
+
+  /* ── focus ──────────────────────────────────────────────────────── */
+  function focusables(el) {
+    return Array.prototype.filter.call(el.querySelectorAll(FOCUSABLE), function (n) {
+      return n.offsetParent !== null && n.closest('.bs') === el;      // skip nested sheets' own controls
+    });
+  }
+  doc.addEventListener('keydown', function (e) {
+    var top = stack[stack.length - 1]; if (!top) return;
+    if (e.key === 'Escape') {
+      if (e.defaultPrevented) return;              // an inner control (e.g. a listbox) handled it
+      if (dismissible(top)) { e.preventDefault(); close(top, 'escape'); }
+      return;
+    }
+    if (e.key !== 'Tab') return;
+    var f = focusables(top);
+    if (!f.length) { e.preventDefault(); top.focus(); return; }
+    var first = f[0], last = f[f.length - 1], a = doc.activeElement;
+    if (e.shiftKey && (a === first || a === top)) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && a === last) { e.preventDefault(); first.focus(); }
+    else if (!top.contains(a)) { e.preventDefault(); first.focus(); }
+  });
+
+  /* ── on-screen keyboard (v1.2) ────────────────────────────────────
+     iOS Safari never resizes the page for the keyboard — it slides over fixed
+     content, so a bottom sheet ends up underneath it. While any sheet is open we
+     follow visualViewport; the CSS pads the sheet's content up by the keyboard
+     height (the surface itself stays on the bottom edge, behind the keyboard):
+       --bs-kb   = layout-viewport bottom − visible-area bottom   (keyboard height)
+       --bs-vvh  = visible height (caps the sheet so its head never hides)
+     Android WebView/Chrome resize the page instead → --bs-kb stays 0 there. */
+  var kb = { on: false, raf: 0, px: 0 };
+  function kbSet(px, h) {
+    var r = doc.documentElement;
+    if (px > 0) { r.style.setProperty('--bs-kb', px + 'px'); r.style.setProperty('--bs-vvh', Math.round(h) + 'px'); r.classList.add('bs-kb'); }
+    else { r.style.removeProperty('--bs-kb'); r.style.removeProperty('--bs-vvh'); r.classList.remove('bs-kb'); }
+    if (px !== kb.px) {
+      kb.px = px;
+      stack.forEach(function (el) { if (el.__bs && el.__bs.bottom) { syncCta(el); syncScroll(el); } });
+      var a = doc.activeElement;                         // keep the focused field in view inside the sheet
+      if (px > 0 && a && a.closest && a.closest('.bs') && a.scrollIntoView) setTimeout(function () { try { a.scrollIntoView({ block: 'nearest' }); } catch (e) {} }, 260);
+    }
+  }
+  function kbMeasure() {
+    kb.raf = 0;
+    var vv = global.visualViewport; if (!vv || !stack.length) return kbSet(0);
+    var px = Math.round(global.innerHeight - vv.height - vv.offsetTop);
+    kbSet(px > 80 ? px : 0, vv.height);                  // < 80 px = browser chrome moving, not a keyboard
+  }
+  function kbSchedule() { if (!kb.raf) kb.raf = requestAnimationFrame(kbMeasure); }
+  function keyboard(on) {
+    var vv = global.visualViewport; if (!vv) return;
+    if (on && !kb.on) { vv.addEventListener('resize', kbSchedule); vv.addEventListener('scroll', kbSchedule); }
+    if (!on && kb.on) { vv.removeEventListener('resize', kbSchedule); vv.removeEventListener('scroll', kbSchedule); kbSet(0); }
+    kb.on = on; if (on) kbSchedule();
+  }
+
+  /* ── status-bar tint (v1.2) ─────────────────────────────────────────
+     iOS 26 Safari colours the status bar from body's background-color (or a
+     fixed element's background-color at the top edge). Scrims paint with an image
+     layer, so while one is up we give html/body the page colour dimmed by it —
+     the status bar dims together with the page, and is restored on close. */
+  var tintSaved = null;
+  function rgba(s) { var m = /rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:[,\s/]+([\d.]+))?/.exec(s || ''); return m ? [+m[1], +m[2], +m[3], m[4] === undefined ? 1 : +m[4]] : null; }
+  function tint() {
+    var r = doc.documentElement, b = doc.body; if (!b) return;
+    var scrims = stack.filter(function (el) { return el.__bs.scrim && !isNested(el); }).map(function (el) { return el.__bs.scrim; });
+    if (!scrims.length) {
+      if (tintSaved) { r.style.backgroundColor = tintSaved[0]; b.style.backgroundColor = tintSaved[1]; tintSaved = null; }
+      return;
+    }
+    if (!tintSaved) {
+      var base = rgba(getComputedStyle(b).backgroundColor);
+      if (!base || base[3] < 0.5) base = rgba(getComputedStyle(r).backgroundColor);
+      if (!base || base[3] < 0.5) base = [255, 255, 255, 1];
+      tintSaved = [r.style.backgroundColor, b.style.backgroundColor, base];
+    }
+    var col = tintSaved[2].slice(0, 3);
+    scrims.forEach(function (sc) {                       // stacked scrims compound
+      var c = rgba(getComputedStyle(sc).getPropertyValue('--bs-scrim-c')) || [13, 17, 23, 0.24];
+      col = [0, 1, 2].map(function (k) { return c[k] * c[3] + col[k] * (1 - c[3]); });
+    });
+    var css = 'rgb(' + col.map(Math.round).join(',') + ')';
+    r.style.backgroundColor = css; b.style.backgroundColor = css;
+  }
+  function scrimMs(sc) { var d = getComputedStyle(sc).transitionDuration; return (parseFloat(d) || 0) * (/ms/.test(d) ? 1 : 1000); }
+
+  /* ── open / close ───────────────────────────────────────────────── */
+  function layer() {
+    stack.forEach(function (el, i) {
+      var base = 'calc(var(--bs-z) + ' + (i * 2) + ')';
+      if (!isNested(el)) {
+        el.style.zIndex = 'calc(var(--bs-z) + ' + (i * 2 + 1) + ')';
+        if (el.__bs.scrim) el.__bs.scrim.style.zIndex = base;
+      } else {
+        el.style.zIndex = 12; if (el.__bs.scrim) el.__bs.scrim.style.zIndex = 11;
+      }
+    });
+  }
+
+  function open(target, opts) {
+    var el = $(target); if (!el) return false;
+    opts = opts || {};
+    var st = prepare(el);
+    if (stack.indexOf(el) > -1) return true;
+    if (!emit(el, 'shine:sheet-open', { trigger: opts.trigger || null }, true)) return false;
+    clearTimeout(st.timer);
+
+    st.trigger = opts.trigger || (doc.activeElement !== doc.body ? doc.activeElement : null);
+    if (st.trigger && st.trigger.setAttribute) { st.trigger.setAttribute('aria-expanded', 'true'); st.trigger.setAttribute('aria-controls', st.id); }
+
+    stack.push(el);
+    if (stack.length === 1) lock(true);
+    var scrim = scrimFor(el);
+    if (scrim) { clearTimeout(scrim.__t); scrim.hidden = false; }
+    el.hidden = false; el.style.transform = '';
+    layer();
+    watchCta(el, true);
+    void el.offsetHeight;                          // commit the closed position so the slide runs
+    el.classList.add('is-open');
+    if (scrim) scrim.classList.add('is-open');
+    syncScroll(el);
+    tint(); keyboard(true);
+
+    var af = el.querySelector('[data-bs-autofocus]');
+    try { (af || el).focus({ preventScroll: true }); } catch (e) { (af || el).focus(); }
+    st.timer = setTimeout(function () { syncScroll(el); emit(el, 'shine:sheet-opened', {}); }, durationOf(el));
+    return true;
+  }
+
+  function close(target, reason) {
+    var el = target == null ? top() : $(target); if (!el || !el.__bs) return false;
+    var st = el.__bs, i = stack.indexOf(el);
+    if (i < 0) return false;
+    reason = reason || 'api';
+    if (!emit(el, 'shine:sheet-close', { reason: reason }, true)) { el.style.transform = ''; return false; }
+    // closing a parent closes anything stacked above it first
+    for (var k = stack.length - 1; k > i; k--) close(stack[k], 'parent');
+
+    stack.splice(stack.indexOf(el), 1);
+    el.classList.remove('is-open', 'is-dragging');
+    el.style.transform = '';
+    if (st.scrim) {
+      var sc = st.scrim; sc.classList.remove('is-open');
+      clearTimeout(sc.__t); sc.__t = setTimeout(function () { if (!sc.classList.contains('is-open')) sc.hidden = true; }, scrimMs(sc) + 20);
+    }
+    if (st.trigger && st.trigger.setAttribute) st.trigger.setAttribute('aria-expanded', 'false');
+    if (!stack.length) { lock(false); keyboard(false); }
+    layer(); tint();
+
+    var trig = st.trigger; st.trigger = null;
+    if (trig && doc.contains(trig) && typeof trig.focus === 'function' && (!stack.length || stack[stack.length - 1].contains(trig))) {
+      try { trig.focus({ preventScroll: true }); } catch (e) { trig.focus(); }
+    } else if (stack.length) {
+      try { stack[stack.length - 1].focus({ preventScroll: true }); } catch (e) {}
+    }
+    clearTimeout(st.timer);
+    st.timer = setTimeout(function () {
+      if (stack.indexOf(el) > -1) return;            // reopened meanwhile
+      el.hidden = true;
+      watchCta(el, false);
+      emit(el, 'shine:sheet-closed', { reason: reason });
+    }, durationOf(el) + 20);
+    return true;
+  }
+
+  function toggle(target, opts) { var el = $(target); return isOpen(el) ? close(el, 'api') : open(el, opts); }
+  function isOpen(target) { var el = $(target); return !!el && stack.indexOf(el) > -1; }
+  function top() { return stack[stack.length - 1] || null; }
+  function closeAll(reason) { for (var k = stack.length - 1; k >= 0; k--) close(stack[k], reason || 'api'); }
+
+  /* ── drag to dismiss ────────────────────────────────────────────── */
+  function dragify(el, handle) {
+    var y0 = 0, t0 = 0, dy = 0, active = false, pid = null;
+    handle.addEventListener('pointerdown', function (e) {
+      if (!isOpen(el) || !dismissible(el) || e.button > 0) return;
+      if (e.target.closest('button, a, input, select, textarea, [role="button"]')) return;
+      active = true; pid = e.pointerId; y0 = e.clientY; t0 = e.timeStamp; dy = 0;
+      try { handle.setPointerCapture(pid); } catch (x) {}
+      el.classList.add('is-dragging');
+    });
+    handle.addEventListener('pointermove', function (e) {
+      if (!active || e.pointerId !== pid) return;
+      dy = Math.max(0, e.clientY - y0);
+      el.style.transform = 'translate3d(0,' + dy + 'px,0)';
+    });
+    function end(e) {
+      if (!active || (e && e.pointerId !== pid)) return;
+      active = false; el.classList.remove('is-dragging');
+      var v = dy / Math.max(1, (e ? e.timeStamp : t0) - t0);   // px / ms
+      if (dy > el.offsetHeight * 0.3 || (dy > 24 && v > 0.6)) close(el, 'drag');
+      else el.style.transform = '';
+    }
+    handle.addEventListener('pointerup', end);
+    handle.addEventListener('pointercancel', end);
+  }
+
+  /* ── declarative triggers ───────────────────────────────────────── */
+  doc.addEventListener('click', function (e) {
+    var o = e.target.closest && e.target.closest('[data-bs-open]');
+    if (o) { e.preventDefault(); open(o.getAttribute('data-bs-open'), { trigger: o }); return; }
+    var c = e.target.closest && e.target.closest('[data-bs-close]');
+    if (c) { var s = c.closest('.bs'); if (s) { e.preventDefault(); close(s, 'close-button'); } }
+  });
+
+  function init(root) {
+    Array.prototype.forEach.call((root || doc).querySelectorAll('.bs'), prepare);
+  }
+  if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', function () { init(); }); else init();
+
+  // re-measure an auto sheet after the page swaps its content (optional — a MutationObserver already does this)
+  function refresh(target) { var el = $(target); if (el && el.__bs) { syncCta(el); syncScroll(el); } }
+
+  global.ShineSheet = { open: open, close: close, toggle: toggle, isOpen: isOpen, top: top, closeAll: closeAll, init: init, refresh: refresh, version: '2.4.0' };
+})(window);
+</script>
+<!-- ▲ COMPONENT · bottom-sheet -->
+
+  <div class="toast" id="toast">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+    <span id="toastMsg">Done</span>
+  </div>
+
+  <script>
+    // === Toast ===
+    function showToast(msg) {
+      var t = document.getElementById('toast');
+      var m = document.getElementById('toastMsg');
+      m.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 1800);
+    }
+  </script>
+  <!-- ▼ COMPONENT · sub-view v1.0.0 — verbatim copy of App-login/app-components/sub-view/sub-view.js (read README.md there before changing; resync every copy) -->
+  <script data-component="sub-view">
+/* ═══════════════════════════════════════════════════════════════════════
+   SHINE · SUB-VIEW HISTORY  (app component · App-login)         v1.0.0
+   A screen inside a tab that opens on top of the tab's list without
+   leaving the page — Docket › Expired, My Jobs › Saved › Expired — gets a
+   real history step, so the phone's Back (Android button, iPhone swipe,
+   browser Back) closes it instead of leaving the tab.
+
+   ▶ Read README.md in this folder before using it.
+
+   Usage (one sub-view at a time per page):
+     var sv = ShineSubView.attach(function (name) {   // name = 'expired' | null (the list)
+       view = name || 'list'; render();
+     });
+     sv.open('expired');   // panel tap — pushes a step (same URL), calls fn('expired')
+     sv.close();           // on-screen back arrow — history.back(); fn(null) runs on popstate
+     sv.current();         // 'expired' | null
+
+   How it stays out of the bottom tab bar's way (ShineTabBar v1.1 keeps the
+   stack at Home → one tab and compares the page URL):
+     • the step uses the SAME URL (history.state only), so the tab bar still
+       recognises the page;
+     • tapping any tab while a sub-view is open first unwinds the step
+       (history.back), then repeats the tap — the tab bar then navigates as
+       usual, so Back from any tab still lands on Home;
+     • tapping the current tab just closes the sub-view.
+   A reload keeps the step (history.state survives) and reopens the sub-view,
+   so Back still behaves the same. Zero dependencies.
+   ═══════════════════════════════════════════════════════════════════════ */
+(function (global) {
+  'use strict';
+  if (global.ShineSubView) return;
+  var KEY = 'shineSubView', fn = null, pendingTab = null;
+  function now() { var s = global.history.state; return (s && s[KEY]) || null; }
+  function emit() { if (fn) fn(now()); }
+
+  global.addEventListener('popstate', function () {
+    emit();
+    if (pendingTab && !now()) {                 // unwound for a tab tap → repeat it now
+      var id = pendingTab; pendingTab = null;
+      var b = global.document.querySelector('[data-shine-tabbar] .stb-tab[data-tab="' + id + '"]');
+      if (b) setTimeout(function () { b.click(); }, 0);
+    }
+  });
+
+  // any tab tap while a sub-view is open: unwind first (the page's own shine:tab listeners still run)
+  global.document.addEventListener('shine:tab', function (e) {
+    if (!now()) return;
+    e.preventDefault();
+    if (!e.detail.active) pendingTab = e.detail.tab;
+    global.history.back();
+  });
+
+  global.ShineSubView = {
+    version: '1.0.0',
+    attach: function (onChange) {
+      fn = onChange;
+      if (now()) emit();                        // reload inside a sub-view: reopen it
+      return {
+        open: function (name) {
+          if (now() === name) return;
+          var st = {}; var cur = global.history.state;
+          if (cur && typeof cur === 'object') for (var k in cur) st[k] = cur[k];
+          st[KEY] = name;
+          global.history.pushState(st, '');     // same URL — the tab bar still recognises the page
+          emit();
+        },
+        close: function () { if (now()) global.history.back(); else if (fn) fn(null); },
+        current: now
+      };
+    }
+  };
+})(window);
+</script>
+  <!-- ▲ COMPONENT · sub-view -->
+  <script>
+(function(){
+  'use strict';
+  /* ═══ MY JOBS · App-login ═══════════════════════════════════════════
+     Three lists on one screen, switched by the Docket-style segment:
+       Recommended — matches for the job seeker's profile + job preferences
+       Saved       — jobs bookmarked anywhere (JSRP, JD, similar jobs)
+       Applied     — jobs applied to from any page
+     Cards = the App-logout JSRP mobile job card, verbatim (jobCardHTML below
+     is copied unchanged from App JSRP/jsrp-logout.html); only two states are
+     layered on the generated HTML:
+       saved   → bookmark filled (.is-saved, aria-pressed="true")
+       applied → save button removed, Apply replaced by an "Applied 2d ago" pill
+     Unsave asks first in the shared bottom sheet (#mjCf, ShineSheet).
+     Lists are flat (no day / "based on" group labels); order = most recent first.
+     Saving from Recommended keeps the card in place (bookmark fills) — it also
+     appears in Saved. Applying moves a job to Applied (and out of Recommended / Saved).
+     Saved ends with Docket's expired panel → an "Expired." view (read-only). */
+
+  var JOBS = [
+    { id:'j1', rec:true, saved:false, savedGroup:null, appliedDays:null, co:'Razorpay Software Pvt. Ltd.',     short:'RP', bg:'#072654', time:'5 days ago',   title:'Group Product Lead',                       chips:[{cls:'actively',text:'Actively Hiring'}], exp:'8 to 12 Yrs', sal:'40 - 60 Lacs', loc:'Bengaluru', skills:['Fintech','Payments','API Products','Leadership'], apply:'native' },
+    { id:'j2', rec:true, saved:true, savedGroup:'Saved today', appliedDays:null, co:'Flipkart Internet Pvt. Ltd.',     short:'FK', bg:'#2874F0', time:'3 days ago',   title:'Product Lead, Marketplace',               chips:[{cls:'actively',text:'Actively Hiring'},{cls:'early',text:'Be An Early Applicant'}], exp:'6 to 10 Yrs', sal:'25 - 45 Lacs', loc:'Bengaluru', skills:['Marketplace','E-commerce','Analytics','Growth'], apply:'native' },
+    { id:'j3', rec:true, saved:false, savedGroup:null, appliedDays:null, co:'Swiggy',                          short:'SW', bg:'#FC8019', time:'2 weeks ago',  title:'Product Lead · Instamart',                chips:[{cls:'actively',text:'Actively Hiring'}], exp:'7 to 10 Yrs', sal:'35 - 50 Lacs', loc:'Bengaluru', skills:['Quick Commerce','Logistics','Mobile','Analytics'], apply:'native' },
+    { id:'j4', rec:true, saved:false, savedGroup:null, appliedDays:null, co:'PhonePe Pvt. Ltd.',               short:'PP', bg:'#5F259F', time:'1 week ago',   title:'Group Product Lead · Payments',           chips:[{cls:'actively',text:'Actively Hiring'}], exp:'8 to 12 Yrs', sal:'45 - 65 Lacs', loc:'Bengaluru', skills:['UPI','Payments','Mobile','Platform'], apply:'native' },
+    { id:'j5', rec:true, saved:true, savedGroup:'Saved this week', appliedDays:null, co:'Microsoft India',                 short:'MS', bg:'#0078D4', time:'1 week ago',   title:'Senior Product Lead · Azure',             chips:[{cls:'actively',text:'Actively Hiring'}], exp:'7 to 10 Yrs', sal:'30 - 50 Lacs', loc:'Bengaluru, Hyderabad', skills:['Azure','Cloud','Platform PM','Enterprise'], apply:'external' },
+    { id:'j6', rec:true, saved:false, savedGroup:null, appliedDays:null, co:'CRED',                            short:'CR', bg:'#0D1117', time:'3 days ago',   title:'Product Lead · Rewards Platform',         chips:[{cls:'actively',text:'Actively Hiring'}], exp:'6 to 9 Yrs', sal:'30 - 50 Lacs', loc:'Bengaluru', skills:['Rewards','Fintech','Consumer','Loyalty'], apply:'native' },
+    { id:'j7', rec:true, saved:false, savedGroup:null, appliedDays:null, co:'Zerodha',                         short:'ZE', bg:'#387ED1', time:'1 week ago',   title:'Product Lead · Trading Platform',         chips:[{cls:'actively',text:'Actively Hiring'}], exp:'6 to 10 Yrs', sal:'35 - 55 Lacs', loc:'Bengaluru', skills:['Fintech','Trading','Consumer','Web'], apply:'native' },
+    { id:'j8', rec:true, saved:false, savedGroup:null, appliedDays:null, co:'Groww',                           short:'GW', bg:'#00B386', time:'4 days ago',   title:'Senior Product Manager · Mutual Funds',   chips:[{cls:'actively',text:'Actively Hiring'}], exp:'5 to 9 Yrs', sal:'30 - 45 Lacs', loc:'Bengaluru', skills:['Fintech','Investments','Consumer','Growth'], apply:'native' },
+    { id:'j9', rec:true, saved:false, savedGroup:null, appliedDays:null, co:'Paytm',                           short:'PT', bg:'#00BAF2', time:'4 days ago',   title:'Product Lead · Merchant Solutions',       chips:[{cls:'actively',text:'Actively Hiring'}], exp:'7 to 11 Yrs', sal:'32 - 52 Lacs', loc:'Noida', skills:['Merchant PM','B2B Fintech','SMB','Growth'], apply:'native' },
+    { id:'j10', rec:true, saved:false, savedGroup:null, appliedDays:null, co:'Postman',                         short:'PS', bg:'#FF6C37', time:'3 days ago',   title:'Senior Product Manager · Developer Tools',chips:[{cls:'actively',text:'Actively Hiring'}], exp:'7 to 10 Yrs', sal:'45 - 65 Lacs', loc:'Bengaluru', skills:['DevTools','API','B2B','Developer PM'], apply:'external' },
+    { id:'j11', rec:false, saved:true, savedGroup:'Saved today', appliedDays:null, co:'Zomato Limited',                  short:'ZM', bg:'#E23744', time:'3 days ago',   title:'Senior Product Lead · Hyperpure',         chips:[{cls:'actively',text:'Actively Hiring'},{cls:'early',text:'Be An Early Applicant'}], exp:'6 to 10 Yrs', sal:'30 - 48 Lacs', loc:'Gurgaon', skills:['Supply Chain','B2B','Foodtech','Operations'], apply:'native' },
+    { id:'j12', rec:false, saved:true, savedGroup:'Saved this week', appliedDays:null, co:'Airbnb India',                    short:'AB', bg:'#FF5A5F', time:'2 weeks ago',  title:'Senior Product Manager · Payments',       chips:[{cls:'actively',text:'Actively Hiring'}], exp:'6 to 9 Yrs', sal:'32 - 48 Lacs', loc:'Bengaluru', skills:['Payments','International','Growth','Mobile'], apply:'external' },
+    { id:'j13', rec:false, saved:true, savedGroup:'Earlier', appliedDays:null, co:'Google India',                    short:'GG', bg:'#4285F4', time:'1 week ago',   title:'Senior Product Manager · Search Ads',     chips:[], exp:'8 to 12 Yrs', sal:'55 - 80 Lacs', loc:'Gurgaon', skills:['Search','Ads','ML','Growth'], apply:'external' },
+    { id:'j14', rec:false, saved:true, savedGroup:'Earlier', appliedDays:null, co:'Nykaa E-Retail',                  short:'NY', bg:'#FC2779', time:'5 days ago',   title:'Senior Product Lead · Beauty D2C',        chips:[{cls:'actively',text:'Actively Hiring'},{cls:'early',text:'Be An Early Applicant'}], exp:'7 to 10 Yrs', sal:'35 - 52 Lacs', loc:'Mumbai', skills:['D2C','E-commerce','Consumer','Growth'], apply:'native' },
+    { id:'j15', rec:false, saved:true, savedGroup:'Saved this week', appliedDays:2, co:'Uber India',                      short:'UB', bg:'#0D1117', time:'1 week ago',   title:'Product Lead · Rides Marketplace',        chips:[{cls:'actively',text:'Actively Hiring'},{cls:'early',text:'Be An Early Applicant'}], exp:'7 to 10 Yrs', sal:'38 - 55 Lacs', loc:'Bengaluru', skills:['Marketplace','Mobility','Growth','Analytics'], apply:'external' },
+    { id:'j16', rec:false, saved:false, savedGroup:null, appliedDays:5, co:'Ola Cabs',                        short:'OL', bg:'#0EAB50', time:'3 days ago',   title:'Product Manager · Driver Growth',         chips:[{cls:'actively',text:'Actively Hiring'}], exp:'5 to 8 Yrs', sal:'25 - 38 Lacs', loc:'Bengaluru', skills:['Growth','Two-sided','Mobile','Retention'], apply:'native' },
+    { id:'j17', rec:false, saved:false, savedGroup:null, appliedDays:8, co:'BookMyShow',                      short:'BM', bg:'#C4242B', time:'1 week ago',   title:'Senior Product Lead · Live Experiences',  chips:[{cls:'early',text:'Be An Early Applicant'}], exp:'6 to 9 Yrs', sal:'28 - 42 Lacs', loc:'Mumbai', skills:['Consumer PM','Ticketing','Mobile','Live Events'], apply:'native' },
+    { id:'j18', rec:false, saved:false, savedGroup:null, appliedDays:12, co:'MakeMyTrip',                      short:'MM', bg:'#EB5F55', time:'2 weeks ago',  title:'Product Manager · Flights',               chips:[], exp:'5 to 8 Yrs', sal:'28 - 42 Lacs', loc:'Gurgaon', skills:['Travel','Booking','Mobile','Consumer'], apply:'native' },
+    { id:'j19', rec:false, saved:false, savedGroup:null, appliedDays:23, co:'Unacademy',                       short:'UN', bg:'#08BD80', time:'5 days ago',   title:'Product Lead · Live Classes',             chips:[{cls:'actively',text:'Actively Hiring'}], exp:'6 to 10 Yrs', sal:'30 - 48 Lacs', loc:'Bengaluru', skills:['EdTech','Live','Video','Consumer'], apply:'native' }
+  ];
+
+  // Saved jobs the recruiter has since closed — shown only in Saved › Expired (read-only, like Docket's expired list)
+  var EXPIRED = [
+    { id:'x1', closed:'12 Oct', co:'Meesho',                          short:'ME', bg:'#9F2089', time:'3 weeks ago',  title:'Product Lead · Seller Growth',            chips:[], exp:'6 to 9 Yrs', sal:'30 - 45 Lacs', loc:'Bengaluru', skills:['Marketplace','Sellers','Growth','Analytics'], apply:'native' },
+    { id:'x2', closed:'7 Oct',  co:'Dunzo Digital',                   short:'DZ', bg:'#00D290', time:'1 month ago',  title:'Senior Product Manager · Quick Commerce', chips:[], exp:'5 to 8 Yrs', sal:'26 - 40 Lacs', loc:'Bengaluru', skills:['Quick Commerce','Logistics','Consumer','Mobile'], apply:'native' },
+    { id:'x3', closed:'28 Sep', co:'ShareChat',                       short:'SC', bg:'#FF4F73', time:'1 month ago',  title:'Product Lead · Creator Monetisation',     chips:[], exp:'6 to 10 Yrs', sal:'32 - 50 Lacs', loc:'Bengaluru', skills:['Creator Economy','Monetisation','Consumer','Growth'], apply:'native' }
+  ];
+
+  // saved order — most recent first (seeded from the sample data; a new save goes to the top)
+  var GRP_RANK = { 'Saved today': 0, 'Saved this week': 1, 'Earlier': 2 }, saveSeq = 0;
+  JOBS.forEach(function(j, i){ if (j.saved) j.savedOrder = (GRP_RANK[j.savedGroup] || 0) * 100 + i; });
+
+  // ── job card — VERBATIM from App-logout/App JSRP/jsrp-logout.html (mobile IIFE) ──
+      function jobCardHTML(j, idx){
+        // Deterministic decorative-color hash (same rule as desktop).
+        var COLORS = ['violet','aqua','pink','cyan','lime','ey'];
+        var hash = 0;
+        for (var ci = 0; ci < (j.co || '').length; ci++) hash = (hash * 31 + j.co.charCodeAt(ci)) >>> 0;
+        var logoColor = COLORS[hash % COLORS.length];
+
+        // Status chips → Badge atoms (with pulsing dot for "Actively hiring").
+        var chips = (j.chips || []).map(function(c){
+          if (c.cls === 'actively') {
+            return '<span class="jsrp-m-jc-chip ' + c.cls + ' badge badge--brand">' +
+                     '<span class="badge-dot" aria-hidden="true"></span> ' + c.text +
+                   '</span>';
+          }
+          if (c.cls === 'early') {
+            return '<span class="jsrp-m-jc-chip ' + c.cls + ' badge badge--pink">' + c.text + '</span>';
+          }
+          return '<span class="jsrp-m-jc-chip ' + c.cls + ' badge">' + c.text + '</span>';
+        }).join('');
+
+        var payNum = (function(){ var m = (j.sal||'').match(/[\d.]+/); return m ? parseFloat(m[0]) : 0; })();
+        var expNum = (function(){ var m = (j.exp||'').match(/[\d.]+/); return m ? parseFloat(m[0]) : 0; })();
+
+        var icoBriefcase = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>';
+        var icoRupee     = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12M6 8h12M9 13c0-3 9-3 9 0v5l-9-5z"/></svg>';
+        var icoPin       = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>';
+        // → for on-platform applies, ↗ for crawled jobs routing to the
+        // company's ATS — same icon contract as desktop.
+        var icoArrow     = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+        var icoExternal  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>';
+        var icoShare     = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>';
+
+        // Skills row — first 3 visible on mobile (narrower than desktop).
+        var visibleSkills = (j.skills || []).slice(0, 3);
+        var skillsHTML = visibleSkills.map(function(s, i){
+          return (i > 0 ? '<span class="job-card-skill-dot" aria-hidden="true">·</span>' : '') +
+                 '<span class="jsrp-m-jc-skill tag">' + s + '</span>';
+        }).join('');
+
+        // Apply button — two variants:
+        //   native    → "Apply →"
+        //   external  → "Apply ↗"
+        // Both share the same visible label ("Apply") + same 14/700
+        // brand type as desktop; the variant diff is the trailing icon
+        // (→ vs ↗) and the .is-external semantic hook only. Aria-label
+        // still names the external destination for screen readers.
+        var isExternal = j.apply === 'external';
+        var applyLabel = 'Apply';
+        var applyIcon  = isExternal ? icoExternal : icoArrow;
+        var applyCls   = 'jsrp-m-jc-apply btn btn--lg btn--shape-lg btn--primary' + (isExternal ? ' is-external' : '');
+        var applyAria  = isExternal ? 'Apply on ' + j.co + ' (opens in new tab)' : 'Apply';
+        // Bookmark SVG (mobile) — same glyph as desktop; currentColor → brand
+        // when the button gets .is-saved.
+        var icoBookmark = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>';
+        var applyHTML  = '<button class="' + applyCls + '" data-act="apply" data-apply="' + (j.apply || 'native') + '" aria-label="' + applyAria + '">' +
+                         applyLabel +
+                         ' <span class="ic" aria-hidden="true">' + applyIcon + '</span>' +
+                         '</button>';
+
+        // Same filter-flag helpers as the desktop card — inlined here
+        // because the mobile IIFE can't see the desktop's TOP_COMPANIES /
+        // isActivelyHiring / isTopCompany helpers.
+        var TOP_COMPANIES_M = ['Microsoft', 'Flipkart', 'Zomato', 'Swiggy', 'PhonePe'];
+        var activeFlagM = (function(){
+          if (!j.chips) return '0';
+          for (var i = 0; i < j.chips.length; i++) {
+            if (j.chips[i].cls === 'actively') return '1';
+          }
+          return '0';
+        })();
+        var topFlagM = (function(){
+          if (!j.co) return '0';
+          var low = j.co.toLowerCase();
+          for (var i = 0; i < TOP_COMPANIES_M.length; i++) {
+            if (low.indexOf(TOP_COMPANIES_M[i].toLowerCase()) !== -1) return '1';
+          }
+          return '0';
+        })();
+        return '<article class="jsrp-m-jc job-card job-card--landscape" data-idx="' + idx + '" data-pay="' + payNum + '" data-exp="' + expNum + '" data-active="' + activeFlagM + '" data-top="' + topFlagM + '">' +
+          // Head — co-row first (mobile pattern: name+time stacked left, logo right)
+          '<div class="jsrp-m-jc-top job-card-head">' +
+            '<div class="jsrp-m-jc-co job-card-co-row">' +
+              '<div class="jsrp-m-jc-co-name job-card-co-name">' + j.co + '</div>' +
+              '<div class="jsrp-m-jc-time job-card-co-time">' + j.time + '</div>' +
+            '</div>' +
+            // Canonical M.02 Landscape logo (mobile) — same rules as desktop:
+            // square w/ radius.md, surface.decorative.<color>-intense fill.
+            // Avatar atom not used (it's always circular per A.08.6 — Don'ts).
+            '<div class="jsrp-m-jc-logo job-card-logo job-card-logo--' + logoColor + '" aria-label="' + j.co + '">' + j.short + '</div>' +
+          '</div>' +
+          // Role title
+          '<h3 class="jsrp-m-jc-role job-card-role">' + j.title + '</h3>' +
+          // Status badges row — Actively Hiring / Be An Early Applicant
+          '<div class="jsrp-m-jc-chips job-card-co-chips">' + chips + '</div>' +
+          // Meta rows — Exp / Sal / Loc (vertical stack on mobile per current visual)
+          '<div class="jsrp-m-jc-meta job-card-meta">' +
+            '<div class="jsrp-m-jc-row job-card-meta-row"><span class="ico" aria-hidden="true">' + icoBriefcase + '</span><span class="text">' + j.exp + '</span></div>' +
+            '<div class="jsrp-m-jc-row job-card-meta-row"><span class="ico" aria-hidden="true">' + icoRupee + '</span><span class="text">' + j.sal + '</span></div>' +
+            '<div class="jsrp-m-jc-row job-card-meta-row"><span class="ico" aria-hidden="true">' + icoPin + '</span><span class="text">' + j.loc + '</span></div>' +
+          '</div>' +
+          // Required-skills row — mirrors desktop's .jd-jc-skills-row content.
+          // Renders only if the job has skills; the meta's border-bottom acts
+          // as the divider above, and this row owns the border-bottom below
+          // (which then separates it from the Share / Save / Apply cluster).
+          (skillsHTML ?
+            '<div class="jsrp-m-jc-skills-row job-card-skills-row">' +
+              '<span class="jsrp-m-jc-skills-label job-card-skills-label">Required:</span>' +
+              '<span class="jsrp-m-jc-skills-list job-card-skills-list">' + skillsHTML + '</span>' +
+            '</div>' : '') +
+          // Bottom row — Share + Save + Apply (canonical landscape pattern)
+          '<div class="jsrp-m-jc-actions job-card-bottom">' +
+            '<button class="jsrp-m-jc-share job-card-share btn btn--md btn--icon" data-act="share" aria-label="Share">' + icoShare + '</button>' +
+            '<button class="jsrp-m-jc-save job-card-save btn btn--md btn--icon" data-act="save" aria-label="Save job" aria-pressed="false">' + icoBookmark + '</button>' +
+            applyHTML +
+          '</div>' +
+        '</article>';
+      }
+
+
+  // ── end verbatim card ──
+
+  var ICO_CLOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>';
+  var ICO_RIGHT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+  var ICO_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>';
+  var SAVE_OFF = 'class="jsrp-m-jc-save job-card-save btn btn--md btn--icon" data-act="save" aria-label="Save job" aria-pressed="false"';
+  var SAVE_ON  = 'class="jsrp-m-jc-save job-card-save btn btn--md btn--icon is-saved" data-act="save" aria-label="Saved — remove job" aria-pressed="true"';
+
+  function ago(d){
+    if (d === 0) return 'Applied today';
+    if (d < 7) return 'Applied ' + d + 'd ago';
+    return 'Applied ' + Math.floor(d / 7) + 'w ago';
+  }
+  function cardHTML(j, idx){
+    var h = jobCardHTML(j, idx);
+    h = h.replace('<article class="jsrp-m-jc job-card job-card--landscape"', '<article class="jsrp-m-jc job-card job-card--landscape" data-id="' + j.id + '"');
+    if (j.closed){
+      // Expired (read-only): no share / save / apply — the Apply slot says when it closed
+      h = h.replace(/<button class="jsrp-m-jc-share[\s\S]*?<\/button>/, '');
+      h = h.replace(/<button class="jsrp-m-jc-save[\s\S]*?<\/button>/, '');
+      h = h.replace(/<button class="jsrp-m-jc-apply[\s\S]*?<\/button>/,
+        '<span class="mj-expired" role="status">' + ICO_CLOCK + 'Expired ' + j.closed + '</span>');
+      return h.replace('data-id="' + j.id + '"', 'data-id="' + j.id + '" aria-disabled="true"');
+    }
+    if (j.appliedDays != null){
+      // Applied: only Share stays; the Apply button becomes a status pill
+      h = h.replace(/<button class="jsrp-m-jc-save[\s\S]*?<\/button>/, '');
+      h = h.replace(/<button class="jsrp-m-jc-apply[\s\S]*?<\/button>/,
+        '<span class="mj-applied" role="status">' + ICO_CHECK + ago(j.appliedDays) + '</span>');
+    } else if (j.saved){
+      h = h.replace(SAVE_OFF, SAVE_ON);
+    }
+    return h;
+  }
+
+  var list  = document.getElementById('mjList');
+  var sheet = document.getElementById('mrSheet');
+  var tab = 'recommended';
+  try { var q = new URLSearchParams(location.search).get('tab'); if (q === 'saved' || q === 'applied') tab = q; } catch (e) {}
+
+  var view = 'list';   // 'list' | 'expired' (Saved › Expired)
+  function rows(which){
+    if (which === 'recommended') return JOBS.filter(function(j){ return j.rec && j.appliedDays == null; });
+    if (which === 'saved')       return JOBS.filter(function(j){ return j.saved && j.appliedDays == null; })   // once applied, a job moves to Applied
+                                            .sort(function(a, b){ return a.savedOrder - b.savedOrder; });     // most recently saved first
+    return JOBS.filter(function(j){ return j.appliedDays != null; })
+               .sort(function(a, b){ return a.appliedDays - b.appliedDays; });                                // most recent application first
+  }
+
+  // the panel that closes the Saved list — Docket's expired card, same anatomy and copy pattern
+  function expiredPanel(){
+    if (!EXPIRED.length) return '';
+    return '<button class="mr-exp" data-mj="expired" type="button">' +
+      '<span class="mr-exp-ic">' + ICO_CLOCK + '</span>' +
+      '<span class="mr-exp-tx"><b>' + EXPIRED.length + ' expired</b>' +
+        '<span>Closed after you saved them</span></span>' +
+      '<span class="mr-exp-chev">' + ICO_RIGHT + '</span>' +
+    '</button>';
+  }
+  // the Expired view — notice + greyed, read-only cards (Docket's .mr-xnote / .mr-xwrap)
+  function expiredHTML(){
+    var out = '<div class="mr-xnote">' + ICO_CLOCK +
+      '<span>Recruiters close a job once the role is filled. These closed after you saved them.</span></div>' +
+      '<div class="mr-xwrap"><div class="mj-list">';
+    EXPIRED.forEach(function(j, i){ out += cardHTML(j, i); });
+    return out + '</div></div>';
+  }
+
+  // empty states — same anatomy as Docket's
+  function emptyHTML(which, tail){
+    var lead = { recommended: '<h3>Matches<br>on the<br><em>way.</em></h3>',
+                 saved:       '<h3>Nothing<br>saved.<br><em>Yet.</em></h3>',
+                 applied:     '<h3>No<br>applications.<br><em>Yet.</em></h3>' }[which];
+    var body = { recommended: 'Add your skills and job preferences and matching jobs land on this page.',
+                 saved:       'Tap the bookmark on any job and it lands on this page.',
+                 applied:     'Apply to a job and you can follow it from this page.' }[which];
+    return '<div class="mr-empty">' +
+      '<div class="mr-empty-tx">' + lead + '</div>' +
+      '<div class="mr-empty-rule"></div>' +
+      '<div class="mr-empty-tx"><p>' + body + '</p></div>' +
+      (tail || '') +
+    '</div>';
+  }
+
+  // header for the Expired view: back arrow in the menu's slot, title "Expired.", segment out (as Docket)
+  function header(){
+    var gone = (view === 'expired');
+    var back = document.querySelector('.mr-page-hd .mr-back'), menu = document.querySelector('.mr-page-hd [data-shine-menu]');
+    if (back) back.hidden = !gone;
+    if (menu) menu.hidden = gone;
+    var segw = document.querySelector('.mr-seg-wrap'); if (segw) segw.hidden = gone;
+    sheet.classList.toggle('is-expired', gone);
+    document.getElementById('mrTitleM').textContent = gone ? 'Expired.' : 'My Jobs.';
+  }
+  function render(){
+    header();
+    if (view === 'expired'){ list.innerHTML = expiredHTML(); syncScroll(); return; }
+    var r = rows(tab), tail = (tab === 'saved') ? expiredPanel() : '';
+    if (!r.length){ list.innerHTML = emptyHTML(tab, tail); syncScroll(); return; }
+    var out = '<div class="mj-list">';
+    r.forEach(function(j, i){ out += cardHTML(j, i); });
+    list.innerHTML = out + tail + '</div>';
+    syncScroll();
+  }
+  // Saved › Expired = a sub-view with its own history step (shared sub-view helper): the phone's Back
+  // (Android button, iPhone swipe) and the back arrow both close it; Saved comes back where it was
+  var listScroll = 0;
+  var sv = ShineSubView.attach(function(name){
+    var back = (name !== 'expired' && view === 'expired');
+    view = (name === 'expired') ? 'expired' : 'list';
+    if (view === 'expired' && tab !== 'saved'){ tab = 'saved'; ShineSegment.set('#mjSeg', 'saved', { silent: true }); }  // reload inside Expired
+    render();
+    list.scrollTop = back ? listScroll : 0;
+    syncScroll();
+  });
+
+  // the segment is the shared segment-control component: it paints the options, the page renders the list
+  function setTab(t){
+    tab = t;
+    ShineSegment.set('#mjSeg', t, { silent: true });
+    list.scrollTop = 0;
+    render();
+  }
+  document.getElementById('mjSeg').addEventListener('shine:segment', function(e){ setTab(e.detail.value); });
+
+  function syncScroll(){ sheet.classList.toggle('is-scrolled', list.scrollTop > 2); }
+  list.addEventListener('scroll', syncScroll, { passive: true });
+
+  function say(t){ if (typeof showToast === 'function') showToast(t); }
+  function find(id){ for (var i = 0; i < JOBS.length; i++) if (JOBS[i].id === id) return JOBS[i]; return null; }
+
+  // ── unsave confirmation (shared bottom sheet) ──
+  var pending = null;
+  document.addEventListener('shine:sheet-close', function(e){ if (e.target.id === 'mjCf') pending = null; });
+
+  document.addEventListener('click', function(e){
+    var cf = e.target.closest('[data-mj]');
+    if (cf){
+      var what = cf.getAttribute('data-mj');
+      if (what === 'expired'){ listScroll = list.scrollTop; sv.open('expired'); return; }
+      if (what === 'backlist'){ sv.close(); return; }   // = the phone's Back
+      if (what === 'cfyes' && pending){
+        var pj = find(pending); if (pj) pj.saved = false;
+        ShineSheet.close('#mjCf', 'close-button'); render(); say('Removed from saved');
+      } else if (what === 'cfno'){ ShineSheet.close('#mjCf', 'close-button'); }
+      return;
+    }
+
+    var card = e.target.closest('.jsrp-m-jc[data-id]');
+    if (!card || !list.contains(card)) return;
+    var j = find(card.getAttribute('data-id'));
+    if (!j) return;                                   // expired cards are read-only
+    var act = e.target.closest('[data-act]');
+    if (act){
+      var a = act.getAttribute('data-act');
+      if (a === 'share'){ say('Link copied'); return; }
+      if (a === 'save'){
+        if (j.saved){ pending = j.id; ShineSheet.open('#mjCf', { trigger: act }); return; }
+        // stays where it is (Recommended keeps it, bookmark filled) and goes to the top of Saved
+        j.saved = true; j.savedGroup = 'Saved today'; j.savedOrder = --saveSeq;
+        act.classList.add('is-saved'); act.setAttribute('aria-pressed', 'true'); act.setAttribute('aria-label', 'Saved — remove job');
+        say('Job saved. Find it in Saved'); return;
+      }
+      if (a === 'apply'){
+        if (act.getAttribute('data-apply') === 'external'){ say('Opening company site…'); return; }
+        j.appliedDays = 0; render(); say('Applied to ' + j.co); return;
+      }
+      return;
+    }
+    say('Opens job detail');
+  });
+
+  // Menu (shared menu-button): not built yet — same placeholder on every tab
+  document.addEventListener('shine:menu', function(){ say('Opens the menu'); });
+
+  // tapping Jobs again (the current tab) scrolls the list back to the top
+  document.addEventListener('shine:tab', function(e){
+    if (e.detail.tab !== 'jobs' || !e.detail.active) return;
+    e.preventDefault();
+    // (in the Expired view the sub-view helper unwinds first — tapping Jobs there returns to Saved)
+    list.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  if (view === 'expired') render(); else setTab(tab);
+})();
+  </script>
+</body>
+</html>
