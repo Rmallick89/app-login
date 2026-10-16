@@ -14,7 +14,7 @@ The Jobs tab opens My Jobs (`my-jobs.html`: Recommended · Saved · Applied, wit
 Docket tab opens the Docket screen (`docket.html`); the tabs keep a native history (swipe back returns to the previous
 tab). Menu, search, job/company/job-details pages, the check-in sheets and the Me tab aren't built yet — those taps stay
 on their screen.
-The bottom tab bar is the shared component `App-login/app-components/bottom-tab-bar` (v1.3.0): 104 pt tall on iPhones with a
+The bottom tab bar is the shared component `App-login/app-components/bottom-tab-bar` (v1.3.1): 104 pt tall on iPhones with a
 home indicator — 12 top, 56 tab, 36 bottom (the 34 pt safe area + 2) — and 80 pt without one. Changing tab plays the
 Stretch + Flip motion as the new screen opens (the grey wash stretches across, the icon turns over to filled; none with
 Reduce Motion on).

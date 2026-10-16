@@ -1241,15 +1241,15 @@ h1, h2, h3, h4, p { overflow-wrap:break-word; word-wrap:break-word; }
 }
 </style>
 <!-- ▲ COMPONENT · segment-control -->
-<!-- ▼ COMPONENT · bottom-tab-bar v1.3.0 · verbatim copy of App-login/app-components/bottom-tab-bar/bottom-tab-bar.css — do not edit here -->
+<!-- ▼ COMPONENT · bottom-tab-bar v1.3.1 · verbatim copy of App-login/app-components/bottom-tab-bar/bottom-tab-bar.css — do not edit here -->
 <style data-component="bottom-tab-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BOTTOM TAB BAR  (app component)                      v1.3.0
+   SHINE · BOTTOM TAB BAR  (app component)                      v1.3.1
    The logged-in app's primary navigation — Home · Jobs · Docket · Me —
    fixed to the bottom of the screen on a frosted white surface.
 
      • Each tab = outline icon (inactive) / filled icon (active) + label.
-       Active tab: content-base colour on a 6% ink wash, radius.xl.
+       Active tab: content.neutral.base on a surface.neutral.muted wash, radius.xl.
      • Optional unread dot per tab (brand, 7 px) — e.g. Docket.
      • Reserves its own space at the end of the page (body padding),
        so content never hides behind the bar.
@@ -1285,18 +1285,26 @@ h1, h2, h3, h4, p { overflow-wrap:break-word; word-wrap:break-word; }
 html.in-app { --stb-safe: 0px; }                     /* Android app shell: already above the system nav bar */
 
 .stb {
-  /* palette */
-  --stb-black: #0D1117; --stb-white: #FFFFFF;
-  --stb-cn-200: #E4E7EC; --stb-cn-500: #667085;
-  --stb-brand-500: #1A56FF;
+  /* semantic tokens only (DESIGN-SYSTEM.md §2.2, light) — the component never reads a primitive */
+  --stb-content-neutral-base: #0D1117;                /* content.neutral.base — active label + icon */
+  --stb-content-neutral-faded: #667085;               /* content.neutral.faded — inactive label + icon */
+  --stb-surface-neutral-raised-translucent: rgba(255, 255, 255, .96);
+                                                      /* surface.neutral.raised-translucent (PROPOSED — DS has no
+                                                         translucent surface): cool-neutral/white @ 96 %, frosted bar.
+                                                         96 % keeps inactive labels ≥ 4.5 : 1 even over black content */
+  --stb-stroke-neutral-muted: #EEF1F5;                /* stroke.neutral.muted — top hairline */
+  --stb-surface-neutral-muted: #EEF1F5;               /* surface.neutral.muted — active tab wash */
+  --stb-surface-brand-intense: #1A56FF;               /* surface.brand.brand-intense — unread dot */
+  --stb-stroke-neutral-focus: #1A56FF;                /* stroke.neutral.focus — keyboard focus outline */
+  --stb-elevation-focus: 0 0 0 4px rgba(26, 86, 255, .10);   /* elevation.focus.default */
 
-  /* semantic */
-  --stb-content-base: var(--stb-black);               /* active tab */
-  --stb-content-faded: var(--stb-cn-500);             /* inactive tab */
-  --stb-surface: rgba(255, 255, 255, .94);            /* surface.raised @ 94% — frosted glass */
-  --stb-stroke: rgba(228, 231, 236, .7);              /* stroke.base (cool-neutral 200) @ 70% */
-  --stb-active-wash: rgba(13, 17, 23, .06);           /* content.base @ 6% */
-  --stb-dot: var(--stb-brand-500);                    /* surface.brand.intense */
+  /* component aliases */
+  --stb-content-base: var(--stb-content-neutral-base);
+  --stb-content-faded: var(--stb-content-neutral-faded);
+  --stb-surface: var(--stb-surface-neutral-raised-translucent);
+  --stb-stroke: var(--stb-stroke-neutral-muted);
+  --stb-active-wash: var(--stb-surface-neutral-muted);
+  --stb-dot: var(--stb-surface-brand-intense);
 
   /* type · size · space */
   --stb-font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -1377,7 +1385,7 @@ html.in-app { --stb-safe: 0px; }                     /* Android app shell: alrea
 }
 .stb-tab:active { transform: scale(.96); }
 .stb-tab.is-active { color: var(--stb-content-base); }
-.stb-tab:focus-visible { outline: 2px solid var(--stb-content-base); outline-offset: -2px; }
+.stb-tab:focus-visible { outline: 2px solid var(--stb-stroke-neutral-focus); outline-offset: -2px; box-shadow: var(--stb-elevation-focus); }   /* DS: stroke.neutral.focus + elevation.focus.default */
 
 /* icon = a card: outline on the front, filled on the back */
 .stb-icon { position: relative; width: var(--stb-icon); height: var(--stb-icon); perspective: 120px; }
@@ -2161,10 +2169,10 @@ html.in-app .bs { --bs-safe: 0px; }
       <div class="mr-scroll" id="mjList"></div>
     </section>
     <nav data-shine-tabbar data-active="jobs" data-dot="docket" data-href-home="index.html" data-href-docket="docket.html"></nav>
-<!-- ▼ COMPONENT · bottom-tab-bar v1.3.0 · verbatim copy of App-login/app-components/bottom-tab-bar/bottom-tab-bar.js — do not edit here -->
+<!-- ▼ COMPONENT · bottom-tab-bar v1.3.1 · verbatim copy of App-login/app-components/bottom-tab-bar/bottom-tab-bar.js — do not edit here -->
 <script data-component="bottom-tab-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BOTTOM TAB BAR  (app component)                      v1.3.0
+   SHINE · BOTTOM TAB BAR  (app component)                      v1.3.1
    Pair with bottom-tab-bar.css. Zero dependencies, no build step.
 
    Markup — one empty mount, the component renders the tabs:
