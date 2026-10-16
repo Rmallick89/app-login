@@ -3101,10 +3101,10 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
 }
 </style>
 <!-- ▲ COMPONENT · bottom-tab-bar -->
-<!-- ▼ COMPONENT · top-app-bar v1.0.2 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v1.0.3 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
 <style data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v1.0.2
+   SHINE · TOP APP BAR  (app component · App-login)              v1.0.3
    One top bar for every logged-in screen, in two variants that share one
    frame, so the menu, the brand/title anchor and the trailing action sit
    on exactly the same spot on every tab.
@@ -3130,8 +3130,10 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
    Platform (html / ancestor [data-platform="ios"]; Android is the default)
      Android  title bar = M3 small top app bar: 64, pinned, start-aligned;
               on scroll it lifts (frosted surface + hairline under the slot)
-     iPhone   title bar: 64, pinned — nothing in the header moves or resizes
-              on scroll (row + segment stay put). Opaque page surface in both
+     iPhone   title bar: the standard 44 pt bar — row 44 right under the
+              status bar, 10 under it (so the title keeps the same 20 gap
+              to the segment as on Android) → 54; pinned, nothing moves or
+              resizes on scroll. Opaque page surface in both
               states, so iOS's status bar (painted from the page surface) is
               always the same colour as the bar; a hairline fades in at the
               edge (scroll-linked, 40 px). Title start-aligned at 62
@@ -3174,6 +3176,7 @@ html.in-app { --stp-safe-top: 0px; }
   --stp-gutter: 24px;              /* spacing.layout.sm — glyphs + text on it */
   --stp-pad-y: 8px;                /* spacing.inset.md — above / below the row */
   --stp-row: 48px;                 /* size.control.lg */
+  --stp-row-ios: 44px;             /* size.control.md — iOS standard navigation bar 44 pt */
   --stp-hit: 40px;                 /* size.control.sm — menu / icon buttons, CTA */
   --stp-icon: 20px;                /* size.icon.lg — menu glyph */
   --stp-hit-edge: calc(var(--stp-gutter) - (var(--stp-hit) - var(--stp-icon)) / 2);   /* 14 */
@@ -3292,11 +3295,17 @@ html.in-app { --stp-safe-top: 0px; }
 }
 .stp--title.is-scrolled::after { opacity: 1; }
 
-/* ── iPhone: the header never moves; the bar matches the status bar ───
-   • No compacting: the row stays 48 with 8 above / below, so the menu row and the segment never shift.
+/* ── iPhone: standard 44 pt bar, never moves; the bar matches the status bar ───
+   • The title bar is the iOS 44 pt navigation bar at rest: row 44 directly under the status bar, and
+     8 + (48 − 44) / 2 = 10 under it, so title → segment is 20 on both platforms. Bar 54 (110 with a
+     segment). No compacting on scroll: the menu row and the segment never shift.
    • iOS paints the status bar from the page surface (body or the fixed screen at the top edge — it
      ignores opacity and theme-color), so a frosted white bar would sit under an off-white status bar.
      The bar stays on the opaque page surface in both states; only the hairline marks the scroll edge. */
+[data-platform="ios"] .stp--title .stp-row {
+  height: var(--stp-row-ios);
+  margin: 0 0 calc(var(--stp-pad-y) + (var(--stp-row) - var(--stp-row-ios)) / 2);
+}
 [data-platform="ios"] .stp--title,
 [data-platform="ios"] .stp--title.is-scrolled {
   background: var(--stp-surface-neutral-base);
@@ -3354,10 +3363,10 @@ html.in-app { --stp-safe-top: 0px; }
         </div>
       </div>
     </header>
-<!-- ▼ COMPONENT · top-app-bar v1.0.2 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v1.0.3 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
 <script data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v1.0.2
+   SHINE · TOP APP BAR  (app component · App-login)              v1.0.3
    Pair with top-app-bar.css and the menu-button component.
 
    Markup — brand (Home):
@@ -3434,7 +3443,7 @@ html.in-app { --stp-safe-top: 0px; }
     return el;
   }
   function init() { doc.querySelectorAll('[data-shine-topbar]:not(style):not(script)').forEach(mount); }
-  global.ShineTopBar = { version: '1.0.2', mount: mount, update: function () { bars.forEach(function (b) { if (b.__stpT) paint(b); }); } };
+  global.ShineTopBar = { version: '1.0.3', mount: mount, update: function () { bars.forEach(function (b) { if (b.__stpT) paint(b); }); } };
   init();
   if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', init);
 })(window);
