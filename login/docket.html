@@ -1340,10 +1340,10 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
 }
 </style>
 <!-- ▲ COMPONENT · bottom-tab-bar -->
-<!-- ▼ COMPONENT · top-app-bar v1.0.1 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v1.0.2 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
 <style data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v1.0.1
+   SHINE · TOP APP BAR  (app component · App-login)              v1.0.2
    One top bar for every logged-in screen, in two variants that share one
    frame, so the menu, the brand/title anchor and the trailing action sit
    on exactly the same spot on every tab.
@@ -1369,11 +1369,11 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
    Platform (html / ancestor [data-platform="ios"]; Android is the default)
      Android  title bar = M3 small top app bar: 64, pinned, start-aligned;
               on scroll it lifts (frosted surface + hairline under the slot)
-     iPhone   title bar: 64 at rest; as the list scrolls (scroll-linked, 40 px)
-              the space ABOVE the row closes and the row compacts to the
-              standard 44 bar. The gap between the title row and the slot
-              below (segment) never changes; the title stays start-aligned at
-              62, same size; hairline at the edge
+     iPhone   title bar: 64, pinned — nothing in the header moves or resizes
+              on scroll (row + segment stay put). Opaque page surface in both
+              states, so iOS's status bar (painted from the page surface) is
+              always the same colour as the bar; a hairline fades in at the
+              edge (scroll-linked, 40 px). Title start-aligned at 62
      brand    floating pill on both; it already sits on its own surface
 
    ▶ BEFORE ADDING OR CHANGING IT: read README.md in this folder.
@@ -1413,7 +1413,6 @@ html.in-app { --stp-safe-top: 0px; }
   --stp-gutter: 24px;              /* spacing.layout.sm — glyphs + text on it */
   --stp-pad-y: 8px;                /* spacing.inset.md — above / below the row */
   --stp-row: 48px;                 /* size.control.lg */
-  --stp-row-ios-compact: 44px;     /* iOS standard navigation bar */
   --stp-hit: 40px;                 /* size.control.sm — menu / icon buttons, CTA */
   --stp-icon: 20px;                /* size.icon.lg — menu glyph */
   --stp-hit-edge: calc(var(--stp-gutter) - (var(--stp-hit) - var(--stp-icon)) / 2);   /* 14 */
@@ -1427,13 +1426,14 @@ html.in-app { --stp-safe-top: 0px; }
 
   /* TYPE — §2.1 */
   --stp-font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;   /* typeface.family.brand */
-  /* Heading / md (mobile) bold: 18 / 22, −0.2 — title at rest */
+  /* Title: 20 / 24 bold −0.2 — the Heading / md step one size up (unit/20 · unit/24, its ≥768 values);
+     between Heading / md mobile 18 and Heading / lg mobile 22 */
   /* Label / md bold: 12 / 12 — Search Jobs (A.02 btn--sm) */
 
   /* MOTION — proposed */
   --stp-dur: 200ms; --stp-ease: ease;
 
-  --stp-p: 0;                      /* iOS collapse progress 0 → 1, set by the script */
+  --stp-p: 0;                      /* scroll-edge progress 0 → 1 over 40 px, set by the script (iOS hairline) */
 
   position: sticky; top: 0; z-index: 80;
   box-sizing: border-box;
@@ -1512,7 +1512,7 @@ html.in-app { --stp-safe-top: 0px; }
 .stp--title { background: var(--stp-surface-neutral-base); }
 .stp-title {
   margin: 0;
-  font-size: 18px; line-height: 22px; font-weight: 700; letter-spacing: -0.2px;   /* Heading / md bold (mobile) */
+  font-size: 20px; line-height: 24px; font-weight: 700; letter-spacing: -0.2px;   /* unit/20 · unit/24 · Heading / md bold, one step up from 18 (user, v1.0.2) */
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .stp-below { padding: 0 var(--stp-gutter) 16px; } /* slot: segment control etc., on the gutter · 16 under (spacing.inset.xl) */
@@ -1531,16 +1531,17 @@ html.in-app { --stp-safe-top: 0px; }
 }
 .stp--title.is-scrolled::after { opacity: 1; }
 
-/* ── iPhone: the bar compacts into the standard 44 bar; the title stays put ── */
-[data-platform="ios"] .stp--title .stp-row {
-  /* compacts from the TOP only: 8 above → 0, row 48 → 44. The space under the row grows by half the
-     row's shrink (8 → 10) so the title / menu keep exactly the same distance to the segment below. */
-  height: calc(var(--stp-row) - (var(--stp-row) - var(--stp-row-ios-compact)) * var(--stp-p));
-  margin-top: calc(var(--stp-pad-y) * (1 - var(--stp-p)));
-  margin-bottom: calc(var(--stp-pad-y) + (var(--stp-row) - var(--stp-row-ios-compact)) / 2 * var(--stp-p));
+/* ── iPhone: the header never moves; the bar matches the status bar ───
+   • No compacting: the row stays 48 with 8 above / below, so the menu row and the segment never shift.
+   • iOS paints the status bar from the page surface (body or the fixed screen at the top edge — it
+     ignores opacity and theme-color), so a frosted white bar would sit under an off-white status bar.
+     The bar stays on the opaque page surface in both states; only the hairline marks the scroll edge. */
+[data-platform="ios"] .stp--title,
+[data-platform="ios"] .stp--title.is-scrolled {
+  background: var(--stp-surface-neutral-base);
+  -webkit-backdrop-filter: none; backdrop-filter: none;
 }
 [data-platform="ios"] .stp--title.is-scrolled::after { opacity: var(--stp-p); }
-[data-platform="ios"] .stp--title.is-scrolled { background: var(--stp-surface-neutral-raised-translucent); }
 [data-platform="ios"] .stp-row > .mb::after, [data-platform="ios"] .stp-row > .stp-back::after { inset: -2px; }    /* 44 touch target */
 
 @media (prefers-reduced-motion: reduce) {
@@ -2279,10 +2280,10 @@ html.in-app .bs { --bs-safe: 0px; }
         <!-- ▲ COMPONENT · segment-control -->
         </div>
       </header>
-<!-- ▼ COMPONENT · top-app-bar v1.0.1 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v1.0.2 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
 <script data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v1.0.1
+   SHINE · TOP APP BAR  (app component · App-login)              v1.0.2
    Pair with top-app-bar.css and the menu-button component.
 
    Markup — brand (Home):
@@ -2308,9 +2309,9 @@ html.in-app .bs { --bs-safe: 0px; }
                      waits for it (DOMContentLoaded) before listening.
    Platform: sets <html data-platform="ios|android"> once (iPhone / iPad →
    ios, anything else → android) unless the page already set it.
-   Behaviour: .is-scrolled when the content is scrolled; on iOS --stp-p runs
-   0 → 1 over the first 40 px (space above the row closes, row 48 → 44;
-   the title and its gap to the slot below stay put).
+   Behaviour: .is-scrolled when the content is scrolled; --stp-p runs
+   0 → 1 over the first 40 px (fades the iPhone scroll-edge hairline in;
+   the header itself never moves or resizes).
    API: ShineTopBar.mount(el) · ShineTopBar.update() · ShineTopBar.version
    ═══════════════════════════════════════════════════════════════════════ */
 (function (global) {
@@ -2359,7 +2360,7 @@ html.in-app .bs { --bs-safe: 0px; }
     return el;
   }
   function init() { doc.querySelectorAll('[data-shine-topbar]:not(style):not(script)').forEach(mount); }
-  global.ShineTopBar = { version: '1.0.1', mount: mount, update: function () { bars.forEach(function (b) { if (b.__stpT) paint(b); }); } };
+  global.ShineTopBar = { version: '1.0.2', mount: mount, update: function () { bars.forEach(function (b) { if (b.__stpT) paint(b); }); } };
   init();
   if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', init);
 })(window);
