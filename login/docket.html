@@ -1419,10 +1419,10 @@ html.in-app { --stp-safe-top: 0px; }
 }
 </style>
 <!-- ▲ COMPONENT · top-app-bar -->
-<!-- ▼ COMPONENT · job-card v1.2.1 · verbatim copy of App-login/app-components/job-card/job-card.css — do not edit here -->
+<!-- ▼ COMPONENT · job-card v1.2.2 · verbatim copy of App-login/app-components/job-card/job-card.css — do not edit here -->
 <style data-component="job-card">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · JOB CARD  (app component · App-login)                 v1.2.1
+   SHINE · JOB CARD  (app component · App-login)                 v1.2.2
    One card for every job in the logged-in app, built from the design system:
    M.02 Job Card · Portrait (the mobile job list), composed of the M.02 logo,
    A.04 Badge, A.03 Pill (unread dot), A.02 Button (Primary · Neutral,
@@ -1445,8 +1445,8 @@ html.in-app { --stp-safe-top: 0px; }
      │  or  (Applied)          2 days ago     │  outcome · A.04 Badge md + Body / sm
      └──────────────────────────────────────┘
 
-   M.02 portrait: card radius.xl 16 · inset.xxl 22 · 1 px stroke.neutral.muted (v1.1: subtler) · resting shadow
-   elevation.neutral.raised (v1.2.1) · sections stack.lg 14 · hover: border content.neutral.brand + elevation.neutral.lifted
+   M.02 portrait: card radius.xl 16 · inset.xxl 22 · 1 px stroke.neutral.muted (v1.1: subtler) · soft resting shadow
+   (= Home tab job cards, v1.2.2) · sections stack.lg 14 · hover: border content.neutral.brand + elevation.neutral.lifted
    + 1 px lift · focus: elevation.focus.default.
    ▶ BEFORE CHANGING IT: read README.md here and component-system.md M.02. Semantic tokens only.
    ═══════════════════════════════════════════════════════════════════════ */
@@ -1493,6 +1493,7 @@ html.in-app { --stp-safe-top: 0px; }
   /* ELEVATION — §2.5 */
   --jc-lifted: 0 4px 12px rgba(13, 17, 23, .08), 0 2px 4px rgba(13, 17, 23, .04);   /* elevation.neutral.lifted */
   --jc-raised: 0 1px 3px rgba(13, 17, 23, .08), 0 1px 2px rgba(13, 17, 23, .04);    /* elevation.neutral.raised */
+  --jc-soft: 0 6px 22px -8px rgba(16, 24, 40, .10), 0 2px 4px -1px rgba(16, 24, 40, .04);   /* card resting shadow — the Home tab's job cards (user: softer than raised); proposed elevation.neutral.soft */
   --jc-ring: 0 0 0 4px rgba(26, 86, 255, .10);                                       /* elevation.focus.default */
   --jc-halo-brand: 0 0 0 3px rgba(26, 86, 255, .18);                                 /* elevation.halo.brand (proposed, A.04) */
   /* SPACE · SIZE — §2.3 / §2.4 */
@@ -1516,7 +1517,7 @@ html.in-app { --stp-safe-top: 0px; }
   position: relative; box-sizing: border-box; display: flex; flex-direction: column; min-width: 0; margin: 0;
   padding: var(--jc-inset); overflow: hidden;
   background: var(--jc-surface-raised); border: 1px solid var(--jc-line-subtle); border-radius: var(--jc-radius);   /* size.stroke.thin */
-  box-shadow: var(--jc-raised);              /* elevation.neutral.raised — DS “default card resting state” (v1.2.1: the cards had a soft shadow before v1.0) */
+  box-shadow: var(--jc-soft);                /* soft resting shadow, same as the Home tab's job cards (v1.2.2) */
   font-family: var(--jc-font); color: var(--jc-ink); -webkit-font-smoothing: antialiased;
   cursor: pointer; -webkit-tap-highlight-color: transparent;
   transition: border-color var(--jc-dur), box-shadow var(--jc-dur), transform var(--jc-dur);
@@ -1525,7 +1526,7 @@ html.in-app { --stp-safe-top: 0px; }
 .jcard button { font-family: inherit; }
 .jcard svg { display: block; flex: none; }
 @media (hover: hover) { .jcard:hover { border-color: var(--jc-brand); box-shadow: var(--jc-lifted); transform: translateY(-1px); } }
-.jcard:focus-visible { outline: none; box-shadow: var(--jc-ring), var(--jc-raised); border-color: var(--jc-focus); }
+.jcard:focus-visible { outline: none; box-shadow: var(--jc-ring), var(--jc-soft); border-color: var(--jc-focus); }
 
 /* context strip — why the card is in Docket (no DS atom; tokens follow A.04 / A.07 intent pairs) */
 .jcard-ctx {
@@ -1647,7 +1648,7 @@ html.in-app { --stp-safe-top: 0px; }
 .jcard--expired .jcard-role, .jcard--expired .jcard-name, .jcard--expired .jcard-skills-list,
 .jcard--expired .jcard-meta li, .jcard--expired .jcard-desc { color: var(--jc-faded); }
 .jcard--expired * { pointer-events: none; }
-@media (hover: hover) { .jcard--expired:hover { border-color: var(--jc-line-subtle); box-shadow: var(--jc-raised); transform: none; } }
+@media (hover: hover) { .jcard--expired:hover { border-color: var(--jc-line-subtle); box-shadow: var(--jc-soft); transform: none; } }
 
 /* ── List furniture ───────────────────────────────────────────────── */
 .jcard-group { margin: 4px 0 -8px; font: 700 12px/12px var(--jc-font); letter-spacing: 1.5px; text-transform: uppercase; color: var(--jc-faded); }   /* Eyebrow / md */
@@ -3243,10 +3244,10 @@ html.in-app .bs { --bs-safe: 0px; }
 })(window);
 </script>
   <!-- ▲ COMPONENT · sub-view -->
-  <!-- ▼ COMPONENT · job-card v1.2.1 · verbatim copy of App-login/app-components/job-card/job-card.js — do not edit here -->
+  <!-- ▼ COMPONENT · job-card v1.2.2 · verbatim copy of App-login/app-components/job-card/job-card.js — do not edit here -->
 <script data-component="job-card">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · JOB CARD  (app component · App-login)                 v1.2.1
+   SHINE · JOB CARD  (app component · App-login)                 v1.2.2
    Pair with job-card.css. One renderer for every job card in the app.
 
    ShineJobCard.html(job)  → markup for one card
@@ -3363,7 +3364,7 @@ html.in-app .bs { --bs-safe: 0px; }
   function group(t) { return '<p class="jcard-group">' + esc(t) + '</p>'; }
   var CLOCK_FILLED = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 110 20 10 10 0 010-20zm1 5h-2v6l5 3 1-1.7-4-2.3z"/></svg>';
   function note(t) { return '<p class="jcard-note" role="note"><span class="jcard-note-ic">' + CLOCK_FILLED + '</span><span>' + esc(t) + '</span></p>'; }
-  global.ShineJobCard = { version: '1.2.1', html: html, list: function (js) { return js.map(html).join(''); }, setSaved: setSaved,
+  global.ShineJobCard = { version: '1.2.2', html: html, list: function (js) { return js.map(html).join(''); }, setSaved: setSaved,
     nudge: nudge, group: group, note: note, icons: IC };
 })(window);
 </script>
