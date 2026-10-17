@@ -1419,10 +1419,10 @@ html.in-app { --stp-safe-top: 0px; }
 }
 </style>
 <!-- ▲ COMPONENT · top-app-bar -->
-<!-- ▼ COMPONENT · job-card v1.2.3 · verbatim copy of App-login/app-components/job-card/job-card.css — do not edit here -->
+<!-- ▼ COMPONENT · job-card v1.3.0 · verbatim copy of App-login/app-components/job-card/job-card.css — do not edit here -->
 <style data-component="job-card">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · JOB CARD  (app component · App-login)                 v1.2.3
+   SHINE · JOB CARD  (app component · App-login)                 v1.3.0
    One card for every job in the logged-in app, built from the design system:
    M.02 Job Card · Portrait (the mobile job list), composed of the M.02 logo,
    A.04 Badge, A.03 Pill (unread dot), A.02 Button (Primary · Neutral,
@@ -1501,7 +1501,8 @@ html.in-app { --stp-safe-top: 0px; }
   --jc-stack: 14px;          /* spacing.stack.lg — between sections (user: more room; = M.02 landscape rhythm) */
   --jc-row-gap: 12px;        /* spacing.stack.md — between meta rows */
   --jc-inline: 8px;          /* spacing.inline.md */
-  --jc-control: 44px;        /* size.control.md — M.02 portrait: Apply btn--md + icon button 44 */
+  --jc-control: 56px;        /* size.control.xl — A.02 “xl 56 for job card CTAs” (v1.3, user: taller buttons; was md 44) */
+  --jc-btn-gap: 12px;        /* spacing.inline.lg — between the card's buttons (v1.3, user: more room; was inline.md 8) */
   --jc-radius: 24px;         /* size.radius.2xl — card corners (user: as before v1.0 — My Jobs 24, Docket/Home 22 → nearest token 24) */
   --jc-radius-row: 16px;     /* size.radius.xl — expired nudge row */
   --jc-radius-ctl: 12px;     /* size.radius.lg — A.02 buttons, A.07 alert */
@@ -1607,7 +1608,7 @@ html.in-app { --stp-safe-top: 0px; }
 .jcard-skills-list i { font-style: normal; color: var(--jc-faded); margin: 0 4px; }
 
 /* ── Actions ──────────────────────────────────────────────────────── */
-.jcard-actions { display: flex; align-items: center; gap: var(--jc-inline); padding-top: var(--jc-stack); margin-top: auto; }
+.jcard-actions { display: flex; align-items: center; gap: var(--jc-btn-gap); padding-top: var(--jc-stack); margin-top: auto; }
 
 /* A.02 Icon-only · md 44, radius.lg, glyph 20 content.neutral.muted. At rest (user, v1.1): warm white surface.neutral.base +
    1 px stroke.neutral.muted — Docket's quiet look. Saved (user): brand subtle + filled content.neutral.brand glyph. */
@@ -1624,15 +1625,16 @@ html.in-app { --stp-safe-top: 0px; }
 .jcard-ib[aria-pressed="true"] svg { fill: currentColor; }
 .jcard-ib:focus-visible { outline: none; box-shadow: var(--jc-ring); }
 
-/* A.02 Primary · Neutral md (Apply now / Interested) · Secondary md (Not interested — warm white at rest, user v1.1) */
+/* A.02 Primary · Neutral xl (Apply now / Interested) · Secondary xl (Not interested — warm white at rest, user v1.1) */
 .jcard-cta {
-  flex: 1 1 0; min-width: 0; height: var(--jc-control); padding: 0 16px;                        /* inset.xl */
+  flex: 1 1 0; min-width: 0; height: var(--jc-control); padding: 0 12px;                        /* inset.lg — fill-width, label centred; two-up on a phone card can't hold A.02 xl's 22 with a 14 label */
   display: inline-flex; align-items: center; justify-content: center; gap: var(--jc-inline);
   border: 0; border-radius: var(--jc-radius-ctl); background: var(--jc-inverse); color: var(--jc-on-dark);
-  font: 700 12px/12px var(--jc-font); white-space: nowrap; cursor: pointer; -webkit-tap-highlight-color: transparent;   /* Label / md bold */
+  font: 700 14px/14px var(--jc-font); white-space: nowrap; cursor: pointer; -webkit-tap-highlight-color: transparent;   /* A.02 xl · Label / lg bold */
   transition: background-color var(--jc-dur), box-shadow var(--jc-dur), transform var(--jc-dur);
 }
 .jcard-cta svg { width: 16px; height: 16px; }                           /* size.icon.md */
+@media (max-width: 359px) { .jcard-cta { padding: 0 8px; font-size: 12px; line-height: 12px; } }   /* phones under 360: inset.md + A.02 md label (Label / md bold 12) so “Not interested” fits two-up */
 @media (hover: hover) { .jcard-cta:hover { background: var(--jc-inverse-hover); box-shadow: var(--jc-lifted); transform: translateY(-1px); } }
 .jcard-cta:active { background: var(--jc-inverse-pressed); box-shadow: var(--jc-raised); transform: none; }
 .jcard-cta--secondary { background: var(--jc-surface-base); color: var(--jc-ink); border: 1.5px solid var(--jc-line-subtle); }        /* warm white at rest (user) · size.stroke.default */
@@ -3245,10 +3247,10 @@ html.in-app .bs { --bs-safe: 0px; }
 })(window);
 </script>
   <!-- ▲ COMPONENT · sub-view -->
-  <!-- ▼ COMPONENT · job-card v1.2.3 · verbatim copy of App-login/app-components/job-card/job-card.js — do not edit here -->
+  <!-- ▼ COMPONENT · job-card v1.3.0 · verbatim copy of App-login/app-components/job-card/job-card.js — do not edit here -->
 <script data-component="job-card">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · JOB CARD  (app component · App-login)                 v1.2.3
+   SHINE · JOB CARD  (app component · App-login)                 v1.3.0
    Pair with job-card.css. One renderer for every job card in the app.
 
    ShineJobCard.html(job)  → markup for one card
@@ -3365,7 +3367,7 @@ html.in-app .bs { --bs-safe: 0px; }
   function group(t) { return '<p class="jcard-group">' + esc(t) + '</p>'; }
   var CLOCK_FILLED = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 110 20 10 10 0 010-20zm1 5h-2v6l5 3 1-1.7-4-2.3z"/></svg>';
   function note(t) { return '<p class="jcard-note" role="note"><span class="jcard-note-ic">' + CLOCK_FILLED + '</span><span>' + esc(t) + '</span></p>'; }
-  global.ShineJobCard = { version: '1.2.3', html: html, list: function (js) { return js.map(html).join(''); }, setSaved: setSaved,
+  global.ShineJobCard = { version: '1.3.0', html: html, list: function (js) { return js.map(html).join(''); }, setSaved: setSaved,
     nudge: nudge, group: group, note: note, icons: IC };
 })(window);
 </script>
