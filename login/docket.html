@@ -469,148 +469,53 @@ h1, h2, h3, h4, p { overflow-wrap:break-word; word-wrap:break-word; }
 .mr-scroll { overflow-y:auto; flex:1; }
 .mr-scroll::-webkit-scrollbar { width:7px; }
 .mr-scroll::-webkit-scrollbar-thumb { background:var(--stroke-base); border-radius:var(--radius-full); }
-.mr-list { padding:2px 14px 16px; display:flex; flex-direction:column; gap:12px; }
+
 .mr-seg-wrap { padding:14px 22px 16px; border-bottom:1px solid var(--stroke-muted); }
-.mr-grp { font-size:11px; font-weight:700; letter-spacing:.8px; text-transform:uppercase;
-    color:var(--content-faded); padding:14px 4px 0;
-}
-.mr-card {
-    background:var(--surface-raised);
-    border:1px solid var(--stroke-muted);
-    border-radius:20px;
-    padding:0 18px 18px;
-    overflow:hidden;
-    cursor:pointer;
-    box-shadow:0 6px 22px -8px rgba(16,24,40,.10), 0 2px 4px -1px rgba(16,24,40,.04);
-    transition:border-color 160ms ease, box-shadow 160ms ease;
-}
-.mr-card:hover {
-    border-color:var(--content-brand);
-    box-shadow:0 8px 24px -10px rgba(26,86,255,.18);
-}
-.mr-card.is-read { box-shadow:none; border-color:var(--stroke-faded); }
-.mr-card.is-read:hover { border-color:var(--content-brand);
-    box-shadow:0 8px 24px -10px rgba(26,86,255,.18);
-}
-.mr-banner {
-    display:flex; align-items:flex-start; gap:9px;
-    margin:0 -18px 16px; padding:12px 18px;
-    font-size:12px; line-height:16px; font-weight:700; letter-spacing:-.05px;
-}
-.mr-banner svg { width:15px; height:15px; flex:none; margin-top:1px; }
-.mr-banner.is-note { background:var(--surface-notice-subtle); color:var(--content-notice); }
-.mr-banner.is-match { background:var(--surface-brand-subtle);  color:var(--content-brand); }
-.mr-banner.is-saved { background:var(--surface-violet-subtle); color:var(--content-violet); }
-.mr-c-top {
-    display:flex; align-items:center; gap:12px;
-    padding-bottom:14px; margin-bottom:14px;
-    border-bottom:1px solid var(--stroke-muted);
-}
-.mr-c-who { flex:1; min-width:0; }
-.mr-c-name {
-    display:block; font-size:14px; font-weight:var(--typeface-weight-extrabold);
-    letter-spacing:-.1px; line-height:1.2; color:var(--content-base);
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-.mr-c-sub { display:block; font-size:11.5px; line-height:1.2; font-weight:500;
-    color:var(--content-faded); margin-top:3px;
-}
-.mr-c-logo {
-    width:40px; height:40px; border-radius:12px; flex-shrink:0;
-    display:grid; place-items:center;
-    font-size:13px; font-weight:var(--typeface-weight-extrabold); letter-spacing:.02em;
-}
-.mr-c-title { margin:0 0 12px; font-size:18px; line-height:24px; letter-spacing:-.4px;
-    font-weight:var(--typeface-weight-extrabold); color:var(--content-base);
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .mr-chips { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
-.mr-chip {
-    font-family:var(--font-brand);
-    font-size:11.5px; line-height:1.4;
-    font-weight:var(--typeface-weight-extrabold); letter-spacing:0;
-    padding:6px 12px; border-radius:100px;
-    display:inline-flex; align-items:center; gap:5px;
-}
-.mr-chip.is-urgent { background:var(--surface-negative-subtle); color:var(--content-negative); }
-.mr-chip.is-early { background:var(--surface-pink-subtle);     color:var(--content-pink); }
-.mr-c-body { margin:0 0 14px; font-size:13px; line-height:1.55; color:var(--content-muted); }
-.mr-c-meta { display:flex; flex-direction:column; gap:8px; padding-bottom:14px; }
-.mr-c-meta-item {
-    display:flex; align-items:center; gap:10px;
-    font-size:13px; color:var(--content-base);
-    font-weight:var(--typeface-weight-semibold);
-}
-.mr-c-meta-item .ico {
-    width:24px; height:24px; border-radius:8px; flex-shrink:0;
-    display:grid; place-items:center;
-    background:var(--surface-base); color:var(--content-faded);
-}
-.mr-c-meta-item .ico svg { width:14px; height:14px; }
-.mr-c-skills {
-    display:flex; align-items:baseline; gap:8px; flex-wrap:nowrap; min-width:0;
-    padding:13px 0; margin:0 0 14px;
-    border-top:1px solid var(--stroke-muted);
-    border-bottom:1px solid var(--stroke-muted);
-}
-.mr-c-skills > span {
-    font-size:11.5px; font-weight:var(--typeface-weight-semibold);
-    color:var(--content-faded); letter-spacing:.02em; text-transform:uppercase;
-    flex-shrink:0;
-}
-.mr-c-skills > b {
-    font-size:12.5px; font-weight:var(--typeface-weight-extrabold);
-    letter-spacing:-.1px; color:var(--content-base);
-    min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-.mr-card.no-skills .mr-c-actions {
-    padding-top:14px; border-top:1px solid var(--stroke-muted);
-}
-.mr-c-actions { display:flex; align-items:center; gap:10px; }
-.mr-c-actions.is-pair { display:grid; grid-template-columns:1fr 1fr; }
-.mr-pri, .mr-sec, .mr-ico {
-    appearance:none; font-family:var(--font-brand); cursor:pointer; border:none;
-    -webkit-tap-highlight-color:transparent;
-}
-.mr-pri {
-    flex:1 1 0; min-width:0; height:48px; border-radius:12px;
-    background:var(--content-base); color:var(--content-on-fill-dark);
-    font-size:14px; font-weight:var(--typeface-weight-extrabold); letter-spacing:-.1px;
-    display:inline-flex; align-items:center; justify-content:center; gap:8px;
-    transition:background 150ms ease;
-}
-.mr-pri:hover { background:var(--content-muted); }
-.mr-pri svg { width:16px; height:16px; }
-.mr-sec {
-    /* pairs with .mr-pri on invite cards — both take an equal share of the row */
-    flex:1 1 0; min-width:0;
-    display:inline-flex; align-items:center; justify-content:center;
-    height:48px; padding:0 12px; border-radius:12px;
-    background:var(--surface-base); border:1px solid var(--stroke-muted);
-    color:var(--content-muted); font-size:13.5px;
-    font-weight:var(--typeface-weight-extrabold); letter-spacing:-.1px;
-    transition:background 120ms ease, border-color 120ms ease, color 120ms ease;
-}
-.mr-sec:hover { background:var(--surface-raised); border-color:var(--content-faded);
-    color:var(--content-base);
-}
-.mr-ico {
-    width:48px; height:48px; border-radius:12px; flex-shrink:0;
-    background:var(--surface-base); border:1px solid var(--stroke-muted);
-    display:grid; place-items:center; color:var(--content-muted);
-    transition:background 120ms ease, border-color 120ms ease;
-}
-.mr-ico:hover { background:var(--surface-raised); border-color:var(--content-faded); }
-.mr-ico svg { width:18px; height:18px; }
-.mr-ico.is-saved { background:var(--surface-brand-subtle); border-color:transparent;
-    color:var(--content-brand);
-}
-.mr-ico.is-saved svg { fill:currentColor; }
-.mr-done { display:inline-flex; align-items:center; gap:8px; height:48px;
-    font-size:13.5px; font-weight:var(--typeface-weight-extrabold);
-    color:var(--content-positive);
-}
-.mr-done svg { width:16px; height:16px; }
-.mr-done.is-neg { color:var(--content-faded); }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .mr-empty { padding:52px 0 0; }
 .mr-empty-tx { padding:0 26px; }
 .mr-empty h3 {
@@ -623,7 +528,6 @@ h1, h2, h3, h4, p { overflow-wrap:break-word; word-wrap:break-word; }
     margin:0; font-size:13.5px; line-height:1.6; font-weight:500;
     color:var(--content-faded); max-width:31ch;
 }
-.mr-empty .mr-exp { margin-top:28px; margin-bottom:26px; }
 
 
 
@@ -633,11 +537,9 @@ h1, h2, h3, h4, p { overflow-wrap:break-word; word-wrap:break-word; }
 
 
 
-.mr-ico.is-saved {
-    background:var(--surface-base); border-color:var(--stroke-muted);
-    color:var(--content-base);
-}
-.mr-ico.is-saved svg { fill:currentColor; }
+
+
+
 .mr-back {
     flex:none; width:32px; height:32px; margin-left:-6px;
     display:grid; place-items:center;
@@ -653,56 +555,23 @@ h1, h2, h3, h4, p { overflow-wrap:break-word; word-wrap:break-word; }
 .mr-sheet.is-expired .mr-page-hd {
     padding-bottom:18px; border-bottom:1px solid var(--stroke-base);
 }
-.mr-exp {
-    display:flex; align-items:center; gap:13px; width:100%;
-    margin:18px 14px 26px; padding:16px 18px;
-    box-sizing:border-box; width:calc(100% - 28px);
-    background:var(--surface-muted); border:none; border-radius:14px;
-    text-align:left; cursor:pointer; font-family:var(--font-brand);
-    transition:background 140ms ease;
-}
-.mr-exp:hover { background:var(--stroke-muted); }
-.mr-exp-ic {
-    flex:none; width:34px; height:34px; border-radius:11px;
-    display:grid; place-items:center;
-    background:var(--surface-raised); color:var(--content-faded);
-}
-.mr-exp-ic svg { width:17px; height:17px; }
-.mr-exp-tx { flex:1; min-width:0; }
-.mr-exp-tx b {
-    display:block; font-size:13.5px; line-height:18px;
-    font-weight:var(--typeface-weight-extrabold); letter-spacing:-.2px;
-    color:var(--content-base);
-}
-.mr-exp-tx span {
-    display:block; margin-top:2px; font-size:11.5px; line-height:15px;
-    font-weight:var(--typeface-weight-semibold); color:var(--content-faded);
-}
-.mr-exp-chev { flex:none; display:grid; place-items:center; color:var(--content-faded); }
-.mr-exp-chev svg { width:16px; height:16px; }
-.mr-xnote {
-    display:flex; align-items:flex-start; gap:10px;
-    margin:18px 26px 4px; padding:12px 14px;
-    border-radius:var(--radius-lg);
-    background:var(--surface-notice-subtle); color:var(--content-notice);
-    border:1px solid color-mix(in srgb, currentColor 22%, #fff);
-    font-size:12.5px; line-height:1.5;
-    font-weight:var(--typeface-weight-semibold);
-}
-.mr-xnote svg { width:15px; height:15px; flex:none; margin-top:1px; }
-.mr-xwrap { filter:grayscale(1); opacity:.66; }
-.mr-xwrap * { pointer-events:none; }
-.mr-jd {
-    display:inline-flex; align-items:center; gap:5px;
-    padding:0; background:none; border:none; cursor:pointer;
-    font-family:var(--font-brand); font-size:13px; line-height:18px;
-    font-weight:var(--typeface-weight-extrabold); letter-spacing:-.1px;
-    color:var(--content-base);
-    transition:color 120ms ease;
-}
-.mr-jd svg { width:13px; height:13px; }
-.mr-jd:hover { color:var(--content-brand); }
-.mr-card .mr-jd { margin:0 0 16px; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .mr-sheet { display:none; }
 .mr-sheet {
       position:fixed; left:0; right:0; top:0;
@@ -719,7 +588,7 @@ h1, h2, h3, h4, p { overflow-wrap:break-word; word-wrap:break-word; }
       display:flex; align-items:center; gap:10px;
       padding:18px 20px 2px;
 }
-.mr-xnote { margin:18px 20px 4px; }
+
 .mr-page-hd, .mr-seg-wrap { background:var(--surface-base); position:relative; z-index:2; }
 .mr-seg-wrap {
       padding:14px 20px 16px;
@@ -733,46 +602,38 @@ h1, h2, h3, h4, p { overflow-wrap:break-word; word-wrap:break-word; }
 .mr-page-hd h2 { margin:0; font-size:var(--type-display-sm-size);
       font-weight:var(--typeface-weight-extrabold); letter-spacing:-.6px;
 }
-.mr-list { padding:2px 16px 20px; gap:20px; }   /* between cards: spacing.stack.xl (20 · mobile) — was 14 (stack.lg) */
+   /* between cards: spacing.stack.xl (20 · mobile) — was 14 (stack.lg) */
 .mr-empty { padding:44px 0 0; }
 .mr-empty-tx { padding:0 20px; }
 .mr-empty-rule { margin:26px 20px 16px; }
-.mr-exp {
-      margin:0 16px 24px; width:calc(100% - 32px);
-      background:var(--surface-raised); border:1px solid var(--stroke-muted);
-      border-radius:16px; padding:16px;
-}
-.mr-exp:hover { background:var(--surface-raised); }
-.mr-exp-ic { background:var(--surface-muted); }
-.mr-grp { padding:28px 4px 2px; }
-.mr-list > .mr-grp:first-child { padding-top:22px; }
-.mr-card {
-      padding:0 18px 18px; border-radius:22px; gap:0;
-      border:1px solid var(--stroke-muted);
-      box-shadow:0 6px 22px -8px rgba(16,24,40,.10), 0 2px 4px -1px rgba(16,24,40,.04);
-      transition:transform .15s ease;
-}
-.mr-card:hover { border-color:var(--stroke-muted);
-      box-shadow:0 6px 22px -8px rgba(16,24,40,.10), 0 2px 4px -1px rgba(16,24,40,.04);
-}
-.mr-card:active { transform:scale(.99); }
-.mr-card.is-read { box-shadow:0 1px 2px rgba(13,17,23,.06); }
-.mr-banner { margin:0 -18px 16px; padding:13px 18px; font-size:12.5px; line-height:17px; }
-.mr-c-title { font-size:20px; line-height:26px; letter-spacing:-.4px; margin-bottom:14px; }
+
+
+
+
+
+
+
+
+
+
+
 .mr-chips { margin-bottom:16px; }
-.mr-c-body { font-size:13.5px; margin-bottom:14px; }
-.mr-c-meta { padding-bottom:16px; }
-.mr-c-meta-item { font-size:13.5px; }
-.mr-c-skills { padding:14px 0; margin-bottom:14px; }
-.mr-c-skills > b { font-size:13px; }
-.mr-card.no-skills .mr-c-actions { padding-top:14px; }
-.mr-c-actions { padding-top:2px; }
-.mr-pri, .mr-sec, .mr-ico { height:52px; border-radius:14px; }
-.mr-ico { width:52px; }
-.mr-pri { font-size:15px; }
-.mr-done { height:52px; }
+
+
+
+
+
+
+
+
+
+
+
 /* leading slot (menu button · back arrow) — both 40 round, icon centred 30 from the edge, title at 60 */
 .mr-page-hd .mr-back { width: 40px; height: 40px; margin: -6px 0 -6px -10px; border-radius: 1024px; }
+
+/* ── job cards (shared job-card component) inside the Docket screen ── */
+.mr-empty .jcard-nudge { margin: 28px 24px 26px; width: calc(100% - 48px); }   /* empty Action Pending: the nudge on the list gutter */
 </style>
 <!-- ▼ COMPONENT · menu-button v1.1.0 — verbatim copy of App-login/app-components/menu-button/menu-button.css (read README.md there before changing; resync every copy) -->
 <style data-component="menu-button">
@@ -1558,6 +1419,266 @@ html.in-app { --stp-safe-top: 0px; }
 }
 </style>
 <!-- ▲ COMPONENT · top-app-bar -->
+<!-- ▼ COMPONENT · job-card v1.0.0 · verbatim copy of App-login/app-components/job-card/job-card.css — do not edit here -->
+<style data-component="job-card">
+/* ═══════════════════════════════════════════════════════════════════════
+   SHINE · JOB CARD  (app component · App-login)                 v1.0.0
+   One card for every job in the logged-in app, built from the design system:
+   M.02 Job Card · Portrait (the mobile job list), composed of A.08 Avatar,
+   A.04 Badge, A.03 Pill (unread dot), A.02 Button (Primary · Neutral,
+   Secondary, Tertiary, Icon-only) and A.07 Alert (Expired-page note).
+
+     ┌──────────────────────────────────────┐
+     │ ♡ Kavita liked your profile…          │  context strip    (Docket)
+     │ (KS) Kavita Sharma                     │  head  · A.08 Avatar lg (+ A.03 unread dot)
+     │      TalentBridge Staffing · 6:40 PM   │
+     │ ──────────────────────────────────── │  separator · stroke.neutral.base
+     │ Role title                             │  Heading / md bold
+     │ (● Actively hiring) (Early applicant)  │  A.04 Badge md
+     │ Recruiter note…                        │  Body / md medium          (optional)
+     │ ◯ 6 to 10 Yrs · ◯ 25–45 Lacs · ◯ …     │  meta rows · 28 frame · icon 14
+     │ Job details ›                          │  A.02 Tertiary sm          (invite)
+     │ ──────────────────────────────────── │
+     │ Required: A · B · C                    │  skills                    (optional)
+     │ ──────────────────────────────────── │
+     │ [share] [save] [   Apply now   ]       │  A.02 Icon-only md · Primary · Neutral md
+     │  or  (Applied)          2 days ago     │  outcome · A.04 Badge md + Body / sm
+     └──────────────────────────────────────┘
+
+   M.02 portrait: card radius.xl 16 · inset.xxl 22 · 1 px stroke.neutral.base · no resting
+   shadow · sections stack.md 12 · hover: border content.neutral.brand + elevation.neutral.lifted
+   + 1 px lift · focus: elevation.focus.default.
+   ▶ BEFORE CHANGING IT: read README.md here and component-system.md M.02. Semantic tokens only.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.jcard, .jcard-list, .jcard-nudge, .jcard-note, .jcard-group {
+  /* COLOUR — DESIGN-SYSTEM.md §2.2 (light; the app is light-only) */
+  --jc-surface-raised: #FFFFFF;             /* surface.neutral.raised */
+  --jc-surface-muted: #EEF1F5;              /* surface.neutral.muted */
+  --jc-state-hover: #EEF1F5;                /* surface.neutral-state.hover */
+  --jc-state-pressed: #E4E7EC;              /* surface.neutral-state.pressed */
+  --jc-inverse: #0D1117;                    /* surface.inverse.base */
+  --jc-inverse-hover: #344054;              /* surface.inverse-state.hover */
+  --jc-inverse-pressed: #4A5260;            /* surface.inverse-state.pressed */
+  --jc-brand-subtle: #EBF0FF;               /* surface.brand.brand-subtle */
+  --jc-brand-intense: #1A56FF;              /* surface.brand.brand-intense — unread dot */
+  --jc-positive-subtle: #EAFAF0;            /* surface.status.positive-subtle */
+  --jc-notice-subtle: #FFF4ED;              /* surface.status.notice-subtle */
+  --jc-negative-subtle: #FEF2F2;            /* surface.status.negative-subtle */
+  --jc-pink-subtle: #FCE7F3;                /* surface.decorative.pink-subtle */
+  --jc-violet-subtle: #F3EEFE;              /* surface.decorative.violet-subtle */
+  --jc-ink: #0D1117;                        /* content.neutral.base */
+  --jc-muted: #344054;                      /* content.neutral.muted */
+  --jc-faded: #667085;                      /* content.neutral.faded */
+  --jc-brand: #0B3FCC;                      /* content.neutral.brand */
+  --jc-brand-hover: #0A33A6;                /* content.neutral.brand-hover */
+  --jc-on-dark: #FFFFFF;                    /* content.on-fill-dark.base */
+  --jc-on-light: #0D1117;                   /* content.on-fill-light.base */
+  --jc-positive: #027A48;                   /* content.status.positive */
+  --jc-notice: #A35A04;                     /* content.status.notice */
+  --jc-negative: #B42318;                   /* content.status.negative */
+  --jc-pink: #BE185D;                       /* content.decorative.pink */
+  --jc-violet: #6F46E0;                     /* content.decorative.violet */
+  --jc-line: #E4E7EC;                       /* stroke.neutral.base — card border, separators, outlines */
+  --jc-notice-line: #D97706;                /* stroke.status.notice — Alert border */
+  --jc-focus: #1A56FF;                      /* stroke.neutral.focus */
+  --jc-av-pink: #BE185D;                    /* surface.decorative.pink-intense */
+  --jc-av-violet: #6F46E0;                  /* surface.decorative.violet-intense */
+  --jc-av-aqua: #0F766A;                    /* surface.decorative.aqua-intense */
+  --jc-av-cyan: #0E7490;                    /* surface.decorative.cyan-intense */
+  --jc-av-lime: #C4FF38;                    /* surface.decorative.lime-intense */
+  --jc-av-ey: #FFE419;                      /* surface.decorative.electric-yellow-intense */
+  /* ELEVATION — §2.5 */
+  --jc-lifted: 0 4px 12px rgba(13, 17, 23, .08), 0 2px 4px rgba(13, 17, 23, .04);   /* elevation.neutral.lifted */
+  --jc-raised: 0 1px 3px rgba(13, 17, 23, .08), 0 1px 2px rgba(13, 17, 23, .04);    /* elevation.neutral.raised */
+  --jc-ring: 0 0 0 4px rgba(26, 86, 255, .10);                                       /* elevation.focus.default */
+  --jc-halo-brand: 0 0 0 3px rgba(26, 86, 255, .18);                                 /* elevation.halo.brand (proposed, A.04) */
+  /* SPACE · SIZE — §2.3 / §2.4 */
+  --jc-inset: 22px;          /* spacing.inset.xxl — M.02 card padding */
+  --jc-stack: 12px;          /* spacing.stack.md — M.02 portrait, between sections */
+  --jc-inline: 8px;          /* spacing.inline.md */
+  --jc-control: 44px;        /* size.control.md — M.02 portrait: Apply btn--md + icon button 44 */
+  --jc-radius: 16px;         /* size.radius.xl — M.02 card */
+  --jc-radius-ctl: 12px;     /* size.radius.lg — A.02 buttons, A.07 alert */
+  --jc-font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;   /* typeface.family.brand */
+  --jc-dur: 150ms;           /* motion — proposed */
+}
+
+/* ── List (page level) ───────────────────────────────────────────── */
+.jcard-list { display: flex; flex-direction: column; gap: 20px; padding: 20px 24px 8px; }        /* stack.xl · layout.sm */
+
+/* ── Card · M.02 Portrait ────────────────────────────────────────── */
+.jcard {
+  position: relative; box-sizing: border-box; display: flex; flex-direction: column; min-width: 0; margin: 0;
+  padding: var(--jc-inset); overflow: hidden;
+  background: var(--jc-surface-raised); border: 1px solid var(--jc-line); border-radius: var(--jc-radius);   /* size.stroke.thin */
+  font-family: var(--jc-font); color: var(--jc-ink); -webkit-font-smoothing: antialiased;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: border-color var(--jc-dur), box-shadow var(--jc-dur), transform var(--jc-dur);
+}
+.jcard *, .jcard *::before, .jcard *::after { box-sizing: border-box; }
+.jcard button { font-family: inherit; }
+.jcard svg { display: block; flex: none; }
+@media (hover: hover) { .jcard:hover { border-color: var(--jc-brand); box-shadow: var(--jc-lifted); transform: translateY(-1px); } }
+.jcard:focus-visible { outline: none; box-shadow: var(--jc-ring); border-color: var(--jc-focus); }
+
+/* context strip — why the card is in Docket (no DS atom; tokens follow A.04 / A.07 intent pairs) */
+.jcard-ctx {
+  display: flex; align-items: flex-start; gap: var(--jc-inline);
+  margin: calc(var(--jc-inset) * -1) calc(var(--jc-inset) * -1) var(--jc-stack); padding: 12px var(--jc-inset);   /* inset.lg · inset.xxl */
+  font: 600 12px/18px var(--jc-font);                                     /* Body / sm semibold */
+}
+.jcard-ctx svg { width: 12px; height: 12px; margin-top: 3px; }           /* size.icon.xs — pairs with Body / sm */
+.jcard-ctx--invite { background: var(--jc-notice-subtle); color: var(--jc-notice); }   /* notice intent */
+.jcard-ctx--match  { background: var(--jc-brand-subtle);  color: var(--jc-brand); }    /* brand / info intent */
+.jcard-ctx--saved  { background: var(--jc-violet-subtle); color: var(--jc-violet); }   /* decorative violet */
+
+/* head — A.08 Avatar lg leads, name + time beside it (M.02 portrait) */
+.jcard-head {
+  display: flex; align-items: center; gap: var(--jc-inline);
+  padding-bottom: var(--jc-stack); margin-bottom: var(--jc-stack); border-bottom: 1px solid var(--jc-line);   /* M.02 separator */
+}
+.jcard-who { flex: 1 1 0; min-width: 0; display: grid; gap: 4px; }      /* stack.xxs */
+.jcard-name { font: 700 14px/14px var(--jc-font); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }   /* Label / lg bold */
+.jcard-sub  { font: 500 12px/18px var(--jc-font); color: var(--jc-faded); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }   /* Body / sm medium */
+.jcard-av { position: relative; flex: none; }
+.jc-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }                           /* .pill-wrap */
+.jcard-logo {
+  width: 40px; height: 40px; display: grid; place-items: center; border-radius: 1024px;   /* A.08 lg · radius.full */
+  font: 700 12px/12px var(--jc-font); text-transform: uppercase;                          /* Label / md bold */
+  background: var(--jc-av-violet); color: var(--jc-on-dark);
+}
+.jcard-logo--person { background: var(--jc-inverse); color: var(--jc-on-dark); }          /* A.08 User domain · contrast */
+.jcard-logo--violet { background: var(--jc-av-violet); color: var(--jc-on-dark); }
+.jcard-logo--pink   { background: var(--jc-av-pink);   color: var(--jc-on-dark); }
+.jcard-logo--aqua   { background: var(--jc-av-aqua);   color: var(--jc-on-dark); }
+.jcard-logo--cyan   { background: var(--jc-av-cyan);   color: var(--jc-on-dark); }
+.jcard-logo--lime   { background: var(--jc-av-lime);   color: var(--jc-on-light); }
+.jcard-logo--ey     { background: var(--jc-av-ey);     color: var(--jc-on-light); }
+.jcard-dot {                                                             /* A.03 Pill · dot · brand — unread */
+  position: absolute; top: -1px; right: -1px; width: 10px; height: 10px; border-radius: 1024px;
+  background: var(--jc-brand-intense); border: 1.5px solid var(--jc-surface-raised);         /* size.stroke.default halo */
+}
+
+/* role · badges · note */
+.jcard-role { margin: 0 0 var(--jc-stack); font: 700 18px/22px var(--jc-font); letter-spacing: -.2px; text-wrap: pretty; }   /* Heading / md bold (M.02) */
+.jcard-badges { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: var(--jc-stack); }                    /* inline.sm */
+.jcard-badge {                                                          /* A.04 Badge md */
+  display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 1024px;   /* unit/4 · inset.md · inline.sm */
+  font: 700 12px/12px var(--jc-font); white-space: nowrap;                                        /* Label / md bold */
+}
+.jcard-badge--brand    { background: var(--jc-brand-subtle);    color: var(--jc-brand); }
+.jcard-badge--pink     { background: var(--jc-pink-subtle);     color: var(--jc-pink); }
+.jcard-badge--negative { background: var(--jc-negative-subtle); color: var(--jc-negative); }
+.jcard-badge--positive { background: var(--jc-positive-subtle); color: var(--jc-positive); }
+.jcard-badge--neutral  { background: var(--jc-surface-muted);   color: var(--jc-ink); }
+.jcard-badge-dot { width: 6px; height: 6px; border-radius: 1024px; background: currentColor; box-shadow: var(--jc-halo-brand); animation: jc-pulse 2s ease-in-out infinite; }   /* unit/6 */
+@keyframes jc-pulse { 50% { box-shadow: 0 0 0 0 rgba(26, 86, 255, 0); } }
+.jcard-desc { margin: 0 0 var(--jc-stack); font: 500 14px/20px var(--jc-font); color: var(--jc-muted); }   /* Body / md medium */
+
+/* facts — M.02 meta stack: 28 frame, icon 14, Body / md medium, icon ↔ text inline.md */
+.jcard-facts { display: grid; gap: var(--jc-stack); padding-bottom: var(--jc-stack); border-bottom: 1px solid var(--jc-line); }
+.jcard-meta { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--jc-inline); }                /* stack.xs */
+.jcard-meta li { display: flex; align-items: center; gap: var(--jc-inline); min-width: 0; font: 500 14px/20px var(--jc-font); color: var(--jc-muted); }
+.jcard-meta li > span:last-child { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.jcard-ico { width: 28px; height: 28px; flex: none; display: grid; place-items: center; border-radius: 1024px; border: 1px solid var(--jc-line); color: var(--jc-faded); }
+.jcard-ico svg { width: 14px; height: 14px; }                           /* size.icon.sm */
+.jcard-link {                                                           /* A.02 Tertiary · sm, text on the content edge */
+  justify-self: start; display: inline-flex; align-items: center; gap: var(--jc-inline); height: 40px;
+  margin: -4px -12px; padding: 0 12px; border: 0; border-radius: var(--jc-radius-ctl); background: transparent; cursor: pointer;   /* inset.lg */
+  font: 700 12px/12px var(--jc-font); color: var(--jc-brand); transition: background-color var(--jc-dur), color var(--jc-dur);     /* Label / md bold */
+}
+.jcard-link svg { width: 14px; height: 14px; }                          /* size.icon.sm */
+@media (hover: hover) { .jcard-link:hover { background: var(--jc-brand-subtle); color: var(--jc-brand-hover); } }
+.jcard-link:focus-visible { outline: none; box-shadow: var(--jc-ring); }
+
+/* skills — M.02 skills row: Label / md semibold label · Label / lg bold list · faded dots */
+.jcard-skills { display: flex; align-items: center; gap: var(--jc-inline); min-width: 0; padding: var(--jc-stack) 0; border-bottom: 1px solid var(--jc-line); }
+.jcard-skills-label { flex: none; font: 600 12px/12px var(--jc-font); color: var(--jc-faded); }
+.jcard-skills-list { flex: 1 1 0; min-width: 0; font: 700 14px/14px var(--jc-font); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.jcard-skills-list i { font-style: normal; color: var(--jc-faded); margin: 0 4px; }
+
+/* ── Actions ──────────────────────────────────────────────────────── */
+.jcard-actions { display: flex; align-items: center; gap: var(--jc-inline); padding-top: var(--jc-stack); margin-top: auto; }
+
+/* A.02 Icon-only · md 44: raised surface, 1 px stroke.neutral.base, glyph 20 content.neutral.muted, radius.lg.
+   Saved (user decision): brand subtle + filled content.neutral.brand glyph — as on My Jobs › Saved. */
+.jcard-ib {
+  width: var(--jc-control); height: var(--jc-control); flex: none; display: grid; place-items: center; padding: 0;
+  border-radius: var(--jc-radius-ctl); border: 1px solid var(--jc-line); background: var(--jc-surface-raised); color: var(--jc-muted);
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: background-color var(--jc-dur), border-color var(--jc-dur), color var(--jc-dur), box-shadow var(--jc-dur), transform var(--jc-dur);
+}
+.jcard-ib svg { width: 20px; height: 20px; }                            /* size.icon.lg */
+@media (hover: hover) { .jcard-ib:hover { background: var(--jc-state-hover); box-shadow: var(--jc-raised); transform: translateY(-1px); } }
+.jcard-ib:active { background: var(--jc-state-pressed); box-shadow: var(--jc-raised); transform: none; }
+.jcard-ib[aria-pressed="true"] { background: var(--jc-brand-subtle); border-color: var(--jc-brand-subtle); color: var(--jc-brand); }
+.jcard-ib[aria-pressed="true"] svg { fill: currentColor; }
+.jcard-ib:focus-visible { outline: none; box-shadow: var(--jc-ring); }
+
+/* A.02 Primary · Neutral md (Apply now / Interested) · Secondary md (Not interested) */
+.jcard-cta {
+  flex: 1 1 0; min-width: 0; height: var(--jc-control); padding: 0 16px;                        /* inset.xl */
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--jc-inline);
+  border: 0; border-radius: var(--jc-radius-ctl); background: var(--jc-inverse); color: var(--jc-on-dark);
+  font: 700 12px/12px var(--jc-font); white-space: nowrap; cursor: pointer; -webkit-tap-highlight-color: transparent;   /* Label / md bold */
+  transition: background-color var(--jc-dur), box-shadow var(--jc-dur), transform var(--jc-dur);
+}
+.jcard-cta svg { width: 16px; height: 16px; }                           /* size.icon.md */
+@media (hover: hover) { .jcard-cta:hover { background: var(--jc-inverse-hover); box-shadow: var(--jc-lifted); transform: translateY(-1px); } }
+.jcard-cta:active { background: var(--jc-inverse-pressed); box-shadow: var(--jc-raised); transform: none; }
+.jcard-cta--secondary { background: transparent; color: var(--jc-ink); border: 1.5px solid var(--jc-line); }        /* size.stroke.default */
+@media (hover: hover) { .jcard-cta--secondary:hover { background: var(--jc-state-hover); box-shadow: none; } }
+.jcard-cta--secondary:active { background: var(--jc-state-pressed); box-shadow: none; }
+.jcard-cta:focus-visible { outline: none; box-shadow: var(--jc-ring); }
+
+/* outcome — done / expired: no buttons, only what happened (A.04 Badge md) and when (Body / sm medium) */
+.jcard-actions--outcome { justify-content: space-between; gap: 12px; }
+.jcard-when { min-width: 0; font: 500 12px/18px var(--jc-font); color: var(--jc-faded); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* expired — inert; decorative colour drops out, text steps down to content.neutral.faded */
+.jcard--expired { cursor: default; filter: grayscale(1); }
+.jcard--expired .jcard-role, .jcard--expired .jcard-name, .jcard--expired .jcard-skills-list,
+.jcard--expired .jcard-meta li, .jcard--expired .jcard-desc { color: var(--jc-faded); }
+.jcard--expired * { pointer-events: none; }
+@media (hover: hover) { .jcard--expired:hover { border-color: var(--jc-line); box-shadow: none; transform: none; } }
+
+/* ── List furniture ───────────────────────────────────────────────── */
+.jcard-group { margin: 4px 0 -8px; font: 700 12px/12px var(--jc-font); letter-spacing: 1.5px; text-transform: uppercase; color: var(--jc-faded); }   /* Eyebrow / md */
+.jcard-group:first-child { margin-top: 0; }
+/* expired nudge — a quiet card-row: M.02 card surface + border, A.08 Avatar lg · User · subtle with a 20 icon */
+.jcard-nudge {
+  display: flex; align-items: center; gap: 12px; width: 100%; margin-top: 4px; padding: 16px; box-sizing: border-box;   /* inline.lg · inset.xl */
+  background: var(--jc-surface-raised); border: 1px solid var(--jc-line); border-radius: var(--jc-radius);
+  font-family: var(--jc-font); text-align: left; color: var(--jc-ink); cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: border-color var(--jc-dur), box-shadow var(--jc-dur), background-color var(--jc-dur);
+}
+.jcard-nudge-ic { flex: none; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 1024px; background: var(--jc-surface-muted); color: var(--jc-ink); }
+.jcard-nudge-ic svg { width: 20px; height: 20px; }                      /* size.icon.lg */
+.jcard-nudge-tx { flex: 1 1 0; min-width: 0; display: grid; gap: 4px; }
+.jcard-nudge-tx b { font: 700 14px/14px var(--jc-font); }               /* Label / lg bold */
+.jcard-nudge-tx span { font: 500 12px/18px var(--jc-font); color: var(--jc-faded); }   /* Body / sm medium */
+.jcard-nudge-chev { flex: none; color: var(--jc-faded); }
+.jcard-nudge-chev svg { width: 16px; height: 16px; display: block; }   /* size.icon.md */
+@media (hover: hover) { .jcard-nudge:hover { border-color: var(--jc-brand); box-shadow: var(--jc-lifted); } }
+.jcard-nudge:active { background: var(--jc-state-hover); }
+.jcard-nudge:focus-visible { outline: none; box-shadow: var(--jc-ring); }
+/* Expired-page note — A.07 Alert · Notice (no title, not dismissible) */
+.jcard-note {
+  display: flex; align-items: flex-start; gap: var(--jc-inline); margin: 0; padding: 12px 16px;   /* inset.lg · inset.xl */
+  border-radius: var(--jc-radius-ctl); border: 1px solid var(--jc-notice-line); background: var(--jc-notice-subtle);
+  font: 500 12px/18px var(--jc-font); color: var(--jc-muted);                                      /* body: always neutral */
+}
+.jcard-note-ic { flex: none; width: 20px; height: 20px; display: grid; place-items: center; color: var(--jc-notice); margin-top: -1px; }
+.jcard-note-ic svg { width: 16px; height: 16px; }                       /* size.icon.md, filled */
+
+@media (prefers-reduced-motion: reduce) {
+  .jcard, .jcard-ib, .jcard-cta, .jcard-link, .jcard-nudge { transition: none; }
+  .jcard:hover, .jcard-ib:hover, .jcard-cta:hover { transform: none; }
+  .jcard-badge-dot { animation: none; }
+}
+</style>
+<!-- ▲ COMPONENT · job-card -->
 <!-- ▼ COMPONENT · bottom-sheet v2.4.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
 <style data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
@@ -3116,25 +3237,134 @@ html.in-app .bs { --bs-safe: 0px; }
 })(window);
 </script>
   <!-- ▲ COMPONENT · sub-view -->
-  <script>
+  <!-- ▼ COMPONENT · job-card v1.0.0 · verbatim copy of App-login/app-components/job-card/job-card.js — do not edit here -->
+<script data-component="job-card">
+/* ═══════════════════════════════════════════════════════════════════════
+   SHINE · JOB CARD  (app component · App-login)                 v1.0.0
+   Pair with job-card.css. One renderer for every job card in the app.
+
+   ShineJobCard.html(job)  → markup for one card
+   ShineJobCard.list(jobs) → markup for several (wrap them in .jcard-list)
+   ShineJobCard.setSaved(cardOrId, on)  → bookmark state (aria-pressed + label)
+   Event: 'shine:jobcard' bubbles from the card on any tap,
+          detail { action, id, card, button } — action: open | details | share | save | unsave |
+          apply | decline | interested. Cancelable; the page owns what happens next.
+
+   job = {
+     id, name, sub, logo: { text, person?, color? },   // color: violet|pink|aqua|cyan|lime|ey (default: hash of name)
+     ctx?: { kind: 'invite'|'match'|'saved', text },   // Docket: why the card is here (kept on done / expired cards)
+     role, badges?: ['actively'|'early'|'urgent' | { kind, text }], desc?, meta: { exp, pay, loc }, details?, skills?: [],
+     state: 'active'  → Share · Save · Apply            { saved?, apply?: 'native'|'external' }
+          | 'invite'  → Not interested · Interested     (+ "Job details" link when details: true)
+          | 'done'    → read-only outcome row           { outcome: 'applied'|'interested'|'declined', when }
+          | 'expired' → grey, inert, "Expired" + when   { when }
+     unread?                                            // Docket pending only: A.03 Pill dot on the avatar
+   }
+   ShineJobCard.nudge({ count, text }) → the "N expired" widget that ends Saved / Action Pending
+   ShineJobCard.group(label) · ShineJobCard.note(text) → day header · Expired-page note
+   ═══════════════════════════════════════════════════════════════════════ */
+(function (global) {
+  'use strict';
+  if (global.ShineJobCard) return;
+  var S = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+  var IC = {
+    bag: S + '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5.5A2 2 0 0110 3.5h4a2 2 0 012 2V7"/></svg>',
+    pay: S + '<path d="M6 3h12M6 8h12M9 13c0-3 9-3 9 0v5l-9-5z"/></svg>',
+    pin: S + '<path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>',
+    share: S + '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>',
+    save: S + '<path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>',
+    arrow: S.replace('stroke-width="2"', 'stroke-width="2.4"') + '<path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+    external: S.replace('stroke-width="2"', 'stroke-width="2.4"') + '<path d="M7 17L17 7M9 7h8v8"/></svg>',
+    chev: S.replace('stroke-width="2"', 'stroke-width="2.4"') + '<path d="M9 6l6 6-6 6"/></svg>',
+    tick: S.replace('stroke-width="2"', 'stroke-width="2.6"') + '<path d="M20 6L9 17l-5-5"/></svg>',
+    clock: S + '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>',
+    heart: S + '<path d="M12 20s-7-4.6-7-9.4A3.9 3.9 0 0112 8a3.9 3.9 0 017 2.6C19 15.4 12 20 12 20z"/></svg>',
+    spark: S + '<path d="M12 3l1.9 5.6L19.5 10l-5.6 1.9L12 17.5 10.1 11.9 4.5 10l5.6-1.4z"/></svg>',
+    mark: S + '<path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z" fill="currentColor"/></svg>',
+    bolt: S + '<path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>',
+    cross: S.replace('stroke-width="2"', 'stroke-width="2.6"') + '<path d="M18 6L6 18M6 6l12 12"/></svg>'
+  };
+  var COLORS = ['violet', 'aqua', 'pink', 'cyan', 'lime', 'ey'];   // same hash rule as JSRP
+  var BADGES = { actively: ['brand', '<span class="jcard-badge-dot" aria-hidden="true"></span>', 'Actively Hiring'],
+                 early: ['pink', '', 'Be An Early Applicant'], urgent: ['negative', '', 'Urgent'] };   // A.04: brand (live dot) · decorative pink · negative
+  var CTX = { invite: IC.heart, match: IC.spark, saved: IC.mark };
+
+  function esc(t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function color(name) { var h = 0; for (var i = 0; i < (name || '').length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0; return COLORS[h % COLORS.length]; }
+  function act(a, id, label, inner, cls, extra) {
+    return '<button class="' + cls + '" type="button" data-jc-act="' + a + '" data-id="' + esc(id) + '"' + (label ? ' aria-label="' + label + '"' : '') + (extra || '') + '>' + inner + '</button>';
+  }
+  function saveBtn(id, on) {
+    return act(on ? 'unsave' : 'save', id, on ? 'Saved — remove job' : 'Save job', IC.save, 'jcard-ib jcard-save', ' aria-pressed="' + (on ? 'true' : 'false') + '"');
+  }
+  var OUT = { applied: ['positive', 'Applied'], interested: ['positive', 'Interest sent'], declined: ['neutral', 'Not interested'], expired: ['neutral', 'Expired'] };
+  function state(j) { return j.state || 'active'; }
+  function actions(j) {
+    var st = state(j), id = j.id;
+    if (st === 'invite')
+      return act('decline', id, '', 'Not interested', 'jcard-cta jcard-cta--secondary') + act('interested', id, '', 'Interested' + IC.arrow, 'jcard-cta');
+    if (st === 'done' || st === 'expired') {
+      var o = OUT[st === 'expired' ? 'expired' : (j.outcome || 'applied')] || OUT.applied;
+      return '<span class="jcard-badge jcard-badge--' + o[0] + '">' + o[1] + '</span>' +
+             (j.when ? '<span class="jcard-when">' + esc(j.when) + '</span>' : '');
+    }
+    var ext = j.apply === 'external';
+    return act('share', id, 'Share', IC.share, 'jcard-ib') + saveBtn(id, !!j.saved) +
+      act('apply', id, ext ? 'Apply now on the company site' : 'Apply now', 'Apply now' + (ext ? IC.external : ''), 'jcard-cta', ' data-apply="' + (ext ? 'external' : 'native') + '"');   // M.02 portrait wording
+  }
+  function html(j) {
+    var lg = j.logo || {}, c = lg.color || color(j.name), m = j.meta || {};
+    var row = function (ic, t) { return t ? '<li><span class="jcard-ico">' + ic + '</span><span>' + esc(t) + '</span></li>' : ''; };
+    var badges = (j.badges || []).map(function (b) {      // 'early' or { kind: 'early', text: 'Early Applicant' }
+      var k = typeof b === 'string' ? b : b.kind, d = BADGES[k]; if (!d) return '';
+      return '<span class="jcard-badge jcard-badge--' + d[0] + '">' + d[1] + esc(typeof b === 'string' ? d[2] : (b.text || d[2])) + '</span>'; }).join('');
+    var st = state(j), ex = st === 'expired', ro = st === 'done' || ex;
+    return '<article class="jcard jcard--' + st + (j.unread && !ro ? ' jcard--unread' : '') + '" data-id="' + esc(j.id) + '" data-state="' + st + '" tabindex="' + (ex ? '-1' : '0') + '"' + (ex ? ' aria-disabled="true"' : '') + '>' +
+      (j.ctx ? '<div class="jcard-ctx jcard-ctx--' + j.ctx.kind + '">' + (CTX[j.ctx.kind] || '') + '<span>' + esc(j.ctx.text) + '</span></div>' : '') +
+      '<div class="jcard-head"><span class="jcard-av"><span class="jcard-logo ' + (lg.person ? 'jcard-logo--person' : 'jcard-logo--' + c) + '" aria-hidden="true">' + esc(lg.text) + '</span>' +
+          (j.unread && !ro ? '<span class="jcard-dot" aria-hidden="true"></span>' : '') + '</span>' +
+        '<div class="jcard-who"><span class="jcard-name">' + esc(j.name) + (j.unread && !ro ? '<span class="jc-sr"> · new</span>' : '') + '</span>' + (j.sub ? '<span class="jcard-sub">' + esc(j.sub) + '</span>' : '') + '</div></div>' +
+      '<h3 class="jcard-role">' + esc(j.role) + '</h3>' +
+      (badges ? '<div class="jcard-badges">' + badges + '</div>' : '') +
+      (j.desc ? '<p class="jcard-desc">' + esc(j.desc) + '</p>' : '') +
+      '<div class="jcard-facts"><ul class="jcard-meta">' + row(IC.bag, m.exp) + row(IC.pay, m.pay) + row(IC.pin, m.loc) + '</ul>' +
+        (j.details && st === 'invite' ? act('details', j.id, '', 'Job details' + IC.chev, 'jcard-link') : '') + '</div>' +
+      (j.skills && j.skills.length ? '<div class="jcard-skills"><span class="jcard-skills-label">Required:</span><span class="jcard-skills-list">' +
+        j.skills.map(esc).join('<i aria-hidden="true">·</i>') + '</span></div>' : '') +
+      '<div class="jcard-actions' + (ro ? ' jcard-actions--outcome' : '') + '">' + actions(j) + '</div>' +
+    '</article>';
+  }
+  function setSaved(card, on) {
+    if (typeof card === 'string') card = document.querySelector('.jcard[data-id="' + card + '"]');
+    var b = card && card.querySelector('.jcard-save'); if (!b) return;
+    b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.setAttribute('data-jc-act', on ? 'unsave' : 'save');
+    b.setAttribute('aria-label', on ? 'Saved — remove job' : 'Save job');
+  }
+  document.addEventListener('click', function (e) {
+    var card = e.target.closest && e.target.closest('.jcard'); if (!card || card.classList.contains('jcard--expired')) return;
+    var b = e.target.closest('[data-jc-act]');
+    card.dispatchEvent(new CustomEvent('shine:jobcard', { bubbles: true, cancelable: true,
+      detail: { action: b ? b.getAttribute('data-jc-act') : 'open', id: card.getAttribute('data-id'), card: card, button: b || null } }));
+  });
+  document.addEventListener('keydown', function (e) {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.classList && e.target.classList.contains('jcard')) { e.preventDefault(); e.target.click(); }
+  });
+  function nudge(o) {
+    return '<button class="jcard-nudge" type="button" data-jc-nudge="expired"><span class="jcard-nudge-ic">' + IC.clock + '</span>' +
+      '<span class="jcard-nudge-tx"><b>' + esc(o.count) + ' expired</b><span>' + esc(o.text) + '</span></span><span class="jcard-nudge-chev">' + IC.chev + '</span></button>';
+  }
+  function group(t) { return '<p class="jcard-group">' + esc(t) + '</p>'; }
+  var CLOCK_FILLED = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 110 20 10 10 0 010-20zm1 5h-2v6l5 3 1-1.7-4-2.3z"/></svg>';
+  function note(t) { return '<p class="jcard-note" role="note"><span class="jcard-note-ic">' + CLOCK_FILLED + '</span><span>' + esc(t) + '</span></p>'; }
+  global.ShineJobCard = { version: '1.0.0', html: html, list: function (js) { return js.map(html).join(''); }, setSaved: setSaved,
+    nudge: nudge, group: group, note: note, icons: IC };
+})(window);
+</script>
+<!-- ▲ COMPONENT · job-card -->
+<script>
+
 (function(){
   'use strict';
-
-  var ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
-  var TICK  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
-
-  var IC = {
-    bag:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5.5A2 2 0 0110 3.5h4a2 2 0 012 2V7"/></svg>',
-    pay:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12M6 8h12M9 13c0-3 9-3 9 0v5l-9-5z"/></svg>',
-    pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1118 0z"/></svg>',
-    bolt:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>',
-    heart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.6-7-9.4A3.9 3.9 0 0112 8a3.9 3.9 0 017 2.6C19 15.4 12 20 12 20z"/></svg>',
-    spark:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.6L19.5 10l-5.6 1.9L12 17.5 10.1 11.9 4.5 10l5.6-1.4z"/></svg>',
-    chev:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
-    clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>',
-    right:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>',
-    mark:'<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>'
-  };
 
   var SEED = [
     { id:'n1', kind:'note', day:'Today', time:'6:40 PM', unread:true, urgent:true,
@@ -3241,100 +3471,38 @@ html.in-app .bs { --bs-safe: 0px; }
   }
   function say(t){ if (typeof showToast === 'function') showToast(t); }
 
-  var IC_BOOKMARK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2v16z"/></svg>';
-  var IC_SHARE    = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>';
-  var IC_CHEV_R   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
-
-  // Recruiter invites carry a way into the job that is deliberately NOT part
-  // of the decision row — it sits with the job facts, above the divider, so
-  // reading about the role never looks like answering the recruiter.
-  function jobDetails(m){
-    // Expired invites keep the card's anatomy, but not a link into a job
-    // that is no longer open.
-    if (m.kind !== 'note' || m.done === 'expired') return '';
-    return '<button class="mr-jd" data-mr="details" data-id="'+m.id+'" type="button">'+
-             'Job details'+IC_CHEV_R+'</button>';
+  /* ── Cards = the shared job-card component (ShineJobCard, app-components/job-card) ──
+     invite (note)  → state 'invite'   · Not interested · Interested (+ Job details)
+     match / saved  → state 'active'   · Share · Save · Apply now
+     acted on       → state 'done'     · outcome + when (Action Taken)
+     expired        → state 'expired'  · Expired + when it closed (Expired page)
+     Un-saving a saved job is not an action: the card leaves Docket. */
+  var OUTCOME = { applied: 'applied', interested: 'interested', declined: 'declined' };
+  function jc(m){
+    var first = String(m.who).split(' ')[0];
+    var j = {
+      id: m.id, name: m.who, sub: m.kind === 'note' ? (m.org + ' · ' + m.time) : m.time,
+      logo: { text: m.mono, person: m.kind === 'note' },
+      ctx: m.kind === 'note'  ? { kind: 'invite', text: first + ' liked your profile and invited you to apply' }
+         : m.kind === 'saved' ? { kind: 'saved', text: 'You saved this job ' + m.saved + ' ago' }
+         :                      { kind: 'match', text: 'Matched to your profile and preferences' },
+      role: m.h, desc: m.p || '', meta: { exp: m.exp, pay: m.pay, loc: m.loc },
+      skills: m.skills ? String(m.skills).split(' · ') : null,
+      badges: [], unread: !!m.unread
+    };
+    if (m.urgent && m.kind !== 'note') j.badges.push('urgent');
+    if (m.early) j.badges.push({ kind: 'early', text: 'Early Applicant' });
+    if (m.done === 'expired')      { j.state = 'expired'; j.when = 'Closed ' + String(m.gone || '').replace(/^Expired /, ''); }
+    else if (OUTCOME[m.done])      { j.state = 'done'; j.outcome = OUTCOME[m.done]; j.when = m.doneAt || ''; }
+    else if (m.kind === 'note')    { j.state = 'invite'; j.details = true; }
+    else                           { j.state = 'active'; j.saved = m.kind === 'saved' || !!m.bookmarked; }
+    return j;
   }
-
-  function actionsFor(m){
-    if (m.done === 'applied')    return '<span class="mr-done">'+TICK+'Applied</span>';
-    if (m.done === 'interested') return '<span class="mr-done">'+TICK+'Interest sent</span>';
-    if (m.done === 'declined')   return '<span class="mr-done is-neg">'+TICK+'Not interested</span>';
-    if (m.done === 'unsaved')    return '<span class="mr-done is-neg">'+TICK+'Removed from saved</span>';
-    if (m.done === 'expired')    return '<span class="mr-done is-neg">'+esc(m.gone)+'</span>';
-    if (m.kind === 'saved')
-      return '<button class="mr-ico is-saved" data-mr="unsave" data-id="'+m.id+'" aria-label="Remove from saved" aria-pressed="true">'+
-               IC_BOOKMARK+
-             '</button>'+
-             '<button class="mr-ico" data-mr="share" data-id="'+m.id+'" aria-label="Share">'+
-               IC_SHARE+
-             '</button>'+
-             '<button class="mr-pri" data-mr="apply" data-id="'+m.id+'">Apply'+ARROW+'</button>';
-    if (m.kind === 'note')
-      return '<button class="mr-sec" data-mr="declined" data-id="'+m.id+'">Not interested</button>'+
-             '<button class="mr-pri" data-mr="interested" data-id="'+m.id+'">Interested'+ARROW+'</button>';
-    return '<button class="mr-ico" data-mr="save" data-id="'+m.id+'" aria-label="Bookmark">'+
-             IC_BOOKMARK+
-           '</button>'+
-           '<button class="mr-ico" data-mr="share" data-id="'+m.id+'" aria-label="Share">'+
-             IC_SHARE+
-           '</button>'+
-           '<button class="mr-pri" data-mr="apply" data-id="'+m.id+'">Apply'+ARROW+'</button>';
-  }
-
-  // The banner names the category now, so only status chips remain — and the
-  // row is omitted entirely when a message carries none.
-  function chips(m){
-    var out = '';
-    if (m.urgent && m.kind !== 'note')
-      out += '<span class="mr-chip is-urgent">'+IC.bolt+'Urgent</span>';
-    if (m.early)  out += '<span class="mr-chip is-early">Early Applicant</span>';
-    return out ? '<div class="mr-chips">'+out+'</div>' : '';
-  }
-
-  function banner(m){
-    if (m.kind === 'note'){
-      var first = String(m.who).split(' ')[0];
-      return '<div class="mr-banner is-note">'+IC.heart+
-        '<span>'+esc(first)+' liked your profile and invited you to apply</span></div>';
-    }
-    if (m.kind === 'saved'){
-      return '<div class="mr-banner is-saved">'+IC.mark+
-        '<span>You saved this job '+esc(m.saved)+' ago</span></div>';
-    }
-    return '<div class="mr-banner is-match">'+IC.spark+
-      '<span>Matched to your profile and preferences</span></div>';
-  }
-
-  function meta(m){
-    function row(icon, txt){
-      return '<div class="mr-c-meta-item"><span class="ico">'+icon+'</span>'+esc(txt)+'</div>';
-    }
-    return '<div class="mr-c-meta">'+row(IC.bag, m.exp)+row(IC.pay, m.pay)+row(IC.pin, m.loc)+'</div>';
-  }
-
-  function card(m){
-    // second line: the agency for an invite, the timestamp alone for a match
-    var sub = m.kind === 'note' ? (m.org + ' \u00b7 ' + m.time) : m.time;
-    return '<article class="mr-card'+(m.unread?' is-unread':' is-read')+
-             (m.skills ? '' : ' no-skills')+'" data-mr="read" data-id="'+m.id+'">'+
-      banner(m)+
-      '<div class="mr-c-top">'+
-        '<div class="mr-c-who">'+
-          '<span class="mr-c-name">'+esc(m.who)+'</span>'+
-          '<span class="mr-c-sub">'+esc(sub)+'</span>'+
-        '</div>'+
-        '<div class="mr-c-logo" style="background:'+m.bg+';color:#fff">'+esc(m.mono)+'</div>'+
-      '</div>'+
-      '<h4 class="mr-c-title">'+esc(m.h)+'</h4>'+
-      chips(m)+
-      (m.p ? '<p class="mr-c-body">'+esc(m.p)+'</p>' : '')+
-      meta(m)+
-      (m.skills ? '<div class="mr-c-skills"><span>Required:</span><b>'+esc(m.skills)+'</b></div>' : '')+
-      jobDetails(m)+
-      '<div class="mr-c-actions'+(m.kind === 'note' && !m.done ? ' is-pair' : '')+'">'+
-        actionsFor(m)+'</div>'+
-    '</article>';
+  function card(m){ return ShineJobCard.html(jc(m)); }
+  var actSeq = 0;
+  function stamp(m){   // when the action was taken — shown on the Action Taken card
+    var d = new Date(), h = d.getHours(), mm = ('0' + d.getMinutes()).slice(-2);
+    m.doneAt = 'Today, ' + ((h % 12) || 12) + ':' + mm + (h < 12 ? ' AM' : ' PM'); m.doneDay = 'Today'; m.doneSeq = ++actSeq; m.unread = false;
   }
 
   var filter = 'pending';  // 'pending' = not acted on yet | 'taken' = acted on
@@ -3343,14 +3511,9 @@ html.in-app .bs { --bs-safe: 0px; }
   // The card that closes the Action Pending list. Deliberately quiet: it is
   // a way out of the list, not another thing competing for the action.
   function expiredCard(){
-    var n = EXPIRED.length;
-    return '<button class="mr-exp" data-mr="expired" type="button">'+
-      '<span class="mr-exp-ic">'+IC.clock+'</span>'+
-      '<span class="mr-exp-tx"><b>'+n+' expired</b>'+
-        '<span>Closed before you acted on them</span></span>'+
-      '<span class="mr-exp-chev">'+IC.right+'</span>'+
-    '</button>';
+    return EXPIRED.length ? ShineJobCard.nudge({ count: EXPIRED.length, text: 'Closed before you acted on them' }) : '';
   }
+
 
   // Empty state. Pending-empty is a good outcome, so it reads as 'all caught
   // up' rather than as an absence; taken-empty is the gap the ghosts preview.
@@ -3376,28 +3539,25 @@ html.in-app .bs { --bs-safe: 0px; }
     var rows = msgs.filter(function(m){
       return scope === 'taken' ? !!m.done : !m.done;
     });
+    if (scope === 'taken') rows.sort(function(x, y){ return (y.doneSeq || 0) - (x.doneSeq || 0); });   // newest action first
     var tail = (scope === 'pending') ? expiredCard() : '';
     if (!rows.length) return emptyState(scope, tail);
-    var out = '<div class="mr-list">', last = null;
+    var out = '<div class="jcard-list">', last = null;
     rows.forEach(function(m){
-      if (m.day !== last){ out += '<div class="mr-grp">'+esc(m.day)+'</div>'; last = m.day; }
+      var day = scope === 'taken' ? (m.doneDay || m.day) : m.day;   // Action Taken groups by the day you acted
+      if (day !== last){ out += ShineJobCard.group(day); last = day; }
       out += card(m);
     });
-    return out + '</div>' + tail;
+    return out + tail + '</div>';
   }
 
   // The expired screen. No actions, no expansion — these are read-only.
   function expiredList(mode){
-    var note = '<div class="mr-xnote">'+IC.clock+
-      '<span>Recruiters close invitations and matches after a while. '+
-      'These ran out before you replied.</span></div>';
-    var out = note + '<div class="mr-xwrap">'+
-              '<div class="mr-list">';
-    EXPIRED.forEach(function(m){
-      out += card(m);
-    });
-    return out + '</div></div>';
+    return '<div class="jcard-list">' +
+      ShineJobCard.note('Recruiters close invitations and matches after a while. These ran out before you replied.') +
+      ShineJobCard.list(EXPIRED.map(jc)) + '</div>';
   }
+
 
 
 
@@ -3444,18 +3604,12 @@ html.in-app .bs { --bs-safe: 0px; }
       var pool = msgs.concat(EXPIRED);
       for (var i = 0; i < pool.length; i++) if (pool[i].id === id) m = pool[i];
       if (what !== 'read') e.stopPropagation();
-      if (what === 'read' && m && m.unread) { m.unread = false; }
-      else if (what === 'interested' && m)       { m.done = 'interested'; m.unread = false; say('Interest sent to ' + m.who); }
-      else if (what === 'declined' && m)         { m.done = 'declined';   m.unread = false; say('Marked not interested'); }
-      else if (what === 'apply' && m)            { m.done = 'applied';    m.unread = false; say('Applied to ' + m.who); }
-      else if (what === 'save' && m)             { say('Saved to My Jobs'); }
-      else if (what === 'share' && m)            { say('Link copied'); }
-      else if (what === 'details' && m)          { say('Opening job details'); }
-      else if (what === 'unsave' && m)           { pendingUnsave = m.id; setConfirm(true, t); }
+      if (false) {}
       else if (what === 'cfno')                  { setConfirm(false); }
       else if (what === 'cfyes'){
+        // un-saving is not an action: the saved job simply leaves Docket (it never shows in Action Taken)
         for (var u = 0; u < msgs.length; u++){
-          if (msgs[u].id === pendingUnsave){ msgs[u].done = 'unsaved'; break; }
+          if (msgs[u].id === pendingUnsave){ msgs.splice(u, 1); break; }
         }
         setConfirm(false);
         say('Removed from saved');
@@ -3466,6 +3620,32 @@ html.in-app .bs { --bs-safe: 0px; }
       render();
       return;
     }
+  });
+
+  // card taps (shared job-card component)
+  sheetList.addEventListener('shine:jobcard', function(e){
+    var d = e.detail, m = null;
+    for (var i = 0; i < msgs.length; i++) if (msgs[i].id === d.id) m = msgs[i];
+    if (!m) return;
+    var a = d.action;
+    if (a === 'open' || a === 'details'){ if (m.unread){ m.unread = false; render(); } say(a === 'details' ? 'Opening job details' : 'Opens the job'); return; }
+    if (a === 'share'){ say('Link copied'); return; }
+    if (a === 'save'){ m.bookmarked = true; m.unread = false; render(); say('Saved to My Jobs'); return; }
+    if (a === 'unsave'){
+      if (m.kind === 'saved'){ pendingUnsave = m.id; setConfirm(true, d.button); return; }   // asks first; then it leaves Docket
+      m.bookmarked = false; render(); say('Removed from saved'); return;                     // a match stays in Action Pending
+    }
+    if (a === 'interested'){ m.done = 'interested'; stamp(m); render(); say('Interest sent to ' + m.who); return; }
+    if (a === 'decline')   { m.done = 'declined';   stamp(m); render(); say('Marked not interested'); return; }
+    if (a === 'apply'){
+      if (d.button && d.button.getAttribute('data-apply') === 'external'){ say('Opening company site…'); return; }
+      m.done = 'applied'; stamp(m); render(); say('Applied to ' + m.who); return;
+    }
+  });
+  // the expired nudge at the end of Action Pending opens the Expired page
+  sheetList.addEventListener('click', function(e){
+    if (!e.target.closest('[data-jc-nudge]')) return;
+    listScroll = sheetList.scrollTop; sub.open('expired');
   });
 
   // Expired = a sub-view with its own history step (shared sub-view helper): the phone's Back closes it,
@@ -3500,6 +3680,7 @@ html.in-app .bs { --bs-safe: 0px; }
   render();
 })();
 
-  </script>
+  
+</script>
 </body>
 </html>
