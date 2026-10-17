@@ -3101,15 +3101,15 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
 }
 </style>
 <!-- ▲ COMPONENT · bottom-tab-bar -->
-<!-- ▼ COMPONENT · tab-nudge v1.1.0 · verbatim copy of App-login/app-components/tab-nudge/tab-nudge.css — do not edit here -->
+<!-- ▼ COMPONENT · tab-nudge v1.1.1 · verbatim copy of App-login/app-components/tab-nudge/tab-nudge.css — do not edit here -->
 <style data-component="tab-nudge">
 /* ══════════════════════════════════════════════════════════════════════
-   Shine app · Tab nudge · v1.1.0 (2026-10-17)
+   Shine app · Tab nudge · v1.1.1 (2026-10-17)
    A slim card above the bottom tab bar whose lower edge flows down in one
    soft wave and takes over one tab (outline icon + label in white) —
    "something is waiting in this tab". User picks: shape "B · Soft wave",
    colour "Graphite" gradient, entrance "F · Build up", bell in the disc,
-   closes itself after 4 s.
+   closes itself after 8 s.
    Needs the bottom-tab-bar component (v1.3+) on the page.
    Guideline: tab-nudge-spec.html · README.md
    Light-only (the app is light-only); every value is a DS token or a
@@ -3196,6 +3196,7 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .stn-text b { font-weight: 700; }
+@media (max-width: 359px) { .stn-text { font-size: 12px; line-height: 18px; } }   /* Body / sm under 360 so a full line ("12 recruiters invited you to apply") still fits a 320 phone */
 .stn-x {
   appearance: none; flex: none; width: var(--stn-close-size); height: var(--stn-close-size); margin: 0; padding: 0; border: 0;
   border-radius: 1024px; display: grid; place-items: center; cursor: pointer; background: var(--stn-close); color: var(--stn-content);
@@ -4120,7 +4121,7 @@ html.in-app { --stp-safe-top: 0px; }
       </div>
     </section>
     <nav data-shine-tabbar data-active="home" data-dot="docket" data-href-docket="docket.html" data-href-jobs="my-jobs.html"></nav>
-    <div data-shine-tabnudge data-tab="docket" data-id="docket-invites" data-count="4" data-text="recruiters invited you" data-text-one="recruiter invited you"></div>   <!-- tab-nudge: recruiter invites waiting in Docket (demo count = Docket › Action Pending invites) -->
+    <div data-shine-tabnudge data-tab="docket" data-id="docket-invites" data-count="4" data-text="recruiters invited you to apply" data-text-one="recruiter invited you to apply"></div>   <!-- tab-nudge: recruiter invites waiting in Docket (demo count = Docket › Action Pending invites) -->
 <!-- ▼ COMPONENT · bottom-tab-bar v1.3.1 · verbatim copy of App-login/app-components/bottom-tab-bar/bottom-tab-bar.js — do not edit here -->
 <script data-component="bottom-tab-bar">
 /* ═══════════════════════════════════════════════════════════════════════
@@ -4309,10 +4310,10 @@ html.in-app { --stp-safe-top: 0px; }
 })(window);
 </script>
 <!-- ▲ COMPONENT · bottom-tab-bar -->
-<!-- ▼ COMPONENT · tab-nudge v1.1.0 · verbatim copy of App-login/app-components/tab-nudge/tab-nudge.js — do not edit here -->
+<!-- ▼ COMPONENT · tab-nudge v1.1.1 · verbatim copy of App-login/app-components/tab-nudge/tab-nudge.js — do not edit here -->
 <script data-component="tab-nudge">
 /* ══════════════════════════════════════════════════════════════════════
-   Shine app · Tab nudge · v1.1.0 (2026-10-17) — ShineTabNudge
+   Shine app · Tab nudge · v1.1.1 (2026-10-17) — ShineTabNudge
    Points at one bottom-tab-bar tab while something waits inside it
    (Docket: recruiter invites waiting for a reply).
 
@@ -4322,7 +4323,7 @@ html.in-app { --stp-safe-top: 0px; }
    • Shows ~0.6 s after the page opens, on any page whose active tab is not
      data-tab. Not on that tab's own page. Builds up: shape → bell → words →
      × → the tab icon hops once.
-   • Closes itself 4 s after it has fully appeared (data-auto, ms; 0 = never).
+   • Closes itself 8 s after it has fully appeared (data-auto, ms; 0 = never).
      A finger, pointer or keyboard focus on it pauses the count. This only
      hides it on this page: the next tab page shows it again.
    • The card only informs (no tap target). Its wave + tab part IS the tab:
@@ -4461,7 +4462,7 @@ html.in-app { --stp-safe-top: 0px; }
       text: o.text || el.getAttribute('data-text') || 'waiting',
       textOne: o.textOne || el.getAttribute('data-text-one') || o.text || el.getAttribute('data-text') || 'waiting',
       delay: +(o.delay != null ? o.delay : el.getAttribute('data-delay') || 600),
-      auto: +(o.auto != null ? o.auto : el.hasAttribute('data-auto') ? el.getAttribute('data-auto') : 4000),
+      auto: +(o.auto != null ? o.auto : el.hasAttribute('data-auto') ? el.getAttribute('data-auto') : 8000),
       icon: o.icon || el.getAttribute('data-icon') || 'bell',
       shown: false
     };
@@ -4503,7 +4504,7 @@ html.in-app { --stp-safe-top: 0px; }
 
   function find(id) { return items.filter(function (n) { return id == null || n.id === id; }); }
   global.ShineTabNudge = {
-    version: '1.1.0',
+    version: '1.1.1',
     mount: mount,
     show: function (id) { find(id).forEach(show); },
     hide: function (id) { find(id).forEach(function (n) { hide(n, 'hide'); }); },
