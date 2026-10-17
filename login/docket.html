@@ -1419,10 +1419,10 @@ html.in-app { --stp-safe-top: 0px; }
 }
 </style>
 <!-- ▲ COMPONENT · top-app-bar -->
-<!-- ▼ COMPONENT · job-card v1.0.0 · verbatim copy of App-login/app-components/job-card/job-card.css — do not edit here -->
+<!-- ▼ COMPONENT · job-card v1.1.0 · verbatim copy of App-login/app-components/job-card/job-card.css — do not edit here -->
 <style data-component="job-card">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · JOB CARD  (app component · App-login)                 v1.0.0
+   SHINE · JOB CARD  (app component · App-login)                 v1.1.0
    One card for every job in the logged-in app, built from the design system:
    M.02 Job Card · Portrait (the mobile job list), composed of A.08 Avatar,
    A.04 Badge, A.03 Pill (unread dot), A.02 Button (Primary · Neutral,
@@ -1432,7 +1432,7 @@ html.in-app { --stp-safe-top: 0px; }
      │ ♡ Kavita liked your profile…          │  context strip    (Docket)
      │ (KS) Kavita Sharma                     │  head  · A.08 Avatar lg (+ A.03 unread dot)
      │      TalentBridge Staffing · 6:40 PM   │
-     │ ──────────────────────────────────── │  separator · stroke.neutral.base
+     │ ──────────────────────────────────── │  separator · stroke.neutral.muted
      │ Role title                             │  Heading / md bold
      │ (● Actively hiring) (Early applicant)  │  A.04 Badge md
      │ Recruiter note…                        │  Body / md medium          (optional)
@@ -1445,8 +1445,8 @@ html.in-app { --stp-safe-top: 0px; }
      │  or  (Applied)          2 days ago     │  outcome · A.04 Badge md + Body / sm
      └──────────────────────────────────────┘
 
-   M.02 portrait: card radius.xl 16 · inset.xxl 22 · 1 px stroke.neutral.base · no resting
-   shadow · sections stack.md 12 · hover: border content.neutral.brand + elevation.neutral.lifted
+   M.02 portrait: card radius.xl 16 · inset.xxl 22 · 1 px stroke.neutral.muted (v1.1: subtler) · no resting
+   shadow · sections stack.lg 14 · hover: border content.neutral.brand + elevation.neutral.lifted
    + 1 px lift · focus: elevation.focus.default.
    ▶ BEFORE CHANGING IT: read README.md here and component-system.md M.02. Semantic tokens only.
    ═══════════════════════════════════════════════════════════════════════ */
@@ -1454,6 +1454,7 @@ html.in-app { --stp-safe-top: 0px; }
 .jcard, .jcard-list, .jcard-nudge, .jcard-note, .jcard-group {
   /* COLOUR — DESIGN-SYSTEM.md §2.2 (light; the app is light-only) */
   --jc-surface-raised: #FFFFFF;             /* surface.neutral.raised */
+  --jc-surface-base: #FAF9F6;               /* surface.neutral.base — warm white: secondary buttons at rest (user) */
   --jc-surface-muted: #EEF1F5;              /* surface.neutral.muted */
   --jc-state-hover: #EEF1F5;                /* surface.neutral-state.hover */
   --jc-state-pressed: #E4E7EC;              /* surface.neutral-state.pressed */
@@ -1479,7 +1480,8 @@ html.in-app { --stp-safe-top: 0px; }
   --jc-negative: #B42318;                   /* content.status.negative */
   --jc-pink: #BE185D;                       /* content.decorative.pink */
   --jc-violet: #6F46E0;                     /* content.decorative.violet */
-  --jc-line: #E4E7EC;                       /* stroke.neutral.base — card border, separators, outlines */
+  --jc-line: #E4E7EC;                       /* stroke.neutral.base — meta icon frames */
+  --jc-line-subtle: #EEF1F5;                /* stroke.neutral.muted — card border, separators, secondary-button outlines (user: subtler) */
   --jc-notice-line: #D97706;                /* stroke.status.notice — Alert border */
   --jc-focus: #1A56FF;                      /* stroke.neutral.focus */
   --jc-av-pink: #BE185D;                    /* surface.decorative.pink-intense */
@@ -1495,7 +1497,8 @@ html.in-app { --stp-safe-top: 0px; }
   --jc-halo-brand: 0 0 0 3px rgba(26, 86, 255, .18);                                 /* elevation.halo.brand (proposed, A.04) */
   /* SPACE · SIZE — §2.3 / §2.4 */
   --jc-inset: 22px;          /* spacing.inset.xxl — M.02 card padding */
-  --jc-stack: 12px;          /* spacing.stack.md — M.02 portrait, between sections */
+  --jc-stack: 14px;          /* spacing.stack.lg — between sections (user: more room; = M.02 landscape rhythm) */
+  --jc-row-gap: 12px;        /* spacing.stack.md — between meta rows */
   --jc-inline: 8px;          /* spacing.inline.md */
   --jc-control: 44px;        /* size.control.md — M.02 portrait: Apply btn--md + icon button 44 */
   --jc-radius: 16px;         /* size.radius.xl — M.02 card */
@@ -1511,7 +1514,7 @@ html.in-app { --stp-safe-top: 0px; }
 .jcard {
   position: relative; box-sizing: border-box; display: flex; flex-direction: column; min-width: 0; margin: 0;
   padding: var(--jc-inset); overflow: hidden;
-  background: var(--jc-surface-raised); border: 1px solid var(--jc-line); border-radius: var(--jc-radius);   /* size.stroke.thin */
+  background: var(--jc-surface-raised); border: 1px solid var(--jc-line-subtle); border-radius: var(--jc-radius);   /* size.stroke.thin */
   font-family: var(--jc-font); color: var(--jc-ink); -webkit-font-smoothing: antialiased;
   cursor: pointer; -webkit-tap-highlight-color: transparent;
   transition: border-color var(--jc-dur), box-shadow var(--jc-dur), transform var(--jc-dur);
@@ -1536,7 +1539,7 @@ html.in-app { --stp-safe-top: 0px; }
 /* head — A.08 Avatar lg leads, name + time beside it (M.02 portrait) */
 .jcard-head {
   display: flex; align-items: center; gap: var(--jc-inline);
-  padding-bottom: var(--jc-stack); margin-bottom: var(--jc-stack); border-bottom: 1px solid var(--jc-line);   /* M.02 separator */
+  padding-bottom: var(--jc-stack); margin-bottom: var(--jc-stack); border-bottom: 1px solid var(--jc-line-subtle);   /* separator · stroke.neutral.muted (A.11 default “inside cards”) */
 }
 .jcard-who { flex: 1 1 0; min-width: 0; display: grid; gap: 4px; }      /* stack.xxs */
 .jcard-name { font: 700 14px/14px var(--jc-font); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }   /* Label / lg bold */
@@ -1577,8 +1580,8 @@ html.in-app { --stp-safe-top: 0px; }
 .jcard-desc { margin: 0 0 var(--jc-stack); font: 500 14px/20px var(--jc-font); color: var(--jc-muted); }   /* Body / md medium */
 
 /* facts — M.02 meta stack: 28 frame, icon 14, Body / md medium, icon ↔ text inline.md */
-.jcard-facts { display: grid; gap: var(--jc-stack); padding-bottom: var(--jc-stack); border-bottom: 1px solid var(--jc-line); }
-.jcard-meta { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--jc-inline); }                /* stack.xs */
+.jcard-facts { display: grid; gap: var(--jc-stack); padding-bottom: var(--jc-stack); border-bottom: 1px solid var(--jc-line-subtle); }
+.jcard-meta { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--jc-row-gap); }               /* stack.md */
 .jcard-meta li { display: flex; align-items: center; gap: var(--jc-inline); min-width: 0; font: 500 14px/20px var(--jc-font); color: var(--jc-muted); }
 .jcard-meta li > span:last-child { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .jcard-ico { width: 28px; height: 28px; flex: none; display: grid; place-items: center; border-radius: 1024px; border: 1px solid var(--jc-line); color: var(--jc-faded); }
@@ -1593,7 +1596,7 @@ html.in-app { --stp-safe-top: 0px; }
 .jcard-link:focus-visible { outline: none; box-shadow: var(--jc-ring); }
 
 /* skills — M.02 skills row: Label / md semibold label · Label / lg bold list · faded dots */
-.jcard-skills { display: flex; align-items: center; gap: var(--jc-inline); min-width: 0; padding: var(--jc-stack) 0; border-bottom: 1px solid var(--jc-line); }
+.jcard-skills { display: flex; align-items: center; gap: var(--jc-inline); min-width: 0; padding: var(--jc-stack) 0; border-bottom: 1px solid var(--jc-line-subtle); }
 .jcard-skills-label { flex: none; font: 600 12px/12px var(--jc-font); color: var(--jc-faded); }
 .jcard-skills-list { flex: 1 1 0; min-width: 0; font: 700 14px/14px var(--jc-font); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .jcard-skills-list i { font-style: normal; color: var(--jc-faded); margin: 0 4px; }
@@ -1601,11 +1604,11 @@ html.in-app { --stp-safe-top: 0px; }
 /* ── Actions ──────────────────────────────────────────────────────── */
 .jcard-actions { display: flex; align-items: center; gap: var(--jc-inline); padding-top: var(--jc-stack); margin-top: auto; }
 
-/* A.02 Icon-only · md 44: raised surface, 1 px stroke.neutral.base, glyph 20 content.neutral.muted, radius.lg.
-   Saved (user decision): brand subtle + filled content.neutral.brand glyph — as on My Jobs › Saved. */
+/* A.02 Icon-only · md 44, radius.lg, glyph 20 content.neutral.muted. At rest (user, v1.1): warm white surface.neutral.base +
+   1 px stroke.neutral.muted — Docket's quiet look. Saved (user): brand subtle + filled content.neutral.brand glyph. */
 .jcard-ib {
   width: var(--jc-control); height: var(--jc-control); flex: none; display: grid; place-items: center; padding: 0;
-  border-radius: var(--jc-radius-ctl); border: 1px solid var(--jc-line); background: var(--jc-surface-raised); color: var(--jc-muted);
+  border-radius: var(--jc-radius-ctl); border: 1px solid var(--jc-line-subtle); background: var(--jc-surface-base); color: var(--jc-muted);
   cursor: pointer; -webkit-tap-highlight-color: transparent;
   transition: background-color var(--jc-dur), border-color var(--jc-dur), color var(--jc-dur), box-shadow var(--jc-dur), transform var(--jc-dur);
 }
@@ -1616,7 +1619,7 @@ html.in-app { --stp-safe-top: 0px; }
 .jcard-ib[aria-pressed="true"] svg { fill: currentColor; }
 .jcard-ib:focus-visible { outline: none; box-shadow: var(--jc-ring); }
 
-/* A.02 Primary · Neutral md (Apply now / Interested) · Secondary md (Not interested) */
+/* A.02 Primary · Neutral md (Apply now / Interested) · Secondary md (Not interested — warm white at rest, user v1.1) */
 .jcard-cta {
   flex: 1 1 0; min-width: 0; height: var(--jc-control); padding: 0 16px;                        /* inset.xl */
   display: inline-flex; align-items: center; justify-content: center; gap: var(--jc-inline);
@@ -1627,7 +1630,7 @@ html.in-app { --stp-safe-top: 0px; }
 .jcard-cta svg { width: 16px; height: 16px; }                           /* size.icon.md */
 @media (hover: hover) { .jcard-cta:hover { background: var(--jc-inverse-hover); box-shadow: var(--jc-lifted); transform: translateY(-1px); } }
 .jcard-cta:active { background: var(--jc-inverse-pressed); box-shadow: var(--jc-raised); transform: none; }
-.jcard-cta--secondary { background: transparent; color: var(--jc-ink); border: 1.5px solid var(--jc-line); }        /* size.stroke.default */
+.jcard-cta--secondary { background: var(--jc-surface-base); color: var(--jc-ink); border: 1.5px solid var(--jc-line-subtle); }        /* warm white at rest (user) · size.stroke.default */
 @media (hover: hover) { .jcard-cta--secondary:hover { background: var(--jc-state-hover); box-shadow: none; } }
 .jcard-cta--secondary:active { background: var(--jc-state-pressed); box-shadow: none; }
 .jcard-cta:focus-visible { outline: none; box-shadow: var(--jc-ring); }
@@ -1641,7 +1644,7 @@ html.in-app { --stp-safe-top: 0px; }
 .jcard--expired .jcard-role, .jcard--expired .jcard-name, .jcard--expired .jcard-skills-list,
 .jcard--expired .jcard-meta li, .jcard--expired .jcard-desc { color: var(--jc-faded); }
 .jcard--expired * { pointer-events: none; }
-@media (hover: hover) { .jcard--expired:hover { border-color: var(--jc-line); box-shadow: none; transform: none; } }
+@media (hover: hover) { .jcard--expired:hover { border-color: var(--jc-line-subtle); box-shadow: none; transform: none; } }
 
 /* ── List furniture ───────────────────────────────────────────────── */
 .jcard-group { margin: 4px 0 -8px; font: 700 12px/12px var(--jc-font); letter-spacing: 1.5px; text-transform: uppercase; color: var(--jc-faded); }   /* Eyebrow / md */
@@ -1649,7 +1652,7 @@ html.in-app { --stp-safe-top: 0px; }
 /* expired nudge — a quiet card-row: M.02 card surface + border, A.08 Avatar lg · User · subtle with a 20 icon */
 .jcard-nudge {
   display: flex; align-items: center; gap: 12px; width: 100%; margin-top: 4px; padding: 16px; box-sizing: border-box;   /* inline.lg · inset.xl */
-  background: var(--jc-surface-raised); border: 1px solid var(--jc-line); border-radius: var(--jc-radius);
+  background: var(--jc-surface-raised); border: 1px solid var(--jc-line-subtle); border-radius: var(--jc-radius);
   font-family: var(--jc-font); text-align: left; color: var(--jc-ink); cursor: pointer; -webkit-tap-highlight-color: transparent;
   transition: border-color var(--jc-dur), box-shadow var(--jc-dur), background-color var(--jc-dur);
 }
@@ -3237,10 +3240,10 @@ html.in-app .bs { --bs-safe: 0px; }
 })(window);
 </script>
   <!-- ▲ COMPONENT · sub-view -->
-  <!-- ▼ COMPONENT · job-card v1.0.0 · verbatim copy of App-login/app-components/job-card/job-card.js — do not edit here -->
+  <!-- ▼ COMPONENT · job-card v1.1.0 · verbatim copy of App-login/app-components/job-card/job-card.js — do not edit here -->
 <script data-component="job-card">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · JOB CARD  (app component · App-login)                 v1.0.0
+   SHINE · JOB CARD  (app component · App-login)                 v1.1.0
    Pair with job-card.css. One renderer for every job card in the app.
 
    ShineJobCard.html(job)  → markup for one card
@@ -3356,7 +3359,7 @@ html.in-app .bs { --bs-safe: 0px; }
   function group(t) { return '<p class="jcard-group">' + esc(t) + '</p>'; }
   var CLOCK_FILLED = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 110 20 10 10 0 010-20zm1 5h-2v6l5 3 1-1.7-4-2.3z"/></svg>';
   function note(t) { return '<p class="jcard-note" role="note"><span class="jcard-note-ic">' + CLOCK_FILLED + '</span><span>' + esc(t) + '</span></p>'; }
-  global.ShineJobCard = { version: '1.0.0', html: html, list: function (js) { return js.map(html).join(''); }, setSaved: setSaved,
+  global.ShineJobCard = { version: '1.1.0', html: html, list: function (js) { return js.map(html).join(''); }, setSaved: setSaved,
     nudge: nudge, group: group, note: note, icons: IC };
 })(window);
 </script>
