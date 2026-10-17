@@ -1426,19 +1426,19 @@ html.in-app { --stp-safe-top: 0px; }
 }
 </style>
 <!-- ▲ COMPONENT · top-app-bar -->
-<!-- ▼ COMPONENT · job-card v1.1.0 · verbatim copy of App-login/app-components/job-card/job-card.css — do not edit here -->
+<!-- ▼ COMPONENT · job-card v1.2.0 · verbatim copy of App-login/app-components/job-card/job-card.css — do not edit here -->
 <style data-component="job-card">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · JOB CARD  (app component · App-login)                 v1.1.0
+   SHINE · JOB CARD  (app component · App-login)                 v1.2.0
    One card for every job in the logged-in app, built from the design system:
-   M.02 Job Card · Portrait (the mobile job list), composed of A.08 Avatar,
+   M.02 Job Card · Portrait (the mobile job list), composed of the M.02 logo,
    A.04 Badge, A.03 Pill (unread dot), A.02 Button (Primary · Neutral,
    Secondary, Tertiary, Icon-only) and A.07 Alert (Expired-page note).
 
      ┌──────────────────────────────────────┐
      │ ♡ Kavita liked your profile…          │  context strip    (Docket)
-     │ (KS) Kavita Sharma                     │  head  · A.08 Avatar lg (+ A.03 unread dot)
-     │      TalentBridge Staffing · 6:40 PM   │
+     │ Kavita Sharma                    [KS] │  head  · name + time left, square logo 40 right
+     │ TalentBridge Staffing · 6:40 PM        │         (M.02 logo · radius.md; + A.03 unread dot)
      │ ──────────────────────────────────── │  separator · stroke.neutral.muted
      │ Role title                             │  Heading / md bold
      │ (● Actively hiring) (Early applicant)  │  A.04 Badge md
@@ -1510,6 +1510,7 @@ html.in-app { --stp-safe-top: 0px; }
   --jc-control: 44px;        /* size.control.md — M.02 portrait: Apply btn--md + icon button 44 */
   --jc-radius: 16px;         /* size.radius.xl — M.02 card */
   --jc-radius-ctl: 12px;     /* size.radius.lg — A.02 buttons, A.07 alert */
+  --jc-radius-logo: 8px;     /* size.radius.md — M.02 square company logo */
   --jc-font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;   /* typeface.family.brand */
   --jc-dur: 150ms;           /* motion — proposed */
 }
@@ -1543,22 +1544,23 @@ html.in-app { --stp-safe-top: 0px; }
 .jcard-ctx--match  { background: var(--jc-brand-subtle);  color: var(--jc-brand); }    /* brand / info intent */
 .jcard-ctx--saved  { background: var(--jc-violet-subtle); color: var(--jc-violet); }   /* decorative violet */
 
-/* head — A.08 Avatar lg leads, name + time beside it (M.02 portrait) */
+/* head — name + time on the left, square logo on the right (the app's job-card head before v1.0;
+   M.02 landscape head: square logo 40 · radius.md · decorative intense) — v1.2, user */
 .jcard-head {
-  display: flex; align-items: center; gap: var(--jc-inline);
+  display: flex; align-items: center; justify-content: space-between; gap: var(--jc-row-gap);   /* stack.md 12 between text and logo */
   padding-bottom: var(--jc-stack); margin-bottom: var(--jc-stack); border-bottom: 1px solid var(--jc-line-subtle);   /* separator · stroke.neutral.muted (A.11 default “inside cards”) */
 }
-.jcard-who { flex: 1 1 0; min-width: 0; display: grid; gap: 4px; }      /* stack.xxs */
-.jcard-name { font: 700 14px/14px var(--jc-font); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }   /* Label / lg bold */
+.jcard-who { flex: 1 1 0; min-width: 0; display: grid; gap: 2px; }      /* stack.3xs */
+.jcard-name { font: 700 14px/20px var(--jc-font); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }   /* Label / lg bold */
 .jcard-sub  { font: 500 12px/18px var(--jc-font); color: var(--jc-faded); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }   /* Body / sm medium */
 .jcard-av { position: relative; flex: none; }
 .jc-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }                           /* .pill-wrap */
 .jcard-logo {
-  width: 40px; height: 40px; display: grid; place-items: center; border-radius: 1024px;   /* A.08 lg · radius.full */
+  width: 40px; height: 40px; display: grid; place-items: center; border-radius: var(--jc-radius-logo);   /* M.02 logo 40 · radius.md */
   font: 700 12px/12px var(--jc-font); text-transform: uppercase;                          /* Label / md bold */
   background: var(--jc-av-violet); color: var(--jc-on-dark);
 }
-.jcard-logo--person { background: var(--jc-inverse); color: var(--jc-on-dark); }          /* A.08 User domain · contrast */
+.jcard-logo--person { background: var(--jc-inverse); color: var(--jc-on-dark); }          /* recruiter (a person): User domain · contrast */
 .jcard-logo--violet { background: var(--jc-av-violet); color: var(--jc-on-dark); }
 .jcard-logo--pink   { background: var(--jc-av-pink);   color: var(--jc-on-dark); }
 .jcard-logo--aqua   { background: var(--jc-av-aqua);   color: var(--jc-on-dark); }
@@ -1566,7 +1568,7 @@ html.in-app { --stp-safe-top: 0px; }
 .jcard-logo--lime   { background: var(--jc-av-lime);   color: var(--jc-on-light); }
 .jcard-logo--ey     { background: var(--jc-av-ey);     color: var(--jc-on-light); }
 .jcard-dot {                                                             /* A.03 Pill · dot · brand — unread */
-  position: absolute; top: -1px; right: -1px; width: 10px; height: 10px; border-radius: 1024px;
+  position: absolute; top: -4px; right: -4px; width: 10px; height: 10px; border-radius: 1024px;   /* on the logo's top-right corner */
   background: var(--jc-brand-intense); border: 1.5px solid var(--jc-surface-raised);         /* size.stroke.default halo */
 }
 
@@ -3249,10 +3251,10 @@ html.in-app .bs { --bs-safe: 0px; }
 })(window);
 </script>
   <!-- ▲ COMPONENT · sub-view -->
-<!-- ▼ COMPONENT · job-card v1.1.0 · verbatim copy of App-login/app-components/job-card/job-card.js — do not edit here -->
+<!-- ▼ COMPONENT · job-card v1.2.0 · verbatim copy of App-login/app-components/job-card/job-card.js — do not edit here -->
 <script data-component="job-card">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · JOB CARD  (app component · App-login)                 v1.1.0
+   SHINE · JOB CARD  (app component · App-login)                 v1.2.0
    Pair with job-card.css. One renderer for every job card in the app.
 
    ShineJobCard.html(job)  → markup for one card
@@ -3270,7 +3272,7 @@ html.in-app .bs { --bs-safe: 0px; }
           | 'invite'  → Not interested · Interested     (+ "Job details" link when details: true)
           | 'done'    → read-only outcome row           { outcome: 'applied'|'interested'|'declined', when }
           | 'expired' → grey, inert, "Expired" + when   { when }
-     unread?                                            // Docket pending only: A.03 Pill dot on the avatar
+     unread?                                            // Docket pending only: A.03 Pill dot on the logo
    }
    ShineJobCard.nudge({ count, text }) → the "N expired" widget that ends Saved / Action Pending
    ShineJobCard.group(label) · ShineJobCard.note(text) → day header · Expired-page note
@@ -3333,9 +3335,10 @@ html.in-app .bs { --bs-safe: 0px; }
     var st = state(j), ex = st === 'expired', ro = st === 'done' || ex;
     return '<article class="jcard jcard--' + st + (j.unread && !ro ? ' jcard--unread' : '') + '" data-id="' + esc(j.id) + '" data-state="' + st + '" tabindex="' + (ex ? '-1' : '0') + '"' + (ex ? ' aria-disabled="true"' : '') + '>' +
       (j.ctx ? '<div class="jcard-ctx jcard-ctx--' + j.ctx.kind + '">' + (CTX[j.ctx.kind] || '') + '<span>' + esc(j.ctx.text) + '</span></div>' : '') +
-      '<div class="jcard-head"><span class="jcard-av"><span class="jcard-logo ' + (lg.person ? 'jcard-logo--person' : 'jcard-logo--' + c) + '" aria-hidden="true">' + esc(lg.text) + '</span>' +
-          (j.unread && !ro ? '<span class="jcard-dot" aria-hidden="true"></span>' : '') + '</span>' +
-        '<div class="jcard-who"><span class="jcard-name">' + esc(j.name) + (j.unread && !ro ? '<span class="jc-sr"> · new</span>' : '') + '</span>' + (j.sub ? '<span class="jcard-sub">' + esc(j.sub) + '</span>' : '') + '</div></div>' +
+      '<div class="jcard-head">' +                       // name + time left, logo right (v1.2)
+        '<div class="jcard-who"><span class="jcard-name">' + esc(j.name) + (j.unread && !ro ? '<span class="jc-sr"> · new</span>' : '') + '</span>' + (j.sub ? '<span class="jcard-sub">' + esc(j.sub) + '</span>' : '') + '</div>' +
+        '<span class="jcard-av"><span class="jcard-logo ' + (lg.person ? 'jcard-logo--person' : 'jcard-logo--' + c) + '" aria-hidden="true">' + esc(lg.text) + '</span>' +
+          (j.unread && !ro ? '<span class="jcard-dot" aria-hidden="true"></span>' : '') + '</span></div>' +
       '<h3 class="jcard-role">' + esc(j.role) + '</h3>' +
       (badges ? '<div class="jcard-badges">' + badges + '</div>' : '') +
       (j.desc ? '<p class="jcard-desc">' + esc(j.desc) + '</p>' : '') +
@@ -3368,7 +3371,7 @@ html.in-app .bs { --bs-safe: 0px; }
   function group(t) { return '<p class="jcard-group">' + esc(t) + '</p>'; }
   var CLOCK_FILLED = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 110 20 10 10 0 010-20zm1 5h-2v6l5 3 1-1.7-4-2.3z"/></svg>';
   function note(t) { return '<p class="jcard-note" role="note"><span class="jcard-note-ic">' + CLOCK_FILLED + '</span><span>' + esc(t) + '</span></p>'; }
-  global.ShineJobCard = { version: '1.1.0', html: html, list: function (js) { return js.map(html).join(''); }, setSaved: setSaved,
+  global.ShineJobCard = { version: '1.2.0', html: html, list: function (js) { return js.map(html).join(''); }, setSaved: setSaved,
     nudge: nudge, group: group, note: note, icons: IC };
 })(window);
 </script>
