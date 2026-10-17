@@ -633,7 +633,11 @@ h1, h2, h3, h4, p { overflow-wrap:break-word; word-wrap:break-word; }
 .mr-page-hd .mr-back { width: 40px; height: 40px; margin: -6px 0 -6px -10px; border-radius: 1024px; }
 
 /* ── job cards (shared job-card component) inside the Docket screen ── */
-.mr-empty .jcard-nudge { margin: 28px 24px 26px; width: calc(100% - 48px); }   /* empty Action Pending: the nudge on the list gutter */
+.mr-empty .ncard { margin: 28px 24px 26px; width: calc(100% - 48px); }   /* empty Action Pending: the expired nav card on the list gutter */
+/* list parts around the job cards (page-owned since job-card v2.0.0) */
+.jcard-list > .ncard { margin-top: 4px; }   /* expired nav card: 24 under the last card (list gap 20 + 4) */
+.mr-day { margin: 4px 0 -8px; font: 700 12px/12px var(--font-brand); letter-spacing: 1.5px; text-transform: uppercase; color: var(--content-faded); }   /* day header · Eyebrow / md · content.neutral.faded */
+.mr-day:first-child { margin-top: 0; }
 </style>
 <!-- ▼ COMPONENT · menu-button v1.1.0 — verbatim copy of App-login/app-components/menu-button/menu-button.css (read README.md there before changing; resync every copy) -->
 <style data-component="menu-button">
@@ -1419,14 +1423,15 @@ html.in-app { --stp-safe-top: 0px; }
 }
 </style>
 <!-- ▲ COMPONENT · top-app-bar -->
-<!-- ▼ COMPONENT · job-card v1.3.0 · verbatim copy of App-login/app-components/job-card/job-card.css — do not edit here -->
+<!-- ▼ COMPONENT · job-card v2.0.0 · verbatim copy of App-login/app-components/job-card/job-card.css — do not edit here -->
 <style data-component="job-card">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · JOB CARD  (app component · App-login)                 v1.3.0
+   SHINE · JOB CARD  (app component · App-login)                 v2.0.0
    One card for every job in the logged-in app, built from the design system:
    M.02 Job Card · Portrait (the mobile job list), composed of the M.02 logo,
    A.04 Badge, A.03 Pill (unread dot), A.02 Button (Primary · Neutral,
-   Secondary, Tertiary, Icon-only) and A.07 Alert (Expired-page note).
+   Secondary, Tertiary, Icon-only). Cards only: the expired row (nav-card), the Expired-page
+   note (alert) and day headers (page) are not part of this component.
 
      ┌──────────────────────────────────────┐
      │ ♡ Kavita liked your profile…          │  context strip    (Docket)
@@ -1451,7 +1456,7 @@ html.in-app { --stp-safe-top: 0px; }
    ▶ BEFORE CHANGING IT: read README.md here and component-system.md M.02. Semantic tokens only.
    ═══════════════════════════════════════════════════════════════════════ */
 
-.jcard, .jcard-list, .jcard-nudge, .jcard-note, .jcard-group {
+.jcard, .jcard-list {
   /* COLOUR — DESIGN-SYSTEM.md §2.2 (light; the app is light-only) */
   --jc-surface-raised: #FFFFFF;             /* surface.neutral.raised */
   --jc-surface-base: #FAF9F6;               /* surface.neutral.base — warm white: secondary buttons at rest (user) */
@@ -1482,7 +1487,6 @@ html.in-app { --stp-safe-top: 0px; }
   --jc-violet: #6F46E0;                     /* content.decorative.violet */
   --jc-line: #E4E7EC;                       /* stroke.neutral.base — meta icon frames */
   --jc-line-subtle: #EEF1F5;                /* stroke.neutral.muted — card border, separators, secondary-button outlines (user: subtler) */
-  --jc-notice-line: #D97706;                /* stroke.status.notice — Alert border */
   --jc-focus: #1A56FF;                      /* stroke.neutral.focus */
   --jc-av-pink: #BE185D;                    /* surface.decorative.pink-intense */
   --jc-av-violet: #6F46E0;                  /* surface.decorative.violet-intense */
@@ -1504,7 +1508,6 @@ html.in-app { --stp-safe-top: 0px; }
   --jc-control: 56px;        /* size.control.xl — A.02 “xl 56 for job card CTAs” (v1.3, user: taller buttons; was md 44) */
   --jc-btn-gap: 12px;        /* spacing.inline.lg — between the card's buttons (v1.3, user: more room; was inline.md 8) */
   --jc-radius: 24px;         /* size.radius.2xl — card corners (user: as before v1.0 — My Jobs 24, Docket/Home 22 → nearest token 24) */
-  --jc-radius-row: 16px;     /* size.radius.xl — expired nudge row */
   --jc-radius-ctl: 12px;     /* size.radius.lg — A.02 buttons, A.07 alert */
   --jc-radius-logo: 8px;     /* size.radius.md — M.02 square company logo */
   --jc-font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;   /* typeface.family.brand */
@@ -1653,42 +1656,151 @@ html.in-app { --stp-safe-top: 0px; }
 .jcard--expired * { pointer-events: none; }
 @media (hover: hover) { .jcard--expired:hover { border-color: var(--jc-line-subtle); box-shadow: var(--jc-soft); transform: none; } }
 
-/* ── List furniture ───────────────────────────────────────────────── */
-.jcard-group { margin: 4px 0 -8px; font: 700 12px/12px var(--jc-font); letter-spacing: 1.5px; text-transform: uppercase; color: var(--jc-faded); }   /* Eyebrow / md */
-.jcard-group:first-child { margin-top: 0; }
-/* expired nudge — a quiet card-row: M.02 card surface + border, A.08 Avatar lg · User · subtle with a 20 icon */
-.jcard-nudge {
-  display: flex; align-items: center; gap: 12px; width: 100%; margin-top: 4px; padding: 16px; box-sizing: border-box;   /* inline.lg · inset.xl */
-  background: var(--jc-surface-raised); border: 1px solid var(--jc-line-subtle); border-radius: var(--jc-radius-row);
-  font-family: var(--jc-font); text-align: left; color: var(--jc-ink); cursor: pointer; -webkit-tap-highlight-color: transparent;
-  transition: border-color var(--jc-dur), box-shadow var(--jc-dur), background-color var(--jc-dur);
-}
-.jcard-nudge-ic { flex: none; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 1024px; background: var(--jc-surface-muted); color: var(--jc-ink); }
-.jcard-nudge-ic svg { width: 20px; height: 20px; }                      /* size.icon.lg */
-.jcard-nudge-tx { flex: 1 1 0; min-width: 0; display: grid; gap: 4px; }
-.jcard-nudge-tx b { font: 700 14px/14px var(--jc-font); }               /* Label / lg bold */
-.jcard-nudge-tx span { font: 500 12px/18px var(--jc-font); color: var(--jc-faded); }   /* Body / sm medium */
-.jcard-nudge-chev { flex: none; color: var(--jc-faded); }
-.jcard-nudge-chev svg { width: 16px; height: 16px; display: block; }   /* size.icon.md */
-@media (hover: hover) { .jcard-nudge:hover { border-color: var(--jc-brand); box-shadow: var(--jc-lifted); } }
-.jcard-nudge:active { background: var(--jc-state-hover); }
-.jcard-nudge:focus-visible { outline: none; box-shadow: var(--jc-ring); }
-/* Expired-page note — A.07 Alert · Notice (no title, not dismissible) */
-.jcard-note {
-  display: flex; align-items: flex-start; gap: var(--jc-inline); margin: 0; padding: 12px 16px;   /* inset.lg · inset.xl */
-  border-radius: var(--jc-radius-ctl); border: 1px solid var(--jc-notice-line); background: var(--jc-notice-subtle);
-  font: 500 12px/18px var(--jc-font); color: var(--jc-muted);                                      /* body: always neutral */
-}
-.jcard-note-ic { flex: none; width: 20px; height: 20px; display: grid; place-items: center; color: var(--jc-notice); margin-top: -1px; }
-.jcard-note-ic svg { width: 16px; height: 16px; }                       /* size.icon.md, filled */
-
 @media (prefers-reduced-motion: reduce) {
-  .jcard, .jcard-ib, .jcard-cta, .jcard-link, .jcard-nudge { transition: none; }
+  .jcard, .jcard-ib, .jcard-cta, .jcard-link { transition: none; }
   .jcard:hover, .jcard-ib:hover, .jcard-cta:hover { transform: none; }
   .jcard-badge-dot { animation: none; }
 }
 </style>
 <!-- ▲ COMPONENT · job-card -->
+<!-- ▼ COMPONENT · alert v1.0.0 · verbatim copy of App-login/app-components/alert/alert.css — do not edit here -->
+<style data-component="alert">
+/* ═══════════════════════════════════════════════════════════════════════
+   SHINE · ALERT  (app component · App-login)                     v1.0.0
+   Design-system A.07 Alert: an inline, persistent message that sits in the page flow next to what it is
+   about. Five intents (neutral · info · positive · notice · negative), one size, optional title, optional
+   close column. Not a toast (floats, auto-dismisses) and not a badge (card status).
+
+     ┌────────────────────────────────────────────────┬────┐
+     │ [icon]  Title in the intent colour             │  × │   container · 1 px intent border · radius.lg 12
+     │         Body text, always neutral muted        │    │   main column · inset.lg 12 · inset.xl 16
+     └────────────────────────────────────────────────┴────┘   close column 44 · neutral divider
+
+   Pair with alert.js (ShineAlert.html). ▶ BEFORE CHANGING IT: read README.md here and component-system.md A.07.
+   Semantic tokens only; the dark values follow DESIGN-SYSTEM.md §2.2.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.alert {
+  /* COLOUR — DESIGN-SYSTEM.md §2.2 (light) */
+  --al-neutral-bg: #EEF1F5;        /* surface.neutral.muted */
+  --al-neutral-line: #E4E7EC;      /* stroke.neutral.base */
+  --al-neutral-tone: #0D1117;      /* content.neutral.base */
+  --al-info-bg: #EBF0FF;           /* surface.brand.brand-subtle */
+  --al-info-tone: #0B3FCC;         /* content.neutral.brand (border + title; no status stroke for brand) */
+  --al-positive-bg: #EAFAF0;       /* surface.status.positive-subtle */
+  --al-positive-line: #0E9A5A;     /* stroke.status.positive */
+  --al-positive-tone: #027A48;     /* content.status.positive */
+  --al-notice-bg: #FFF4ED;         /* surface.status.notice-subtle */
+  --al-notice-line: #D97706;       /* stroke.status.notice */
+  --al-notice-tone: #A35A04;       /* content.status.notice */
+  --al-negative-bg: #FEF2F2;       /* surface.status.negative-subtle */
+  --al-negative-line: #B42318;     /* stroke.status.negative */
+  --al-negative-tone: #B42318;     /* content.status.negative */
+  --al-text: #344054;              /* content.neutral.muted — body, every intent */
+  --al-faded: #667085;             /* content.neutral.faded — close glyph */
+  --al-ink: #0D1117;               /* content.neutral.base — close glyph on hover */
+  --al-divider: #E4E7EC;           /* stroke.neutral.base — close-column divider, every intent */
+  --al-hover: #EEF1F5;             /* surface.neutral-state.hover */
+  --al-focus: #1A56FF;             /* stroke.neutral.focus */
+  --al-font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;   /* typeface.family.brand */
+
+  position: relative; box-sizing: border-box; display: flex; align-items: stretch; margin: 0; padding: 0; overflow: hidden;
+  border: 1px solid var(--al-neutral-line); border-radius: 12px;                     /* size.stroke.thin · size.radius.lg */
+  background: var(--al-neutral-bg); color: var(--al-neutral-tone); font-family: var(--al-font); -webkit-font-smoothing: antialiased;
+}
+.alert *, .alert *::before, .alert *::after { box-sizing: border-box; }
+.alert-main { flex: 1 1 0; min-width: 0; display: flex; align-items: flex-start; gap: 8px; padding: 12px 16px; }   /* inline.md · inset.lg · inset.xl */
+.alert-icon { flex: none; display: inline-grid; place-items: center; width: 20px; height: 20px; margin-top: 2px; color: currentColor; }   /* size.icon.lg box · A.07 optical offset */
+.alert-icon svg { display: block; width: 16px; height: 16px; fill: currentColor; stroke: none; }   /* size.icon.md · filled */
+.alert--text-only .alert-icon { margin-top: -1px; }      /* no title: centre the 20 box on the first 18 body line */
+.alert-body { flex: 1 1 0; min-width: 0; }
+.alert-title { margin: 0 0 4px; font: 700 14px/20px var(--al-font); color: currentColor; }   /* Body / md bold · stack.xxs */
+.alert-text { margin: 0; font: 500 12px/18px var(--al-font); color: var(--al-text); }        /* Body / sm medium · always neutral */
+.alert-close-col {
+  flex: none; display: flex; align-items: center; justify-content: center; width: 44px; align-self: stretch; padding: 0; margin: 0;
+  border: 0; border-left: 1px solid var(--al-divider); background: transparent; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: background-color 150ms ease;
+}
+.alert-close-col svg { width: 16px; height: 16px; fill: none; stroke: var(--al-faded); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: stroke 150ms ease; }
+@media (hover: hover) { .alert-close-col:hover { background: var(--al-hover); } .alert-close-col:hover svg { stroke: var(--al-ink); } }
+.alert-close-col:active { background: var(--al-hover); }
+.alert-close-col:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--al-focus); }
+
+/* intents — the outer border, icon and title carry the colour; the body and the divider never do */
+.alert--neutral  { background: var(--al-neutral-bg);  border-color: var(--al-neutral-line);  color: var(--al-neutral-tone); }
+.alert--info     { background: var(--al-info-bg);     border-color: var(--al-info-tone);     color: var(--al-info-tone); }
+.alert--positive { background: var(--al-positive-bg); border-color: var(--al-positive-line); color: var(--al-positive-tone); }
+.alert--notice   { background: var(--al-notice-bg);   border-color: var(--al-notice-line);   color: var(--al-notice-tone); }
+.alert--negative { background: var(--al-negative-bg); border-color: var(--al-negative-line); color: var(--al-negative-tone); }
+
+/* dark — DESIGN-SYSTEM.md §2.2 dark column (the app pages are light-only; used by previews and future dark mode) */
+[data-theme="dark"] .alert {
+  --al-neutral-bg: #161B22; --al-neutral-line: #4A5260; --al-neutral-tone: #F7F9FB;
+  --al-info-bg: #06184F; --al-info-tone: #7EA3FF;
+  --al-positive-bg: #011A10; --al-positive-line: #34D77F; --al-positive-tone: #34D77F;
+  --al-notice-bg: #211100; --al-notice-line: #FAB663; --al-notice-tone: #FAB663;
+  --al-negative-bg: #1C0404; --al-negative-line: #F87171; --al-negative-tone: #FCA5A0;
+  --al-text: #C8CED7; --al-faded: #98A2B3; --al-ink: #F7F9FB; --al-divider: #4A5260; --al-hover: #344054; --al-focus: #7EA3FF;
+}
+
+@media (prefers-reduced-motion: reduce) { .alert-close-col, .alert-close-col svg { transition: none; } }
+</style>
+<!-- ▲ COMPONENT · alert -->
+<!-- ▼ COMPONENT · nav-card v1.0.0 · verbatim copy of App-login/app-components/nav-card/nav-card.css — do not edit here -->
+<style data-component="nav-card">
+/* ═══════════════════════════════════════════════════════════════════════
+   SHINE · NAV CARD  (app component · App-login)                  v1.0.0
+   A generic tappable card row that takes you somewhere: an optional icon, a title, a supporting line and a
+   chevron. Used at the end of a list (“3 expired · Closed after you saved them”), for “see all” links, settings
+   rows and similar. Not a job card: it carries no job, no state and no buttons.
+
+     ┌──────────────────────────────────────────────┐
+     │ (◷)  3 expired                            ›  │   card · radius.xl 16 · inset.xl 16 · 1 px stroke.neutral.muted
+     │      Closed after you saved them             │   icon disc 40 (A.08 lg · subtle) · icon 20 · chevron 16
+     └──────────────────────────────────────────────┘
+
+   Not in the design system as a molecule yet: built only from DS tokens and atoms (A.08 Avatar subtle disc,
+   Label / lg, Body / sm). Proposed as M.03. ▶ BEFORE CHANGING IT: read README.md here. Semantic tokens only.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.ncard {
+  /* COLOUR — DESIGN-SYSTEM.md §2.2 (light) */
+  --nc-surface: #FFFFFF;           /* surface.neutral.raised */
+  --nc-disc: #EEF1F5;              /* surface.neutral.muted — icon disc (A.08 subtle) */
+  --nc-line: #EEF1F5;              /* stroke.neutral.muted — matches the job card edge */
+  --nc-hover: #EEF1F5;             /* surface.neutral-state.hover — pressed */
+  --nc-ink: #0D1117;               /* content.neutral.base */
+  --nc-faded: #667085;             /* content.neutral.faded */
+  --nc-brand: #0B3FCC;             /* content.neutral.brand — hover border */
+  --nc-lifted: 0 4px 12px rgba(13, 17, 23, .08), 0 2px 4px rgba(13, 17, 23, .04);   /* elevation.neutral.lifted */
+  --nc-ring: 0 0 0 4px rgba(26, 86, 255, .10);                                       /* elevation.focus.default */
+  --nc-font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;   /* typeface.family.brand */
+
+  display: flex; align-items: center; gap: 12px; width: 100%; margin: 0; padding: 16px; box-sizing: border-box;   /* inline.lg · inset.xl */
+  background: var(--nc-surface); border: 1px solid var(--nc-line); border-radius: 16px;                       /* size.stroke.thin · size.radius.xl */
+  font-family: var(--nc-font); text-align: left; text-decoration: none; color: var(--nc-ink); cursor: pointer;
+  -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent;
+  transition: border-color 150ms, box-shadow 150ms, background-color 150ms;
+}
+.ncard *, .ncard *::before, .ncard *::after { box-sizing: border-box; }
+.ncard-ic { flex: none; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 1024px; background: var(--nc-disc); color: var(--nc-ink); }   /* A.08 lg · subtle */
+.ncard-ic svg { display: block; width: 20px; height: 20px; }                                     /* size.icon.lg */
+.ncard-tx { flex: 1 1 0; min-width: 0; display: grid; gap: 4px; }                                 /* stack.xxs */
+.ncard-title { font: 700 14px/14px var(--nc-font); color: var(--nc-ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }   /* Label / lg bold */
+.ncard-text { font: 500 12px/18px var(--nc-font); color: var(--nc-faded); }                        /* Body / sm medium */
+.ncard-chev { flex: none; color: var(--nc-faded); }
+.ncard-chev svg { display: block; width: 16px; height: 16px; }                                   /* size.icon.md */
+@media (hover: hover) { .ncard:hover { border-color: var(--nc-brand); box-shadow: var(--nc-lifted); } }
+.ncard:active { background: var(--nc-hover); }
+.ncard:focus-visible { outline: none; box-shadow: var(--nc-ring); }
+
+[data-theme="dark"] .ncard {
+  --nc-surface: #232A38; --nc-disc: #161B22; --nc-line: #344054; --nc-hover: #344054;
+  --nc-ink: #F7F9FB; --nc-faded: #98A2B3; --nc-brand: #7EA3FF; --nc-ring: 0 0 0 4px rgba(126, 163, 255, .25);
+}
+@media (prefers-reduced-motion: reduce) { .ncard { transition: none; } }
+</style>
+<!-- ▲ COMPONENT · nav-card -->
 <!-- ▼ COMPONENT · bottom-sheet v2.4.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
 <style data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
@@ -3247,10 +3359,10 @@ html.in-app .bs { --bs-safe: 0px; }
 })(window);
 </script>
   <!-- ▲ COMPONENT · sub-view -->
-  <!-- ▼ COMPONENT · job-card v1.3.0 · verbatim copy of App-login/app-components/job-card/job-card.js — do not edit here -->
+  <!-- ▼ COMPONENT · job-card v2.0.0 · verbatim copy of App-login/app-components/job-card/job-card.js — do not edit here -->
 <script data-component="job-card">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · JOB CARD  (app component · App-login)                 v1.3.0
+   SHINE · JOB CARD  (app component · App-login)                 v2.0.0
    Pair with job-card.css. One renderer for every job card in the app.
 
    ShineJobCard.html(job)  → markup for one card
@@ -3270,8 +3382,8 @@ html.in-app .bs { --bs-safe: 0px; }
           | 'expired' → grey, inert, "Expired" + when   { when }
      unread?                                            // Docket pending only: A.03 Pill dot on the logo
    }
-   ShineJobCard.nudge({ count, text }) → the "N expired" widget that ends Saved / Action Pending
-   ShineJobCard.group(label) · ShineJobCard.note(text) → day header · Expired-page note
+   Cards only. The list around them is the page's: the expired row is the nav-card component, the Expired-page note
+   is the alert component, day headers are page markup.
    ═══════════════════════════════════════════════════════════════════════ */
 (function (global) {
   'use strict';
@@ -3287,7 +3399,6 @@ html.in-app .bs { --bs-safe: 0px; }
     external: S.replace('stroke-width="2"', 'stroke-width="2.4"') + '<path d="M7 17L17 7M9 7h8v8"/></svg>',
     chev: S.replace('stroke-width="2"', 'stroke-width="2.4"') + '<path d="M9 6l6 6-6 6"/></svg>',
     tick: S.replace('stroke-width="2"', 'stroke-width="2.6"') + '<path d="M20 6L9 17l-5-5"/></svg>',
-    clock: S + '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>',
     heart: S + '<path d="M12 20s-7-4.6-7-9.4A3.9 3.9 0 0112 8a3.9 3.9 0 017 2.6C19 15.4 12 20 12 20z"/></svg>',
     spark: S + '<path d="M12 3l1.9 5.6L19.5 10l-5.6 1.9L12 17.5 10.1 11.9 4.5 10l5.6-1.4z"/></svg>',
     mark: S + '<path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z" fill="currentColor"/></svg>',
@@ -3360,18 +3471,111 @@ html.in-app .bs { --bs-safe: 0px; }
   document.addEventListener('keydown', function (e) {
     if ((e.key === 'Enter' || e.key === ' ') && e.target.classList && e.target.classList.contains('jcard')) { e.preventDefault(); e.target.click(); }
   });
-  function nudge(o) {
-    return '<button class="jcard-nudge" type="button" data-jc-nudge="expired"><span class="jcard-nudge-ic">' + IC.clock + '</span>' +
-      '<span class="jcard-nudge-tx"><b>' + esc(o.count) + ' expired</b><span>' + esc(o.text) + '</span></span><span class="jcard-nudge-chev">' + IC.chev + '</span></button>';
-  }
-  function group(t) { return '<p class="jcard-group">' + esc(t) + '</p>'; }
-  var CLOCK_FILLED = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 110 20 10 10 0 010-20zm1 5h-2v6l5 3 1-1.7-4-2.3z"/></svg>';
-  function note(t) { return '<p class="jcard-note" role="note"><span class="jcard-note-ic">' + CLOCK_FILLED + '</span><span>' + esc(t) + '</span></p>'; }
-  global.ShineJobCard = { version: '1.3.0', html: html, list: function (js) { return js.map(html).join(''); }, setSaved: setSaved,
-    nudge: nudge, group: group, note: note, icons: IC };
+  global.ShineJobCard = { version: '2.0.0', html: html, list: function (js) { return js.map(html).join(''); }, setSaved: setSaved, icons: IC };
 })(window);
 </script>
 <!-- ▲ COMPONENT · job-card -->
+<!-- ▼ COMPONENT · alert v1.0.0 · verbatim copy of App-login/app-components/alert/alert.js — do not edit here -->
+<script data-component="alert">
+/* ═══════════════════════════════════════════════════════════════════════
+   SHINE · ALERT  (app component · App-login)                     v1.0.0
+   Pair with alert.css. Renders the design-system A.07 Alert.
+
+   ShineAlert.html({
+     intent: 'neutral' | 'info' | 'positive' | 'notice' | 'negative',   // default 'neutral'
+     title?:  'Profile incomplete',            // Body / md bold, intent colour
+     text:    'Add 2 more skills…',            // Body / sm medium, always neutral muted
+     icon?:   'info' | 'check' | 'warning' | 'error' | 'clock' | 'bookmark' | '<svg…>' | false,   // default per intent
+     dismissible?: true,                       // adds the 44 close column
+     id?:     'profile-alert',                 // reported in the event
+     live?:   true                             // role="status" (role="alert" for negative) when injected after load
+   })
+   Event: 'shine:alert' bubbles from the alert when it is dismissed, detail { action: 'dismiss', id, alert }.
+   Cancelable: call preventDefault() to keep it on screen; otherwise it is removed.
+   ═══════════════════════════════════════════════════════════════════════ */
+(function (global) {
+  'use strict';
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  var V = '<svg viewBox="0 0 24 24" aria-hidden="true">';
+  var ICONS = {   // filled glyphs (A.07: filled icon that echoes the content)
+    info: V + '<path d="M12 2a10 10 0 110 20 10 10 0 010-20zm1 8h-2v7h2v-7zm0-4h-2v2h2V6z"/></svg>',
+    check: V + '<path d="M12 2a10 10 0 110 20 10 10 0 010-20zm4.3 6.3L10.5 14l-2.8-2.8-1.4 1.4 4.2 4.2 7.2-7.1-1.4-1.4z"/></svg>',
+    warning: V + '<path d="M13.7 3.9l8.2 14.2A2 2 0 0120.2 21H3.8a2 2 0 01-1.7-2.9l8.2-14.2a2 2 0 013.4 0zM13 16h-2v2h2v-2zm0-7h-2v5h2V9z"/></svg>',
+    error: V + '<path d="M12 2a10 10 0 110 20 10 10 0 010-20zm3.5 5.1L12 10.6 8.5 7.1 7.1 8.5l3.5 3.5-3.5 3.5 1.4 1.4 3.5-3.5 3.5 3.5 1.4-1.4-3.5-3.5 3.5-3.5-1.4-1.4z"/></svg>',
+    clock: V + '<path d="M12 2a10 10 0 110 20 10 10 0 010-20zm1 5h-2v6l5 3 1-1.7-4-2.3z"/></svg>',
+    bookmark: V + '<path d="M17 3a2 2 0 012 2v16l-7-5-7 5V5a2 2 0 012-2h10z"/></svg>'
+  };
+  var DEFAULT = { neutral: 'info', info: 'info', positive: 'check', notice: 'warning', negative: 'error' };
+  var CLOSE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+
+  function html(o) {
+    o = o || {};
+    var intent = DEFAULT[o.intent] ? o.intent : 'neutral';
+    var ic = o.icon === false ? '' : (o.icon && o.icon.charAt(0) === '<' ? o.icon : ICONS[o.icon || DEFAULT[intent]] || '');
+    var role = o.live ? (intent === 'negative' ? ' role="alert"' : ' role="status"') : (o.title ? '' : ' role="note"');
+    return '<div class="alert alert--' + intent + (o.title ? '' : ' alert--text-only') + '"' + (o.id ? ' data-alert-id="' + esc(o.id) + '"' : '') + role + '>' +
+      '<div class="alert-main">' + (ic ? '<span class="alert-icon" aria-hidden="true">' + ic + '</span>' : '') +
+        '<div class="alert-body">' + (o.title ? '<p class="alert-title">' + esc(o.title) + '</p>' : '') + '<p class="alert-text">' + esc(o.text) + '</p></div></div>' +
+      (o.dismissible ? '<button class="alert-close-col" type="button" data-alert-close aria-label="Dismiss' + (o.title ? ' ' + esc(o.title) : '') + '">' + CLOSE + '</button>' : '') +
+    '</div>';
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-alert-close]'); if (!b) return;
+    var al = b.closest('.alert'); if (!al) return;
+    var ev = new CustomEvent('shine:alert', { bubbles: true, cancelable: true, detail: { action: 'dismiss', id: al.getAttribute('data-alert-id'), alert: al } });
+    if (al.dispatchEvent(ev)) al.remove();
+  });
+  global.ShineAlert = { version: '1.0.0', html: html, icons: ICONS };
+})(window);
+</script>
+<!-- ▲ COMPONENT · alert -->
+<!-- ▼ COMPONENT · nav-card v1.0.0 · verbatim copy of App-login/app-components/nav-card/nav-card.js — do not edit here -->
+<script data-component="nav-card">
+/* ═══════════════════════════════════════════════════════════════════════
+   SHINE · NAV CARD  (app component · App-login)                  v1.0.0
+   Pair with nav-card.css. A generic tappable card row: icon · title · supporting line · chevron.
+
+   ShineNavCard.html({
+     title: '3 expired',                         // Label / lg bold, one line
+     text?: 'Closed after you saved them',       // Body / sm medium, faded
+     icon?: 'clock' | 'bookmark' | 'briefcase' | 'bell' | '<svg…>',   // in a 40 disc; omit for none
+     href?: '../Docket/docket.html',             // renders a link; otherwise a button
+     id?:   'expired',                           // reported in the event, set as data-ncard
+     label?: 'Open 3 expired jobs',              // accessible name when title + text aren't enough
+     chevron?: false                             // default true
+   })
+   Event: 'shine:navcard' bubbles from the card on tap, detail { id, card }. Cancelable (a link then won't follow).
+   ═══════════════════════════════════════════════════════════════════════ */
+(function (global) {
+  'use strict';
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  var S = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+  var ICONS = {
+    clock: S + '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>',
+    bookmark: S + '<path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>',
+    briefcase: S + '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>',
+    bell: S + '<path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>'
+  };
+  var CHEV = S.replace('stroke-width="2"', 'stroke-width="2.4"') + '<path d="M9 6l6 6-6 6"/></svg>';
+
+  function html(o) {
+    o = o || {};
+    var ic = o.icon ? (o.icon.charAt(0) === '<' ? o.icon : ICONS[o.icon] || '') : '';
+    var inner = (ic ? '<span class="ncard-ic" aria-hidden="true">' + ic + '</span>' : '') +
+      '<span class="ncard-tx"><span class="ncard-title">' + esc(o.title) + '</span>' + (o.text ? '<span class="ncard-text">' + esc(o.text) + '</span>' : '') + '</span>' +
+      (o.chevron === false ? '' : '<span class="ncard-chev" aria-hidden="true">' + CHEV + '</span>');
+    var attrs = ' class="ncard"' + (o.id ? ' data-ncard="' + esc(o.id) + '"' : ' data-ncard=""') + (o.label ? ' aria-label="' + esc(o.label) + '"' : '');
+    return o.href ? '<a' + attrs + ' href="' + esc(o.href) + '">' + inner + '</a>' : '<button' + attrs + ' type="button">' + inner + '</button>';
+  }
+  document.addEventListener('click', function (e) {
+    var c = e.target.closest && e.target.closest('.ncard'); if (!c) return;
+    var ok = c.dispatchEvent(new CustomEvent('shine:navcard', { bubbles: true, cancelable: true, detail: { id: c.getAttribute('data-ncard'), card: c } }));
+    if (!ok && c.tagName === 'A') e.preventDefault();
+  });
+  global.ShineNavCard = { version: '1.0.0', html: html, icons: ICONS };
+})(window);
+</script>
+<!-- ▲ COMPONENT · nav-card -->
 <script>
 
 (function(){
@@ -3522,7 +3726,7 @@ html.in-app .bs { --bs-safe: 0px; }
   // The card that closes the Action Pending list. Deliberately quiet: it is
   // a way out of the list, not another thing competing for the action.
   function expiredCard(){
-    return EXPIRED.length ? ShineJobCard.nudge({ count: EXPIRED.length, text: 'Closed before you acted on them' }) : '';
+    return EXPIRED.length ? ShineNavCard.html({ id: 'expired', icon: 'clock', title: EXPIRED.length + ' expired', text: 'Closed before you acted on them' }) : '';   // nav-card component
   }
 
 
@@ -3556,7 +3760,7 @@ html.in-app .bs { --bs-safe: 0px; }
     var out = '<div class="jcard-list">', last = null;
     rows.forEach(function(m){
       var day = scope === 'taken' ? (m.doneDay || m.day) : m.day;   // Action Taken groups by the day you acted
-      if (day !== last){ out += ShineJobCard.group(day); last = day; }
+      if (day !== last){ out += '<p class="mr-day">' + day + '</p>'; last = day; }   // day header (page markup)
       out += card(m);
     });
     return out + tail + '</div>';
@@ -3565,7 +3769,7 @@ html.in-app .bs { --bs-safe: 0px; }
   // The expired screen. No actions, no expansion — these are read-only.
   function expiredList(mode){
     return '<div class="jcard-list">' +
-      ShineJobCard.note('Recruiters close invitations and matches after a while. These ran out before you replied.') +
+      ShineAlert.html({ intent: 'notice', icon: 'clock', text: 'Recruiters close invitations and matches after a while. These ran out before you replied.' }) +   // alert component
       ShineJobCard.list(EXPIRED.map(jc)) + '</div>';
   }
 
@@ -3655,7 +3859,7 @@ html.in-app .bs { --bs-safe: 0px; }
   });
   // the expired nudge at the end of Action Pending opens the Expired page
   sheetList.addEventListener('click', function(e){
-    if (!e.target.closest('[data-jc-nudge]')) return;
+    if (!e.target.closest('[data-ncard="expired"]')) return;
     listScroll = sheetList.scrollTop; sub.open('expired');
   });
 
