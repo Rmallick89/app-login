@@ -1419,10 +1419,10 @@ html.in-app { --stp-safe-top: 0px; }
 }
 </style>
 <!-- ▲ COMPONENT · top-app-bar -->
-<!-- ▼ COMPONENT · job-card v1.2.2 · verbatim copy of App-login/app-components/job-card/job-card.css — do not edit here -->
+<!-- ▼ COMPONENT · job-card v1.2.3 · verbatim copy of App-login/app-components/job-card/job-card.css — do not edit here -->
 <style data-component="job-card">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · JOB CARD  (app component · App-login)                 v1.2.2
+   SHINE · JOB CARD  (app component · App-login)                 v1.2.3
    One card for every job in the logged-in app, built from the design system:
    M.02 Job Card · Portrait (the mobile job list), composed of the M.02 logo,
    A.04 Badge, A.03 Pill (unread dot), A.02 Button (Primary · Neutral,
@@ -1445,7 +1445,7 @@ html.in-app { --stp-safe-top: 0px; }
      │  or  (Applied)          2 days ago     │  outcome · A.04 Badge md + Body / sm
      └──────────────────────────────────────┘
 
-   M.02 portrait: card radius.xl 16 · inset.xxl 22 · 1 px stroke.neutral.muted (v1.1: subtler) · soft resting shadow
+   M.02 portrait: card radius.2xl 24 (v1.2.3, as before v1.0) · inset.xxl 22 · 1 px stroke.neutral.muted (v1.1: subtler) · soft resting shadow
    (= Home tab job cards, v1.2.2) · sections stack.lg 14 · hover: border content.neutral.brand + elevation.neutral.lifted
    + 1 px lift · focus: elevation.focus.default.
    ▶ BEFORE CHANGING IT: read README.md here and component-system.md M.02. Semantic tokens only.
@@ -1502,7 +1502,8 @@ html.in-app { --stp-safe-top: 0px; }
   --jc-row-gap: 12px;        /* spacing.stack.md — between meta rows */
   --jc-inline: 8px;          /* spacing.inline.md */
   --jc-control: 44px;        /* size.control.md — M.02 portrait: Apply btn--md + icon button 44 */
-  --jc-radius: 16px;         /* size.radius.xl — M.02 card */
+  --jc-radius: 24px;         /* size.radius.2xl — card corners (user: as before v1.0 — My Jobs 24, Docket/Home 22 → nearest token 24) */
+  --jc-radius-row: 16px;     /* size.radius.xl — expired nudge row */
   --jc-radius-ctl: 12px;     /* size.radius.lg — A.02 buttons, A.07 alert */
   --jc-radius-logo: 8px;     /* size.radius.md — M.02 square company logo */
   --jc-font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;   /* typeface.family.brand */
@@ -1656,7 +1657,7 @@ html.in-app { --stp-safe-top: 0px; }
 /* expired nudge — a quiet card-row: M.02 card surface + border, A.08 Avatar lg · User · subtle with a 20 icon */
 .jcard-nudge {
   display: flex; align-items: center; gap: 12px; width: 100%; margin-top: 4px; padding: 16px; box-sizing: border-box;   /* inline.lg · inset.xl */
-  background: var(--jc-surface-raised); border: 1px solid var(--jc-line-subtle); border-radius: var(--jc-radius);
+  background: var(--jc-surface-raised); border: 1px solid var(--jc-line-subtle); border-radius: var(--jc-radius-row);
   font-family: var(--jc-font); text-align: left; color: var(--jc-ink); cursor: pointer; -webkit-tap-highlight-color: transparent;
   transition: border-color var(--jc-dur), box-shadow var(--jc-dur), background-color var(--jc-dur);
 }
@@ -3244,10 +3245,10 @@ html.in-app .bs { --bs-safe: 0px; }
 })(window);
 </script>
   <!-- ▲ COMPONENT · sub-view -->
-  <!-- ▼ COMPONENT · job-card v1.2.2 · verbatim copy of App-login/app-components/job-card/job-card.js — do not edit here -->
+  <!-- ▼ COMPONENT · job-card v1.2.3 · verbatim copy of App-login/app-components/job-card/job-card.js — do not edit here -->
 <script data-component="job-card">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · JOB CARD  (app component · App-login)                 v1.2.2
+   SHINE · JOB CARD  (app component · App-login)                 v1.2.3
    Pair with job-card.css. One renderer for every job card in the app.
 
    ShineJobCard.html(job)  → markup for one card
@@ -3364,7 +3365,7 @@ html.in-app .bs { --bs-safe: 0px; }
   function group(t) { return '<p class="jcard-group">' + esc(t) + '</p>'; }
   var CLOCK_FILLED = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 110 20 10 10 0 010-20zm1 5h-2v6l5 3 1-1.7-4-2.3z"/></svg>';
   function note(t) { return '<p class="jcard-note" role="note"><span class="jcard-note-ic">' + CLOCK_FILLED + '</span><span>' + esc(t) + '</span></p>'; }
-  global.ShineJobCard = { version: '1.2.2', html: html, list: function (js) { return js.map(html).join(''); }, setSaved: setSaved,
+  global.ShineJobCard = { version: '1.2.3', html: html, list: function (js) { return js.map(html).join(''); }, setSaved: setSaved,
     nudge: nudge, group: group, note: note, icons: IC };
 })(window);
 </script>
