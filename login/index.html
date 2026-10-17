@@ -3101,6 +3101,112 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
 }
 </style>
 <!-- ▲ COMPONENT · bottom-tab-bar -->
+<!-- ▼ COMPONENT · tab-nudge v1.0.1 · verbatim copy of App-login/app-components/tab-nudge/tab-nudge.css — do not edit here -->
+<style data-component="tab-nudge">
+/* ══════════════════════════════════════════════════════════════════════
+   Shine app · Tab nudge · v1.0.1 (2026-10-17)
+   A slim card above the bottom tab bar whose lower edge flows down in one
+   soft wave and takes over one tab (icon + label in white) — "something is
+   waiting in this tab". User-picked "B · Soft wave" in Rose.
+   Needs the bottom-tab-bar component (v1.3+) on the page.
+   Guideline: tab-nudge-spec.html · README.md
+   Light-only (the app is light-only); every value is a DS token or a
+   documented derived / proposed value.
+   ══════════════════════════════════════════════════════════════════════ */
+.stn {
+  /* COLOUR — DESIGN-SYSTEM.md §2.2 */
+  --stn-surface: #BE185D;                /* surface.decorative.pink-intense (utility/pink/600) */
+  --stn-content: #FFFFFF;                /* content.on-fill-dark.base */
+  --stn-disc: #FFFFFF;                   /* surface.neutral.raised */
+  --stn-disc-content: #BE185D;           /* content.decorative.pink (utility/pink/600) */
+  --stn-close: rgba(255, 255, 255, .18); /* PROPOSED surface.on-fill-dark.state — content.on-fill-dark.base @ 18 % */
+  --stn-close-hover: rgba(255, 255, 255, .28);  /* same, hover @ 28 % */
+  --stn-shade: #410923;                  /* inner shadow colour: utility/pink/900 … */
+  --stn-shade-a: .42;                    /* … @ 42 % (PROPOSED elevation.decorative.pink-inset) */
+  --stn-lite-a: .18;                     /* inner top highlight: content.on-fill-dark.base @ 18 % */
+  --stn-glow: 0 8px 14px rgba(190, 24, 93, .30);   /* PROPOSED elevation.decorative.pink-raised — pink/600 @ 30 % */
+  /* SIZE — §2.3 / §2.4 */
+  --stn-h: 48px;                         /* card height · size.control.lg */
+  --stn-radius: 16px;                    /* size.radius.xl — card corners and the wave's bottom corners */
+  --stn-side: 12px;                      /* spacing.inset.lg — same side inset as the tab bar */
+  --stn-gap: 4px;                        /* spacing.stack.xxs — card ↔ tab bar */
+  --stn-pad-start: 10px;                 /* derived: (48 − 28) / 2, centres the disc */
+  --stn-pad-end: 12px;                   /* derived: (48 − 24) / 2, centres the close button · = spacing.inset.lg */
+  --stn-inline: 10px;                    /* derived with the start padding (disc ↔ text), between inline.md 8 and lg 12 */
+  --stn-disc-size: 28px;                 /* icon disc (no DS size token; documented) */
+  --stn-icon: 14px;                      /* size.icon.sm */
+  --stn-close-size: 24px;                /* close target inside the card (the card is not a tap target) */
+  --stn-close-icon: 12px;                /* size.icon.xs */
+  --stn-tab-icon: 24px;                  /* size.icon.xl — same as the tab bar */
+  --stn-dot: 8px;                        /* A.03 dot — same as the tab bar */
+  /* MOTION — proposed (DS has no motion section; same style as the tab bar's --stb-dur-*) */
+  --stn-dur-fade: 200ms;
+  --stn-dur-rise: 300ms;
+  --stn-ease-rise: cubic-bezier(.2, .8, .2, 1);
+  --stn-rise: 12px;
+  --stn-z: 96;                           /* above the tab bar (90) and full-page sub-views (95), under bottom sheets (100+) and toasts */
+
+  position: fixed; z-index: var(--stn-z); left: 0; width: 100%; pointer-events: none;
+  opacity: 0; transform: translateY(var(--stn-rise));
+  transition: opacity var(--stn-dur-fade) ease, transform var(--stn-dur-rise) var(--stn-ease-rise);
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;   /* typeface/family/brand */
+  -webkit-tap-highlight-color: transparent;
+}
+.stn[hidden] { display: none; }
+.stn--in-host { position: absolute; }                 /* inside a positioned frame (guideline phones) */
+.stn.is-in { opacity: 1; transform: none; }
+/* the card swallows taps (it only informs); the wave and the tab part act as the tab */
+.stn.is-in .stn-body, .stn.is-in .stn-x, .stn.is-in .stn-tab, .stn.is-in .stn-path { pointer-events: auto; }
+
+/* 1 · shape — one SVG path: card + wave + tab, drawn from the live tab position */
+.stn-shape { position: absolute; left: 0; top: 0; overflow: visible; filter: drop-shadow(var(--stn-glow)); }
+.stn-path { fill: var(--stn-surface); cursor: pointer; }
+.stn-shade { flood-color: var(--stn-shade); flood-opacity: var(--stn-shade-a); }
+.stn-lite { flood-color: var(--stn-content); flood-opacity: var(--stn-lite-a); }
+
+/* 2–4 · card content */
+.stn-body {
+  position: absolute; left: var(--stn-side); right: var(--stn-side); top: 0; height: var(--stn-h);
+  display: flex; align-items: center; gap: var(--stn-inline); padding: 0 var(--stn-pad-end) 0 var(--stn-pad-start);
+  box-sizing: border-box; color: var(--stn-content);
+}
+.stn-ic {
+  flex: none; width: var(--stn-disc-size); height: var(--stn-disc-size); border-radius: 1024px;   /* size.radius.full */
+  display: grid; place-items: center; background: var(--stn-disc); color: var(--stn-disc-content);
+}
+.stn-ic svg { width: var(--stn-icon); height: var(--stn-icon); display: block; }
+.stn-text {                                            /* Body / md semibold 14/20 (20 keeps the descenders — g, p, y — inside the ellipsis clip) · count bold */
+  flex: 1 1 0; min-width: 0; margin: 0; font-size: 14px; line-height: 20px; font-weight: 600; letter-spacing: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.stn-text b { font-weight: 700; }
+.stn-x {
+  appearance: none; flex: none; width: var(--stn-close-size); height: var(--stn-close-size); margin: 0; padding: 0; border: 0;
+  border-radius: 1024px; display: grid; place-items: center; cursor: pointer; background: var(--stn-close); color: var(--stn-content);
+  position: relative;
+}
+.stn-x::after { content: ""; position: absolute; inset: -10px; }   /* 44 touch area (size.control.md) without growing the card */
+.stn-x svg { width: var(--stn-close-icon); height: var(--stn-close-icon); fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; }
+@media (hover: hover) { .stn-x:hover { background: var(--stn-close-hover); } }
+
+/* 5–6 · the tab part: same icon and label positions as the tab under it, in white */
+.stn-tab {
+  appearance: none; position: absolute; margin: 0; padding: 0; border: 0; background: none; cursor: pointer; color: var(--stn-content);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;   /* = tab bar: icon 24 · gap 2 · label 10 */
+  border-radius: 0 0 var(--stn-radius) var(--stn-radius); font: inherit;
+}
+.stn-tab svg { width: var(--stn-tab-icon); height: var(--stn-tab-icon); display: block; }
+.stn-tab span { font-size: 10px; line-height: 10px; font-weight: 700; letter-spacing: 0; }   /* Label / sm bold — same as the tab bar */
+.stn-dot { position: absolute; width: var(--stn-dot); height: var(--stn-dot); border-radius: 1024px; background: var(--stn-content); box-shadow: 0 0 0 2px var(--stn-surface); }
+.stn-dot[hidden] { display: none; }
+.stn-x:focus-visible, .stn-tab:focus-visible { outline: 2px solid var(--stn-content); outline-offset: 2px; box-shadow: 0 0 0 4px var(--stn-surface); }
+
+@media (prefers-reduced-motion: reduce) { .stn { transition: opacity 150ms ease; transform: none; } }
+
+/* the page keeps its last content reachable above the nudge (--stn-lift = card + gap, set while it shows) */
+html.stn-on body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px + var(--stn-lift, 0px)) !important; }
+</style>
+<!-- ▲ COMPONENT · tab-nudge -->
 <!-- ▼ COMPONENT · top-app-bar v1.0.3 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
 <style data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
@@ -3996,6 +4102,7 @@ html.in-app { --stp-safe-top: 0px; }
       </div>
     </section>
     <nav data-shine-tabbar data-active="home" data-dot="docket" data-href-docket="docket.html" data-href-jobs="my-jobs.html"></nav>
+    <div data-shine-tabnudge data-tab="docket" data-id="docket-invites" data-count="4" data-text="invites waiting" data-text-one="invite waiting"></div>   <!-- tab-nudge: Docket invites waiting (demo count = Docket › Action Pending invites) -->
 <!-- ▼ COMPONENT · bottom-tab-bar v1.3.1 · verbatim copy of App-login/app-components/bottom-tab-bar/bottom-tab-bar.js — do not edit here -->
 <script data-component="bottom-tab-bar">
 /* ═══════════════════════════════════════════════════════════════════════
@@ -4184,6 +4291,191 @@ html.in-app { --stp-safe-top: 0px; }
 })(window);
 </script>
 <!-- ▲ COMPONENT · bottom-tab-bar -->
+<!-- ▼ COMPONENT · tab-nudge v1.0.1 · verbatim copy of App-login/app-components/tab-nudge/tab-nudge.js — do not edit here -->
+<script data-component="tab-nudge">
+/* ══════════════════════════════════════════════════════════════════════
+   Shine app · Tab nudge · v1.0.1 (2026-10-17) — ShineTabNudge
+   Points at one bottom-tab-bar tab while something waits inside it
+   (Docket: recruiter invites waiting for a reply).
+
+     <div data-shine-tabnudge data-tab="docket" data-count="4"
+          data-text="invites waiting" data-text-one="invite waiting"></div>
+
+   • Shows ~0.6 s after the page opens, on any page whose active tab is not
+     data-tab. Not on that tab's own page.
+   • The card only informs (no tap target). Its wave + tab part IS the tab:
+     tapping it taps the real tab (the tab bar navigates).
+   • × or opening the tab hides it until the app is opened again
+     (sessionStorage — cleared when the app is closed).
+   • While it shows: html.stn-on and --stn-lift (card + gap) so pages can
+     keep content and toasts clear of it.
+
+   API  ShineTabNudge.mount(el, { tab, count, text, textOne, id, bar, host, delay })
+        ShineTabNudge.show(id) · hide(id) · place() · reset(id) · setCount(id, n)
+   Event shine:tabnudge { action: 'show'|'close'|'open'|'hide', id, tab, nudge }
+         — 'close' and 'open' are cancelable.
+   Needs bottom-tab-bar v1.3+. No other dependencies.
+   ══════════════════════════════════════════════════════════════════════ */
+(function (global) {
+  'use strict';
+  var doc = global.document;
+  if (global.ShineTabNudge) return;
+  var KEY = 'shine-tabnudge:off:';
+  var X = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+  // wave geometry (px): top half-width where the wave leaves the card, half-width round the tab, where the curve ends
+  var WAVE = { top: 74, side: 32, ease: 30, mid: .48 };
+  var items = [], seq = 0;
+
+  function ss(fn) { try { return fn(global.sessionStorage); } catch (e) { return null; } }
+  function isOff(id) { return ss(function (s) { return s.getItem(KEY + id) === '1'; }) === true; }
+  function setOff(id, on) { ss(function (s) { if (on) s.setItem(KEY + id, '1'); else s.removeItem(KEY + id); }); }
+  function px(el, name, d) { var v = parseFloat(global.getComputedStyle(el).getPropertyValue(name)); return isNaN(v) ? d : v; }
+  function fire(n, action) {
+    var ev; try { ev = new CustomEvent('shine:tabnudge', { detail: { action: action, id: n.id, tab: n.tab, nudge: n.el }, cancelable: true }); } catch (e) { return true; }
+    return doc.dispatchEvent(ev);
+  }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  // the outline: card → soft wave down round the tab → flat bottom with radius corners → back up → card
+  function outline(x0, x1, h, r, cx, yb) {
+    var wt = WAVE.top, wb = WAVE.side, mid = h + (yb - h) * WAVE.mid, rb = Math.min(r, wb);
+    return ['M', x0, r, 'A', r, r, 0, 0, 1, x0 + r, 0, 'L', x1 - r, 0, 'A', r, r, 0, 0, 1, x1, r, 'L', x1, h - r, 'A', r, r, 0, 0, 1, x1 - r, h,
+      'L', cx + wt, h, 'C', cx + wt - WAVE.ease, h, cx + wb, h + (mid - h) * .35, cx + wb, mid,
+      'L', cx + wb, yb - rb, 'A', rb, rb, 0, 0, 1, cx + wb - rb, yb, 'L', cx - wb + rb, yb, 'A', rb, rb, 0, 0, 1, cx - wb, yb - rb, 'L', cx - wb, mid,
+      'C', cx - wb, h + (mid - h) * .35, cx - wt + WAVE.ease, h, cx - wt, h,
+      'L', x0 + r, h, 'A', r, r, 0, 0, 1, x0, h - r, 'Z'].map(function (v) { return typeof v === 'number' ? Math.round(v * 100) / 100 : v; }).join(' ');
+  }
+
+  function render(n) {
+    var tab = n.bar.querySelector('.stb-tab[data-tab="' + n.tab + '"]');
+    var icon = tab && tab.querySelector('.stb-fill') ? tab.querySelector('.stb-fill').outerHTML.replace(/ class="[^"]*"/, '') : '';
+    var label = tab && tab.querySelector('.stb-lbl') ? tab.querySelector('.stb-lbl').textContent : n.tab;
+    var dot = tab && tab.querySelector('.stb-dot') && !tab.querySelector('.stb-dot').hidden;
+    var words = esc(n.count === 1 ? n.textOne : n.text), fid = 'stn-inset-' + n.uid;
+    n.el.className = 'stn' + (n.host ? ' stn--in-host' : '');
+    n.el.setAttribute('data-stn-id', n.id);
+    n.el.innerHTML =
+      '<svg class="stn-shape" aria-hidden="true" focusable="false"><defs>' +
+        '<filter id="' + fid + '" x="-5%" y="-10%" width="110%" height="120%" color-interpolation-filters="sRGB">' +
+          '<feComponentTransfer in="SourceAlpha" result="inv"><feFuncA type="table" tableValues="1 0"/></feComponentTransfer>' +
+          '<feGaussianBlur in="inv" stdDeviation="3.5"/><feOffset dy="2.5" result="ob"/>' +
+          '<feFlood class="stn-shade"/><feComposite in2="ob" operator="in"/><feComposite in2="SourceAlpha" operator="in" result="shade"/>' +
+          '<feGaussianBlur in="inv" stdDeviation="1"/><feOffset dy="-1" result="ot"/>' +
+          '<feFlood class="stn-lite"/><feComposite in2="ot" operator="in"/><feComposite in2="SourceAlpha" operator="in" result="lite"/>' +
+          '<feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="shade"/><feMergeNode in="lite"/></feMerge>' +
+        '</filter></defs><path class="stn-path" data-stn-go filter="url(#' + fid + ')"/></svg>' +
+      '<div class="stn-body" role="status"><span class="stn-ic" aria-hidden="true">' + icon + '</span>' +
+        '<p class="stn-text"><b>' + n.count + '</b> ' + words + '</p>' +
+        '<button class="stn-x" type="button" data-stn-close aria-label="Close until you open the app again">' + X + '</button></div>' +
+      '<button class="stn-tab" type="button" data-stn-go aria-label="' + esc(label) + ', ' + n.count + ' ' + words + '">' + icon +
+        '<span>' + esc(label) + '</span><em class="stn-dot" aria-hidden="true"' + (dot ? '' : ' hidden') + '></em></button>';
+  }
+
+  function layout(n) {
+    if (!n.shown) return;
+    var tab = n.bar.querySelector('.stb-tab[data-tab="' + n.tab + '"]'); if (!tab) return;
+    var H = n.host ? n.host.getBoundingClientRect() : { left: 0, top: 0, width: doc.documentElement.clientWidth, height: global.innerHeight };
+    var bar = n.bar.getBoundingClientRect(), t = tab.getBoundingClientRect();
+    var h = px(n.el, '--stn-h', 48), r = px(n.el, '--stn-radius', 16), side = px(n.el, '--stn-side', 12), gap = px(n.el, '--stn-gap', 4);
+    var W = H.width, top = bar.top - H.top - gap - h;                        // card's top, in the frame
+    var cx = t.left - H.left + t.width / 2, yb = t.bottom - H.top - top;     // tab centre; tab bottom in the nudge's coordinates
+    n.el.style.top = 'auto'; n.el.style.height = Math.ceil(yb + 1) + 'px';
+    n.el.style.bottom = (H.height - (top + yb + 1)) + 'px';
+    var svg = n.el.querySelector('.stn-shape');
+    svg.setAttribute('width', W); svg.setAttribute('height', Math.ceil(yb + 1)); svg.setAttribute('viewBox', '0 0 ' + W + ' ' + Math.ceil(yb + 1));
+    svg.querySelector('path').setAttribute('d', outline(side, W - side, h, r, cx, yb));
+    // tab part = the real tab's box (same height, same centre): icon 24 · gap 2 · label 10 centred, exactly as the tab bar draws them
+    var b = n.el.querySelector('.stn-tab'), wb = WAVE.side;
+    b.style.left = (cx - wb) + 'px'; b.style.width = (wb * 2) + 'px';
+    b.style.top = (t.top - H.top - top) + 'px'; b.style.height = t.height + 'px';
+    var d = n.el.querySelector('.stn-dot'), td = tab.querySelector('.stb-dot');
+    if (d && td) { var R = td.getBoundingClientRect(); d.style.left = (R.left - (cx - wb + H.left)) + 'px'; d.style.top = (R.top - t.top) + 'px'; }
+    if (!n.host) doc.documentElement.style.setProperty('--stn-lift', (h + gap) + 'px');
+  }
+
+  function activeTab(n) { var a = n.bar.querySelector('.stb-tab.is-active'); return n.bar.getAttribute('data-active') || (a && a.getAttribute('data-tab')); }
+  function canShow(n) { return n.count > 0 && !isOff(n.id) && activeTab(n) !== n.tab && n.bar.querySelector('.stb-tab[data-tab="' + n.tab + '"]'); }
+
+  function show(n) {
+    if (n.shown || !canShow(n)) return;
+    render(n); n.shown = true; n.el.hidden = false;
+    if (!n.host) doc.documentElement.classList.add('stn-on');
+    layout(n);
+    global.requestAnimationFrame(function () { global.requestAnimationFrame(function () { if (n.shown) { layout(n); n.el.classList.add('is-in'); } }); });
+    fire(n, 'show');
+  }
+  function hide(n, why) {
+    if (!n.shown) return;
+    n.shown = false; n.el.classList.remove('is-in');
+    if (!n.host && !items.some(function (o) { return o.shown && !o.host; })) {
+      doc.documentElement.classList.remove('stn-on'); doc.documentElement.style.removeProperty('--stn-lift');
+    }
+    setTimeout(function () { if (!n.shown) { n.el.hidden = true; n.el.innerHTML = ''; } }, 320);
+    if (why) fire(n, why);
+  }
+
+  function mount(el, o) {
+    if (!el || el.__stn) return el && el.__stn;
+    o = o || {};
+    var bar = o.bar || doc.querySelector('[data-shine-tabbar].stb, .stb'); if (!bar) return null;
+    var n = {
+      el: el, bar: bar, host: o.host || null, uid: ++seq,
+      tab: o.tab || el.getAttribute('data-tab') || 'docket',
+      count: +(o.count != null ? o.count : el.getAttribute('data-count') || 0),
+      text: o.text || el.getAttribute('data-text') || 'waiting',
+      textOne: o.textOne || el.getAttribute('data-text-one') || o.text || el.getAttribute('data-text') || 'waiting',
+      delay: +(o.delay != null ? o.delay : el.getAttribute('data-delay') || 600),
+      shown: false
+    };
+    n.id = o.id || el.getAttribute('data-id') || n.tab;
+    el.__stn = n; el.hidden = true; items.push(n);
+    el.addEventListener('click', function (e) {
+      if (e.target.closest('[data-stn-close]')) {
+        if (!fire(n, 'close')) return;
+        setOff(n.id, true); hide(n); return;
+      }
+      if (e.target.closest('[data-stn-go]')) {
+        if (!fire(n, 'open')) return;
+        setOff(n.id, true); hide(n);
+        var t = n.bar.querySelector('.stb-tab[data-tab="' + n.tab + '"]'); if (t) t.click();   // the tab bar takes it from here
+      }
+    });
+    if (global.ResizeObserver) new global.ResizeObserver(function () { layout(n); }).observe(bar);
+    setTimeout(function () { show(n); }, n.delay);
+    return n;
+  }
+
+  // the tab opened any other way also counts as seen
+  doc.addEventListener('shine:tab', function (e) {
+    var d = e.detail || {};
+    items.forEach(function (n) {
+      if (d.bar && d.bar !== n.bar) return;
+      if (d.tab === n.tab && !e.defaultPrevented) { setOff(n.id, true); hide(n); }
+    });
+  });
+  global.addEventListener('resize', function () { items.forEach(layout); });
+  global.addEventListener('pageshow', function (e) {                 // back-forward cache: re-check (closed or seen meanwhile?)
+    if (!e.persisted) return;
+    items.forEach(function (n) { if (isOff(n.id) || activeTab(n) === n.tab) hide(n); else if (!n.shown) setTimeout(function () { show(n); }, n.delay); });
+  });
+  if (doc.fonts && doc.fonts.ready) doc.fonts.ready.then(function () { items.forEach(layout); });
+
+  function find(id) { return items.filter(function (n) { return id == null || n.id === id; }); }
+  global.ShineTabNudge = {
+    version: '1.0.1',
+    mount: mount,
+    show: function (id) { find(id).forEach(show); },
+    hide: function (id) { find(id).forEach(function (n) { hide(n, 'hide'); }); },
+    place: function () { items.forEach(layout); },
+    reset: function (id) { find(id).forEach(function (n) { setOff(n.id, false); hide(n); setTimeout(function () { show(n); }, 340); }); },
+    setCount: function (id, c) { find(id).forEach(function (n) { n.count = +c || 0; if (n.shown) { if (n.count > 0) { render(n); layout(n); n.el.classList.add('is-in'); } else hide(n); } }); }
+  };
+
+  function init() { doc.querySelectorAll('[data-shine-tabnudge]:not(style):not(script)').forEach(function (el) { mount(el); }); }
+  if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', init); else init();
+})(window);
+</script>
+<!-- ▲ COMPONENT · tab-nudge -->
   </div>
 
   <script>
