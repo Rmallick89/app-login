@@ -1975,10 +1975,10 @@ html.in-app { --stp-safe-top: 0px; }
 @media (prefers-reduced-motion: reduce) { .ncard { transition: none; } }
 </style>
 <!-- ▲ COMPONENT · nav-card -->
-<!-- ▼ COMPONENT · bottom-sheet v2.4.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
+<!-- ▼ COMPONENT · bottom-sheet v2.5.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
 <style data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BOTTOM SHEET  (app component · App-login)            v2.4.0
+   SHINE · BOTTOM SHEET  (app component · App-login)            v2.5.0
    The one container behind every slide-up panel in the logged-in app.
    Built on App-logout's bottom sheet (v1.2.1 — same ShineSheet engine:
    stacking, focus trap, scroll lock, drag-to-dismiss, keyboard-aware,
@@ -2028,6 +2028,7 @@ html.in-app { --stp-safe-top: 0px; }
   --bs-p-cn-black-25: rgba(13,17,23,.08); --bs-p-cn-black-50: rgba(13,17,23,.24); --bs-p-cn-black-75: rgba(13,17,23,.36);
   --bs-p-cn-white-25: rgba(255,255,255,.08); --bs-p-cn-white-75: rgba(255,255,255,.36);
   --bs-p-wn-100: #FAF9F6;
+  --bs-p-brand-100: #EBF0FF; --bs-p-brand-900: #06184F;
   --bs-p-brand-200: #C9DBFF; --bs-p-brand-300: #7EA3FF; --bs-p-brand-400: #4D7CFF; --bs-p-brand-500: #1A56FF;
   --bs-p-brand-600: #0B3FCC; --bs-p-brand-700: #0A33A6;
   --bs-p-red-600: #B42318; --bs-p-red-700: #8B1A14;
@@ -2066,6 +2067,7 @@ html.in-app { --stp-safe-top: 0px; }
   --bs-surface-brand-intense: var(--bs-p-brand-500);
   --bs-surface-brand-intense-hover: var(--bs-p-brand-600);
   --bs-surface-brand-intense-pressed: var(--bs-p-brand-700);
+  --bs-surface-brand-subtle: var(--bs-p-brand-100);                     /* eyebrow badge (v2.5) */
   --bs-surface-status-negative-intense: var(--bs-p-red-600);
   --bs-surface-status-negative-intense-hover: var(--bs-p-red-700);
   --bs-btn-primary-content: var(--bs-content-on-fill-dark-base);        /* A.02: on-fill-dark (light) · inverse.base (dark) */
@@ -2078,6 +2080,7 @@ html.in-app { --stp-safe-top: 0px; }
   --bs-elevation-brand-raised: 0 6px 14px -4px rgba(var(--bs-p-brand-rgb),.45);
   --bs-elevation-brand-lifted: 0 16px 40px -12px rgba(var(--bs-p-brand-rgb),.40);
   --bs-elevation-focus-default: 0 0 0 4px rgba(var(--bs-p-brand-rgb),.10);
+  --bs-elevation-halo-brand: 0 0 0 3px rgba(var(--bs-p-brand-rgb),.18);  /* PROPOSED elevation.halo.brand (A.04) — badge dot */
 
   /* TYPOGRAPHY — §1.3 + §2.1 (mobile) */
   --bs-typeface-brand: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -2089,6 +2092,7 @@ html.in-app { --stp-safe-top: 0px; }
   --bs-body-sm-size: 12px;    --bs-body-sm-lh: 18px;                                   /* Body / sm     */
   --bs-label-lg-size: 14px;   --bs-label-lg-lh: 14px;                                  /* Label / lg    */
   --bs-eyebrow-sm-size: 10px; --bs-eyebrow-sm-lh: 10px; --bs-eyebrow-sm-ls: 1px; --bs-eyebrow-sm-para: 8px;   /* Eyebrow / sm */
+  --bs-eyebrow-md-size: 12px; --bs-eyebrow-md-lh: 12px; --bs-eyebrow-md-ls: 1.5px;                            /* Eyebrow / md — badge eyebrow (v2.5) */
 
   /* SPACING — §2.3 (mobile) */
   --bs-spacing-inset-md: 8px;   --bs-spacing-inset-xl: 16px;  --bs-spacing-inset-xxl: 22px; --bs-spacing-inset-lg: 12px;
@@ -2108,6 +2112,8 @@ html.in-app { --stp-safe-top: 0px; }
   --bs-control-lg: 48px;     /* size.control.lg (proposed in A.02) — button height    */
   --bs-sheet-handle-w: 40px; --bs-sheet-handle-h: 4px;     /* PROPOSED size.sheet.handle-* (unit/40 · unit/4)  */
   --bs-sheet-close-sm: 28px; --bs-sheet-close-md: 32px;    /* PROPOSED size.sheet.close-*  (unit/28 · unit/32) */
+  --bs-badge-pad-y: 4px;     /* unit/4 — A.04 Badge md block padding (v2.5) */
+  --bs-badge-dot: 6px;       /* unit/6 — A.04 Badge dot (v2.5)             */
 
   /* HEADING SIZES (v2.3) — two title sizes, independent of the heading layout.
      Large 24/28 bold = Display / sm on mobile, Heading / lg on desktop (both 24/28 there) → 24 at every width.
@@ -2151,6 +2157,7 @@ html.in-app .bs { --bs-safe: 0px; }
     --bs-heading-lg-size: 24px; --bs-heading-lg-lh: 28px; --bs-heading-lg-ls: -0.3px;
     --bs-title-lg-size: var(--bs-heading-lg-size); --bs-title-lg-lh: var(--bs-heading-lg-lh); --bs-title-lg-ls: var(--bs-heading-lg-ls);
     --bs-eyebrow-sm-size: 12px; --bs-eyebrow-sm-lh: 12px; --bs-eyebrow-sm-ls: 1.5px;
+    --bs-eyebrow-md-size: 14px; --bs-eyebrow-md-lh: 14px; --bs-eyebrow-md-ls: 2px;
     --bs-spacing-inset-md: 10px; --bs-spacing-inset-xl: 20px; --bs-spacing-inset-xxl: 32px; --bs-spacing-inset-lg: 14px;
     --bs-spacing-inline-sm: 6px; --bs-spacing-inline-md: 10px;
     --bs-spacing-stack-3xs: 4px; --bs-spacing-stack-xs: 10px; --bs-spacing-stack-md: 16px;
@@ -2171,6 +2178,8 @@ html.in-app .bs { --bs-safe: 0px; }
   --bs-content-inverse-faded: var(--bs-p-cn-500);
   --bs-content-inverse-brand: var(--bs-p-brand-600);
   --bs-content-status-positive: var(--bs-p-green-400);
+  --bs-surface-brand-subtle: var(--bs-p-brand-900);
+  --bs-elevation-halo-brand: 0 0 0 3px rgba(var(--bs-p-brand-rgb),.30);
   --bs-stroke-neutral-base: var(--bs-p-cn-600);
   --bs-stroke-neutral-muted: var(--bs-p-cn-700);
   --bs-stroke-neutral-disabled: var(--bs-p-cn-white-25);
@@ -2306,6 +2315,22 @@ html.in-app .bs { --bs-safe: 0px; }
   font: var(--bs-weight-bold) var(--bs-eyebrow-sm-size)/var(--bs-eyebrow-sm-lh) var(--bs-typeface-brand);
   letter-spacing: var(--bs-eyebrow-sm-ls); text-transform: uppercase;
   color: var(--bs-content-neutral-brand);
+}
+/* eyebrow as a badge (v2.5 · share sheet): the eyebrow label (Eyebrow / md, caps) in an A.04 Badge · brand · md
+   container — surface.brand.brand-subtle, radius full, 4 / 8 padding — with an optional 6 px dot (static: A.04 keeps
+   the pulse for live states) and stack.md 12 to the title. Markup: <p class="bs-eyebrow bs-eyebrow--badge">
+   <span class="bs-eyebrow-dot" aria-hidden="true"></span>Share this job</p> */
+.bs-eyebrow--badge {
+  display: flex; width: max-content; max-width: 100%; align-items: center; gap: var(--bs-spacing-inline-sm);   /* block-level so its margin is exact */
+  margin-bottom: var(--bs-spacing-stack-md);
+  padding: var(--bs-badge-pad-y) var(--bs-spacing-inset-md);
+  border-radius: var(--bs-radius-full);
+  background: var(--bs-surface-brand-subtle);
+  font-size: var(--bs-eyebrow-md-size); line-height: var(--bs-eyebrow-md-lh); letter-spacing: var(--bs-eyebrow-md-ls);
+}
+.bs-eyebrow-dot {
+  flex: none; width: var(--bs-badge-dot); height: var(--bs-badge-dot); border-radius: var(--bs-radius-full);
+  background: currentColor; box-shadow: var(--bs-elevation-halo-brand);
 }
 .bs-close {
   position: relative; flex-shrink: 0; width: var(--bs-sheet-close-sm); height: var(--bs-sheet-close-sm);
@@ -2447,6 +2472,146 @@ html.in-app .bs { --bs-safe: 0px; }
 }
 </style>
 <!-- ▲ COMPONENT · bottom-sheet -->
+<!-- ▼ COMPONENT · share-sheet v1.0.0 · verbatim copy of App-login/app-components/share-sheet/share-sheet.css — do not edit here -->
+<style data-component="share-sheet">
+/* ═══════════════════════════════════════════════════════════════════════
+   SHINE · SHARE SHEET  (app component · App-login)              v1.0.0
+   "Send this role to a friend." — the sheet a job card's Share button opens.
+   The container, heading and close are the BOTTOM-SHEET component (v2.5.0+):
+   display layout · badge eyebrow · Large title · default scrim · no bottom
+   section. This file styles only what goes in its body:
+
+     [in LinkedIn] [X X] [f Facebook]        channels — A.06 Chip · md
+     [✉ Email] [◎ WhatsApp]                  (wrap, 8 apart)
+                                             20
+     ┌────────────────────────────┬──────┐
+     │ https://shine.com/j/…      │ Copy │   link — A.01 Input · lg, read-only
+     └────────────────────────────┴──────┘   + A.02 Button · Primary · Neutral · sm
+
+   ▶ BEFORE CHANGING IT: read README.md + share-sheet-spec.html here, and the
+     bottom-sheet README + spec (the container rules live there).
+   • Semantic tokens only (DESIGN-SYSTEM.md §2); the scoped --shs-* layer
+     names them. Light only (app pages are light-only); dark mappings follow
+     the bottom sheet's pattern when a page opts in.
+   • Third-party marks (LinkedIn, Facebook, WhatsApp) keep their own brand
+     colours — they are logos, not UI colour, so they are not DS tokens.
+   • Pair with share-sheet.js (ShineShare) and the bottom-sheet component.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.shs {
+  /* PRIMITIVES — DESIGN-SYSTEM.md §1 (backing values only) */
+  --shs-p-white: #FFFFFF; --shs-p-cn-100: #EEF1F5; --shs-p-cn-200: #E4E7EC; --shs-p-cn-500: #667085;
+  --shs-p-cn-600: #4A5260; --shs-p-cn-700: #344054; --shs-p-cn-black: #0D1117;
+  --shs-p-brand-500: #1A56FF; --shs-p-brand-rgb: 26,86,255; --shs-p-shadow: 13,17,23;
+
+  /* COLOUR — §2.2 */
+  --shs-surface-neutral-raised: var(--shs-p-white);          /* chip                          */
+  --shs-surface-neutral-muted: var(--shs-p-cn-100);          /* link field (read-only)        */
+  --shs-surface-neutral-state-hover: var(--shs-p-cn-100);    /* chip pressed (touch feedback) */
+  --shs-stroke-neutral-base: var(--shs-p-cn-200);            /* chip border                   */
+  --shs-stroke-neutral-focus: var(--shs-p-brand-500);
+  --shs-content-neutral-base: var(--shs-p-cn-black);         /* chip hover · X / email marks  */
+  --shs-content-neutral-muted: var(--shs-p-cn-700);          /* chip label · link text        */
+  --shs-surface-inverse-base: var(--shs-p-cn-black);         /* Copy (Primary · Neutral)      */
+  --shs-surface-inverse-state-hover: var(--shs-p-cn-700);
+  --shs-surface-inverse-state-pressed: var(--shs-p-cn-600);
+  --shs-content-on-fill-dark-base: var(--shs-p-white);
+  --shs-mark-linkedin: #0A66C2;  --shs-mark-facebook: #1877F2;  --shs-mark-whatsapp: #25D366;   /* brand marks, not DS */
+
+  /* ELEVATION — §2.5 */
+  --shs-elevation-neutral-raised: 0 1px 3px rgba(var(--shs-p-shadow),.08), 0 1px 2px rgba(var(--shs-p-shadow),.04);
+  --shs-elevation-neutral-lifted: 0 4px 12px rgba(var(--shs-p-shadow),.08), 0 2px 4px rgba(var(--shs-p-shadow),.04);
+  --shs-elevation-focus-default: 0 0 0 4px rgba(var(--shs-p-brand-rgb),.10);
+
+  /* TYPE — §2.1 */
+  --shs-font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;   /* typeface.family.brand */
+  --shs-label-lg-size: 14px; --shs-label-lg-lh: 14px;    /* Label / lg — chip md        */
+  --shs-label-md-size: 12px; --shs-label-md-lh: 12px;    /* Label / md — button sm      */
+  --shs-body-lg-size: 16px;  --shs-body-lg-lh: 24px;     /* Body / lg  — input lg (16: no iOS zoom on focus) */
+
+  /* SPACING — §2.3 (mobile) */
+  --shs-inline-sm: 4px;      /* spacing.inline.sm — chip icon ↔ label (A.06)   */
+  --shs-inline-md: 8px;      /* spacing.inline.md — between chips · Copy icon ↔ label (A.02) */
+  --shs-stack-xs: 8px;       /* spacing.stack.xs  — chip rows               */
+  --shs-stack-xl: 20px;      /* spacing.stack.xl  — channels → link         */
+  --shs-inset-xs: 4px;       /* spacing.inset.xs  — button inside the field */
+  --shs-inset-xl: 16px;      /* spacing.inset.xl  — chip md · input lg · button sm padding */
+
+  /* SIZE — §2.4 */
+  --shs-control-sm: 40px; --shs-control-md: 44px; --shs-control-lg: 48px;   /* size.control.* (proposed in A.02) */
+  --shs-radius-md: 8px; --shs-radius-lg: 12px; --shs-radius-full: 1024px;
+  --shs-icon-sm: 14px;       /* size.icon.sm — chip + button sm icons */
+  --shs-stroke-thin: 1px;
+  --shs-lift-up: -1px;       /* motion.lift.up (proposed in A.02) */
+  font-family: var(--shs-font);
+}
+@media (min-width: 768px) {
+  .shs { --shs-inline-sm: 6px; --shs-inline-md: 10px; --shs-stack-xs: 10px; --shs-stack-xl: 32px; --shs-inset-xs: 6px; --shs-inset-xl: 20px; }
+}
+
+/* ── channels · A.06 Chip · md ─────────────────────────────────────── */
+.shs-channels { display: flex; flex-wrap: wrap; gap: var(--shs-stack-xs) var(--shs-inline-md); margin: 0; padding: 0; list-style: none; }
+.shs-chip {
+  display: inline-flex; align-items: center; gap: var(--shs-inline-sm);
+  height: var(--shs-control-md); padding: 0 var(--shs-inset-xl);
+  border: var(--shs-stroke-thin) solid var(--shs-stroke-neutral-base); border-radius: var(--shs-radius-full);
+  background: var(--shs-surface-neutral-raised); color: var(--shs-content-neutral-muted);
+  font: 600 var(--shs-label-lg-size)/var(--shs-label-lg-lh) var(--shs-font); letter-spacing: 0;
+  white-space: nowrap; cursor: pointer; -webkit-appearance: none; appearance: none;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  transition: border-color 140ms ease, color 140ms ease, background-color 140ms ease, box-shadow 140ms ease;
+}
+.shs-chip svg { flex: none; width: var(--shs-icon-sm); height: var(--shs-icon-sm); }
+.shs-chip--linkedin svg { color: var(--shs-mark-linkedin); }
+.shs-chip--x svg, .shs-chip--email svg { color: var(--shs-content-neutral-base); }
+.shs-chip--facebook svg { color: var(--shs-mark-facebook); }
+.shs-chip--whatsapp svg { color: var(--shs-mark-whatsapp); }
+@media (hover: hover) { .shs-chip:hover { border-color: var(--shs-content-neutral-base); color: var(--shs-content-neutral-base); } }
+.shs-chip:active { background: var(--shs-surface-neutral-state-hover); }
+.shs-chip:focus { outline: none; }
+.shs-chip:focus-visible { border-color: var(--shs-stroke-neutral-focus); box-shadow: var(--shs-elevation-focus-default); }
+
+/* ── link · A.01 Input · lg (read-only) + A.02 Button · Primary · Neutral · sm ── */
+.shs-link {
+  position: relative; display: flex; align-items: center; gap: var(--shs-inset-xs);
+  margin-top: var(--shs-stack-xl); height: var(--shs-control-lg);
+  padding: 0 var(--shs-inset-xs) 0 var(--shs-inset-xl);
+  border: var(--shs-stroke-thin) solid transparent; border-radius: var(--shs-radius-lg);
+  background: var(--shs-surface-neutral-muted);
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+.shs-link:focus-within { border-color: var(--shs-stroke-neutral-focus); box-shadow: var(--shs-elevation-focus-default); }
+.shs-url {
+  flex: 1 1 auto; min-width: 0; height: 100%; margin: 0; padding: 0;
+  border: 0; outline: 0; background: transparent; -webkit-appearance: none; appearance: none;
+  color: var(--shs-content-neutral-muted);
+  font: 500 var(--shs-body-lg-size)/var(--shs-body-lg-lh) var(--shs-font);
+  text-overflow: ellipsis; white-space: nowrap;
+}
+.shs-copy {
+  flex: none; display: inline-flex; align-items: center; gap: var(--shs-inline-md);
+  height: var(--shs-control-sm); padding: 0 var(--shs-inset-xl);
+  border: 0; border-radius: var(--shs-radius-md);
+  background: var(--shs-surface-inverse-base); color: var(--shs-content-on-fill-dark-base);
+  font: 700 var(--shs-label-md-size)/var(--shs-label-md-lh) var(--shs-font); letter-spacing: 0;
+  white-space: nowrap; cursor: pointer; -webkit-appearance: none; appearance: none;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  transition: background-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+}
+.shs-copy svg { flex: none; width: var(--shs-icon-sm); height: var(--shs-icon-sm); }
+@media (hover: hover) { .shs-copy:hover { background: var(--shs-surface-inverse-state-hover); box-shadow: var(--shs-elevation-neutral-lifted); transform: translateY(var(--shs-lift-up)); } }
+.shs-copy:active { background: var(--shs-surface-inverse-state-pressed); box-shadow: var(--shs-elevation-neutral-raised); transform: none; }
+.shs-copy:focus { outline: none; }
+.shs-copy:focus-visible { outline: 2px solid var(--shs-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--shs-elevation-focus-default); }
+.shs-copy .shs-ic-done { display: none; }
+.shs-copy.is-copied .shs-ic-copy { display: none; }
+.shs-copy.is-copied .shs-ic-done { display: block; }
+
+.shs-status { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+@media (prefers-reduced-motion: reduce) { .shs-chip, .shs-link, .shs-copy { transition: none; } .shs-copy:hover { transform: none; } }
+</style>
+<!-- ▲ COMPONENT · share-sheet -->
 <link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Shine Login"><meta name="apple-mobile-web-app-status-bar-style" content="default"><link rel="apple-touch-icon" href="icons/icon-180.png"><link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png"><link rel="apple-touch-startup-image" href="icons/launch-640x1136.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-750x1334.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1242x2208.png" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1125x2436.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-828x1792.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1242x2688.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1170x2532.png" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1284x2778.png" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1179x2556.png" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1290x2796.png" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1206x2622.png" media="(device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1320x2868.png" media="(device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1260x2736.png" media="(device-width: 420px) and (device-height: 912px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><script>if("serviceWorker" in navigator)addEventListener("load",function(){navigator.serviceWorker.register("sw.js")})</script>
 </head>
 <body>
@@ -3371,10 +3536,10 @@ html.in-app .bs { --bs-safe: 0px; }
     </div>
   </div>
 
-<!-- ▼ COMPONENT · bottom-sheet v2.4.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.js — do not edit here -->
+<!-- ▼ COMPONENT · bottom-sheet v2.5.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.js — do not edit here -->
 <script data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BOTTOM SHEET  (app component · App-login)            v2.4.0
+   SHINE · BOTTOM SHEET  (app component · App-login)            v2.5.0
    Pair with bottom-sheet.css. Zero dependencies, no build step.
    Engine = App-logout's ShineSheet v1.2.1; v2.0 adds the three-section anatomy;
    v2.1 aligns every value with design-system/DESIGN-SYSTEM.md.
@@ -3802,10 +3967,142 @@ html.in-app .bs { --bs-safe: 0px; }
   // re-measure an auto sheet after the page swaps its content (optional — a MutationObserver already does this)
   function refresh(target) { var el = $(target); if (el && el.__bs) { syncCta(el); syncScroll(el); } }
 
-  global.ShineSheet = { open: open, close: close, toggle: toggle, isOpen: isOpen, top: top, closeAll: closeAll, init: init, refresh: refresh, version: '2.4.0' };
+  global.ShineSheet = { open: open, close: close, toggle: toggle, isOpen: isOpen, top: top, closeAll: closeAll, init: init, refresh: refresh, version: '2.5.0' };
 })(window);
 </script>
 <!-- ▲ COMPONENT · bottom-sheet -->
+<!-- ▼ COMPONENT · share-sheet v1.0.0 · verbatim copy of App-login/app-components/share-sheet/share-sheet.js — do not edit here -->
+<script data-component="share-sheet">
+/* ═══════════════════════════════════════════════════════════════════════
+   SHINE · SHARE SHEET  (app component · App-login)              v1.0.0
+   Needs the bottom-sheet component (ShineSheet v2.5.0+: badge eyebrow) and
+   share-sheet.css. Builds one sheet the first time it opens, reuses it after.
+
+   API
+     ShineShare.open({ url, title, company?, trigger? })   → opens the sheet for one job
+     ShineShare.close()                                      → closes it
+     ShineShare.markup()                                     → the sheet's inner HTML (docs / specimens)
+     ShineShare.version
+   Event  shine:share — bubbles from the sheet, cancelable:
+          detail { channel: 'linkedin'|'x'|'facebook'|'email'|'whatsapp'|'copy', url, title, company }
+          preventDefault() stops the default (opening the channel / copying).
+
+   Behaviour
+     · a channel opens its share page (LinkedIn, X, Facebook, WhatsApp) or the
+       mail app (Email) with the job's link + a one-line message, then the
+       sheet closes. Inside the Android app (html.in-app) the link is handed to
+       the app shell, which opens the right app; elsewhere a new tab / the app.
+     · Copy puts the link on the clipboard (the app shell's clipboard inside
+       the Android app), turns the button into "Copied" for 1.6 s and tells
+       screen readers "Link copied". The sheet stays open.
+     · Everything else (scrim, Escape, drag, Back, focus trap, return focus to
+       the Share button) is the bottom sheet's.
+   ═══════════════════════════════════════════════════════════════════════ */
+(function (global) {
+  'use strict';
+  if (global.ShineShare) return;
+  var doc = global.document, el = null, ctx = {}, copyT = 0;
+  var X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+  var CH = [
+    ['linkedin', 'LinkedIn', '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5V9h3v10zm-1.5-11.3a1.75 1.75 0 110-3.5 1.75 1.75 0 010 3.5zM19 19h-3v-5.5c0-1.4-.5-2.3-1.7-2.3-1 0-1.5.6-1.7 1.2-.1.2-.1.5-.1.8V19h-3V9h3v1.3A3 3 0 0115 8.8c2 0 3.4 1.3 3.4 4.1V19z"/></svg>'],
+    ['x', 'X', '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.9 3H22l-7.3 8.4L23 21h-6.7l-5.2-6.8L5 21H2l7.8-9L1.8 3h6.9l4.7 6.2L18.9 3zm-2.4 16h1.9L7.6 5H5.6l10.9 14z"/></svg>'],
+    ['facebook', 'Facebook', '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 10-11.6 9.9v-7h-2.5V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.3v7A10 10 0 0022 12z"/></svg>'],
+    ['email', 'Email', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>'],
+    ['whatsapp', 'WhatsApp', '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.5 3.5A11.94 11.94 0 0012 0C5.4 0 .1 5.3.1 11.9c0 2.1.6 4.1 1.6 5.9L0 24l6.4-1.7c1.7 1 3.6 1.5 5.6 1.5 6.6 0 11.9-5.3 11.9-11.9 0-3.2-1.2-6.2-3.4-8.4zM12 21.7c-1.8 0-3.6-.5-5.1-1.4l-.4-.2-3.8 1 1-3.7-.2-.4c-1-1.6-1.6-3.4-1.6-5.2 0-5.5 4.5-9.9 10-9.9 2.7 0 5.2 1 7 2.9 1.9 1.9 2.9 4.4 2.9 7 .1 5.5-4.4 9.9-9.8 9.9zm5.4-7.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.4-1.5-.9-.8-1.5-1.8-1.6-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5s-.7-1.7-.9-2.4c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4s-1 1-1 2.4 1.1 2.8 1.2 3c.1.2 2.1 3.2 5 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4 0-.1-.3-.2-.6-.3z"/></svg>']
+  ];
+  var IC_COPY = '<svg class="shs-ic-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>';
+  var IC_DONE = '<svg class="shs-ic-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>';
+
+  // the share page / app for each channel: the job link + one line about it
+  var TARGET = {
+    linkedin: function (c) { return 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(c.url); },
+    x:        function (c) { return 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(c.line) + '&url=' + encodeURIComponent(c.url); },
+    facebook: function (c) { return 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(c.url); },
+    email:    function (c) { return 'mailto:?subject=' + encodeURIComponent(c.subject) + '&body=' + encodeURIComponent(c.line + '\n' + c.url); },
+    whatsapp: function (c) { return 'https://wa.me/?text=' + encodeURIComponent(c.line + ' ' + c.url); }
+  };
+
+  function markup() {                                      // the sheet's inside: bottom-sheet classes + .shs body
+    return '<div class="bs-top"><div class="bs-handle" aria-hidden="true"></div>' +
+        '<div class="bs-head bs-head--display bs-head--lg"><div class="bs-heading">' +
+          '<p class="bs-eyebrow bs-eyebrow--badge"><span class="bs-eyebrow-dot" aria-hidden="true"></span>Share this job</p>' +
+          '<h2 class="bs-title">Send this role to a friend.</h2></div>' +
+          '<button class="bs-close" type="button" data-bs-close aria-label="Close">' + X + '</button>' +
+        '</div></div>' +
+      '<div class="bs-body bs-body--gutter"><div class="shs">' +
+        '<div class="shs-channels" role="group" aria-label="Share on">' +
+          CH.map(function (c) { return '<button class="shs-chip shs-chip--' + c[0] + '" type="button" data-shs="' + c[0] + '" aria-label="Share on ' + c[1] + '">' + c[2] + c[1] + '</button>'; }).join('') +
+        '</div>' +
+        '<div class="shs-link"><input class="shs-url" type="text" readonly aria-label="Job link" value="">' +
+          '<button class="shs-copy" type="button" data-shs="copy">' + IC_COPY + IC_DONE + '<span class="shs-copy-lbl">Copy</span></button></div>' +
+        '<p class="shs-status" role="status" aria-live="polite"></p>' +
+      '</div></div>';
+  }
+  function build() {
+    el = doc.createElement('div');
+    el.className = 'bs bs--pad-bottom'; el.id = 'shineShareSheet'; el.hidden = true;   // default scrim: a tool the person asked for, not an interruption
+    el.innerHTML = markup();
+    doc.body.appendChild(el);
+    el.addEventListener('click', function (e) {
+      var b = e.target.closest && e.target.closest('[data-shs]'); if (!b || !el.contains(b)) return;
+      var ch = b.getAttribute('data-shs');
+      var ev; try { ev = new CustomEvent('shine:share', { bubbles: true, cancelable: true, detail: { channel: ch, url: ctx.url, title: ctx.title, company: ctx.company } }); } catch (x) { ev = null; }
+      if (ev && !el.dispatchEvent(ev)) return;
+      if (ch === 'copy') return copy();
+      go(TARGET[ch](ctx));
+      setTimeout(function () { if (global.ShineSheet) ShineSheet.close(el); }, 150);
+    });
+    el.querySelector('.shs-url').addEventListener('focus', function () { this.select(); });
+    el.addEventListener('shine:sheet-closed', reset);
+  }
+  function go(href) {
+    var inApp = doc.documentElement.classList.contains('in-app');
+    if (inApp || /^mailto:/.test(href)) { global.location.href = href; return; }   // the app shell / mail app takes it
+    var w = global.open(href, '_blank');
+    if (w) { try { w.opener = null; } catch (x) {} } else global.location.href = href;   // pop-up blocked
+  }
+  function copy() {
+    var input = el.querySelector('.shs-url');
+    var done = function () {
+      var b = el.querySelector('.shs-copy');
+      b.classList.add('is-copied'); b.querySelector('.shs-copy-lbl').textContent = 'Copied';
+      el.querySelector('.shs-status').textContent = 'Link copied';
+      clearTimeout(copyT); copyT = setTimeout(reset, 1600);
+    };
+    var fallback = function () {
+      try { input.focus(); input.select(); input.setSelectionRange(0, input.value.length); if (doc.execCommand('copy')) return done(); } catch (x) {}
+      el.querySelector('.shs-status').textContent = 'Select the link to copy it';
+    };
+    try {
+      if (global.navigator.clipboard && global.navigator.clipboard.writeText) {
+        var p = global.navigator.clipboard.writeText(ctx.url);
+        if (p && p.then) p.then(done, fallback); else done();
+      } else fallback();
+    } catch (x) { fallback(); }
+  }
+  function reset() {
+    if (!el) return; clearTimeout(copyT);
+    var b = el.querySelector('.shs-copy'); b.classList.remove('is-copied'); b.querySelector('.shs-copy-lbl').textContent = 'Copy';
+    el.querySelector('.shs-status').textContent = '';
+  }
+  function open(o) {
+    o = o || {};
+    if (!o.url) return false;
+    if (!el) build();
+    reset();
+    ctx = { url: o.url, title: o.title || '', company: o.company || '' };
+    ctx.subject = ctx.title ? ctx.title + (ctx.company ? ' at ' + ctx.company : '') : 'A job on Shine.com';
+    ctx.line = 'Check out this role on Shine.com' + (ctx.title ? ': ' + ctx.subject : '');
+    var input = el.querySelector('.shs-url'); input.value = ctx.url; input.scrollLeft = 0;
+    return global.ShineSheet ? ShineSheet.open(el, { trigger: o.trigger || null }) : false;
+  }
+  global.ShineShare = {
+    version: '1.0.0', open: open, markup: markup,
+    close: function () { if (el && global.ShineSheet) ShineSheet.close(el); }
+  };
+})(window);
+</script>
+<!-- ▲ COMPONENT · share-sheet -->
 
   <div class="toast" id="toast">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
@@ -4266,6 +4563,7 @@ html.in-app .bs { --bs-safe: 0px; }
   list.addEventListener('scroll', syncScroll, { passive: true });
 
   function say(t){ if (typeof showToast === 'function') showToast(t); }
+  function shareUrl(t, c){ return 'https://shine.com/j/' + (t + ' ' + (c || '')).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }   // demo link (real jobs carry their own URL)
   function find(id){ for (var i = 0; i < JOBS.length; i++) if (JOBS[i].id === id) return JOBS[i]; return null; }
 
   // ── unsave confirmation (shared bottom sheet) ──
@@ -4290,7 +4588,7 @@ html.in-app .bs { --bs-safe: 0px; }
     if (!j) return;                                   // expired cards are inert
     var a = d.action;
     if (a === 'open'){ say('Opens job detail'); return; }
-    if (a === 'share'){ say('Link copied'); return; }
+    if (a === 'share'){ ShineShare.open({ url: shareUrl(j.title, j.co), title: j.title, company: j.co, trigger: d.button }); return; }   // share-sheet component
     if (a === 'unsave'){ pending = j.id; ShineSheet.open('#mjCf', { trigger: d.button }); return; }
     if (a === 'save'){
       // stays where it is (Recommended keeps it, bookmark pressed) and goes to the top of Saved
