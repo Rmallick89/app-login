@@ -3718,6 +3718,11 @@ html.in-app .bs { --bs-safe: 0px; }
       clearTimeout(window.__toastTimer);
       window.__toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 1800);
     }
+    // a bottom sheet opening clears the toast at once, so it never sits over the sheet (e.g. Save, then un-save straight away)
+    document.addEventListener('shine:sheet-open', function(){
+      clearTimeout(window.__toastTimer);
+      var t = document.getElementById('toast'); if (t) t.classList.remove('show');
+    });
   </script>
   <!-- ▼ COMPONENT · sub-view v1.0.0 — verbatim copy of App-login/app-components/sub-view/sub-view.js (read README.md there before changing; resync every copy) -->
   <script data-component="sub-view">
@@ -4282,11 +4287,34 @@ html.in-app .bs { --bs-safe: 0px; }
   }
 
   // remove-saved confirmation = shared bottom sheet (ShineSheet handles scrim, Escape, drag, focus)
+  // Every un-save asks first. The line under the title says what happens to this card:
+  //   a saved job leaves Docket · a match you bookmarked here stays in Action Pending (only the bookmark goes)
   var pendingUnsave = null;
-  function setConfirm(open, trigger){
+  var CF_SUB = {
+    saved: "It comes off your Docket for good. You'd have to find it in search again to save it back.",
+    match: 'It comes off your Saved list in My Jobs. The job stays here in Action Pending.'
+  };
+  function setConfirm(open, trigger, m){
     if (!window.ShineSheet) return;
-    if (open) ShineSheet.open('#mrCf', { trigger: trigger || null });
+    if (open){
+      var sub = document.querySelector('#mrCf .bs-sub');
+      if (sub && m) sub.textContent = CF_SUB[m.kind === 'saved' ? 'saved' : 'match'];
+      ShineSheet.open('#mrCf', { trigger: trigger || null });
+    }
     else ShineSheet.close('#mrCf', 'close-button');
+  }
+  // the list is re-rendered after a change, so focus is put back by hand: on the card's bookmark when the card
+  // is still there, otherwise on the card that took its place (next, else previous), else the active segment
+  function cardIds(){ return [].map.call(sheetList.querySelectorAll('.jcard'), function(c){ return c.getAttribute('data-id'); }); }
+  function refocus(id, before){
+    var q = function(s){ return sheetList.querySelector(s); }, el = q('.jcard[data-id="' + id + '"] .jcard-save');
+    if (!el && before){
+      var at = before.indexOf(id);
+      for (var k = at + 1; !el && k < before.length; k++) el = q('.jcard[data-id="' + before[k] + '"]');
+      for (k = at - 1; !el && k >= 0; k--) el = q('.jcard[data-id="' + before[k] + '"]');
+    }
+    if (!el) el = document.querySelector('header.stp .seg-item.is-active');
+    if (el) try { el.focus({ preventScroll: true }); } catch (x) { el.focus(); }
   }
   document.addEventListener('shine:sheet-close', function(e){ if (e.target.id === 'mrCf') pendingUnsave = null; });
   // header shadow appears only when the list has scrolled under it
@@ -4305,12 +4333,18 @@ html.in-app .bs { --bs-safe: 0px; }
       if (what !== 'read') e.stopPropagation();
       if (false) {}
       else if (what === 'cfyes'){
-        // un-saving is not an action: the saved job simply leaves Docket (it never shows in Action Taken)
+        // un-saving is not an action: a saved job simply leaves Docket (it never shows in Action Taken);
+        // a match you bookmarked here only loses its bookmark and stays in Action Pending
+        var gone = pendingUnsave, before = cardIds();
         for (var u = 0; u < msgs.length; u++){
-          if (msgs[u].id === pendingUnsave){ msgs.splice(u, 1); break; }
+          if (msgs[u].id !== gone) continue;
+          if (msgs[u].kind === 'saved') msgs.splice(u, 1); else msgs[u].bookmarked = false;
+          break;
         }
         setConfirm(false);
+        render(); refocus(gone, before);
         say('Removed from saved');
+        return;
       }
       else if (what === 'markall')               { msgs.forEach(function(x){ x.unread = false; }); say('All mail marked as read'); }
       else if (what === 'expired')               { listScroll = sheetList.scrollTop; sub.open('expired'); return; }   // history step (sub-view)
@@ -4329,11 +4363,8 @@ html.in-app .bs { --bs-safe: 0px; }
     var a = d.action;
     if (a === 'open' || a === 'details'){ if (m.unread){ m.unread = false; render(); } say(a === 'details' ? 'Opening job details' : 'Opens the job'); return; }
     if (a === 'share'){ var co = m.kind === 'note' ? m.org : m.who; openShare({ url: shareUrl(m.h, co), title: m.h, company: co, trigger: d.button }); return; }   // share sheet (page block, bottom-sheet component)
-    if (a === 'save'){ m.bookmarked = true; m.unread = false; render(); say('Saved to My Jobs'); return; }
-    if (a === 'unsave'){
-      if (m.kind === 'saved'){ pendingUnsave = m.id; setConfirm(true, d.button); return; }   // asks first; then it leaves Docket
-      m.bookmarked = false; render(); say('Removed from saved'); return;                     // a match stays in Action Pending
-    }
+    if (a === 'save'){ m.bookmarked = true; m.unread = false; render(); refocus(m.id); say('Saved to My Jobs'); return; }
+    if (a === 'unsave'){ pendingUnsave = m.id; setConfirm(true, d.button, m); return; }   // always asks first (saved job or bookmarked match)
     if (a === 'interested'){ m.done = 'interested'; stamp(m); render(); say('Interest sent to ' + m.who); return; }
     if (a === 'decline')   { m.done = 'declined';   stamp(m); render(); say('Marked not interested'); return; }
     if (a === 'apply'){

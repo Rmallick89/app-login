@@ -4047,6 +4047,11 @@ html.in-app .bs { --bs-safe: 0px; }
       clearTimeout(window.__toastTimer);
       window.__toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 1800);
     }
+    // a bottom sheet opening clears the toast at once, so it never sits over the sheet (e.g. Save, then un-save straight away)
+    document.addEventListener('shine:sheet-open', function(){
+      clearTimeout(window.__toastTimer);
+      var t = document.getElementById('toast'); if (t) t.classList.remove('show');
+    });
   </script>
   <!-- ▼ COMPONENT · sub-view v1.0.0 — verbatim copy of App-login/app-components/sub-view/sub-view.js (read README.md there before changing; resync every copy) -->
   <script data-component="sub-view">
@@ -4497,6 +4502,19 @@ html.in-app .bs { --bs-safe: 0px; }
   // ── unsave confirmation (shared bottom sheet) ──
   var pending = null;
   document.addEventListener('shine:sheet-close', function(e){ if (e.target.id === 'mjCf') pending = null; });
+  // the list is re-rendered after Remove, so focus is put back by hand: on the card's bookmark when the card
+  // is still there (Recommended), otherwise on the card that took its place (next, else previous), else the active segment
+  function cardIds(){ return [].map.call(list.querySelectorAll('.jcard'), function(c){ return c.getAttribute('data-id'); }); }
+  function refocus(id, before){
+    var q = function(s){ return list.querySelector(s); }, el = q('.jcard[data-id="' + id + '"] .jcard-save');
+    if (!el && before){
+      var at = before.indexOf(id);
+      for (var k = at + 1; !el && k < before.length; k++) el = q('.jcard[data-id="' + before[k] + '"]');
+      for (k = at - 1; !el && k >= 0; k--) el = q('.jcard[data-id="' + before[k] + '"]');
+    }
+    if (!el) el = document.querySelector('header.stp .seg-item.is-active');
+    if (el) try { el.focus({ preventScroll: true }); } catch (x) { el.focus(); }
+  }
 
   document.addEventListener('click', function(e){
     if (e.target.closest('#mjList [data-ncard="expired"]')){ listScroll = list.scrollTop; sv.open('expired'); return; }
@@ -4505,8 +4523,8 @@ html.in-app .bs { --bs-safe: 0px; }
     var what = cf.getAttribute('data-mj');
     if (what === 'backlist'){ sv.close(); return; }   // = the phone's Back
     if (what === 'cfyes' && pending){
-      var pj = find(pending); if (pj) pj.saved = false;
-      ShineSheet.close('#mjCf', 'close-button'); render(); say('Removed from saved');
+      var gone = pending, before = cardIds(), pj = find(gone); if (pj) pj.saved = false;
+      ShineSheet.close('#mjCf', 'close-button'); render(); refocus(gone, before); say('Removed from saved');
     }   // Keep it = data-bs-close (the bottom sheet closes itself)
   });
 
