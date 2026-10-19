@@ -1349,10 +1349,10 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
 html.stn-on body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px + var(--stn-lift, 0px)) !important; }
 </style>
 <!-- ▲ COMPONENT · tab-nudge -->
-<!-- ▼ COMPONENT · top-app-bar v2.1.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v2.2.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
 <style data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v2.1.0
+   SHINE · TOP APP BAR  (app component · App-login)              v2.2.0
    One top bar for every logged-in screen: ONE floating bar (any items, light
    or dark) and the title bar, on one shared frame, so the leading item, the
    logo / title and the trailing action sit on exactly the same spot — and
@@ -1455,10 +1455,15 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
   --stp-surface-neutral-state-hover: #EEF1F5;              /* surface.neutral-state.hover — back button */
   --stp-surface-neutral-state-pressed: #E4E7EC;            /* surface.neutral-state.pressed — back button, status pressed */
   /* floating bar items · dark tone (v2.0.0) */
-  --stp-surface-neutral-muted: #EEF1F5;                    /* surface.neutral.muted — A.08 avatar · user · subtle; status on the light pill */
+  --stp-surface-neutral-muted: #EEF1F5;                    /* surface.neutral.muted — status on the light pill */
   --stp-surface-on-fill-dark-subtle: rgba(255, 255, 255, .06);
                                                            /* surface.on-fill-dark.subtle (PROPOSED) — pill on the dark hero */
   --stp-blur: blur(24px) saturate(180%);
+  /* scroll (v2.2.0): what passes under the floating bar is frosted, never readable */
+  --stp-surface-neutral-base-translucent: rgba(250, 249, 246, .72);
+                                                           /* surface.neutral.base-translucent (PROPOSED) — scroll edge, light */
+  --stp-edge-blur: blur(12px);                             /* scroll edge behind the floating bar (proposed) */
+  --stp-edge-fade: 16px;                                   /* the edge fades out over its last 16 (spacing.inset.xl) */
 
   /* SPACE · SIZE — §2.3 / §2.4 */
   --stp-gutter: 24px;              /* spacing.layout.sm — glyphs + text on it */
@@ -1542,6 +1547,18 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
   box-shadow: var(--stp-elevation-neutral-lifted);
   transition: background-color var(--stp-dur) var(--stp-ease), box-shadow var(--stp-dur) var(--stp-ease);
 }
+/* scroll edge (v2.2.0): once the page moves, a soft frosted band sits behind the whole bar (status-bar area, the
+   6 above / below and the 8 at the sides), fading out over its last 16 — so content passing under the bar is never
+   readable in the gaps around the pill either. Same idea as the iOS scroll-edge effect; both platforms. */
+.stp--float::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;   /* z −1 stays inside the bar: the sticky bar (z 80) is its own stacking context */
+  background: var(--stp-surface-neutral-base-translucent);
+  -webkit-backdrop-filter: var(--stp-edge-blur); backdrop-filter: var(--stp-edge-blur);
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - var(--stp-edge-fade)), transparent);
+          mask-image: linear-gradient(to bottom, #000 calc(100% - var(--stp-edge-fade)), transparent);
+  opacity: 0; transition: opacity var(--stp-dur) var(--stp-ease), background-color var(--stp-dur) var(--stp-ease);
+}
+.stp--float.is-scrolled::before { opacity: 1; }
 .stp--float .stp-anchor { left: calc(var(--stp-anchor) - var(--stp-pill-margin)); }
 .stp-logo { display: block; height: var(--stp-logo-h); line-height: 0; text-decoration: none; border-radius: 8px; }
 .stp-logo img { display: block; height: 100%; width: auto; }
@@ -1563,15 +1580,20 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
 .stp-cta:active { background: var(--stp-surface-brand-intense-pressed); box-shadow: var(--stp-elevation-brand-subtle); }
 .stp-cta:focus-visible { outline: 2px solid var(--stp-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--stp-elevation-focus-default); }
 
-/* photo — DS A.08 Avatar · user · subtle · lg 40, in the leading slot (14 → 54, like the menu): initials (Label / md
-   bold 12) until there is a photo (an <img> inside) */
+/* photo — DS A.08 Avatar · lg 40, in the leading slot (14 → 54, like the menu): initials (Label / md bold 12) until
+   there is a photo (an <img> inside). Colour (v2.2.0, user): the brand fill — surface.brand.brand-intense with
+   content.on-fill-dark.base initials — on both tones, never white. DS exception: A.08 keeps user avatars neutral;
+   the user asked for the brand colour on the profile photo (documented in README.md). */
 .stp-avatar {
   position: relative; flex: none; display: grid; place-items: center; overflow: hidden;
   width: var(--stp-hit); height: var(--stp-hit); padding: 0; border: none; border-radius: var(--stp-radius-full);
-  background: var(--stp-surface-neutral-muted); color: var(--stp-content-neutral-base);
+  background: var(--stp-surface-brand-intense); color: var(--stp-content-on-fill-dark-base);
   font: 700 12px/12px var(--stp-font); text-transform: uppercase;            /* Label / md bold */
   cursor: pointer; -webkit-appearance: none; appearance: none; touch-action: manipulation;
+  transition: background-color var(--stp-dur) var(--stp-ease);
 }
+@media (hover: hover) { .stp-avatar:hover { background: var(--stp-surface-brand-intense-hover); } }
+.stp-avatar:active { background: var(--stp-surface-brand-intense-pressed); }
 .stp-avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .stp-avatar img[hidden] { display: none; }
 .stp-row > .stp-avatar::after { content: ""; position: absolute; inset: -4px; }   /* 48 touch target (Android) */
@@ -1605,6 +1627,13 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
   background: var(--stp-surface-on-fill-dark-subtle);
   -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none;
 }
+/* the hero moves under the pill (v2.2.0): the same faint pill, now frosted (the bar blur), so the hero's text and
+   dial only show as a soft haze through it; the scroll edge behind it is blur only — no tint, so it never shows as a
+   band on the hero's gradient */
+.stp--float.stp--dark.is-scrolled:not(.is-lifted) .stp-row {
+  -webkit-backdrop-filter: var(--stp-blur); backdrop-filter: var(--stp-blur);
+}
+.stp--float.stp--dark:not(.is-lifted)::before { background: transparent; }
 .stp--dark:not(.is-lifted) .stp-status { background: var(--stp-surface-neutral-raised); }
 @media (hover: hover) { .stp--dark:not(.is-lifted) .stp-status:hover { background: var(--stp-surface-neutral-state-hover); } }
 .stp--dark:not(.is-lifted) .stp-status:active { background: var(--stp-surface-neutral-state-pressed); }
@@ -1673,7 +1702,7 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
 
 @media (prefers-reduced-motion: reduce) {
   .stp--title, .stp--title::after, .stp-cta, .stp-back, .stp--title.stp-anim, .stp--title.stp-anim .stp-row,
-  .stp--float .stp-row, .stp-status { transition: none; }
+  .stp--float .stp-row, .stp-status, .stp-avatar, .stp--float::before { transition: none; }
 }
 </style>
 <!-- ▲ COMPONENT · top-app-bar -->
@@ -2934,10 +2963,10 @@ html.in-app .bs { --bs-safe: 0px; }
         <!-- ▲ COMPONENT · segment-control -->
         </div>
       </header>
-<!-- ▼ COMPONENT · top-app-bar v2.1.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v2.2.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
 <script data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v2.1.0
+   SHINE · TOP APP BAR  (app component · App-login)              v2.2.0
    Pair with top-app-bar.css and the menu-button component.
 
    Markup — floating bar, light (Home):
@@ -3193,7 +3222,7 @@ html.in-app .bs { --bs-safe: 0px; }
   }
   function init() { doc.querySelectorAll('[data-shine-topbar]:not(style):not(script)').forEach(mount); }
   global.ShineTopBar = {
-    version: '2.1.0', mount: mount, initials: initials,
+    version: '2.2.0', mount: mount, initials: initials,
     update: function () { bars.forEach(function (b) { if (b.__stpT) paint(b); }); },
     reveal: function () { bars.forEach(function (b) { if (b.__stpReveal) b.__stpReveal(); }); }   // bring a tucked row back
   };
