@@ -1349,10 +1349,10 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
 html.stn-on body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px + var(--stn-lift, 0px)) !important; }
 </style>
 <!-- ▲ COMPONENT · tab-nudge -->
-<!-- ▼ COMPONENT · top-app-bar v1.1.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v1.1.1 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
 <style data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v1.1.0
+   SHINE · TOP APP BAR  (app component · App-login)              v1.1.1
    One top bar for every logged-in screen, in two variants that share one
    frame, so the menu, the brand/title anchor and the trailing action sit
    on exactly the same spot on every tab.
@@ -1393,7 +1393,7 @@ html.stn-on body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px + var(--
      The script floats the header over the list (.stp--hides) and pads the
      list by the header's height, so the cards get the row's space
      (Android 56 · iPhone 46) with no reflow. The bar follows the finger;
-     letting go / a flick / re-tapping the tab animates (.stp-anim).
+     letting go / a flick animates (.stp-anim).
 
    ▶ BEFORE ADDING OR CHANGING IT: read README.md in this folder.
    • Semantic tokens only (DESIGN-SYSTEM.md §2); the scoped layer names them.
@@ -1453,7 +1453,7 @@ html.in-app { --stp-safe-top: 0px; }
 
   /* MOTION — proposed */
   --stp-dur: 200ms; --stp-ease: ease;
-  --stp-hide-dur: 280ms;           /* hide on scroll: settle / flick / tab re-tap (the finger drives the rest) */
+  --stp-hide-dur: 280ms;           /* hide on scroll: settle / flick (the finger drives the rest) */
   --stp-hide-ease: cubic-bezier(.2, .8, .2, 1);
 
   --stp-p: 0;                      /* scroll-edge progress 0 → 1 over 40 px, set by the script (iOS hairline) */
@@ -2707,10 +2707,10 @@ html.in-app .bs { --bs-safe: 0px; }
         <!-- ▲ COMPONENT · segment-control -->
         </div>
       </header>
-<!-- ▼ COMPONENT · top-app-bar v1.1.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v1.1.1 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
 <script data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v1.1.0
+   SHINE · TOP APP BAR  (app component · App-login)              v1.1.1
    Pair with top-app-bar.css and the menu-button component.
 
    Markup — brand (Home):
@@ -2754,9 +2754,10 @@ html.in-app .bs { --bs-safe: 0px; }
      · only the person's own scrolling counts (a finger that moved, wheel /
        trackpad, scroll keys and the momentum after them) — the list moving by
        itself (a card removed, a re-render, scrollTo from code) is ignored
-     · it comes back on: re-tapping the current tab (shine:tab active), a
-       segment change in the slot, a sub-view opening or closing (.stp-back
-       shown / hidden), keyboard focus inside the bar; touching the bar holds it
+     · it comes back on: a segment change in the slot, a sub-view opening or
+       closing (.stp-back shown / hidden), keyboard focus inside the bar;
+       touching the bar holds it. Re-tapping the current tab does nothing
+       (v1.1.1)
      · nothing hides when the slot below is hidden (sub-views) — the back
        button stays in reach
    Platform: sets <html data-platform="ios|android"> once (iPhone / iPad →
@@ -2906,9 +2907,6 @@ html.in-app .bs { --bs-safe: 0px; }
     el.addEventListener('focusin', reveal);
     el.addEventListener('shine:segment', function () { acc = 0; to(0, 'rest'); });            // a new list starts at the top
     el.addEventListener('shine:segment-reselect', reveal);
-    doc.addEventListener('shine:tab', function (e) {           // re-tap the current tab: the page glides the list up
-      if (e.detail && e.detail.active && sc.scrollTop > 0) { acc = 0; to(0, 'rest'); }
-    });
     var back = el.querySelector('.stp-back');
     if (back && global.MutationObserver) new MutationObserver(function () { acc = 0; to(0, sc.scrollTop <= 0 || atFirstCard() ? 'rest' : 'shown'); global.requestAnimationFrame(measure); })
       .observe(back, { attributes: true, attributeFilter: ['hidden'] });
@@ -2926,7 +2924,7 @@ html.in-app .bs { --bs-safe: 0px; }
   }
   function init() { doc.querySelectorAll('[data-shine-topbar]:not(style):not(script)').forEach(mount); }
   global.ShineTopBar = {
-    version: '1.1.0', mount: mount,
+    version: '1.1.1', mount: mount,
     update: function () { bars.forEach(function (b) { if (b.__stpT) paint(b); }); },
     reveal: function () { bars.forEach(function (b) { if (b.__stpReveal) b.__stpReveal(); }); }   // bring a tucked row back
   };
@@ -4308,12 +4306,11 @@ html.in-app .bs { --bs-safe: 0px; }
   // Menu (shared menu-button): not built yet — same placeholder on every tab
   document.addEventListener('shine:menu', function(){ say('Opens the menu'); });
 
-  // tapping Jobs again (the current tab) scrolls the list back to the top
+  // tapping Jobs again (the current tab) does nothing — the scroll-to-top was removed (user, 2026-10-19)
+  // (in the Expired view the sub-view helper still unwinds first — tapping Jobs there returns to Saved)
   document.addEventListener('shine:tab', function(e){
     if (e.detail.tab !== 'jobs' || !e.detail.active) return;
-    e.preventDefault();
-    // (in the Expired view the sub-view helper unwinds first — tapping Jobs there returns to Saved)
-    list.scrollTo({ top: 0, behavior: 'smooth' });
+    e.preventDefault();   // keeps the tab bar's own default (scroll the window to the top) from running
   });
 
   if (view === 'expired') render(); else setTab(tab);

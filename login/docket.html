@@ -1205,10 +1205,10 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
 }
 </style>
 <!-- ▲ COMPONENT · bottom-tab-bar -->
-<!-- ▼ COMPONENT · top-app-bar v1.1.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v1.1.1 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
 <style data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v1.1.0
+   SHINE · TOP APP BAR  (app component · App-login)              v1.1.1
    One top bar for every logged-in screen, in two variants that share one
    frame, so the menu, the brand/title anchor and the trailing action sit
    on exactly the same spot on every tab.
@@ -1249,7 +1249,7 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
      The script floats the header over the list (.stp--hides) and pads the
      list by the header's height, so the cards get the row's space
      (Android 56 · iPhone 46) with no reflow. The bar follows the finger;
-     letting go / a flick / re-tapping the tab animates (.stp-anim).
+     letting go / a flick animates (.stp-anim).
 
    ▶ BEFORE ADDING OR CHANGING IT: read README.md in this folder.
    • Semantic tokens only (DESIGN-SYSTEM.md §2); the scoped layer names them.
@@ -1309,7 +1309,7 @@ html.in-app { --stp-safe-top: 0px; }
 
   /* MOTION — proposed */
   --stp-dur: 200ms; --stp-ease: ease;
-  --stp-hide-dur: 280ms;           /* hide on scroll: settle / flick / tab re-tap (the finger drives the rest) */
+  --stp-hide-dur: 280ms;           /* hide on scroll: settle / flick (the finger drives the rest) */
   --stp-hide-ease: cubic-bezier(.2, .8, .2, 1);
 
   --stp-p: 0;                      /* scroll-edge progress 0 → 1 over 40 px, set by the script (iOS hairline) */
@@ -2314,6 +2314,7 @@ html.in-app .bs { --bs-safe: 0px; }
      text     #344054  content.neutral.muted · Label / md bold 12
      size     24 tall · inline 12 (inset.md) · radius.full 1024 · 8 below the top bar (stack.xs)
    v1.1 (2026-10-19): mounted inside the top bar instead of fixed to the screen, so it follows the bar's hide-on-scroll.
+   v1.2 (2026-10-19): follows the cards (data-day) now that only "Today" keeps its in-list eyebrow; switches early (35 % line).
    Deviation (documented): the label's line box is 16 px, not Label / md's 12, so descenders in "Yesterday" are not
    clipped by the rolling-label mask (same fix as the tab nudge copy). */
 .dkc { --dkc-bg: #FFFFFF; --dkc-ring: #EEF1F5; --dkc-text: #344054;
@@ -2600,10 +2601,10 @@ html.in-app .bs { --bs-safe: 0px; }
         <!-- ▲ COMPONENT · segment-control -->
         </div>
       </header>
-<!-- ▼ COMPONENT · top-app-bar v1.1.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v1.1.1 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
 <script data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v1.1.0
+   SHINE · TOP APP BAR  (app component · App-login)              v1.1.1
    Pair with top-app-bar.css and the menu-button component.
 
    Markup — brand (Home):
@@ -2647,9 +2648,10 @@ html.in-app .bs { --bs-safe: 0px; }
      · only the person's own scrolling counts (a finger that moved, wheel /
        trackpad, scroll keys and the momentum after them) — the list moving by
        itself (a card removed, a re-render, scrollTo from code) is ignored
-     · it comes back on: re-tapping the current tab (shine:tab active), a
-       segment change in the slot, a sub-view opening or closing (.stp-back
-       shown / hidden), keyboard focus inside the bar; touching the bar holds it
+     · it comes back on: a segment change in the slot, a sub-view opening or
+       closing (.stp-back shown / hidden), keyboard focus inside the bar;
+       touching the bar holds it. Re-tapping the current tab does nothing
+       (v1.1.1)
      · nothing hides when the slot below is hidden (sub-views) — the back
        button stays in reach
    Platform: sets <html data-platform="ios|android"> once (iPhone / iPad →
@@ -2799,9 +2801,6 @@ html.in-app .bs { --bs-safe: 0px; }
     el.addEventListener('focusin', reveal);
     el.addEventListener('shine:segment', function () { acc = 0; to(0, 'rest'); });            // a new list starts at the top
     el.addEventListener('shine:segment-reselect', reveal);
-    doc.addEventListener('shine:tab', function (e) {           // re-tap the current tab: the page glides the list up
-      if (e.detail && e.detail.active && sc.scrollTop > 0) { acc = 0; to(0, 'rest'); }
-    });
     var back = el.querySelector('.stp-back');
     if (back && global.MutationObserver) new MutationObserver(function () { acc = 0; to(0, sc.scrollTop <= 0 || atFirstCard() ? 'rest' : 'shown'); global.requestAnimationFrame(measure); })
       .observe(back, { attributes: true, attributeFilter: ['hidden'] });
@@ -2819,7 +2818,7 @@ html.in-app .bs { --bs-safe: 0px; }
   }
   function init() { doc.querySelectorAll('[data-shine-topbar]:not(style):not(script)').forEach(mount); }
   global.ShineTopBar = {
-    version: '1.1.0', mount: mount,
+    version: '1.1.1', mount: mount,
     update: function () { bars.forEach(function (b) { if (b.__stpT) paint(b); }); },
     reveal: function () { bars.forEach(function (b) { if (b.__stpReveal) b.__stpReveal(); }); }   // bring a tucked row back
   };
@@ -4011,10 +4010,12 @@ html.in-app .bs { --bs-safe: 0px; }
     var tail = (scope === 'pending') ? expiredCard() : '';
     if (!rows.length) return emptyState(scope, tail);
     var out = '<div class="jcard-list">', last = null;
-    rows.forEach(function(m){
+    rows.forEach(function(m, i){
       var day = scope === 'taken' ? (m.doneDay || m.day) : m.day;   // Action Taken groups by the day you acted
-      if (day !== last){ out += '<p class="mr-day">' + day + '</p>'; last = day; }   // day header (page markup)
-      out += card(m);
+      // Only "Today" keeps its eyebrow in the list (user, 2026-10-19); the floating day chip names every other group.
+      // If the list has no Today cards, its first group keeps the eyebrow so the list never starts unlabelled.
+      if (day !== last){ if (day === 'Today' || i === 0) out += '<p class="mr-day">' + day + '</p>'; last = day; }
+      out += card(m).replace('<article ', '<article data-day="' + esc(day) + '" ');   // the day chip reads the group from the card
     });
     return out + tail + '</div>';
   }
@@ -4138,11 +4139,10 @@ html.in-app .bs { --bs-safe: 0px; }
     render();
   });
 
-  // tapping Docket again (the current tab) scrolls the list back to the top
+  // tapping Docket again (the current tab) does nothing — the scroll-to-top was removed (user, 2026-10-19)
   document.addEventListener('shine:tab', function(e){
     if (e.detail.tab !== 'docket' || !e.detail.active) return;
-    e.preventDefault();
-    sheetList.scrollTo({ top: 0, behavior: 'smooth' });
+    e.preventDefault();   // keeps the tab bar's own default (scroll the window to the top) from running
   });
 
   render();
@@ -4152,19 +4152,21 @@ html.in-app .bs { --bs-safe: 0px; }
 </script>
 <!-- ▼ PAGE · day-chip -->
 <script data-page="day-chip">
-/* Docket · day chip — follows the day headers (.mr-day) of whatever list is showing (Action Pending, Action Taken).
-   Decorative: the headers stay in the list for screen readers, so the chip is aria-hidden and takes no taps. */
+/* Docket · day chip v1.2 — names the day group you are reading (Action Pending, Action Taken) and how many cards it has.
+   v1.2 (user, 2026-10-19): the in-list eyebrows are gone except "Today", so the chip follows the cards themselves
+   (each card carries data-day). It switches a little early — as soon as the first card of the next group rises past
+   the reading line, 35 % down the visible list — so that card already reads as part of its own group.
+   Lives inside the top bar (rides along when the menu row slides away). Decorative: aria-hidden, takes no taps. */
 (function () {
   'use strict';
+  var READ = 0.35;                                        // reading line: share of the visible list under the bar
   var sc = document.getElementById('mrSheetList'), hd = document.querySelector('header.stp');
   if (!sc || !hd) return;
   var chip = document.createElement('div'); chip.className = 'dkc'; chip.setAttribute('aria-hidden', 'true');
   chip.innerHTML = '<span class="dkc-chip"><span class="dkc-lbl"><b></b></span></span>';
-  hd.appendChild(chip);                                // inside the bar: moves with it when the menu row slides away
+  hd.appendChild(chip);                                   // inside the bar: moves with it when the menu row slides away
   var lbl = chip.querySelector('.dkc-lbl'), on = false, lastIdx = -1;
-  function days() { return [].slice.call(sc.querySelectorAll('.mr-day')).filter(function (d) { return d.offsetParent; }); }
-  function count(d) { var n = 0, e = d.nextElementSibling; while (e && !e.classList.contains('mr-day')) { if (e.classList.contains('jcard')) n++; e = e.nextElementSibling; } return n; }
-  function nice(t) { t = t.trim(); return t.charAt(0).toUpperCase() + t.slice(1).toLowerCase(); }
+  function cards() { return [].slice.call(sc.querySelectorAll('.jcard[data-day]')).filter(function (c) { return c.offsetParent; }); }
   function swap(text, dir) {                              // the label rolls: down the list → up and out, back up → the reverse
     var b = lbl.querySelector('b:not(.out)'); if (!b || b.textContent === text) return;
     if (!b.textContent || !on) { b.textContent = text; return; }
@@ -4173,17 +4175,25 @@ html.in-app .bs { --bs-safe: 0px; }
     b.className = 'out' + (dir < 0 ? ' up' : ''); lbl.appendChild(nb);
     setTimeout(function () { if (b.parentNode) b.remove(); if (nb.parentNode && nb.className.indexOf('in') === 0) nb.className = ''; }, 240);
   }
+  function off() { if (on) { on = false; chip.classList.remove('on'); } lastIdx = -1; }
   function update() {
-    var ds = days(), cur = -1, dock = hd.getBoundingClientRect().bottom + 14;   // the header has reached the chip's line
-    for (var i = 0; i < ds.length; i++) if (ds[i].getBoundingClientRect().top <= dock) cur = i;
-    if (cur < 0) { if (on) { on = false; chip.classList.remove('on'); } lastIdx = -1; return; }
-    swap(nice(ds[cur].textContent) + ' · ' + count(ds[cur]), cur < lastIdx ? -1 : 1);
+    var cs = cards(); if (!cs.length) return off();
+    var bar = hd.getBoundingClientRect().bottom, head = sc.querySelector('.mr-day');
+    var first = head && head.offsetParent ? head : cs[0];
+    if (first.getBoundingClientRect().top > bar + 14) return off();   // the top of the list hasn't reached the chip's line yet
+    var read = bar + (sc.getBoundingClientRect().bottom - bar) * READ, groups = [], cur = 0;
+    cs.forEach(function (c) {
+      var d = c.getAttribute('data-day'); if (groups[groups.length - 1] !== d) groups.push(d);
+      if (c.getBoundingClientRect().top <= read) cur = groups.length - 1;
+    });
+    var day = groups[cur], n = cs.filter(function (c) { return c.getAttribute('data-day') === day; }).length;
+    swap(day + ' · ' + n, cur < lastIdx ? -1 : 1);
     if (!on) { on = true; chip.classList.add('on'); }
     lastIdx = cur;
   }
   sc.addEventListener('scroll', update, { passive: true });
   addEventListener('resize', update);
-  hd.addEventListener('transitionend', update);       // the bar settled after hiding / showing its menu row
+  hd.addEventListener('transitionend', update);         // the bar settled after hiding / showing its menu row
   new MutationObserver(function () { requestAnimationFrame(update); }).observe(sc, { childList: true, subtree: true });
   update();
 })();
