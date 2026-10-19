@@ -4,11 +4,11 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#161B22" />
-<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.2 (2026-10-19)
+<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.3 (2026-10-19)
      Built from the mobile view (≤ 480 px) of <Shine Revamp>/profile-index.html, on the design system
      (design-system/DESIGN-SYSTEM.md + component-system.md): semantic tokens only, DS atoms (A.02 Button, A.04 Badge,
      A.05 Tag, A.08 Avatar, A.09 Toast). No menu / title on this tab (v1.1, user): the full-bleed hero starts at the top
-     under the top-app-bar component's profile variant (v1.2: photo + job-search status, floating). Bottom tab bar =
+     under the top-app-bar component's floating bar in its dark tone (v2.0: the same bar as Home — photo + job-search status). Bottom tab bar =
      shared component (Me active). Sections: hero (status · strength dial · next step), Your Resume, Profile Overview
      (professional · personal · contact), Key Skills, Employment History, Education History, Links (empty).
      Not built yet (taps show what they will open): editors, resume upload / viewer, status sheet, photo, item menus. -->
@@ -29,7 +29,7 @@
      primitives once (§1, values only) and maps every semantic token the page
      uses; page rules never touch a primitive or a raw colour.
    • Atoms follow component-system.md: A.02 Button (.btn), A.04 Badge (.badge),
-     A.05 Tag (.tag), A.09 Toast (.toast). Photo + status = top-app-bar profile variant.
+     A.05 Tag (.tag), A.09 Toast (.toast). Photo + status = top-app-bar floating bar (dark tone).
    • App frame: gutter spacing.layout.sm (24), like My Jobs / Docket.
    • Light only (page build). Proposed tokens are marked PROPOSED.
    ═══════════════════════════════════════════════════════════════════════ */
@@ -216,7 +216,7 @@ html.in-app { --pf-safe-top: 0px; }
   position: relative; overflow: hidden; isolation: isolate;
   /* full bleed, edge to edge, flush with the top (reference mobile): out of the page gutter on both sides */
   margin: 0 calc(-1 * var(--spacing-layout-sm));
-  padding: var(--stp-profile-h, calc(var(--spacing-stack-xxl) + var(--pf-safe-top))) var(--spacing-layout-sm) var(--spacing-stack-xxl);   /* top: under the floating profile bar (top-app-bar component) */
+  padding: var(--stp-float-h, calc(var(--spacing-stack-xxl) + var(--pf-safe-top))) var(--spacing-layout-sm) var(--spacing-stack-xxl);   /* top: under the floating bar (top-app-bar component, dark tone) */
   border-radius: 0;
   background: linear-gradient(180deg, var(--surface-inverse-muted) 0%, var(--surface-inverse-base) 100%);
   box-shadow: inset 0 calc(-1 * var(--size-stroke-thin)) 0 var(--stroke-on-fill-dark-subtle), var(--elevation-neutral-lifted);   /* bottom hairline (no side edges) */
@@ -548,45 +548,44 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
 }
 </style>
 <!-- ▲ COMPONENT · bottom-tab-bar -->
-<!-- ▼ COMPONENT · top-app-bar v1.2.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v2.0.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
 <style data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v1.2.0
-   One top bar for every logged-in screen, in three variants that share one
-   frame, so the leading item, the brand/title anchor and the trailing
-   action sit on exactly the same spot on every tab.
+   SHINE · TOP APP BAR  (app component · App-login)              v2.0.0
+   One top bar for every logged-in screen: ONE floating bar (any items, light
+   or dark) and the title bar, on one shared frame, so the leading item, the
+   logo / title and the trailing action sit on exactly the same spot — and
+   at the same height — on every tab.
 
-     brand  ╭──────────────────────────────────────────╮   Home
-            │ ☰  shine                 [ 🔍 Search Jobs ] │   floating pill
+     float  ╭──────────────────────────────────────────╮   Home
+            │ ☰  shine                 [ 🔍 Search Jobs ] │   (light)
+            ╰──────────────────────────────────────────╯
+     float  ╭──────────────────────────────────────────╮   Me (Profile)
+     dark   │ (RM)                  [ Actively Looking ⌄ ] │   over a dark hero
             ╰──────────────────────────────────────────╯
      title    ☰  My Jobs.                                  My Jobs · Docket
               [ Recommended | Saved | Applied ]            (slot below)
-     profile ╭──────────────────────────────────────────╮   Me (Profile)
-            │ (RM)                  [ Actively Looking ⌄ ] │   floating pill
-            ╰──────────────────────────────────────────╯   on a dark hero
 
-   Shared frame (both variants, both platforms)
+   Shared frame (every bar, both platforms)
      gutter G 24 (spacing.layout.sm): glyphs and text start / end on it
      row 48 (size.control.lg) · 8 above / below (spacing.inset.md) → bar 64
-     leading slot = menu-button (icon on G, button 14 → 54) — or, on a
-     sub-view (Docket › Expired), the back button .stp-back in the same slot
-     anchor (logo / title) at 62 = menu hit area 54 + 8 (spacing.inline.md) — 18 after the icon (spacing.inline.xl)
+     leading slot 14 → 54 (40, size.control.sm): menu-button · the photo
+     (.stp-avatar) · on a sub-view the back button .stp-back
+     anchor (logo / title) at 62 = leading 54 + 8 (spacing.inline.md)
      trailing hit areas end at screen − 14 (icon / text on G)
-     brand pill wraps the hit areas with ONE inset all round — 6 (spacing.inset.sm)
-     above, below and at both ends — so the menu and Search Jobs sit concentric
-     in the pill (radius 26 = 20 + 6): pill 52 = 40 + 6 + 6, 6 above / below it
-     (bar still 64, menu centre still 32), 8 from the screen (spacing.inset.md)
 
-   Profile variant (v1.2.0) — the Me tab: no menu, no title. The pill holds
-     the person's photo (A.08 Avatar xl 56 · initials until there is a photo)
-     and the job-search status (A.02 Button lg 48, light fill on dark). Same
-     pill margins as the brand bar (8 from the screen, 6 above / below);
-     pill 64 = avatar 56 + 4 + 4 (spacing.inset.xs), the status sits 8 from
-     the pill's top, bottom and end (concentric) → bar 76. It FLOATS over
-     the page's dark hero (takes no room; pages pad the hero by
-     var(--stp-profile-h)). On the hero: faint light lift; once the hero is
-     no longer under it (data-stp-over="<hero>"), it lifts onto a frosted
-     dark surface + lifted shadow, so it reads over light content too.
+   Floating bar  .stp--float  (v2.0.0 — Home and Me share it exactly)
+     a pill that wraps the 40 items with ONE inset all round — 6
+     (spacing.inset.sm) — so every item sits concentric: pill 52 = 40 + 6 + 6,
+     6 above / below it (bar 64), 8 from the screen (spacing.inset.md).
+     Items, any mix: leading .mb (menu) or .stp-avatar (photo, A.08 lg 40);
+     anchor .stp-logo (optional); end .stp-cta (A.02 brand sm) or
+     .stp-status (A.02 sm, chevron) — all 40.
+     Tone: light by default (frosted white + lifted shadow). .stp--dark = the
+     bar sits over a dark top section: it takes no room (the section starts
+     under it and pads by var(--stp-float-h)), faint light pill on the dark,
+     and once the section (data-stp-over) has scrolled away it lifts onto a
+     frosted dark surface + lifted shadow.
 
    Platform (html / ancestor [data-platform="ios"]; Android is the default)
      Android  title bar = M3 small top app bar: 64, pinned, start-aligned;
@@ -598,7 +597,7 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
               states, so iOS's status bar (painted from the page surface) is
               always the same colour as the bar; a hairline fades in at the
               edge (scroll-linked, 40 px). Title start-aligned at 62
-     brand    floating pill on both; it already sits on its own surface
+     float    floating pill on both; it already sits on its own surface
 
    Hide on scroll — title bar with data-stp-hide (v1.1.0, both platforms)
      The menu row slides away while the list is read and comes back on a
@@ -618,10 +617,10 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
    safe-area-inset-top — adding it doubled the space above the bar (same family as the tab bar's bottom
    inset). html.in-app is set by the app shell's native.js. */
 html.in-app { --stp-safe-top: 0px; }
-/* Profile bar height for pages (v1.2.0): the bar floats over the page's top section, which pads its content by
-   this much — safe top + 6 + pill 64 (avatar 56 + 2 × 4) + 6 = 76. Never hard-code it on a page. */
-:root { --stp-profile-h: calc(var(--stp-safe-top) + 56px + 2 * 4px + 2 * 6px); }
-html.in-app { --stp-profile-h: calc(56px + 2 * 4px + 2 * 6px); }
+/* Floating bar height for pages (v2.0.0): a dark-tone bar floats over the page's top section, which pads its content
+   by this much — safe top + bar 64 (6 + pill 52 + 6, the same as Home). Never hard-code it on a page. */
+:root { --stp-float-h: calc(var(--stp-safe-top) + 64px); }
+html.in-app { --stp-float-h: 64px; }
 
 .stp {
   /* COLOUR — §2.2 (light) */
@@ -644,8 +643,8 @@ html.in-app { --stp-profile-h: calc(56px + 2 * 4px + 2 * 6px); }
   --stp-stroke-neutral-focus: #1A56FF;                     /* stroke.neutral.focus */
   --stp-surface-neutral-state-hover: #EEF1F5;              /* surface.neutral-state.hover — back button */
   --stp-surface-neutral-state-pressed: #E4E7EC;            /* surface.neutral-state.pressed — back button, status pressed */
-  /* profile variant (v1.2.0) — on a surface that is dark in both themes */
-  --stp-surface-neutral-muted: #EEF1F5;                    /* surface.neutral.muted — A.08 avatar · user · subtle */
+  /* floating bar items · dark tone (v2.0.0) */
+  --stp-surface-neutral-muted: #EEF1F5;                    /* surface.neutral.muted — A.08 avatar · user · subtle; status on the light pill */
   --stp-surface-on-fill-dark-subtle: rgba(255, 255, 255, .06);
                                                            /* surface.on-fill-dark.subtle (PROPOSED) — pill on the dark hero */
   --stp-surface-inverse-muted-translucent: rgba(22, 27, 34, .96);
@@ -667,12 +666,6 @@ html.in-app { --stp-profile-h: calc(56px + 2 * 4px + 2 * 6px); }
   --stp-anchor: calc(var(--stp-hit-edge) + var(--stp-hit) + 8px);                       /* 62 — logo / title start (spacing.inline.md after the menu) */
   --stp-logo-h: 36px;              /* brand asset — the DS has no logo size (proposed size.logo.md) */
   --stp-radius-full: 1024px;       /* size.radius.full */
-  /* profile variant */
-  --stp-avatar: 56px;              /* A.08 Avatar xl */
-  --stp-avatar-inset: 4px;         /* spacing.inset.xs — round the avatar */
-  --stp-status-h: 48px;            /* size.control.lg — A.02 Button lg */
-  --stp-profile-pill: calc(var(--stp-avatar) + var(--stp-avatar-inset) * 2);              /* 64 */
-  --stp-status-end: calc((var(--stp-profile-pill) - var(--stp-status-h)) / 2);            /* 8 — status concentric in the pill */
 
   /* TYPE — §2.1 */
   --stp-font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;   /* typeface.family.brand */
@@ -729,17 +722,18 @@ html.in-app { --stp-profile-h: calc(56px + 2 * 4px + 2 * 6px); }
 }
 .stp-end { margin-left: auto; display: flex; align-items: center; gap: 8px; }   /* spacing.inline.md */
 
-/* ── Brand variant · floating pill (Home) ─────────────────────────── */
-.stp--brand .stp-row {
-  height: var(--stp-pill-h);
-  margin: var(--stp-pill-pad-y) var(--stp-pill-margin);
+/* ── Floating bar · one pill for any items (Home, Me, any screen) ─── */
+.stp--float .stp-row {
+  height: var(--stp-pill-h);                        /* 52 */
+  margin: var(--stp-pill-pad-y) var(--stp-pill-margin);   /* 6 above / below · 8 from the screen */
   padding: 0 var(--stp-pill-inset);                 /* = the vertical inset: (52 − 40) / 2 */
   border-radius: var(--stp-radius-full);
   background: var(--stp-surface-neutral-raised-translucent);
   -webkit-backdrop-filter: var(--stp-blur); backdrop-filter: var(--stp-blur);
   box-shadow: var(--stp-elevation-neutral-lifted);
+  transition: background-color var(--stp-dur) var(--stp-ease), box-shadow var(--stp-dur) var(--stp-ease);
 }
-.stp--brand .stp-anchor { left: calc(var(--stp-anchor) - var(--stp-pill-margin)); }
+.stp--float .stp-anchor { left: calc(var(--stp-anchor) - var(--stp-pill-margin)); }
 .stp-logo { display: block; height: var(--stp-logo-h); line-height: 0; text-decoration: none; border-radius: 8px; }
 .stp-logo img { display: block; height: 100%; width: auto; }
 .stp-logo:focus-visible { outline: 2px solid var(--stp-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--stp-elevation-focus-default); }   /* radius.md 8 */
@@ -760,51 +754,55 @@ html.in-app { --stp-profile-h: calc(56px + 2 * 4px + 2 * 6px); }
 .stp-cta:active { background: var(--stp-surface-brand-intense-pressed); box-shadow: var(--stp-elevation-brand-subtle); }
 .stp-cta:focus-visible { outline: 2px solid var(--stp-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--stp-elevation-focus-default); }
 
-/* ── Profile variant · floating pill on a dark hero (Me tab) · v1.2.0 ─
-   Floats: a negative bottom margin as tall as the bar, so the page's dark top section starts under it (pages pad
-   that section by var(--stp-profile-h)). Sticky like the brand bar. */
-.stp--profile { margin-bottom: calc(-1 * var(--stp-profile-h)); color: var(--stp-content-on-fill-dark-base); }
-.stp--profile .stp-row {
-  height: var(--stp-profile-pill);
-  margin: var(--stp-pill-pad-y) var(--stp-pill-margin);              /* 6 above / below · 8 from the screen — as the brand pill */
-  padding: 0 var(--stp-status-end) 0 var(--stp-avatar-inset);        /* avatar hugs the start (4 round it); status 8 from the end */
-  border-radius: var(--stp-radius-full);
-  background: var(--stp-surface-on-fill-dark-subtle);
-  transition: background-color var(--stp-dur) var(--stp-ease), box-shadow var(--stp-dur) var(--stp-ease);
-}
-.stp--profile.is-lifted .stp-row {
-  background: var(--stp-surface-inverse-muted-translucent);
-  -webkit-backdrop-filter: var(--stp-blur); backdrop-filter: var(--stp-blur);
-  box-shadow: var(--stp-elevation-neutral-lifted);
-}
-/* photo — DS A.08 Avatar · user · subtle · xl: initials (Label / lg bold) until there is a photo */
+/* photo — DS A.08 Avatar · user · subtle · lg 40, in the leading slot (14 → 54, like the menu): initials (Label / md
+   bold 12) until there is a photo (an <img> inside) */
 .stp-avatar {
   position: relative; flex: none; display: grid; place-items: center; overflow: hidden;
-  width: var(--stp-avatar); height: var(--stp-avatar); padding: 0; border: none; border-radius: var(--stp-radius-full);
+  width: var(--stp-hit); height: var(--stp-hit); padding: 0; border: none; border-radius: var(--stp-radius-full);
   background: var(--stp-surface-neutral-muted); color: var(--stp-content-neutral-base);
-  font: 700 14px/14px var(--stp-font); text-transform: uppercase;            /* Label / lg bold */
+  font: 700 12px/12px var(--stp-font); text-transform: uppercase;            /* Label / md bold */
   cursor: pointer; -webkit-appearance: none; appearance: none; touch-action: manipulation;
 }
 .stp-avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .stp-avatar img[hidden] { display: none; }
+.stp-row > .stp-avatar::after { content: ""; position: absolute; inset: -4px; }   /* 48 touch target (Android) */
 .stp-avatar:focus { outline: none; }
 .stp-avatar:focus-visible { outline: 2px solid var(--stp-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--stp-elevation-focus-default); }
-/* job-search status — DS A.02 Button · lg · shape-full, light fill on the dark pill: 48 · 22 on the label side,
-   16 on the chevron side · Label / lg bold · chevron 16 (stroke 2) · 8 gap */
+/* status / choice button — DS A.02 Button · sm · shape-full with a trailing chevron, the same size as Search Jobs:
+   40 · 16 inside · Label / md bold · chevron 14 (stroke 2) · 8 gap. Light pill: muted fill; dark pill: white fill */
 .stp-status {
   display: inline-flex; align-items: center; gap: 8px;                       /* spacing.inline.md */
-  height: var(--stp-status-h); padding: 0 16px 0 22px;                       /* spacing.inset.xl · spacing.inset.xxl */
+  height: var(--stp-hit); padding: 0 16px;                                   /* spacing.inset.xl */
   border: none; border-radius: var(--stp-radius-full);
-  background: var(--stp-surface-neutral-raised); color: var(--stp-content-neutral-base);
-  font: 700 14px/14px var(--stp-font);                                        /* Label / lg bold */
+  background: var(--stp-surface-neutral-muted); color: var(--stp-content-neutral-base);
+  font: 700 12px/12px var(--stp-font);                                        /* Label / md bold */
   white-space: nowrap; cursor: pointer; -webkit-appearance: none; appearance: none; touch-action: manipulation;
   transition: background-color var(--stp-dur) var(--stp-ease);
 }
-.stp-status svg { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 2px; stroke-linecap: round; stroke-linejoin: round; }   /* size.icon.md · size.stroke.thick */
-@media (hover: hover) { .stp-status:hover { background: var(--stp-surface-neutral-state-hover); } }
+.stp-status svg { width: 14px; height: 14px; flex: none; fill: none; stroke: currentColor; stroke-width: 2px; stroke-linecap: round; stroke-linejoin: round; }   /* size.icon.sm · size.stroke.thick */
+@media (hover: hover) { .stp-status:hover { background: var(--stp-surface-neutral-state-pressed); } }
 .stp-status:active { background: var(--stp-surface-neutral-state-pressed); }
 .stp-status:focus { outline: none; }
 .stp-status:focus-visible { outline: 2px solid var(--stp-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--stp-elevation-focus-default); }
+
+/* Dark tone · the bar sits over a dark top section (the Me tab's hero). Same pill, same 64 bar.
+   It takes no room (negative bottom margin as tall as the bar): the section starts under it and pads its content by
+   var(--stp-float-h). At rest a faint light pill on the dark; lifted (.is-lifted, once data-stp-over has scrolled
+   away) a frosted dark pill + lifted shadow, so it still reads over light content. */
+.stp--float.stp--dark { margin-bottom: calc(-1 * var(--stp-float-h)); color: var(--stp-content-on-fill-dark-base); }
+.stp--float.stp--dark .stp-row {
+  background: var(--stp-surface-on-fill-dark-subtle);
+  -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none;
+}
+.stp--float.stp--dark.is-lifted .stp-row {
+  background: var(--stp-surface-inverse-muted-translucent);
+  -webkit-backdrop-filter: var(--stp-blur); backdrop-filter: var(--stp-blur);
+  box-shadow: var(--stp-elevation-neutral-lifted);
+}
+.stp--dark .stp-status { background: var(--stp-surface-neutral-raised); }
+@media (hover: hover) { .stp--dark .stp-status:hover { background: var(--stp-surface-neutral-state-hover); } }
+.stp--dark .stp-status:active { background: var(--stp-surface-neutral-state-pressed); }
+/* a menu on the dark pill: use mb--filled (light disc, like the photo) — the plain ghost menu would vanish */
 
 /* ── Title variant (My Jobs, Docket) ──────────────────────────────── */
 .stp--title { background: var(--stp-surface-neutral-base); }
@@ -869,7 +867,7 @@ html.in-app { --stp-profile-h: calc(56px + 2 * 4px + 2 * 6px); }
 
 @media (prefers-reduced-motion: reduce) {
   .stp--title, .stp--title::after, .stp-cta, .stp-back, .stp--title.stp-anim, .stp--title.stp-anim .stp-row,
-  .stp--profile .stp-row, .stp-status { transition: none; }
+  .stp--float .stp-row, .stp-status { transition: none; }
 }
 </style>
 <!-- ▲ COMPONENT · top-app-bar -->
@@ -880,21 +878,21 @@ html.in-app { --stp-profile-h: calc(56px + 2 * 4px + 2 * 6px); }
        the page (light) as you scroll. Android samples the painted colour itself (native.js), so it isn't shown there. -->
   <div class="pf-cap" id="pfCap" aria-hidden="true"></div>
 
-  <!-- Top bar · top-app-bar component, profile variant: photo + job-search status, floating over the hero -->
-  <header class="stp stp--profile" data-shine-topbar data-stp-over="#pfHero">
+  <!-- Top bar · top-app-bar component: the floating bar (same as Home), dark tone — photo + job-search status, over the hero -->
+  <header class="stp stp--float stp--dark" data-shine-topbar data-stp-over="#pfHero">
     <div class="stp-row">
       <button class="stp-avatar" type="button" data-pf="photo" data-name="Rakesh Mallick" aria-label="Update profile photo"></button>
       <div class="stp-end"><button class="stp-status" type="button" data-pf="status" aria-haspopup="dialog">Actively Looking<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button></div>
     </div>
   </header>
-  <!-- ▼ COMPONENT · top-app-bar v1.2.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
+  <!-- ▼ COMPONENT · top-app-bar v2.0.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
 <script data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v1.2.0
+   SHINE · TOP APP BAR  (app component · App-login)              v2.0.0
    Pair with top-app-bar.css and the menu-button component.
 
-   Markup — brand (Home):
-     <header class="stp stp--brand" data-shine-topbar>
+   Markup — floating bar, light (Home):
+     <header class="stp stp--float" data-shine-topbar>
        <div class="stp-row">
          <button class="mb" type="button" data-shine-menu data-page="home" aria-label="Menu">…</button>
          <a class="stp-anchor stp-logo" href="#"><img src="…" alt="Shine.com"></a>
@@ -910,8 +908,8 @@ html.in-app { --stp-profile-h: calc(56px + 2 * 4px + 2 * 6px); }
        </div>
        <div class="stp-below">…segment control…</div>
      </header>
-   Markup — profile (Me tab, v1.2.0): floats over the page's dark hero
-     <header class="stp stp--profile" data-shine-topbar data-stp-over="#hero">
+   Markup — floating bar, dark (Me tab): the same pill, floating over the page's dark hero
+     <header class="stp stp--float stp--dark" data-shine-topbar data-stp-over="#hero">
        <div class="stp-row">
          <button class="stp-avatar" type="button" data-name="Rakesh Mallick" aria-label="Profile photo"></button>
          <div class="stp-end"><button class="stp-status" type="button" aria-haspopup="dialog">Actively Looking<svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button></div>
@@ -921,7 +919,7 @@ html.in-app { --stp-profile-h: calc(56px + 2 * 4px + 2 * 6px); }
    data-stp-scroll   the element whose scroll drives the bar (default: the page).
                      It may come later in the page than the bar — the script
                      waits for it (DOMContentLoaded) before listening.
-   data-stp-over     profile bar: the dark section it floats over (selector).
+   data-stp-over     dark floating bar: the dark section it floats over (selector).
                      While that section is under the pill the bar keeps its
                      faint on-dark look; once it has scrolled away the bar gets
                      .is-lifted (frosted dark surface + shadow). Without it,
@@ -984,7 +982,7 @@ html.in-app { --stp-profile-h: calc(56px + 2 * 4px + 2 * 6px); }
     var v = Math.max(0, y(el.__stpT));
     el.classList.toggle('is-scrolled', v > 0);
     el.style.setProperty('--stp-p', Math.min(1, v / RANGE).toFixed(3));
-    if (el.classList.contains('stp--profile')) {          // profile bar: lifts once its dark section has left
+    if (el.classList.contains('stp--dark')) {             // dark floating bar: lifts once its dark section has left
       var over = el.getAttribute('data-stp-over'), sec = over && doc.querySelector(over), row = el.querySelector('.stp-row');
       var lifted = sec && row ? sec.getBoundingClientRect().bottom <= row.getBoundingClientRect().bottom : v > 0;
       el.classList.toggle('is-lifted', lifted);
@@ -1131,12 +1129,12 @@ html.in-app { --stp-profile-h: calc(56px + 2 * 4px + 2 * 6px); }
     el.__stp = true; bars.push(el);
     avatars(el);
     listen(el);
-    if (el.classList.contains('stp--profile')) global.addEventListener('resize', function () { if (el.__stpT) paint(el); });
+    if (el.classList.contains('stp--dark')) global.addEventListener('resize', function () { if (el.__stpT) paint(el); });
     return el;
   }
   function init() { doc.querySelectorAll('[data-shine-topbar]:not(style):not(script)').forEach(mount); }
   global.ShineTopBar = {
-    version: '1.2.0', mount: mount, initials: initials,
+    version: '2.0.0', mount: mount, initials: initials,
     update: function () { bars.forEach(function (b) { if (b.__stpT) paint(b); }); },
     reveal: function () { bars.forEach(function (b) { if (b.__stpReveal) b.__stpReveal(); }); }   // bring a tucked row back
   };
@@ -1148,8 +1146,8 @@ html.in-app { --stp-profile-h: calc(56px + 2 * 4px + 2 * 6px); }
 
   <main class="pf" id="pfMain">
 
-    <!-- ═══ HERO · full bleed at the top, as on profile-index.html (mobile); the profile bar (top-app-bar component)
-         floats over it, so its content starts var(--stp-profile-h) down ═══ -->
+    <!-- ═══ HERO · full bleed at the top, as on profile-index.html (mobile); the floating bar (top-app-bar component, dark tone)
+         floats over it, so its content starts var(--stp-float-h) down ═══ -->
     <section class="pf-hero" id="pfHero" aria-label="Profile strength">
       <h1 class="pf-sr">Profile</h1>
       <p class="pf-hi">Hi, Rakesh</p>
