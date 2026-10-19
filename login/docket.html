@@ -4011,7 +4011,10 @@ html.in-app .bs { --bs-safe: 0px; }
     if (!rows.length) return emptyState(scope, tail);
     var out = '<div class="jcard-list">', last = null;
     rows.forEach(function(m, i){
-      var day = scope === 'taken' ? (m.doneDay || m.day) : m.day;   // Action Taken groups by the day you acted
+      // Action Taken is one flat list, newest action first — no day eyebrow and no floating day chip (user, 2026-10-19);
+      // each card still says when you acted.
+      if (scope === 'taken') { out += card(m); return; }
+      var day = m.day;
       // Only "Today" keeps its eyebrow in the list (user, 2026-10-19); the floating day chip names every other group.
       // If the list has no Today cards, its first group keeps the eyebrow so the list never starts unlabelled.
       if (day !== last){ if (day === 'Today' || i === 0) out += '<p class="mr-day">' + day + '</p>'; last = day; }
@@ -4152,7 +4155,7 @@ html.in-app .bs { --bs-safe: 0px; }
 </script>
 <!-- ▼ PAGE · day-chip -->
 <script data-page="day-chip">
-/* Docket · day chip v1.2 — names the day group you are reading (Action Pending, Action Taken) and how many cards it has.
+/* Docket · day chip v1.2 — names the day group you are reading in Action Pending and how many cards it has (Action Taken has no groups, so no chip).
    v1.2 (user, 2026-10-19): the in-list eyebrows are gone except "Today", so the chip follows the cards themselves
    (each card carries data-day). It switches a little early — as soon as the first card of the next group rises past
    the reading line, 35 % down the visible list — so that card already reads as part of its own group.
