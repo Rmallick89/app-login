@@ -5,15 +5,15 @@ The logged-in Shine app (`App-login/`) as an iPhone home-screen web app — the 
 
 | Folder | App name | Opens |
 |---|---|---|
-| `login/` | Shine Login | splash → logged-in homepage (`App Dashboard/app-home-login.html`) · Jobs tab → `My Jobs/my-jobs.html` · Docket tab → `Docket/docket.html` |
+| `login/` | Shine Login | splash → logged-in homepage (`App Dashboard/app-home-login.html`) · Jobs tab → `My Jobs/my-jobs.html` · Docket tab → `Docket/docket.html` · Me tab → `Profile/profile.html` |
 
 The app opens on its splash (`splash.html`, dark midnight navy #0C1731, ≈ 2.4 s — two shooting stars meet at the logo,
 then a sunrise glow rises from the bottom), which hands over to the logged-in homepage (`index.html`). The homepage
 sends a fresh launch to the splash itself (once per session), so the installed icon always starts with the splash.
 The Jobs tab opens My Jobs (`my-jobs.html`: Recommended · Saved · Applied, with the App-logout JSRP job cards) and the
-Docket tab opens the Docket screen (`docket.html`); the tabs keep a native history (swipe back returns to the previous
-tab). Menu, search, job/company/job-details pages, the check-in sheets and the Me tab aren't built yet — those taps stay
-on their screen.
+Docket tab opens the Docket screen (`docket.html`); the Me tab opens the Profile page (`profile.html`). The tabs keep a native
+history (swipe back returns to the previous tab). Menu, search, job/company/job-details pages, the check-in sheets and the
+profile editors aren't built yet — those taps stay on their screen.
 The bottom tab bar is the shared component `App-login/app-components/bottom-tab-bar` (v1.3.1): 104 pt tall on iPhones with a
 home indicator — 12 top, 56 tab, 36 bottom (the 34 pt safe area + 2) — and 80 pt without one. Changing tab plays the
 Stretch + Flip motion as the new screen opens (the grey wash stretches across, the icon turns over to filled; none with
