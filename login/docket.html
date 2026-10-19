@@ -2273,6 +2273,42 @@ html.in-app .bs { --bs-safe: 0px; }
 }
 </style>
 <!-- ▲ COMPONENT · bottom-sheet -->
+<!-- ▼ PAGE · day-chip -->
+<style data-page="day-chip">
+/* Docket · day chip (user pick 2026-10-19: "B · Floating chip" from the day-strip samples)
+   A small pill centred under the top bar that names the day group you are reading and how many cards it has.
+   It appears the moment the first day header ("Today") reaches the top bar and rolls to the next group as you scroll.
+   Light only (page build). Values are DS tokens:
+     surface  #FFFFFF  surface.neutral.raised          ring  1px #EEF1F5  stroke.neutral.muted
+     shadow   elevation.neutral.lifted — 0 4px 12px black@8% + 0 2px 4px black@4% (cool-neutral/black #0D1117)
+     text     #344054  content.neutral.muted · Label / md bold 12
+     size     24 tall · inline 12 (inset.md) · radius.full 1024 · 8 below the top bar (stack.xs)
+   Deviation (documented): the label's line box is 16 px, not Label / md's 12, so descenders in "Yesterday" are not
+   clipped by the rolling-label mask (same fix as the tab nudge copy). */
+.dkc { --dkc-bg: #FFFFFF; --dkc-ring: #EEF1F5; --dkc-text: #344054;
+  --dkc-shadow: 0 4px 12px rgba(13, 17, 23, .08), 0 2px 4px rgba(13, 17, 23, .04);
+  --dkc-h: 24px; --dkc-inline: 12px; --dkc-gap: 8px; --dkc-z: 96;   /* above the Docket sheet (95), under bottom sheets (100+) */
+  --dkc-ease: cubic-bezier(.2, .8, .2, 1);
+  position: fixed; z-index: var(--dkc-z); height: 0; display: flex; justify-content: center; pointer-events: none;
+  opacity: 0; visibility: hidden; transition: opacity 160ms ease, visibility 0s linear 160ms; }
+.dkc.on { opacity: 1; visibility: visible; transition: opacity 120ms ease; }
+.dkc-chip { margin-top: var(--dkc-gap); height: var(--dkc-h); padding: 0 var(--dkc-inline); border-radius: 1024px;
+  display: inline-flex; align-items: center; background: var(--dkc-bg); box-shadow: 0 0 0 1px var(--dkc-ring), var(--dkc-shadow);
+  transform: translateY(-4px) scale(.94); transition: transform 200ms var(--dkc-ease); }
+.dkc.on .dkc-chip { transform: none; }
+.dkc-lbl { position: relative; display: block; overflow: hidden; height: 16px; min-width: 72px; text-align: center;
+  font: 700 12px/16px "Plus Jakarta Sans", system-ui, sans-serif; color: var(--dkc-text); }
+.dkc-lbl b { display: block; font-weight: inherit; white-space: nowrap; }
+.dkc-lbl b.out { position: absolute; left: 0; right: 0; top: 0; animation: dkc-out 220ms ease both; }
+.dkc-lbl b.in { animation: dkc-in 220ms var(--dkc-ease) both; }
+.dkc-lbl b.out.up { animation-name: dkc-out-up; } .dkc-lbl b.in.up { animation-name: dkc-in-up; }
+@keyframes dkc-out { to { transform: translateY(-100%); opacity: 0; } }
+@keyframes dkc-in { from { transform: translateY(100%); opacity: 0; } }
+@keyframes dkc-out-up { to { transform: translateY(100%); opacity: 0; } }
+@keyframes dkc-in-up { from { transform: translateY(-100%); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .dkc, .dkc * { animation: none !important; transition: none !important; } }
+</style>
+<!-- ▲ PAGE · day-chip -->
 <link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Shine Login"><meta name="apple-mobile-web-app-status-bar-style" content="default"><link rel="apple-touch-icon" href="icons/icon-180.png"><link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png"><link rel="apple-touch-startup-image" href="icons/launch-640x1136.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-750x1334.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1242x2208.png" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1125x2436.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-828x1792.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1242x2688.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1170x2532.png" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1284x2778.png" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1179x2556.png" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1290x2796.png" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1206x2622.png" media="(device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1320x2868.png" media="(device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1260x2736.png" media="(device-width: 420px) and (device-height: 912px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><script>if("serviceWorker" in navigator)addEventListener("load",function(){navigator.serviceWorker.register("sw.js")})</script>
 </head>
 <body>
@@ -3582,87 +3618,123 @@ html.in-app .bs { --bs-safe: 0px; }
   'use strict';
 
   var SEED = [
-    { id:'n1', kind:'note', day:'Today', time:'6:40 PM', unread:true, urgent:true,
+    { id:'n1', kind:'note', age:0, time:'6:40 PM', unread:true, urgent:true,
       who:'Kavita Sharma', org:'TalentBridge Staffing', mono:'KS', bg:'#B45309',
       h:'Urgent hiring \u2014 BPO Support Executive, night shift',
       p:'8 openings closing this week in Gurugram. 22\u201328k a month, cab facility included.',
       exp:'0 to 2 Yrs', pay:'22 \u2013 28k/month', loc:'Gurugram' },
-    { id:'m1', kind:'match', day:'Today', time:'2:10 PM', unread:true, early:true,
+    { id:'m1', kind:'match', age:0, time:'2:10 PM', unread:true, early:true,
       who:'Zentra Fintech', mono:'ZF', bg:'#1A56FF', h:'Sr. Product Manager \u2014 Growth',
       exp:'5 to 8 Yrs', pay:'28 \u2013 38 Lakh/Yr', loc:'Gurugram',
       skills:'Product Strategy \u00b7 Growth \u00b7 Analytics' },
-    { id:'m2', kind:'match', day:'Today', time:'11:05 AM', unread:true, early:true,
+    { id:'m2', kind:'match', age:0, time:'11:05 AM', unread:true, early:true,
       who:'Nova Retail Pvt Ltd', mono:'NR', bg:'#4D7C4F',
       h:'Customer Support Associate \u2014 Voice Process',
       exp:'1 to 3 Yrs', pay:'2.4 \u2013 3.6 Lakh/Yr', loc:'Bengaluru',
       skills:'Voice Process \u00b7 Kannada + Hindi \u00b7 Customer Support' },
-    { id:'s1', kind:'saved', day:'Today', time:'2 days ago', unread:false,
+    { id:'s1', kind:'saved', age:0, time:'2 days ago', unread:false,
       saved:'4h', early:true,
       who:'Aurora Health', mono:'AH', bg:'#0F766A',
       h:'Product Manager \u2014 Patient Experience',
       exp:'4 to 7 Yrs', pay:'18 \u2013 26 Lakh/Yr', loc:'Pune',
       skills:'Healthcare \u00b7 Discovery \u00b7 Roadmapping' },
-    { id:'n2', kind:'note', day:'Yesterday', time:'5:12 PM', unread:true,
+    { id:'n2', kind:'note', age:1, time:'5:12 PM', unread:true,
       who:'Sneha Iyer', org:'Nova Retail Pvt Ltd', mono:'SI', bg:'#4D7C4F',
       h:'Your profile is shortlisted \u2014 Voice Process, Bengaluru',
       p:'Free for a 20-minute call on Thursday between 11 AM and 4 PM?',
       exp:'1 to 3 Yrs', pay:'2.4 \u2013 3.6 Lakh/Yr', loc:'Bengaluru' },
-    { id:'m3', kind:'match', day:'Yesterday', time:'9:30 AM', unread:false,
+    { id:'m3', kind:'match', age:1, time:'9:30 AM', unread:false,
       who:'Larkspur Logistics', mono:'LL', bg:'#6F46E0',
       h:'Warehouse Operations Executive',
       exp:'2 to 4 Yrs', pay:'3.6 \u2013 4.8 Lakh/Yr', loc:'Bhiwandi',
       skills:'Inventory \u00b7 WMS \u00b7 Team Handling' },
-    { id:'s2', kind:'saved', day:'Yesterday', time:'5 days ago', unread:false,
+    { id:'s2', kind:'saved', age:1, time:'5 days ago', unread:false,
       saved:'1d',
       who:'Verity Payments', mono:'VP', bg:'#6F46E0',
       h:'Product Manager \u2014 Merchant Onboarding',
       exp:'3 to 6 Yrs', pay:'22 \u2013 32 Lakh/Yr', loc:'Gurugram',
       skills:'Payments \u00b7 Onboarding \u00b7 B2B' },
-    { id:'n3', kind:'note', day:'This week', time:'Mon', unread:false,
+    { id:'n3', kind:'note', age:3, time:'4:20 PM', unread:false,
       who:'Rohit Menon', org:'Apex Talent Partners', mono:'RM', bg:'#BE185D',
       h:'Open to relocating to Hyderabad?',
       p:'Tier-1 support leads, three virtual rounds, relocation assistance on the table.',
       exp:'2 to 5 Yrs', pay:'4.5 \u2013 6 Lakh/Yr', loc:'Hyderabad' },
-    { id:'m4', kind:'match', day:'This week', time:'Mon', unread:false,
+    { id:'m4', kind:'match', age:3, time:'10:15 AM', unread:false,
       who:'Brightline EdTech', mono:'BE', bg:'#0F766A',
       h:'Academic Counsellor \u2014 Inside Sales',
       exp:'0 to 2 Yrs', pay:'2.5 \u2013 4 Lakh/Yr', loc:'Noida',
       skills:'Counselling \u00b7 Inside Sales \u00b7 CRM' },
-    { id:'n4', kind:'note', day:'This week', time:'Sun', unread:false,
+    { id:'n4', kind:'note', age:4, time:'7:45 PM', unread:false,
       who:'Imran Qureshi', org:'Vertex HR Solutions', mono:'IQ', bg:'#6F46E0',
       h:'Walk-in drive this Saturday \u2014 Andheri East',
       p:'40 seats, customer support and backend. Printed CV and photo ID, 10 AM.',
       exp:'0 to 3 Yrs', pay:'2.2 \u2013 3 Lakh/Yr', loc:'Mumbai' },
-    { id:'s3', kind:'saved', day:'This week', time:'1 week ago', unread:false,
+    { id:'s3', kind:'saved', age:5, time:'1 week ago', unread:false,
       saved:'6d',
       who:'Trailhead Mobility', mono:'TM', bg:'#B45309',
       h:'Senior Product Manager \u2014 Driver App',
       exp:'6 to 9 Yrs', pay:'30 \u2013 44 Lakh/Yr', loc:'Bengaluru',
-      skills:'Mobility \u00b7 Two-sided \u00b7 Mobile' }
+      skills:'Mobility \u00b7 Two-sided \u00b7 Mobile' },
+    // Earlier = 7 to 30 days ago (user, 2026-10-19: Today · Yesterday · weekday names · Earlier; older → Expired)
+    { id:'n5', kind:'note', age:9, time:'10 Oct', unread:false,
+      who:'Meera Kapoor', org:'Bluepeak Consulting', mono:'MK', bg:'#0F766A',
+      h:'Inside Sales Executive \u2014 EdTech, Noida',
+      p:'Two rounds over video, joining within 15 days. Incentives on top of fixed pay.',
+      exp:'1 to 3 Yrs', pay:'3 \u2013 4.5 Lakh/Yr', loc:'Noida' },
+    { id:'m5', kind:'match', age:14, time:'5 Oct', unread:false,
+      who:'Orbit Logistics', mono:'OL', bg:'#1A56FF',
+      h:'Operations Analyst \u2014 Last Mile',
+      exp:'2 to 4 Yrs', pay:'5 \u2013 7 Lakh/Yr', loc:'Gurugram',
+      skills:'Excel \u00b7 SQL \u00b7 Last-mile Ops' },
+    { id:'s4', kind:'saved', age:22, time:'27 Sep', unread:false,
+      saved:'3w',
+      who:'Saffron Foods', mono:'SF', bg:'#B45309',
+      h:'Product Manager \u2014 Ordering App',
+      exp:'4 to 7 Yrs', pay:'20 \u2013 28 Lakh/Yr', loc:'Bengaluru',
+      skills:'Consumer \u00b7 Mobile \u00b7 Experiments' },
+    // older than 30 days and still untouched → moves to Expired on load (see below)
+    { id:'m6', kind:'match', age:33, time:'16 Sep', unread:false,
+      who:'Lumen Insurance', mono:'LI', bg:'#6F46E0',
+      h:'Claims Associate \u2014 Health',
+      exp:'0 to 2 Yrs', pay:'2.6 \u2013 3.4 Lakh/Yr', loc:'Chennai',
+      skills:'Claims \u00b7 Health Insurance \u00b7 Customer Calls' }
   ];
+
+  // Action Pending groups by how many days ago a card arrived — every group excludes the ones above it
+  // (user, 2026-10-19, option B): 0 Today · 1 Yesterday · 2–6 the weekday name (Saturday, Friday …)
+  // · 7–30 Earlier · older than 30 → Expired (if untouched).
+  // Days are counted back from the real date, so the weekday headers and the dates on older cards always agree.
+  var MAX_AGE = 30;
+  var WEEKDAY = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  var MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  function dayAt(age){ var d = new Date(); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() - age); return d; }
+  function dateOf(age){ var d = dayAt(age); return d.getDate() + ' ' + MONTH[d.getMonth()]; }
+  function groupOf(age){ return age <= 0 ? 'Today' : age === 1 ? 'Yesterday' : age <= 6 ? WEEKDAY[dayAt(age).getDay()] : 'Earlier'; }
+  // the card's own timestamp: a clock time while the header already names the day, a date once it says Earlier
+  function stamp(c){ if (c.kind !== 'saved' && c.age >= 7) c.time = dateOf(c.age); }
 
   // Communications that timed out before the candidate acted on them.
   // Read-only by definition, so these carry no actions and no unread state.
   var EXPIRED = [
-    { id:'x1', kind:'note', day:'Expired', time:'12 Sep', unread:false, done:'expired',
+    { id:'x1', age:37, kind:'note', day:'Expired', time:'12 Sep', unread:false, done:'expired',
       gone:'Expired 12 Sep',
       who:'Priya Nair', org:'Cobalt HR', mono:'PN', bg:'#B45309',
       h:'Interview slots \u2014 Customer Success, Pune',
       p:'Three slots left on Thursday and Friday. Twenty minutes, over a call.',
       exp:'3 to 6 Yrs', pay:'6 \u2013 9 Lakh/Yr', loc:'Pune' },
-    { id:'x2', kind:'match', day:'Expired', time:'9 Sep', unread:false, done:'expired',
+    { id:'x2', age:40, kind:'match', day:'Expired', time:'9 Sep', unread:false, done:'expired',
       gone:'Expired 9 Sep',
       who:'Halcyon Labs', mono:'HL', bg:'#1A56FF',
       h:'Associate Product Manager',
       exp:'2 to 4 Yrs', pay:'14 \u2013 20 Lakh/Yr', loc:'Bengaluru',
       skills:'Product Sense \u00b7 SQL \u00b7 Experimentation' },
-    { id:'x3', kind:'note', day:'Expired', time:'5 Sep', unread:false, done:'expired',
+    { id:'x3', age:44, kind:'note', day:'Expired', time:'5 Sep', unread:false, done:'expired',
       gone:'Expired 5 Sep',
       who:'Arun Desai', org:'Meridian Staffing', mono:'AD', bg:'#BE185D',
       h:'Night shift openings \u2014 Noida',
       p:'Twelve seats across two processes. Cab both ways, fixed weekly off.',
       exp:'0 to 2 Yrs', pay:'2.4 \u2013 3.2 Lakh/Yr', loc:'Noida' },
-    { id:'x4', kind:'match', day:'Expired', time:'2 Sep', unread:false, done:'expired',
+    { id:'x4', age:47, kind:'match', day:'Expired', time:'2 Sep', unread:false, done:'expired',
       gone:'Expired 2 Sep',
       who:'Kettle & Co', mono:'KC', bg:'#4D7C4F',
       h:'Store Operations Executive',
@@ -3670,9 +3742,16 @@ html.in-app .bs { --bs-safe: 0px; }
       skills:'Store Ops \u00b7 Inventory \u00b7 Rostering' }
   ];
 
-  var msgs = SEED.map(function(m){
-    var c = {}; for (var k in m) c[k] = m[k]; c.done = null; return c;
+  var msgs = [];
+  SEED.forEach(function(m){
+    var c = {}; for (var k in m) c[k] = m[k];
+    stamp(c);
+    if (c.age > MAX_AGE) { c.done = 'expired'; c.unread = false; c.gone = 'Expired ' + c.time; EXPIRED.push(c); return; }   // too old, never acted on
+    c.done = null; c.day = groupOf(c.age); msgs.push(c);
   });
+  EXPIRED.forEach(function(c){ if (c.age != null && c.id.charAt(0) === 'x') { stamp(c); c.gone = 'Expired ' + c.time; } });
+  msgs.sort(function(x, y){ return x.age - y.age; });                    // newest first, so the groups read in order
+  EXPIRED.sort(function(x, y){ return x.age - y.age; });
 
   var sheet    = document.getElementById('mrSheet');
   var sheetList= document.getElementById('mrSheetList');
@@ -3897,5 +3976,48 @@ html.in-app .bs { --bs-safe: 0px; }
 
   
 </script>
+<!-- ▼ PAGE · day-chip -->
+<script data-page="day-chip">
+/* Docket · day chip — follows the day headers (.mr-day) of whatever list is showing (Action Pending, Action Taken).
+   Decorative: the headers stay in the list for screen readers, so the chip is aria-hidden and takes no taps. */
+(function () {
+  'use strict';
+  var sc = document.getElementById('mrSheetList'), hd = document.querySelector('header.stp');
+  if (!sc || !hd) return;
+  var chip = document.createElement('div'); chip.className = 'dkc'; chip.setAttribute('aria-hidden', 'true');
+  chip.innerHTML = '<span class="dkc-chip"><span class="dkc-lbl"><b></b></span></span>';
+  document.body.appendChild(chip);
+  var lbl = chip.querySelector('.dkc-lbl'), on = false, lastIdx = -1;
+  function days() { return [].slice.call(sc.querySelectorAll('.mr-day')).filter(function (d) { return d.offsetParent; }); }
+  function count(d) { var n = 0, e = d.nextElementSibling; while (e && !e.classList.contains('mr-day')) { if (e.classList.contains('jcard')) n++; e = e.nextElementSibling; } return n; }
+  function nice(t) { t = t.trim(); return t.charAt(0).toUpperCase() + t.slice(1).toLowerCase(); }
+  function place() {
+    var H = hd.getBoundingClientRect(), S = sc.getBoundingClientRect();
+    chip.style.top = H.bottom + 'px'; chip.style.left = S.left + 'px'; chip.style.width = S.width + 'px';
+    return H.bottom;
+  }
+  function swap(text, dir) {                              // the label rolls: down the list → up and out, back up → the reverse
+    var b = lbl.querySelector('b:not(.out)'); if (!b || b.textContent === text) return;
+    if (!b.textContent || !on) { b.textContent = text; return; }
+    lbl.querySelectorAll('b.out').forEach(function (o) { o.remove(); });
+    var nb = document.createElement('b'); nb.textContent = text; nb.className = 'in' + (dir < 0 ? ' up' : '');
+    b.className = 'out' + (dir < 0 ? ' up' : ''); lbl.appendChild(nb);
+    setTimeout(function () { if (b.parentNode) b.remove(); if (nb.parentNode && nb.className.indexOf('in') === 0) nb.className = ''; }, 240);
+  }
+  function update() {
+    var top = place(), ds = days(), cur = -1, dock = top + 14;   // the header has reached the chip's line
+    for (var i = 0; i < ds.length; i++) if (ds[i].getBoundingClientRect().top <= dock) cur = i;
+    if (cur < 0) { if (on) { on = false; chip.classList.remove('on'); } lastIdx = -1; return; }
+    swap(nice(ds[cur].textContent) + ' · ' + count(ds[cur]), cur < lastIdx ? -1 : 1);
+    if (!on) { on = true; chip.classList.add('on'); }
+    lastIdx = cur;
+  }
+  sc.addEventListener('scroll', update, { passive: true });
+  addEventListener('resize', update);
+  new MutationObserver(function () { requestAnimationFrame(update); }).observe(sc, { childList: true, subtree: true });
+  update();
+})();
+</script>
+<!-- ▲ PAGE · day-chip -->
 </body>
 </html>
