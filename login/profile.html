@@ -4,11 +4,11 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#161B22" />
-<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.1 (2026-10-19)
+<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.2 (2026-10-19)
      Built from the mobile view (≤ 480 px) of <Shine Revamp>/profile-index.html, on the design system
      (design-system/DESIGN-SYSTEM.md + component-system.md): semantic tokens only, DS atoms (A.02 Button, A.04 Badge,
-     A.05 Tag, A.08 Avatar, A.09 Toast). No top app bar on this tab (v1.1, user): the full-bleed hero starts at the top
-     and its strip (photo + job-search status) is the nav row — a new floating nav type comes later. Bottom tab bar =
+     A.05 Tag, A.08 Avatar, A.09 Toast). No menu / title on this tab (v1.1, user): the full-bleed hero starts at the top
+     under the top-app-bar component's profile variant (v1.2: photo + job-search status, floating). Bottom tab bar =
      shared component (Me active). Sections: hero (status · strength dial · next step), Your Resume, Profile Overview
      (professional · personal · contact), Key Skills, Employment History, Education History, Links (empty).
      Not built yet (taps show what they will open): editors, resume upload / viewer, status sheet, photo, item menus. -->
@@ -29,7 +29,7 @@
      primitives once (§1, values only) and maps every semantic token the page
      uses; page rules never touch a primitive or a raw colour.
    • Atoms follow component-system.md: A.02 Button (.btn), A.04 Badge (.badge),
-     A.05 Tag (.tag), A.08 Avatar (.avatar), A.09 Toast (.toast).
+     A.05 Tag (.tag), A.09 Toast (.toast). Photo + status = top-app-bar profile variant.
    • App frame: gutter spacing.layout.sm (24), like My Jobs / Docket.
    • Light only (page build). Proposed tokens are marked PROPOSED.
    ═══════════════════════════════════════════════════════════════════════ */
@@ -211,20 +211,12 @@ html.in-app { --pf-safe-top: 0px; }
   font: var(--weight-bold) var(--type-label-md-size)/var(--type-label-md-line) var(--font-brand); cursor: default;
 }
 
-/* ── A.08 Avatar (user · subtle · xl) ── */
-.avatar {
-  display: grid; place-items: center; flex: none; overflow: hidden;
-  width: var(--size-avatar-xl); height: var(--size-avatar-xl); border-radius: var(--size-radius-full);
-  background: var(--surface-neutral-muted); color: var(--content-neutral-base);
-  font: var(--weight-bold) var(--type-label-lg-size)/var(--type-label-lg-line) var(--font-brand); text-transform: uppercase;
-}
-
 /* ── Hero · strength card ─────────────────────────────────────────────── */
 .pf-hero {
   position: relative; overflow: hidden; isolation: isolate;
   /* full bleed, edge to edge, flush with the top (reference mobile): out of the page gutter on both sides */
   margin: 0 calc(-1 * var(--spacing-layout-sm));
-  padding: calc(var(--spacing-stack-xxl) + var(--pf-safe-top)) var(--spacing-layout-sm) var(--spacing-stack-xxl);
+  padding: var(--stp-profile-h, calc(var(--spacing-stack-xxl) + var(--pf-safe-top))) var(--spacing-layout-sm) var(--spacing-stack-xxl);   /* top: under the floating profile bar (top-app-bar component) */
   border-radius: 0;
   background: linear-gradient(180deg, var(--surface-inverse-muted) 0%, var(--surface-inverse-base) 100%);
   box-shadow: inset 0 calc(-1 * var(--size-stroke-thin)) 0 var(--stroke-on-fill-dark-subtle), var(--elevation-neutral-lifted);   /* bottom hairline (no side edges) */
@@ -240,16 +232,6 @@ html.in-app { --pf-safe-top: 0px; }
   content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
   background: radial-gradient(120% 70% at 88% 55%, color-mix(in srgb, var(--surface-brand-brand-intense) 22%, transparent) 0%, transparent 60%);
 }
-.pf-strip {
-  display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-inline-md);
-  height: calc(var(--size-avatar-xl) + 2 * var(--spacing-inset-xs));   /* 64 = avatar 56 + 4 + 4 */
-  padding: var(--spacing-inset-xs) var(--spacing-inset-md) var(--spacing-inset-xs) var(--spacing-inset-xs);   /* avatar hugs the start (4 round it); the 48 pill sits 8 from the strip edge on top, bottom and end — concentric */
-  border-radius: var(--size-radius-full); background: var(--surface-on-fill-dark-subtle);
-}
-.pf-avatar-btn { padding: 0; border: 0; background: none; border-radius: var(--size-radius-full); cursor: pointer; }
-.pf-avatar-btn:focus { outline: none; }
-.pf-avatar-btn:focus-visible { outline: var(--size-stroke-thick) solid var(--stroke-neutral-focus); outline-offset: var(--size-stroke-thick); }
-.pf-status { padding: 0 var(--spacing-inset-xl) 0 var(--spacing-inset-xxl); }   /* trailing chevron side 16, label side 22 (A.02 lg) */
 .pf-hi {
   margin-top: var(--spacing-section-xl);
   font: var(--weight-medium) var(--type-body-md-size)/var(--type-body-md-line) var(--font-brand);
@@ -566,6 +548,331 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
 }
 </style>
 <!-- ▲ COMPONENT · bottom-tab-bar -->
+<!-- ▼ COMPONENT · top-app-bar v1.2.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
+<style data-component="top-app-bar">
+/* ═══════════════════════════════════════════════════════════════════════
+   SHINE · TOP APP BAR  (app component · App-login)              v1.2.0
+   One top bar for every logged-in screen, in three variants that share one
+   frame, so the leading item, the brand/title anchor and the trailing
+   action sit on exactly the same spot on every tab.
+
+     brand  ╭──────────────────────────────────────────╮   Home
+            │ ☰  shine                 [ 🔍 Search Jobs ] │   floating pill
+            ╰──────────────────────────────────────────╯
+     title    ☰  My Jobs.                                  My Jobs · Docket
+              [ Recommended | Saved | Applied ]            (slot below)
+     profile ╭──────────────────────────────────────────╮   Me (Profile)
+            │ (RM)                  [ Actively Looking ⌄ ] │   floating pill
+            ╰──────────────────────────────────────────╯   on a dark hero
+
+   Shared frame (both variants, both platforms)
+     gutter G 24 (spacing.layout.sm): glyphs and text start / end on it
+     row 48 (size.control.lg) · 8 above / below (spacing.inset.md) → bar 64
+     leading slot = menu-button (icon on G, button 14 → 54) — or, on a
+     sub-view (Docket › Expired), the back button .stp-back in the same slot
+     anchor (logo / title) at 62 = menu hit area 54 + 8 (spacing.inline.md) — 18 after the icon (spacing.inline.xl)
+     trailing hit areas end at screen − 14 (icon / text on G)
+     brand pill wraps the hit areas with ONE inset all round — 6 (spacing.inset.sm)
+     above, below and at both ends — so the menu and Search Jobs sit concentric
+     in the pill (radius 26 = 20 + 6): pill 52 = 40 + 6 + 6, 6 above / below it
+     (bar still 64, menu centre still 32), 8 from the screen (spacing.inset.md)
+
+   Profile variant (v1.2.0) — the Me tab: no menu, no title. The pill holds
+     the person's photo (A.08 Avatar xl 56 · initials until there is a photo)
+     and the job-search status (A.02 Button lg 48, light fill on dark). Same
+     pill margins as the brand bar (8 from the screen, 6 above / below);
+     pill 64 = avatar 56 + 4 + 4 (spacing.inset.xs), the status sits 8 from
+     the pill's top, bottom and end (concentric) → bar 76. It FLOATS over
+     the page's dark hero (takes no room; pages pad the hero by
+     var(--stp-profile-h)). On the hero: faint light lift; once the hero is
+     no longer under it (data-stp-over="<hero>"), it lifts onto a frosted
+     dark surface + lifted shadow, so it reads over light content too.
+
+   Platform (html / ancestor [data-platform="ios"]; Android is the default)
+     Android  title bar = M3 small top app bar: 64, pinned, start-aligned;
+              on scroll it lifts (frosted surface + hairline under the slot)
+     iPhone   title bar: the standard 44 pt bar — row 44 right under the
+              status bar, 10 under it (so the title keeps the same 20 gap
+              to the segment as on Android) → 54; pinned, never resizes on
+              scroll (with data-stp-hide the menu row slides away, as on Android). Opaque page surface in both
+              states, so iOS's status bar (painted from the page surface) is
+              always the same colour as the bar; a hairline fades in at the
+              edge (scroll-linked, 40 px). Title start-aligned at 62
+     brand    floating pill on both; it already sits on its own surface
+
+   Hide on scroll — title bar with data-stp-hide (v1.1.0, both platforms)
+     The menu row slides away while the list is read and comes back on a
+     scroll up; the slot below (segment) stays pinned, 8 under the top edge.
+     The script floats the header over the list (.stp--hides) and pads the
+     list by the header's height, so the cards get the row's space
+     (Android 56 · iPhone 46) with no reflow. The bar follows the finger;
+     letting go / a flick animates (.stp-anim).
+
+   ▶ BEFORE ADDING OR CHANGING IT: read README.md in this folder.
+   • Semantic tokens only (DESIGN-SYSTEM.md §2); the scoped layer names them.
+   • Pair with top-app-bar.js (ShineTopBar) and menu-button.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:root { --stp-safe-top: env(safe-area-inset-top, 0px); }
+/* Android app shell: the WebView is laid out BELOW the status bar but still reports the status bar as
+   safe-area-inset-top — adding it doubled the space above the bar (same family as the tab bar's bottom
+   inset). html.in-app is set by the app shell's native.js. */
+html.in-app { --stp-safe-top: 0px; }
+/* Profile bar height for pages (v1.2.0): the bar floats over the page's top section, which pads its content by
+   this much — safe top + 6 + pill 64 (avatar 56 + 2 × 4) + 6 = 76. Never hard-code it on a page. */
+:root { --stp-profile-h: calc(var(--stp-safe-top) + 56px + 2 * 4px + 2 * 6px); }
+html.in-app { --stp-profile-h: calc(56px + 2 * 4px + 2 * 6px); }
+
+.stp {
+  /* COLOUR — §2.2 (light) */
+  --stp-content-neutral-base: #0D1117;                     /* content.neutral.base — title, icons */
+  --stp-surface-neutral-base: #FAF9F6;                     /* surface.neutral.base — bar at rest = page */
+  --stp-surface-neutral-raised: #FFFFFF;                   /* surface.neutral.raised — hiding title bar, scrolled (Android) */
+  --stp-surface-neutral-raised-translucent: rgba(255, 255, 255, .96);
+                                                           /* surface.neutral.raised-translucent (PROPOSED, same as the tab bar) */
+  --stp-stroke-neutral-muted: #EEF1F5;                     /* stroke.neutral.muted — scroll hairline */
+  --stp-surface-brand-intense: #1A56FF;                    /* surface.brand.brand-intense — Search Jobs */
+  --stp-surface-brand-intense-hover: #0B3FCC;              /* surface.brand.brand-intense-hover */
+  --stp-surface-brand-intense-pressed: #0A33A6;            /* surface.brand.brand-intense-pressed */
+  --stp-content-on-fill-dark-base: #FFFFFF;                /* content.on-fill-dark.base — CTA label */
+  --stp-elevation-neutral-lifted: 0 4px 12px rgba(13, 17, 23, .08), 0 2px 4px rgba(13, 17, 23, .04);
+                                                           /* elevation.neutral.lifted — "sticky headers, floating groups" */
+  --stp-elevation-brand-raised: 0 6px 14px -4px rgba(26, 86, 255, .45);   /* elevation.brand.raised — CTA at rest */
+  --stp-elevation-brand-lifted: 0 16px 40px -12px rgba(26, 86, 255, .40); /* elevation.brand.lifted — CTA hover */
+  --stp-elevation-brand-subtle: 0 8px 24px -10px rgba(26, 86, 255, .18);  /* elevation.brand.subtle — CTA pressed */
+  --stp-elevation-focus-default: 0 0 0 4px rgba(26, 86, 255, .10);        /* elevation.focus.default */
+  --stp-stroke-neutral-focus: #1A56FF;                     /* stroke.neutral.focus */
+  --stp-surface-neutral-state-hover: #EEF1F5;              /* surface.neutral-state.hover — back button */
+  --stp-surface-neutral-state-pressed: #E4E7EC;            /* surface.neutral-state.pressed — back button, status pressed */
+  /* profile variant (v1.2.0) — on a surface that is dark in both themes */
+  --stp-surface-neutral-muted: #EEF1F5;                    /* surface.neutral.muted — A.08 avatar · user · subtle */
+  --stp-surface-on-fill-dark-subtle: rgba(255, 255, 255, .06);
+                                                           /* surface.on-fill-dark.subtle (PROPOSED) — pill on the dark hero */
+  --stp-surface-inverse-muted-translucent: rgba(22, 27, 34, .96);
+                                                           /* surface.inverse.muted-translucent (PROPOSED) — lifted pill over light content */
+  --stp-blur: blur(24px) saturate(180%);
+
+  /* SPACE · SIZE — §2.3 / §2.4 */
+  --stp-gutter: 24px;              /* spacing.layout.sm — glyphs + text on it */
+  --stp-pad-y: 8px;                /* spacing.inset.md — above / below the row */
+  --stp-row: 48px;                 /* size.control.lg */
+  --stp-row-ios: 44px;             /* size.control.md — iOS standard navigation bar 44 pt */
+  --stp-hit: 40px;                 /* size.control.sm — menu / icon buttons, CTA */
+  --stp-icon: 20px;                /* size.icon.lg — menu glyph */
+  --stp-hit-edge: calc(var(--stp-gutter) - (var(--stp-hit) - var(--stp-icon)) / 2);   /* 14 */
+  --stp-pill-margin: 8px;          /* spacing.inset.md — pill to screen edge */
+  --stp-pill-inset: calc(var(--stp-hit-edge) - var(--stp-pill-margin));                 /* 6 = spacing.inset.sm — all four sides */
+  --stp-pill-h: calc(var(--stp-hit) + var(--stp-pill-inset) * 2);                        /* 52 */
+  --stp-pill-pad-y: calc((var(--stp-row) + var(--stp-pad-y) * 2 - var(--stp-pill-h)) / 2); /* 6 — keeps the bar at 64 */
+  --stp-anchor: calc(var(--stp-hit-edge) + var(--stp-hit) + 8px);                       /* 62 — logo / title start (spacing.inline.md after the menu) */
+  --stp-logo-h: 36px;              /* brand asset — the DS has no logo size (proposed size.logo.md) */
+  --stp-radius-full: 1024px;       /* size.radius.full */
+  /* profile variant */
+  --stp-avatar: 56px;              /* A.08 Avatar xl */
+  --stp-avatar-inset: 4px;         /* spacing.inset.xs — round the avatar */
+  --stp-status-h: 48px;            /* size.control.lg — A.02 Button lg */
+  --stp-profile-pill: calc(var(--stp-avatar) + var(--stp-avatar-inset) * 2);              /* 64 */
+  --stp-status-end: calc((var(--stp-profile-pill) - var(--stp-status-h)) / 2);            /* 8 — status concentric in the pill */
+
+  /* TYPE — §2.1 */
+  --stp-font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;   /* typeface.family.brand */
+  /* Title: 20 / 24 bold −0.2 — the Heading / md step one size up (unit/20 · unit/24, its ≥768 values);
+     between Heading / md mobile 18 and Heading / lg mobile 22 */
+  /* Label / md bold: 12 / 12 — Search Jobs (A.02 btn--sm) */
+
+  /* MOTION — proposed */
+  --stp-dur: 200ms; --stp-ease: ease;
+  --stp-hide-dur: 280ms;           /* hide on scroll: settle / flick (the finger drives the rest) */
+  --stp-hide-ease: cubic-bezier(.2, .8, .2, 1);
+
+  --stp-p: 0;                      /* scroll-edge progress 0 → 1 over 40 px, set by the script (iOS hairline) */
+
+  position: sticky; top: 0; z-index: 80;
+  box-sizing: border-box;
+  display: flow-root;              /* keeps the row's 8 / 8 inside the bar */
+  padding-top: var(--stp-safe-top);
+  font-family: var(--stp-font); -webkit-font-smoothing: antialiased;
+  color: var(--stp-content-neutral-base);
+  background: transparent;
+  -webkit-tap-highlight-color: transparent;
+}
+.stp *, .stp *::before, .stp *::after { box-sizing: border-box; }
+
+/* ── Row (shared frame) ────────────────────────────────────────────── */
+.stp-row {
+  position: relative;
+  display: flex; align-items: center;
+  height: var(--stp-row);
+  margin: var(--stp-pad-y) 0;
+  padding: 0 var(--stp-hit-edge);
+}
+.stp-row > .mb, .stp-row > .stp-back { margin: 0; position: relative; }   /* the frame places them; no optical offsets */
+.stp-row > .mb::after, .stp-row > .stp-back::after { content: ""; position: absolute; inset: -4px; }   /* 48 touch target (Android) */
+
+/* back button — takes the menu's slot on a sub-view; same 40 round ghost button as the menu (A.02 icon-only) */
+.stp-back {
+  flex: none; display: inline-grid; place-items: center;
+  width: var(--stp-hit); height: var(--stp-hit); padding: 0; border: none; border-radius: var(--stp-radius-full);
+  background: transparent; color: var(--stp-content-neutral-base); cursor: pointer;
+  -webkit-appearance: none; appearance: none; -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  transition: background-color 140ms ease, box-shadow 140ms ease;
+}
+.stp-back[hidden] { display: none !important; }
+.stp-back svg { display: block; width: var(--stp-icon); height: var(--stp-icon); fill: none; stroke: currentColor; stroke-width: 2px; stroke-linecap: round; stroke-linejoin: round; }   /* size.icon.lg · size.stroke.thick */
+@media (hover: hover) { .stp-back:hover { background: var(--stp-surface-neutral-state-hover); } }
+.stp-back:active { background: var(--stp-surface-neutral-state-pressed); }
+.stp-back:focus { outline: none; }
+.stp-back:focus-visible { outline: 2px solid var(--stp-stroke-neutral-focus); outline-offset: 0; box-shadow: var(--stp-elevation-focus-default); }
+.stp-anchor {                                     /* logo or title — starts at 62 */
+  position: absolute; left: var(--stp-anchor); top: 50%; transform: translateY(-50%);
+  display: flex; align-items: center; min-width: 0; max-width: calc(100% - var(--stp-anchor) - var(--stp-hit-edge));
+}
+.stp-end { margin-left: auto; display: flex; align-items: center; gap: 8px; }   /* spacing.inline.md */
+
+/* ── Brand variant · floating pill (Home) ─────────────────────────── */
+.stp--brand .stp-row {
+  height: var(--stp-pill-h);
+  margin: var(--stp-pill-pad-y) var(--stp-pill-margin);
+  padding: 0 var(--stp-pill-inset);                 /* = the vertical inset: (52 − 40) / 2 */
+  border-radius: var(--stp-radius-full);
+  background: var(--stp-surface-neutral-raised-translucent);
+  -webkit-backdrop-filter: var(--stp-blur); backdrop-filter: var(--stp-blur);
+  box-shadow: var(--stp-elevation-neutral-lifted);
+}
+.stp--brand .stp-anchor { left: calc(var(--stp-anchor) - var(--stp-pill-margin)); }
+.stp-logo { display: block; height: var(--stp-logo-h); line-height: 0; text-decoration: none; border-radius: 8px; }
+.stp-logo img { display: block; height: 100%; width: auto; }
+.stp-logo:focus-visible { outline: 2px solid var(--stp-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--stp-elevation-focus-default); }   /* radius.md 8 */
+
+/* Search Jobs — DS A.02 Button · brand · sm · shape-full */
+.stp-cta {
+  display: inline-flex; align-items: center; gap: 8px;          /* spacing.inline.md — A.02 icon ↔ label */
+  height: var(--stp-hit); padding: 0 16px;                       /* spacing.inset.xl */
+  border: none; border-radius: var(--stp-radius-full);
+  background: var(--stp-surface-brand-intense); color: var(--stp-content-on-fill-dark-base);
+  box-shadow: var(--stp-elevation-brand-raised);
+  font: 700 12px/12px var(--stp-font);                           /* Label / md bold */
+  text-decoration: none; white-space: nowrap; cursor: pointer;
+  transition: background-color var(--stp-dur) var(--stp-ease), box-shadow var(--stp-dur) var(--stp-ease);
+}
+.stp-cta svg { width: 14px; height: 14px; flex: none; stroke-width: 2px; }   /* size.icon.sm · size.stroke.thick */
+@media (hover: hover) { .stp-cta:hover { background: var(--stp-surface-brand-intense-hover); box-shadow: var(--stp-elevation-brand-lifted); } }
+.stp-cta:active { background: var(--stp-surface-brand-intense-pressed); box-shadow: var(--stp-elevation-brand-subtle); }
+.stp-cta:focus-visible { outline: 2px solid var(--stp-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--stp-elevation-focus-default); }
+
+/* ── Profile variant · floating pill on a dark hero (Me tab) · v1.2.0 ─
+   Floats: a negative bottom margin as tall as the bar, so the page's dark top section starts under it (pages pad
+   that section by var(--stp-profile-h)). Sticky like the brand bar. */
+.stp--profile { margin-bottom: calc(-1 * var(--stp-profile-h)); color: var(--stp-content-on-fill-dark-base); }
+.stp--profile .stp-row {
+  height: var(--stp-profile-pill);
+  margin: var(--stp-pill-pad-y) var(--stp-pill-margin);              /* 6 above / below · 8 from the screen — as the brand pill */
+  padding: 0 var(--stp-status-end) 0 var(--stp-avatar-inset);        /* avatar hugs the start (4 round it); status 8 from the end */
+  border-radius: var(--stp-radius-full);
+  background: var(--stp-surface-on-fill-dark-subtle);
+  transition: background-color var(--stp-dur) var(--stp-ease), box-shadow var(--stp-dur) var(--stp-ease);
+}
+.stp--profile.is-lifted .stp-row {
+  background: var(--stp-surface-inverse-muted-translucent);
+  -webkit-backdrop-filter: var(--stp-blur); backdrop-filter: var(--stp-blur);
+  box-shadow: var(--stp-elevation-neutral-lifted);
+}
+/* photo — DS A.08 Avatar · user · subtle · xl: initials (Label / lg bold) until there is a photo */
+.stp-avatar {
+  position: relative; flex: none; display: grid; place-items: center; overflow: hidden;
+  width: var(--stp-avatar); height: var(--stp-avatar); padding: 0; border: none; border-radius: var(--stp-radius-full);
+  background: var(--stp-surface-neutral-muted); color: var(--stp-content-neutral-base);
+  font: 700 14px/14px var(--stp-font); text-transform: uppercase;            /* Label / lg bold */
+  cursor: pointer; -webkit-appearance: none; appearance: none; touch-action: manipulation;
+}
+.stp-avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.stp-avatar img[hidden] { display: none; }
+.stp-avatar:focus { outline: none; }
+.stp-avatar:focus-visible { outline: 2px solid var(--stp-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--stp-elevation-focus-default); }
+/* job-search status — DS A.02 Button · lg · shape-full, light fill on the dark pill: 48 · 22 on the label side,
+   16 on the chevron side · Label / lg bold · chevron 16 (stroke 2) · 8 gap */
+.stp-status {
+  display: inline-flex; align-items: center; gap: 8px;                       /* spacing.inline.md */
+  height: var(--stp-status-h); padding: 0 16px 0 22px;                       /* spacing.inset.xl · spacing.inset.xxl */
+  border: none; border-radius: var(--stp-radius-full);
+  background: var(--stp-surface-neutral-raised); color: var(--stp-content-neutral-base);
+  font: 700 14px/14px var(--stp-font);                                        /* Label / lg bold */
+  white-space: nowrap; cursor: pointer; -webkit-appearance: none; appearance: none; touch-action: manipulation;
+  transition: background-color var(--stp-dur) var(--stp-ease);
+}
+.stp-status svg { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 2px; stroke-linecap: round; stroke-linejoin: round; }   /* size.icon.md · size.stroke.thick */
+@media (hover: hover) { .stp-status:hover { background: var(--stp-surface-neutral-state-hover); } }
+.stp-status:active { background: var(--stp-surface-neutral-state-pressed); }
+.stp-status:focus { outline: none; }
+.stp-status:focus-visible { outline: 2px solid var(--stp-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--stp-elevation-focus-default); }
+
+/* ── Title variant (My Jobs, Docket) ──────────────────────────────── */
+.stp--title { background: var(--stp-surface-neutral-base); }
+.stp-title {
+  margin: 0;
+  font-size: 20px; line-height: 24px; font-weight: 700; letter-spacing: -0.2px;   /* unit/20 · unit/24 · Heading / md bold, one step up from 18 (user, v1.0.2) */
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.stp-below { padding: 0 var(--stp-gutter) 16px; } /* slot: segment control etc., on the gutter · 16 under (spacing.inset.xl) */
+.stp-below[hidden] { display: none !important; }
+
+/* lift on scroll (Android) / scroll edge (iOS) — under the whole header, slot included */
+.stp--title::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+  background: var(--stp-stroke-neutral-muted); opacity: 0;
+  transition: opacity var(--stp-dur) var(--stp-ease);
+}
+.stp--title { transition: background-color var(--stp-dur) var(--stp-ease); }
+.stp--title.is-scrolled {
+  background: var(--stp-surface-neutral-raised-translucent);
+  -webkit-backdrop-filter: var(--stp-blur); backdrop-filter: var(--stp-blur);
+}
+.stp--title.is-scrolled::after { opacity: 1; }
+
+/* hide on scroll (Android): the cards now pass under the bar, and through a 96 % frosted surface their edges and
+   shadows showed as a ghost behind the segment — the hiding bar lifts onto the opaque raised surface instead (it
+   looks the same as before: 96 % white over the page was already ≈ white) */
+.stp--title.stp--hides.is-scrolled {
+  background: var(--stp-surface-neutral-raised);
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+
+/* ── iPhone: standard 44 pt bar, never resizes; the bar matches the status bar ───
+   • The title bar is the iOS 44 pt navigation bar at rest: row 44 directly under the status bar, and
+     8 + (48 − 44) / 2 = 10 under it, so title → segment is 20 on both platforms. Bar 54 (110 with a
+     segment). No compacting on scroll (data-stp-hide slides the row away, the same as on Android).
+   • iOS paints the status bar from the page surface (body or the fixed screen at the top edge — it
+     ignores opacity and theme-color), so a frosted white bar would sit under an off-white status bar.
+     The bar stays on the opaque page surface in both states; only the hairline marks the scroll edge. */
+[data-platform="ios"] .stp--title .stp-row {
+  height: var(--stp-row-ios);
+  margin: 0 0 calc(var(--stp-pad-y) + (var(--stp-row) - var(--stp-row-ios)) / 2);
+}
+[data-platform="ios"] .stp--title,
+[data-platform="ios"] .stp--title.is-scrolled {
+  background: var(--stp-surface-neutral-base);
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+[data-platform="ios"] .stp--title.is-scrolled::after { opacity: var(--stp-p); }
+[data-platform="ios"] .stp-row > .mb::after, [data-platform="ios"] .stp-row > .stp-back::after { inset: -2px; }    /* 44 touch target */
+
+/* ── Hide on scroll (title bar · data-stp-hide · v1.1.0) ─────────────
+   .stp--hides is set by the script once it has padded the list, so without
+   the script the bar stays the plain sticky header. The inline transform
+   (set while the finger moves) is the row's offset; .stp-anim animates the
+   rest of the way. The status-bar area keeps the bar's own surface: only the
+   row's content fades, the header background slides under it. */
+.stp--title.stp--hides { position: absolute; top: 0; left: 0; right: 0; will-change: transform; }
+.stp--title.stp-anim { transition: transform var(--stp-hide-dur) var(--stp-hide-ease), background-color var(--stp-dur) var(--stp-ease); }
+.stp--title.stp-anim .stp-row { transition: opacity var(--stp-dur) var(--stp-ease); }
+.stp--title.is-tucked .stp-row { visibility: hidden; pointer-events: none; }   /* out of reach for taps and the screen reader's swipe order */
+
+@media (prefers-reduced-motion: reduce) {
+  .stp--title, .stp--title::after, .stp-cta, .stp-back, .stp--title.stp-anim, .stp--title.stp-anim .stp-row,
+  .stp--profile .stp-row, .stp-status { transition: none; }
+}
+</style>
+<!-- ▲ COMPONENT · top-app-bar -->
 <link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Shine Login"><meta name="apple-mobile-web-app-status-bar-style" content="default"><link rel="apple-touch-icon" href="icons/icon-180.png"><link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png"><link rel="apple-touch-startup-image" href="icons/launch-640x1136.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-750x1334.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1242x2208.png" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1125x2436.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-828x1792.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1242x2688.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1170x2532.png" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1284x2778.png" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1179x2556.png" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1290x2796.png" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1206x2622.png" media="(device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1320x2868.png" media="(device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1260x2736.png" media="(device-width: 420px) and (device-height: 912px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><script>if("serviceWorker" in navigator)addEventListener("load",function(){navigator.serviceWorker.register("sw.js")})</script>
 </head>
 <body>
@@ -573,16 +880,278 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
        the page (light) as you scroll. Android samples the painted colour itself (native.js), so it isn't shown there. -->
   <div class="pf-cap" id="pfCap" aria-hidden="true"></div>
 
+  <!-- Top bar · top-app-bar component, profile variant: photo + job-search status, floating over the hero -->
+  <header class="stp stp--profile" data-shine-topbar data-stp-over="#pfHero">
+    <div class="stp-row">
+      <button class="stp-avatar" type="button" data-pf="photo" data-name="Rakesh Mallick" aria-label="Update profile photo"></button>
+      <div class="stp-end"><button class="stp-status" type="button" data-pf="status" aria-haspopup="dialog">Actively Looking<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button></div>
+    </div>
+  </header>
+  <!-- ▼ COMPONENT · top-app-bar v1.2.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
+<script data-component="top-app-bar">
+/* ═══════════════════════════════════════════════════════════════════════
+   SHINE · TOP APP BAR  (app component · App-login)              v1.2.0
+   Pair with top-app-bar.css and the menu-button component.
+
+   Markup — brand (Home):
+     <header class="stp stp--brand" data-shine-topbar>
+       <div class="stp-row">
+         <button class="mb" type="button" data-shine-menu data-page="home" aria-label="Menu">…</button>
+         <a class="stp-anchor stp-logo" href="#"><img src="…" alt="Shine.com"></a>
+         <div class="stp-end"><a class="stp-cta" href="#">…Search Jobs</a></div>
+       </div>
+     </header>
+   Markup — title (My Jobs, Docket):
+     <header class="stp stp--title" data-shine-topbar data-stp-scroll="#mjList">
+       <div class="stp-row">
+         <button class="mb" …></button>
+         <button class="stp-back" type="button" aria-label="Back" hidden><svg viewBox="0 0 24 24"><path d="M19 12H5M11 18l-6-6 6-6"/></svg></button>
+         <div class="stp-anchor"><h1 class="stp-title">My Jobs.</h1></div>
+       </div>
+       <div class="stp-below">…segment control…</div>
+     </header>
+   Markup — profile (Me tab, v1.2.0): floats over the page's dark hero
+     <header class="stp stp--profile" data-shine-topbar data-stp-over="#hero">
+       <div class="stp-row">
+         <button class="stp-avatar" type="button" data-name="Rakesh Mallick" aria-label="Profile photo"></button>
+         <div class="stp-end"><button class="stp-status" type="button" aria-haspopup="dialog">Actively Looking<svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button></div>
+       </div>
+     </header>
+
+   data-stp-scroll   the element whose scroll drives the bar (default: the page).
+                     It may come later in the page than the bar — the script
+                     waits for it (DOMContentLoaded) before listening.
+   data-stp-over     profile bar: the dark section it floats over (selector).
+                     While that section is under the pill the bar keeps its
+                     faint on-dark look; once it has scrolled away the bar gets
+                     .is-lifted (frosted dark surface + shadow). Without it,
+                     .is-lifted follows .is-scrolled.
+   .stp-avatar[data-name]  an empty avatar shows the name's initials (A.08:
+                     1–2 letters); an <img> inside it is the photo.
+   data-stp-hide     title bar only, with data-stp-scroll + a slot below
+                     (v1.1.0): the menu row (menu + title) gets out of the way
+                     while the list is read; the slot below stays pinned.
+                     The header then floats over the list (the script pads the
+                     list by the header's height), so the cards gain the space.
+                     Its parent must be a positioned box that holds the list,
+                     and the header must not sit inside the list itself —
+                     otherwise the bar stays the plain sticky header.
+   data-stp-hide-delay  optional, ms: also tuck the row again after the list
+                     has been still this long mid-list. Default 0 = off (the
+                     row stays until the person scrolls down again).
+   Hide rules (v1.1.0):
+     · down 8 px → the row follows the finger out (1:1); up 24 px → it follows
+       back in; a quick upward flick (> 1.1 px/ms) brings it straight back;
+       letting go part-way settles it fully open or closed (nearest end)
+     · near the top the row is never more hidden than the list is scrolled;
+       with the 1st card's middle below the bar it is "at rest"
+     · only the person's own scrolling counts (a finger that moved, wheel /
+       trackpad, scroll keys and the momentum after them) — the list moving by
+       itself (a card removed, a re-render, scrollTo from code) is ignored
+     · it comes back on: a segment change in the slot, a sub-view opening or
+       closing (.stp-back shown / hidden), keyboard focus inside the bar;
+       touching the bar holds it. Re-tapping the current tab does nothing
+       (v1.1.1)
+     · nothing hides when the slot below is hidden (sub-views) — the back
+       button stays in reach
+   Platform: sets <html data-platform="ios|android"> once (iPhone / iPad →
+   ios, anything else → android) unless the page already set it.
+   Behaviour: .is-scrolled when the content is scrolled; --stp-p runs
+   0 → 1 over the first 40 px (fades the iPhone scroll-edge hairline in).
+   Hiding bars also get .stp--hides, .is-tucked (row fully away) and fire
+   `shine:topbar` on the header: detail { state: 'rest'|'shown'|'hidden' }.
+   API: ShineTopBar.mount(el) · ShineTopBar.update() · ShineTopBar.reveal()
+        · ShineTopBar.initials(name) · ShineTopBar.version
+   ═══════════════════════════════════════════════════════════════════════ */
+(function (global) {
+  'use strict';
+  if (global.ShineTopBar) return;
+  var doc = global.document, html = doc.documentElement, RANGE = 40, bars = [];
+
+  if (!html.getAttribute('data-platform')) {
+    var ua = global.navigator.userAgent || '';
+    var ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && 'ontouchend' in doc);
+    html.setAttribute('data-platform', ios ? 'ios' : 'android');
+  }
+
+  function target(el) {
+    var sel = el.getAttribute('data-stp-scroll');
+    if (!sel) return global;
+    return el.ownerDocument.querySelector(sel);           // null until it is parsed
+  }
+  function y(t) { return t === global ? (global.scrollY || doc.documentElement.scrollTop || 0) : t.scrollTop; }
+  function paint(el) {
+    var v = Math.max(0, y(el.__stpT));
+    el.classList.toggle('is-scrolled', v > 0);
+    el.style.setProperty('--stp-p', Math.min(1, v / RANGE).toFixed(3));
+    if (el.classList.contains('stp--profile')) {          // profile bar: lifts once its dark section has left
+      var over = el.getAttribute('data-stp-over'), sec = over && doc.querySelector(over), row = el.querySelector('.stp-row');
+      var lifted = sec && row ? sec.getBoundingClientRect().bottom <= row.getBoundingClientRect().bottom : v > 0;
+      el.classList.toggle('is-lifted', lifted);
+    }
+  }
+  function initials(name) {                                 // A.08: first letters of the first and last word, 1–2
+    var w = String(name || '').trim().split(/\s+/).filter(Boolean);
+    if (!w.length) return '';
+    return (w[0].charAt(0) + (w.length > 1 ? w[w.length - 1].charAt(0) : '')).toUpperCase();
+  }
+  function avatars(el) {
+    el.querySelectorAll('.stp-avatar[data-name]').forEach(function (a) {
+      if (a.querySelector('img:not([hidden])') || a.textContent.trim()) return;
+      a.appendChild(doc.createTextNode(initials(a.getAttribute('data-name'))));
+    });
+  }
+  function listen(el) {
+    var t = target(el);
+    if (!t) {                                              // scroller not parsed yet
+      if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', function () { listen(el); }, { once: true });
+      else { el.__stpT = global; listen2(el); }
+      return;
+    }
+    el.__stpT = t; listen2(el);
+  }
+  function listen2(el) {
+    var raf = 0;
+    el.__stpT.addEventListener('scroll', function () {
+      if (raf) return;
+      raf = global.requestAnimationFrame(function () { raf = 0; paint(el); });
+    }, { passive: true });
+    paint(el);
+    if (el.hasAttribute('data-stp-hide') && el.__stpT !== global) hider(el, el.__stpT);
+  }
+
+  /* ── Hide on scroll (v1.1.0) ─────────────────────────────────────── */
+  var DOWN = 8, UP = 24, FLICK = 1.1, SETTLE = 140;          // px · px · px/ms (over the last ≥ 32 ms, ≥ 12 px) · ms after the last scroll
+  var reduce = global.matchMedia ? global.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
+  function hider(el, sc) {
+    var row = el.querySelector('.stp-row'), below = el.querySelector('.stp-below'), box = el.parentNode;
+    if (!row || !below || !box || sc.contains(el) || global.getComputedStyle(box).position === 'static') return;   // needs: a slot, the header outside the list, a positioned parent
+    var delay = Math.max(0, parseInt(el.getAttribute('data-stp-hide-delay'), 10) || 0);
+    var tuck = 0, off = 0, lastY = sc.scrollTop, acc = 0, trail = [], state = '';
+    var touching = false, moved = false, userUntil = 0, settleT = 0, timer = 0, hold = false;
+    function now() { return global.performance && performance.now ? performance.now() : Date.now(); }
+
+    function measure() {                                     // header height → list padding; how far the row tucks
+      var safe = parseFloat(global.getComputedStyle(el).paddingTop) || 0;
+      tuck = below.offsetParent && !below.hidden ? Math.max(0, below.offsetTop - safe - 8) : 0;   // slot ends 8 under the top edge (spacing.inset.md)
+      sc.style.paddingTop = el.offsetHeight + 'px';
+      sc.style.scrollPaddingTop = el.offsetHeight + 'px';
+      if (off > tuck) off = tuck;
+      paint2(false);
+    }
+    function paint2(animate) {                               // off: 0 = row fully shown … tuck = fully away
+      el.classList.toggle('stp-anim', !!animate && !reduce.matches);
+      el.style.transform = off > 0 ? 'translateY(' + (-off).toFixed(1) + 'px)' : '';
+      row.style.opacity = off > 0 && tuck ? Math.max(0, 1 - off / tuck * 1.6).toFixed(3) : '';
+      el.classList.toggle('is-tucked', tuck > 0 && off >= tuck - 0.5);
+    }
+    function atFirstCard() {                                 // the 1st item's middle is still below the bar at rest
+      var item = sc.querySelector('[data-stp-item], .jcard');   // job cards, or anything the page marks as a list item
+      if (!item || !item.offsetParent) return true;
+      var r = item.getBoundingClientRect();
+      return r.top + r.height / 2 > sc.getBoundingClientRect().top + el.offsetHeight;
+    }
+    function setState(s) {
+      if (s !== 'shown') { global.clearTimeout(timer); timer = 0; }
+      if (s === state) return; state = s;
+      try { el.dispatchEvent(new CustomEvent('shine:topbar', { detail: { state: s } })); } catch (e) {}
+    }
+    function to(target, s) { off = target; paint2(true); setState(s); }
+    function show() { to(0, sc.scrollTop <= 0 || atFirstCard() ? 'rest' : 'shown'); arm(); }
+    function hide() { to(tuck, 'hidden'); }
+    function arm() {                                         // optional: tuck again after the list has been still
+      global.clearTimeout(timer); timer = 0;
+      if (!delay || state !== 'shown' || hold || touching) return;
+      timer = global.setTimeout(function () {
+        timer = 0;
+        if (hold || touching || el.contains(doc.activeElement)) return arm();
+        if (atFirstCard()) setState('rest'); else hide();
+      }, delay);
+    }
+
+    // only the person's own scrolling moves the bar
+    function bump(ms) { userUntil = Math.max(userUntil, now() + ms); }
+    sc.addEventListener('touchstart', function () { touching = true; moved = false; global.clearTimeout(timer); timer = 0; }, { passive: true });
+    sc.addEventListener('touchmove', function () { moved = true; bump(200); }, { passive: true });
+    global.addEventListener('touchend', function () { if (!touching) return; touching = false; if (moved) bump(200); settleSoon(); }, { passive: true });
+    global.addEventListener('touchcancel', function () { if (!touching) return; touching = false; settleSoon(); }, { passive: true });
+    sc.addEventListener('wheel', function () { bump(220); }, { passive: true });
+    global.addEventListener('keydown', function (e) { if (/^(ArrowUp|ArrowDown|PageUp|PageDown|Home|End| )$/.test(e.key)) bump(700); });
+    function userScrolling() { return (touching && moved) || now() < userUntil; }
+
+    function onScroll() {
+      var y = sc.scrollTop, max = sc.scrollHeight - sc.clientHeight, t = now();
+      var dy = y - lastY; lastY = y;
+      if (y <= 0) { acc = 0; if (off > 0) to(0, 'rest'); else setState('rest'); return; }
+      if (!userScrolling() || !tuck) return;
+      bump(SETTLE);                                          // momentum keeps counting as theirs
+      if (dy === 0 || y > max || (y >= max && dy < 0)) return;   // rubber-band at the bottom
+      trail.push([t, y]); while (trail.length > 2 && t - trail[1][0] >= 32) trail.shift();   // speed over a short window,
+      var span = t - trail[0][0], vel = span >= 32 ? (y - trail[0][1]) / span : 0;              // not one event's jump
+      if ((dy > 0) !== (acc > 0)) acc = 0;
+      acc += dy;
+      global.clearTimeout(timer); timer = 0;
+      var next = off;
+      if (dy > 0) { if (off > 0.5 || acc > DOWN) next = Math.min(tuck, off + dy); }
+      else if (off < tuck - 0.5) next = Math.max(0, off + dy);             // on its way back: keep following
+      else if (vel < -FLICK && acc < -12) { acc = 0; show(); return settleSoon(); }   // quick flick: straight back
+      else if (acc < -UP) next = Math.max(0, off + dy);                     // past 24 px: start following
+      next = Math.min(next, y);                              // near the top: never more hidden than scrolled
+      if (next !== off) { off = next; paint2(false); }
+      if (off >= tuck - 0.5) setState('hidden');
+      else if (off <= 0.5) setState(atFirstCard() ? 'rest' : 'shown');
+      settleSoon();
+    }
+    function settleSoon() { global.clearTimeout(settleT); settleT = global.setTimeout(settle, SETTLE); }
+    function settle() {                                      // let go: snap to the nearer end
+      if (touching) return settleSoon();
+      if (off > 0.5 && off < tuck - 0.5) { if (off > tuck / 2 && sc.scrollTop >= tuck) hide(); else show(); }
+      else if (off <= 0.5) { off = 0; paint2(false); setState(sc.scrollTop <= 0 || atFirstCard() ? 'rest' : 'shown'); arm(); }
+    }
+    function reveal() { acc = 0; if (off > 0) show(); else if (state === 'shown') arm(); }
+
+    sc.addEventListener('scroll', onScroll, { passive: true });
+    el.addEventListener('pointerdown', function () { hold = true; global.clearTimeout(timer); timer = 0; });
+    global.addEventListener('pointerup', function () { if (hold) { hold = false; arm(); } });
+    global.addEventListener('pointercancel', function () { if (hold) { hold = false; arm(); } });
+    el.addEventListener('focusin', reveal);
+    el.addEventListener('shine:segment', function () { acc = 0; to(0, 'rest'); });            // a new list starts at the top
+    el.addEventListener('shine:segment-reselect', reveal);
+    var back = el.querySelector('.stp-back');
+    if (back && global.MutationObserver) new MutationObserver(function () { acc = 0; to(0, sc.scrollTop <= 0 || atFirstCard() ? 'rest' : 'shown'); global.requestAnimationFrame(measure); })
+      .observe(back, { attributes: true, attributeFilter: ['hidden'] });
+    if (global.ResizeObserver) new ResizeObserver(function () { measure(); }).observe(el);
+    else global.addEventListener('resize', measure);
+    el.classList.add('stp--hides');
+    measure(); setState('rest');
+    el.__stpReveal = reveal;
+  }
+  function mount(el) {
+    if (!el || el.__stp || /^(STYLE|SCRIPT)$/.test(el.tagName)) return el;
+    el.__stp = true; bars.push(el);
+    avatars(el);
+    listen(el);
+    if (el.classList.contains('stp--profile')) global.addEventListener('resize', function () { if (el.__stpT) paint(el); });
+    return el;
+  }
+  function init() { doc.querySelectorAll('[data-shine-topbar]:not(style):not(script)').forEach(mount); }
+  global.ShineTopBar = {
+    version: '1.2.0', mount: mount, initials: initials,
+    update: function () { bars.forEach(function (b) { if (b.__stpT) paint(b); }); },
+    reveal: function () { bars.forEach(function (b) { if (b.__stpReveal) b.__stpReveal(); }); }   // bring a tucked row back
+  };
+  init();
+  if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', init);
+})(window);
+</script>
+<!-- ▲ COMPONENT · top-app-bar -->
+
   <main class="pf" id="pfMain">
 
-    <!-- ═══ HERO · full bleed at the top, as on profile-index.html (mobile) — no top app bar on this tab: the strip
-         (photo + job-search status) is the page's nav row (to become the new floating nav type) ═══ -->
-    <section class="pf-hero" aria-label="Profile strength">
+    <!-- ═══ HERO · full bleed at the top, as on profile-index.html (mobile); the profile bar (top-app-bar component)
+         floats over it, so its content starts var(--stp-profile-h) down ═══ -->
+    <section class="pf-hero" id="pfHero" aria-label="Profile strength">
       <h1 class="pf-sr">Profile</h1>
-      <div class="pf-strip">
-        <button type="button" class="pf-avatar-btn" data-pf="photo" aria-label="Update profile photo"><span class="avatar">RM</span></button>
-        <button type="button" class="btn btn--lg btn--shape-full btn--on-dark pf-status" data-pf="status" aria-haspopup="dialog">Actively Looking <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
-      </div>
       <p class="pf-hi">Hi, Rakesh</p>
       <div class="pf-dial is-inactive" id="pfDial" data-score="28" role="img" aria-label="Profile strength 28 out of 100">
         <svg viewBox="0 40 380 180" aria-hidden="true">
@@ -944,10 +1513,10 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
 </script>
 <!-- ▲ COMPONENT · bottom-tab-bar -->
   <script>
-/* SHINE APP · PROFILE — page script (v1)
+/* SHINE APP · PROFILE — page script (v1.2)
    · draws the strength dial from data-score (the reference's arc maths: 0 → left end, 100 → right end)
    · placeholder taps: the editors, uploads and sheets behind these buttons aren't built yet, so each says what it will open
-   · iPhone status bar follows the full-bleed hero (status cap) — this tab has no top app bar */
+   · iPhone status bar follows the full-bleed hero (status cap); the platform flag comes from the top-app-bar script */
 (function () {
   'use strict';
   function say(t) {
@@ -957,12 +1526,6 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
   }
   window.showToast = say;
 
-  // platform flag (the top-app-bar component sets it on the other tabs; this tab has no top bar)
-  var html = document.documentElement;
-  if (!html.getAttribute('data-platform')) {
-    var ua = navigator.userAgent || '';
-    html.setAttribute('data-platform', /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && 'ontouchend' in document) ? 'ios' : 'android');
-  }
   // iPhone status bar: the cap is dark while the hero is under the top edge, page-coloured once it has scrolled away
   var cap = document.getElementById('pfCap'), hero = document.querySelector('.pf-hero');
   function capTone() { if (cap && hero) cap.classList.toggle('is-dark', hero.getBoundingClientRect().bottom > cap.offsetHeight); }

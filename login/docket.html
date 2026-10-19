@@ -1205,19 +1205,22 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
 }
 </style>
 <!-- ▲ COMPONENT · bottom-tab-bar -->
-<!-- ▼ COMPONENT · top-app-bar v1.1.1 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v1.2.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
 <style data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v1.1.1
-   One top bar for every logged-in screen, in two variants that share one
-   frame, so the menu, the brand/title anchor and the trailing action sit
-   on exactly the same spot on every tab.
+   SHINE · TOP APP BAR  (app component · App-login)              v1.2.0
+   One top bar for every logged-in screen, in three variants that share one
+   frame, so the leading item, the brand/title anchor and the trailing
+   action sit on exactly the same spot on every tab.
 
      brand  ╭──────────────────────────────────────────╮   Home
             │ ☰  shine                 [ 🔍 Search Jobs ] │   floating pill
             ╰──────────────────────────────────────────╯
      title    ☰  My Jobs.                                  My Jobs · Docket
               [ Recommended | Saved | Applied ]            (slot below)
+     profile ╭──────────────────────────────────────────╮   Me (Profile)
+            │ (RM)                  [ Actively Looking ⌄ ] │   floating pill
+            ╰──────────────────────────────────────────╯   on a dark hero
 
    Shared frame (both variants, both platforms)
      gutter G 24 (spacing.layout.sm): glyphs and text start / end on it
@@ -1230,6 +1233,17 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
      above, below and at both ends — so the menu and Search Jobs sit concentric
      in the pill (radius 26 = 20 + 6): pill 52 = 40 + 6 + 6, 6 above / below it
      (bar still 64, menu centre still 32), 8 from the screen (spacing.inset.md)
+
+   Profile variant (v1.2.0) — the Me tab: no menu, no title. The pill holds
+     the person's photo (A.08 Avatar xl 56 · initials until there is a photo)
+     and the job-search status (A.02 Button lg 48, light fill on dark). Same
+     pill margins as the brand bar (8 from the screen, 6 above / below);
+     pill 64 = avatar 56 + 4 + 4 (spacing.inset.xs), the status sits 8 from
+     the pill's top, bottom and end (concentric) → bar 76. It FLOATS over
+     the page's dark hero (takes no room; pages pad the hero by
+     var(--stp-profile-h)). On the hero: faint light lift; once the hero is
+     no longer under it (data-stp-over="<hero>"), it lifts onto a frosted
+     dark surface + lifted shadow, so it reads over light content too.
 
    Platform (html / ancestor [data-platform="ios"]; Android is the default)
      Android  title bar = M3 small top app bar: 64, pinned, start-aligned;
@@ -1261,6 +1275,10 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
    safe-area-inset-top — adding it doubled the space above the bar (same family as the tab bar's bottom
    inset). html.in-app is set by the app shell's native.js. */
 html.in-app { --stp-safe-top: 0px; }
+/* Profile bar height for pages (v1.2.0): the bar floats over the page's top section, which pads its content by
+   this much — safe top + 6 + pill 64 (avatar 56 + 2 × 4) + 6 = 76. Never hard-code it on a page. */
+:root { --stp-profile-h: calc(var(--stp-safe-top) + 56px + 2 * 4px + 2 * 6px); }
+html.in-app { --stp-profile-h: calc(56px + 2 * 4px + 2 * 6px); }
 
 .stp {
   /* COLOUR — §2.2 (light) */
@@ -1282,7 +1300,13 @@ html.in-app { --stp-safe-top: 0px; }
   --stp-elevation-focus-default: 0 0 0 4px rgba(26, 86, 255, .10);        /* elevation.focus.default */
   --stp-stroke-neutral-focus: #1A56FF;                     /* stroke.neutral.focus */
   --stp-surface-neutral-state-hover: #EEF1F5;              /* surface.neutral-state.hover — back button */
-  --stp-surface-neutral-state-pressed: #E4E7EC;            /* surface.neutral-state.pressed — back button */
+  --stp-surface-neutral-state-pressed: #E4E7EC;            /* surface.neutral-state.pressed — back button, status pressed */
+  /* profile variant (v1.2.0) — on a surface that is dark in both themes */
+  --stp-surface-neutral-muted: #EEF1F5;                    /* surface.neutral.muted — A.08 avatar · user · subtle */
+  --stp-surface-on-fill-dark-subtle: rgba(255, 255, 255, .06);
+                                                           /* surface.on-fill-dark.subtle (PROPOSED) — pill on the dark hero */
+  --stp-surface-inverse-muted-translucent: rgba(22, 27, 34, .96);
+                                                           /* surface.inverse.muted-translucent (PROPOSED) — lifted pill over light content */
   --stp-blur: blur(24px) saturate(180%);
 
   /* SPACE · SIZE — §2.3 / §2.4 */
@@ -1300,6 +1324,12 @@ html.in-app { --stp-safe-top: 0px; }
   --stp-anchor: calc(var(--stp-hit-edge) + var(--stp-hit) + 8px);                       /* 62 — logo / title start (spacing.inline.md after the menu) */
   --stp-logo-h: 36px;              /* brand asset — the DS has no logo size (proposed size.logo.md) */
   --stp-radius-full: 1024px;       /* size.radius.full */
+  /* profile variant */
+  --stp-avatar: 56px;              /* A.08 Avatar xl */
+  --stp-avatar-inset: 4px;         /* spacing.inset.xs — round the avatar */
+  --stp-status-h: 48px;            /* size.control.lg — A.02 Button lg */
+  --stp-profile-pill: calc(var(--stp-avatar) + var(--stp-avatar-inset) * 2);              /* 64 */
+  --stp-status-end: calc((var(--stp-profile-pill) - var(--stp-status-h)) / 2);            /* 8 — status concentric in the pill */
 
   /* TYPE — §2.1 */
   --stp-font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;   /* typeface.family.brand */
@@ -1387,6 +1417,52 @@ html.in-app { --stp-safe-top: 0px; }
 .stp-cta:active { background: var(--stp-surface-brand-intense-pressed); box-shadow: var(--stp-elevation-brand-subtle); }
 .stp-cta:focus-visible { outline: 2px solid var(--stp-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--stp-elevation-focus-default); }
 
+/* ── Profile variant · floating pill on a dark hero (Me tab) · v1.2.0 ─
+   Floats: a negative bottom margin as tall as the bar, so the page's dark top section starts under it (pages pad
+   that section by var(--stp-profile-h)). Sticky like the brand bar. */
+.stp--profile { margin-bottom: calc(-1 * var(--stp-profile-h)); color: var(--stp-content-on-fill-dark-base); }
+.stp--profile .stp-row {
+  height: var(--stp-profile-pill);
+  margin: var(--stp-pill-pad-y) var(--stp-pill-margin);              /* 6 above / below · 8 from the screen — as the brand pill */
+  padding: 0 var(--stp-status-end) 0 var(--stp-avatar-inset);        /* avatar hugs the start (4 round it); status 8 from the end */
+  border-radius: var(--stp-radius-full);
+  background: var(--stp-surface-on-fill-dark-subtle);
+  transition: background-color var(--stp-dur) var(--stp-ease), box-shadow var(--stp-dur) var(--stp-ease);
+}
+.stp--profile.is-lifted .stp-row {
+  background: var(--stp-surface-inverse-muted-translucent);
+  -webkit-backdrop-filter: var(--stp-blur); backdrop-filter: var(--stp-blur);
+  box-shadow: var(--stp-elevation-neutral-lifted);
+}
+/* photo — DS A.08 Avatar · user · subtle · xl: initials (Label / lg bold) until there is a photo */
+.stp-avatar {
+  position: relative; flex: none; display: grid; place-items: center; overflow: hidden;
+  width: var(--stp-avatar); height: var(--stp-avatar); padding: 0; border: none; border-radius: var(--stp-radius-full);
+  background: var(--stp-surface-neutral-muted); color: var(--stp-content-neutral-base);
+  font: 700 14px/14px var(--stp-font); text-transform: uppercase;            /* Label / lg bold */
+  cursor: pointer; -webkit-appearance: none; appearance: none; touch-action: manipulation;
+}
+.stp-avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.stp-avatar img[hidden] { display: none; }
+.stp-avatar:focus { outline: none; }
+.stp-avatar:focus-visible { outline: 2px solid var(--stp-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--stp-elevation-focus-default); }
+/* job-search status — DS A.02 Button · lg · shape-full, light fill on the dark pill: 48 · 22 on the label side,
+   16 on the chevron side · Label / lg bold · chevron 16 (stroke 2) · 8 gap */
+.stp-status {
+  display: inline-flex; align-items: center; gap: 8px;                       /* spacing.inline.md */
+  height: var(--stp-status-h); padding: 0 16px 0 22px;                       /* spacing.inset.xl · spacing.inset.xxl */
+  border: none; border-radius: var(--stp-radius-full);
+  background: var(--stp-surface-neutral-raised); color: var(--stp-content-neutral-base);
+  font: 700 14px/14px var(--stp-font);                                        /* Label / lg bold */
+  white-space: nowrap; cursor: pointer; -webkit-appearance: none; appearance: none; touch-action: manipulation;
+  transition: background-color var(--stp-dur) var(--stp-ease);
+}
+.stp-status svg { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 2px; stroke-linecap: round; stroke-linejoin: round; }   /* size.icon.md · size.stroke.thick */
+@media (hover: hover) { .stp-status:hover { background: var(--stp-surface-neutral-state-hover); } }
+.stp-status:active { background: var(--stp-surface-neutral-state-pressed); }
+.stp-status:focus { outline: none; }
+.stp-status:focus-visible { outline: 2px solid var(--stp-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--stp-elevation-focus-default); }
+
 /* ── Title variant (My Jobs, Docket) ──────────────────────────────── */
 .stp--title { background: var(--stp-surface-neutral-base); }
 .stp-title {
@@ -1449,7 +1525,8 @@ html.in-app { --stp-safe-top: 0px; }
 .stp--title.is-tucked .stp-row { visibility: hidden; pointer-events: none; }   /* out of reach for taps and the screen reader's swipe order */
 
 @media (prefers-reduced-motion: reduce) {
-  .stp--title, .stp--title::after, .stp-cta, .stp-back, .stp--title.stp-anim, .stp--title.stp-anim .stp-row { transition: none; }
+  .stp--title, .stp--title::after, .stp-cta, .stp-back, .stp--title.stp-anim, .stp--title.stp-anim .stp-row,
+  .stp--profile .stp-row, .stp-status { transition: none; }
 }
 </style>
 <!-- ▲ COMPONENT · top-app-bar -->
@@ -2748,10 +2825,10 @@ html.in-app .bs { --bs-safe: 0px; }
         <!-- ▲ COMPONENT · segment-control -->
         </div>
       </header>
-<!-- ▼ COMPONENT · top-app-bar v1.1.1 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v1.2.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
 <script data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v1.1.1
+   SHINE · TOP APP BAR  (app component · App-login)              v1.2.0
    Pair with top-app-bar.css and the menu-button component.
 
    Markup — brand (Home):
@@ -2771,10 +2848,24 @@ html.in-app .bs { --bs-safe: 0px; }
        </div>
        <div class="stp-below">…segment control…</div>
      </header>
+   Markup — profile (Me tab, v1.2.0): floats over the page's dark hero
+     <header class="stp stp--profile" data-shine-topbar data-stp-over="#hero">
+       <div class="stp-row">
+         <button class="stp-avatar" type="button" data-name="Rakesh Mallick" aria-label="Profile photo"></button>
+         <div class="stp-end"><button class="stp-status" type="button" aria-haspopup="dialog">Actively Looking<svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button></div>
+       </div>
+     </header>
 
    data-stp-scroll   the element whose scroll drives the bar (default: the page).
                      It may come later in the page than the bar — the script
                      waits for it (DOMContentLoaded) before listening.
+   data-stp-over     profile bar: the dark section it floats over (selector).
+                     While that section is under the pill the bar keeps its
+                     faint on-dark look; once it has scrolled away the bar gets
+                     .is-lifted (frosted dark surface + shadow). Without it,
+                     .is-lifted follows .is-scrolled.
+   .stp-avatar[data-name]  an empty avatar shows the name's initials (A.08:
+                     1–2 letters); an <img> inside it is the photo.
    data-stp-hide     title bar only, with data-stp-scroll + a slot below
                      (v1.1.0): the menu row (menu + title) gets out of the way
                      while the list is read; the slot below stays pinned.
@@ -2808,7 +2899,7 @@ html.in-app .bs { --bs-safe: 0px; }
    Hiding bars also get .stp--hides, .is-tucked (row fully away) and fire
    `shine:topbar` on the header: detail { state: 'rest'|'shown'|'hidden' }.
    API: ShineTopBar.mount(el) · ShineTopBar.update() · ShineTopBar.reveal()
-        · ShineTopBar.version
+        · ShineTopBar.initials(name) · ShineTopBar.version
    ═══════════════════════════════════════════════════════════════════════ */
 (function (global) {
   'use strict';
@@ -2831,6 +2922,22 @@ html.in-app .bs { --bs-safe: 0px; }
     var v = Math.max(0, y(el.__stpT));
     el.classList.toggle('is-scrolled', v > 0);
     el.style.setProperty('--stp-p', Math.min(1, v / RANGE).toFixed(3));
+    if (el.classList.contains('stp--profile')) {          // profile bar: lifts once its dark section has left
+      var over = el.getAttribute('data-stp-over'), sec = over && doc.querySelector(over), row = el.querySelector('.stp-row');
+      var lifted = sec && row ? sec.getBoundingClientRect().bottom <= row.getBoundingClientRect().bottom : v > 0;
+      el.classList.toggle('is-lifted', lifted);
+    }
+  }
+  function initials(name) {                                 // A.08: first letters of the first and last word, 1–2
+    var w = String(name || '').trim().split(/\s+/).filter(Boolean);
+    if (!w.length) return '';
+    return (w[0].charAt(0) + (w.length > 1 ? w[w.length - 1].charAt(0) : '')).toUpperCase();
+  }
+  function avatars(el) {
+    el.querySelectorAll('.stp-avatar[data-name]').forEach(function (a) {
+      if (a.querySelector('img:not([hidden])') || a.textContent.trim()) return;
+      a.appendChild(doc.createTextNode(initials(a.getAttribute('data-name'))));
+    });
   }
   function listen(el) {
     var t = target(el);
@@ -2960,12 +3067,14 @@ html.in-app .bs { --bs-safe: 0px; }
   function mount(el) {
     if (!el || el.__stp || /^(STYLE|SCRIPT)$/.test(el.tagName)) return el;
     el.__stp = true; bars.push(el);
+    avatars(el);
     listen(el);
+    if (el.classList.contains('stp--profile')) global.addEventListener('resize', function () { if (el.__stpT) paint(el); });
     return el;
   }
   function init() { doc.querySelectorAll('[data-shine-topbar]:not(style):not(script)').forEach(mount); }
   global.ShineTopBar = {
-    version: '1.1.1', mount: mount,
+    version: '1.2.0', mount: mount, initials: initials,
     update: function () { bars.forEach(function (b) { if (b.__stpT) paint(b); }); },
     reveal: function () { bars.forEach(function (b) { if (b.__stpReveal) b.__stpReveal(); }); }   // bring a tucked row back
   };
