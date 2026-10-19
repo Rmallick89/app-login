@@ -35,7 +35,7 @@ Docket's and My Jobs' "Remove this saved job?" confirmation is the shared bottom
 images (`icons/launch-*.png`, one exact size per iPhone screen, linked as `apple-touch-startup-image`), the same colour
 as the splash's first frame, so tapping the icon shows only the Shine splash.
 
-`login/` is a self-contained app: pages, fonts, a web-app manifest, home-screen icons (midnight navy, white Shine logo)
+`login/` is a self-contained app: pages, fonts, a web-app manifest, home-screen icons (the splash background — midnight navy with its sunrise — and the white Shine logo; an icon already on a Home Screen only changes after it is removed and added again)
 and an offline cache (`sw.js`). `index.html` at the root is the install page.
 
 ## Publish (GitHub Pages)
