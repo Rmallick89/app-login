@@ -1205,10 +1205,10 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
 }
 </style>
 <!-- ▲ COMPONENT · bottom-tab-bar -->
-<!-- ▼ COMPONENT · top-app-bar v1.0.3 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v1.1.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
 <style data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v1.0.3
+   SHINE · TOP APP BAR  (app component · App-login)              v1.1.0
    One top bar for every logged-in screen, in two variants that share one
    frame, so the menu, the brand/title anchor and the trailing action sit
    on exactly the same spot on every tab.
@@ -1236,12 +1236,20 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
               on scroll it lifts (frosted surface + hairline under the slot)
      iPhone   title bar: the standard 44 pt bar — row 44 right under the
               status bar, 10 under it (so the title keeps the same 20 gap
-              to the segment as on Android) → 54; pinned, nothing moves or
-              resizes on scroll. Opaque page surface in both
+              to the segment as on Android) → 54; pinned, never resizes on
+              scroll (with data-stp-hide the menu row slides away, as on Android). Opaque page surface in both
               states, so iOS's status bar (painted from the page surface) is
               always the same colour as the bar; a hairline fades in at the
               edge (scroll-linked, 40 px). Title start-aligned at 62
      brand    floating pill on both; it already sits on its own surface
+
+   Hide on scroll — title bar with data-stp-hide (v1.1.0, both platforms)
+     The menu row slides away while the list is read and comes back on a
+     scroll up; the slot below (segment) stays pinned, 8 under the top edge.
+     The script floats the header over the list (.stp--hides) and pads the
+     list by the header's height, so the cards get the row's space
+     (Android 56 · iPhone 46) with no reflow. The bar follows the finger;
+     letting go / a flick / re-tapping the tab animates (.stp-anim).
 
    ▶ BEFORE ADDING OR CHANGING IT: read README.md in this folder.
    • Semantic tokens only (DESIGN-SYSTEM.md §2); the scoped layer names them.
@@ -1258,6 +1266,7 @@ html.in-app { --stp-safe-top: 0px; }
   /* COLOUR — §2.2 (light) */
   --stp-content-neutral-base: #0D1117;                     /* content.neutral.base — title, icons */
   --stp-surface-neutral-base: #FAF9F6;                     /* surface.neutral.base — bar at rest = page */
+  --stp-surface-neutral-raised: #FFFFFF;                   /* surface.neutral.raised — hiding title bar, scrolled (Android) */
   --stp-surface-neutral-raised-translucent: rgba(255, 255, 255, .96);
                                                            /* surface.neutral.raised-translucent (PROPOSED, same as the tab bar) */
   --stp-stroke-neutral-muted: #EEF1F5;                     /* stroke.neutral.muted — scroll hairline */
@@ -1300,6 +1309,8 @@ html.in-app { --stp-safe-top: 0px; }
 
   /* MOTION — proposed */
   --stp-dur: 200ms; --stp-ease: ease;
+  --stp-hide-dur: 280ms;           /* hide on scroll: settle / flick / tab re-tap (the finger drives the rest) */
+  --stp-hide-ease: cubic-bezier(.2, .8, .2, 1);
 
   --stp-p: 0;                      /* scroll-edge progress 0 → 1 over 40 px, set by the script (iOS hairline) */
 
@@ -1399,10 +1410,18 @@ html.in-app { --stp-safe-top: 0px; }
 }
 .stp--title.is-scrolled::after { opacity: 1; }
 
-/* ── iPhone: standard 44 pt bar, never moves; the bar matches the status bar ───
+/* hide on scroll (Android): the cards now pass under the bar, and through a 96 % frosted surface their edges and
+   shadows showed as a ghost behind the segment — the hiding bar lifts onto the opaque raised surface instead (it
+   looks the same as before: 96 % white over the page was already ≈ white) */
+.stp--title.stp--hides.is-scrolled {
+  background: var(--stp-surface-neutral-raised);
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+
+/* ── iPhone: standard 44 pt bar, never resizes; the bar matches the status bar ───
    • The title bar is the iOS 44 pt navigation bar at rest: row 44 directly under the status bar, and
      8 + (48 − 44) / 2 = 10 under it, so title → segment is 20 on both platforms. Bar 54 (110 with a
-     segment). No compacting on scroll: the menu row and the segment never shift.
+     segment). No compacting on scroll (data-stp-hide slides the row away, the same as on Android).
    • iOS paints the status bar from the page surface (body or the fixed screen at the top edge — it
      ignores opacity and theme-color), so a frosted white bar would sit under an off-white status bar.
      The bar stays on the opaque page surface in both states; only the hairline marks the scroll edge. */
@@ -1418,8 +1437,19 @@ html.in-app { --stp-safe-top: 0px; }
 [data-platform="ios"] .stp--title.is-scrolled::after { opacity: var(--stp-p); }
 [data-platform="ios"] .stp-row > .mb::after, [data-platform="ios"] .stp-row > .stp-back::after { inset: -2px; }    /* 44 touch target */
 
+/* ── Hide on scroll (title bar · data-stp-hide · v1.1.0) ─────────────
+   .stp--hides is set by the script once it has padded the list, so without
+   the script the bar stays the plain sticky header. The inline transform
+   (set while the finger moves) is the row's offset; .stp-anim animates the
+   rest of the way. The status-bar area keeps the bar's own surface: only the
+   row's content fades, the header background slides under it. */
+.stp--title.stp--hides { position: absolute; top: 0; left: 0; right: 0; will-change: transform; }
+.stp--title.stp-anim { transition: transform var(--stp-hide-dur) var(--stp-hide-ease), background-color var(--stp-dur) var(--stp-ease); }
+.stp--title.stp-anim .stp-row { transition: opacity var(--stp-dur) var(--stp-ease); }
+.stp--title.is-tucked .stp-row { visibility: hidden; pointer-events: none; }   /* out of reach for taps and the screen reader's swipe order */
+
 @media (prefers-reduced-motion: reduce) {
-  .stp--title, .stp--title::after, .stp-cta, .stp-back { transition: none; }
+  .stp--title, .stp--title::after, .stp-cta, .stp-back, .stp--title.stp-anim, .stp--title.stp-anim .stp-row { transition: none; }
 }
 </style>
 <!-- ▲ COMPONENT · top-app-bar -->
@@ -2283,13 +2313,15 @@ html.in-app .bs { --bs-safe: 0px; }
      shadow   elevation.neutral.lifted — 0 4px 12px black@8% + 0 2px 4px black@4% (cool-neutral/black #0D1117)
      text     #344054  content.neutral.muted · Label / md bold 12
      size     24 tall · inline 12 (inset.md) · radius.full 1024 · 8 below the top bar (stack.xs)
+   v1.1 (2026-10-19): mounted inside the top bar instead of fixed to the screen, so it follows the bar's hide-on-scroll.
    Deviation (documented): the label's line box is 16 px, not Label / md's 12, so descenders in "Yesterday" are not
    clipped by the rolling-label mask (same fix as the tab nudge copy). */
 .dkc { --dkc-bg: #FFFFFF; --dkc-ring: #EEF1F5; --dkc-text: #344054;
   --dkc-shadow: 0 4px 12px rgba(13, 17, 23, .08), 0 2px 4px rgba(13, 17, 23, .04);
-  --dkc-h: 24px; --dkc-inline: 12px; --dkc-gap: 8px; --dkc-z: 96;   /* above the Docket sheet (95), under bottom sheets (100+) */
+  --dkc-h: 24px; --dkc-inline: 12px; --dkc-gap: 8px; --dkc-z: 1;    /* inside the top bar (z 80 in the Docket sheet), under bottom sheets (100+) */
   --dkc-ease: cubic-bezier(.2, .8, .2, 1);
-  position: fixed; z-index: var(--dkc-z); height: 0; display: flex; justify-content: center; pointer-events: none;
+  position: absolute; top: 100%; left: 0; right: 0;   /* lives inside the top bar, so it rides along when the menu row slides away (top-app-bar v1.1.0) */
+  z-index: var(--dkc-z); height: 0; display: flex; justify-content: center; pointer-events: none;
   opacity: 0; visibility: hidden; transition: opacity 160ms ease, visibility 0s linear 160ms; }
 .dkc.on { opacity: 1; visibility: visible; transition: opacity 120ms ease; }
 .dkc-chip { margin-top: var(--dkc-gap); height: var(--dkc-h); padding: 0 var(--dkc-inline); border-radius: 1024px;
@@ -2316,7 +2348,7 @@ html.in-app .bs { --bs-safe: 0px; }
   <div class="view view-in active" id="viewIn">
     <section class="mr-sheet is-open" id="mrSheet" aria-label="Docket">
       <!-- Top bar · top-app-bar component (title variant): menu, or the back arrow in the Expired view, + title + segment slot -->
-      <header class="stp stp--title" data-shine-topbar data-stp-scroll="#mrSheetList">
+      <header class="stp stp--title" data-shine-topbar data-stp-scroll="#mrSheetList" data-stp-hide>
         <div class="stp-row">
           <button class="mb" type="button" data-shine-menu data-page="docket" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
           <!-- ▼ COMPONENT · menu-button v1.1.0 — verbatim copy of App-login/app-components/menu-button/menu-button.js -->
@@ -2568,10 +2600,10 @@ html.in-app .bs { --bs-safe: 0px; }
         <!-- ▲ COMPONENT · segment-control -->
         </div>
       </header>
-<!-- ▼ COMPONENT · top-app-bar v1.0.3 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v1.1.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
 <script data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v1.0.3
+   SHINE · TOP APP BAR  (app component · App-login)              v1.1.0
    Pair with top-app-bar.css and the menu-button component.
 
    Markup — brand (Home):
@@ -2595,12 +2627,39 @@ html.in-app .bs { --bs-safe: 0px; }
    data-stp-scroll   the element whose scroll drives the bar (default: the page).
                      It may come later in the page than the bar — the script
                      waits for it (DOMContentLoaded) before listening.
+   data-stp-hide     title bar only, with data-stp-scroll + a slot below
+                     (v1.1.0): the menu row (menu + title) gets out of the way
+                     while the list is read; the slot below stays pinned.
+                     The header then floats over the list (the script pads the
+                     list by the header's height), so the cards gain the space.
+                     Its parent must be a positioned box that holds the list,
+                     and the header must not sit inside the list itself —
+                     otherwise the bar stays the plain sticky header.
+   data-stp-hide-delay  optional, ms: also tuck the row again after the list
+                     has been still this long mid-list. Default 0 = off (the
+                     row stays until the person scrolls down again).
+   Hide rules (v1.1.0):
+     · down 8 px → the row follows the finger out (1:1); up 24 px → it follows
+       back in; a quick upward flick (> 1.1 px/ms) brings it straight back;
+       letting go part-way settles it fully open or closed (nearest end)
+     · near the top the row is never more hidden than the list is scrolled;
+       with the 1st card's middle below the bar it is "at rest"
+     · only the person's own scrolling counts (a finger that moved, wheel /
+       trackpad, scroll keys and the momentum after them) — the list moving by
+       itself (a card removed, a re-render, scrollTo from code) is ignored
+     · it comes back on: re-tapping the current tab (shine:tab active), a
+       segment change in the slot, a sub-view opening or closing (.stp-back
+       shown / hidden), keyboard focus inside the bar; touching the bar holds it
+     · nothing hides when the slot below is hidden (sub-views) — the back
+       button stays in reach
    Platform: sets <html data-platform="ios|android"> once (iPhone / iPad →
    ios, anything else → android) unless the page already set it.
    Behaviour: .is-scrolled when the content is scrolled; --stp-p runs
-   0 → 1 over the first 40 px (fades the iPhone scroll-edge hairline in;
-   the header itself never moves or resizes).
-   API: ShineTopBar.mount(el) · ShineTopBar.update() · ShineTopBar.version
+   0 → 1 over the first 40 px (fades the iPhone scroll-edge hairline in).
+   Hiding bars also get .stp--hides, .is-tucked (row fully away) and fire
+   `shine:topbar` on the header: detail { state: 'rest'|'shown'|'hidden' }.
+   API: ShineTopBar.mount(el) · ShineTopBar.update() · ShineTopBar.reveal()
+        · ShineTopBar.version
    ═══════════════════════════════════════════════════════════════════════ */
 (function (global) {
   'use strict';
@@ -2640,6 +2699,117 @@ html.in-app .bs { --bs-safe: 0px; }
       raf = global.requestAnimationFrame(function () { raf = 0; paint(el); });
     }, { passive: true });
     paint(el);
+    if (el.hasAttribute('data-stp-hide') && el.__stpT !== global) hider(el, el.__stpT);
+  }
+
+  /* ── Hide on scroll (v1.1.0) ─────────────────────────────────────── */
+  var DOWN = 8, UP = 24, FLICK = 1.1, SETTLE = 140;          // px · px · px/ms (over the last ≥ 32 ms, ≥ 12 px) · ms after the last scroll
+  var reduce = global.matchMedia ? global.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
+  function hider(el, sc) {
+    var row = el.querySelector('.stp-row'), below = el.querySelector('.stp-below'), box = el.parentNode;
+    if (!row || !below || !box || sc.contains(el) || global.getComputedStyle(box).position === 'static') return;   // needs: a slot, the header outside the list, a positioned parent
+    var delay = Math.max(0, parseInt(el.getAttribute('data-stp-hide-delay'), 10) || 0);
+    var tuck = 0, off = 0, lastY = sc.scrollTop, acc = 0, trail = [], state = '';
+    var touching = false, moved = false, userUntil = 0, settleT = 0, timer = 0, hold = false;
+    function now() { return global.performance && performance.now ? performance.now() : Date.now(); }
+
+    function measure() {                                     // header height → list padding; how far the row tucks
+      var safe = parseFloat(global.getComputedStyle(el).paddingTop) || 0;
+      tuck = below.offsetParent && !below.hidden ? Math.max(0, below.offsetTop - safe - 8) : 0;   // slot ends 8 under the top edge (spacing.inset.md)
+      sc.style.paddingTop = el.offsetHeight + 'px';
+      sc.style.scrollPaddingTop = el.offsetHeight + 'px';
+      if (off > tuck) off = tuck;
+      paint2(false);
+    }
+    function paint2(animate) {                               // off: 0 = row fully shown … tuck = fully away
+      el.classList.toggle('stp-anim', !!animate && !reduce.matches);
+      el.style.transform = off > 0 ? 'translateY(' + (-off).toFixed(1) + 'px)' : '';
+      row.style.opacity = off > 0 && tuck ? Math.max(0, 1 - off / tuck * 1.6).toFixed(3) : '';
+      el.classList.toggle('is-tucked', tuck > 0 && off >= tuck - 0.5);
+    }
+    function atFirstCard() {                                 // the 1st item's middle is still below the bar at rest
+      var item = sc.querySelector('[data-stp-item], .jcard');   // job cards, or anything the page marks as a list item
+      if (!item || !item.offsetParent) return true;
+      var r = item.getBoundingClientRect();
+      return r.top + r.height / 2 > sc.getBoundingClientRect().top + el.offsetHeight;
+    }
+    function setState(s) {
+      if (s !== 'shown') { global.clearTimeout(timer); timer = 0; }
+      if (s === state) return; state = s;
+      try { el.dispatchEvent(new CustomEvent('shine:topbar', { detail: { state: s } })); } catch (e) {}
+    }
+    function to(target, s) { off = target; paint2(true); setState(s); }
+    function show() { to(0, sc.scrollTop <= 0 || atFirstCard() ? 'rest' : 'shown'); arm(); }
+    function hide() { to(tuck, 'hidden'); }
+    function arm() {                                         // optional: tuck again after the list has been still
+      global.clearTimeout(timer); timer = 0;
+      if (!delay || state !== 'shown' || hold || touching) return;
+      timer = global.setTimeout(function () {
+        timer = 0;
+        if (hold || touching || el.contains(doc.activeElement)) return arm();
+        if (atFirstCard()) setState('rest'); else hide();
+      }, delay);
+    }
+
+    // only the person's own scrolling moves the bar
+    function bump(ms) { userUntil = Math.max(userUntil, now() + ms); }
+    sc.addEventListener('touchstart', function () { touching = true; moved = false; global.clearTimeout(timer); timer = 0; }, { passive: true });
+    sc.addEventListener('touchmove', function () { moved = true; bump(200); }, { passive: true });
+    global.addEventListener('touchend', function () { if (!touching) return; touching = false; if (moved) bump(200); settleSoon(); }, { passive: true });
+    global.addEventListener('touchcancel', function () { if (!touching) return; touching = false; settleSoon(); }, { passive: true });
+    sc.addEventListener('wheel', function () { bump(220); }, { passive: true });
+    global.addEventListener('keydown', function (e) { if (/^(ArrowUp|ArrowDown|PageUp|PageDown|Home|End| )$/.test(e.key)) bump(700); });
+    function userScrolling() { return (touching && moved) || now() < userUntil; }
+
+    function onScroll() {
+      var y = sc.scrollTop, max = sc.scrollHeight - sc.clientHeight, t = now();
+      var dy = y - lastY; lastY = y;
+      if (y <= 0) { acc = 0; if (off > 0) to(0, 'rest'); else setState('rest'); return; }
+      if (!userScrolling() || !tuck) return;
+      bump(SETTLE);                                          // momentum keeps counting as theirs
+      if (dy === 0 || y > max || (y >= max && dy < 0)) return;   // rubber-band at the bottom
+      trail.push([t, y]); while (trail.length > 2 && t - trail[1][0] >= 32) trail.shift();   // speed over a short window,
+      var span = t - trail[0][0], vel = span >= 32 ? (y - trail[0][1]) / span : 0;              // not one event's jump
+      if ((dy > 0) !== (acc > 0)) acc = 0;
+      acc += dy;
+      global.clearTimeout(timer); timer = 0;
+      var next = off;
+      if (dy > 0) { if (off > 0.5 || acc > DOWN) next = Math.min(tuck, off + dy); }
+      else if (off < tuck - 0.5) next = Math.max(0, off + dy);             // on its way back: keep following
+      else if (vel < -FLICK && acc < -12) { acc = 0; show(); return settleSoon(); }   // quick flick: straight back
+      else if (acc < -UP) next = Math.max(0, off + dy);                     // past 24 px: start following
+      next = Math.min(next, y);                              // near the top: never more hidden than scrolled
+      if (next !== off) { off = next; paint2(false); }
+      if (off >= tuck - 0.5) setState('hidden');
+      else if (off <= 0.5) setState(atFirstCard() ? 'rest' : 'shown');
+      settleSoon();
+    }
+    function settleSoon() { global.clearTimeout(settleT); settleT = global.setTimeout(settle, SETTLE); }
+    function settle() {                                      // let go: snap to the nearer end
+      if (touching) return settleSoon();
+      if (off > 0.5 && off < tuck - 0.5) { if (off > tuck / 2 && sc.scrollTop >= tuck) hide(); else show(); }
+      else if (off <= 0.5) { off = 0; paint2(false); setState(sc.scrollTop <= 0 || atFirstCard() ? 'rest' : 'shown'); arm(); }
+    }
+    function reveal() { acc = 0; if (off > 0) show(); else if (state === 'shown') arm(); }
+
+    sc.addEventListener('scroll', onScroll, { passive: true });
+    el.addEventListener('pointerdown', function () { hold = true; global.clearTimeout(timer); timer = 0; });
+    global.addEventListener('pointerup', function () { if (hold) { hold = false; arm(); } });
+    global.addEventListener('pointercancel', function () { if (hold) { hold = false; arm(); } });
+    el.addEventListener('focusin', reveal);
+    el.addEventListener('shine:segment', function () { acc = 0; to(0, 'rest'); });            // a new list starts at the top
+    el.addEventListener('shine:segment-reselect', reveal);
+    doc.addEventListener('shine:tab', function (e) {           // re-tap the current tab: the page glides the list up
+      if (e.detail && e.detail.active && sc.scrollTop > 0) { acc = 0; to(0, 'rest'); }
+    });
+    var back = el.querySelector('.stp-back');
+    if (back && global.MutationObserver) new MutationObserver(function () { acc = 0; to(0, sc.scrollTop <= 0 || atFirstCard() ? 'rest' : 'shown'); global.requestAnimationFrame(measure); })
+      .observe(back, { attributes: true, attributeFilter: ['hidden'] });
+    if (global.ResizeObserver) new ResizeObserver(function () { measure(); }).observe(el);
+    else global.addEventListener('resize', measure);
+    el.classList.add('stp--hides');
+    measure(); setState('rest');
+    el.__stpReveal = reveal;
   }
   function mount(el) {
     if (!el || el.__stp || /^(STYLE|SCRIPT)$/.test(el.tagName)) return el;
@@ -2648,7 +2818,11 @@ html.in-app .bs { --bs-safe: 0px; }
     return el;
   }
   function init() { doc.querySelectorAll('[data-shine-topbar]:not(style):not(script)').forEach(mount); }
-  global.ShineTopBar = { version: '1.0.3', mount: mount, update: function () { bars.forEach(function (b) { if (b.__stpT) paint(b); }); } };
+  global.ShineTopBar = {
+    version: '1.1.0', mount: mount,
+    update: function () { bars.forEach(function (b) { if (b.__stpT) paint(b); }); },
+    reveal: function () { bars.forEach(function (b) { if (b.__stpReveal) b.__stpReveal(); }); }   // bring a tucked row back
+  };
   init();
   if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', init);
 })(window);
@@ -3986,16 +4160,11 @@ html.in-app .bs { --bs-safe: 0px; }
   if (!sc || !hd) return;
   var chip = document.createElement('div'); chip.className = 'dkc'; chip.setAttribute('aria-hidden', 'true');
   chip.innerHTML = '<span class="dkc-chip"><span class="dkc-lbl"><b></b></span></span>';
-  document.body.appendChild(chip);
+  hd.appendChild(chip);                                // inside the bar: moves with it when the menu row slides away
   var lbl = chip.querySelector('.dkc-lbl'), on = false, lastIdx = -1;
   function days() { return [].slice.call(sc.querySelectorAll('.mr-day')).filter(function (d) { return d.offsetParent; }); }
   function count(d) { var n = 0, e = d.nextElementSibling; while (e && !e.classList.contains('mr-day')) { if (e.classList.contains('jcard')) n++; e = e.nextElementSibling; } return n; }
   function nice(t) { t = t.trim(); return t.charAt(0).toUpperCase() + t.slice(1).toLowerCase(); }
-  function place() {
-    var H = hd.getBoundingClientRect(), S = sc.getBoundingClientRect();
-    chip.style.top = H.bottom + 'px'; chip.style.left = S.left + 'px'; chip.style.width = S.width + 'px';
-    return H.bottom;
-  }
   function swap(text, dir) {                              // the label rolls: down the list → up and out, back up → the reverse
     var b = lbl.querySelector('b:not(.out)'); if (!b || b.textContent === text) return;
     if (!b.textContent || !on) { b.textContent = text; return; }
@@ -4005,7 +4174,7 @@ html.in-app .bs { --bs-safe: 0px; }
     setTimeout(function () { if (b.parentNode) b.remove(); if (nb.parentNode && nb.className.indexOf('in') === 0) nb.className = ''; }, 240);
   }
   function update() {
-    var top = place(), ds = days(), cur = -1, dock = top + 14;   // the header has reached the chip's line
+    var ds = days(), cur = -1, dock = hd.getBoundingClientRect().bottom + 14;   // the header has reached the chip's line
     for (var i = 0; i < ds.length; i++) if (ds[i].getBoundingClientRect().top <= dock) cur = i;
     if (cur < 0) { if (on) { on = false; chip.classList.remove('on'); } lastIdx = -1; return; }
     swap(nice(ds[cur].textContent) + ' · ' + count(ds[cur]), cur < lastIdx ? -1 : 1);
@@ -4014,6 +4183,7 @@ html.in-app .bs { --bs-safe: 0px; }
   }
   sc.addEventListener('scroll', update, { passive: true });
   addEventListener('resize', update);
+  hd.addEventListener('transitionend', update);       // the bar settled after hiding / showing its menu row
   new MutationObserver(function () { requestAnimationFrame(update); }).observe(sc, { childList: true, subtree: true });
   update();
 })();
