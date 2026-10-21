@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#161B22" />
-<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.10 (2026-10-21)
+<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.11 (2026-10-21)
      Built from the mobile view (≤ 480 px) of <Shine Revamp>/profile-index.html, on the design system
      (design-system/DESIGN-SYSTEM.md + component-system.md): semantic tokens only, the buttons atom (atoms/buttons), DS atoms (A.04 Badge,
      A.05 Tag, A.08 Avatar, A.09 Toast). No menu / title on this tab (v1.1, user): the full-bleed hero starts at the top
@@ -626,17 +626,18 @@
 .dcard-row > span { min-width: 0; overflow-wrap: anywhere; font: var(--card-sub1-font); color: var(--card-sub1-color); }   /* 3 Subtext 1 */
 </style>
 <!-- ▲ COMPONENT · profile-info-card -->
-<!-- ▼ COMPONENT · key-skills-card v1.3.0 · verbatim copy of App-login/app-components/cards/key-skills-card/key-skills-card.css — do not edit here -->
+<!-- ▼ COMPONENT · key-skills-card v1.4.0 · verbatim copy of App-login/app-components/cards/key-skills-card/key-skills-card.css — do not edit here -->
 <style data-component="key-skills-card">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · KEY SKILLS CARD  (app component · App-login · cards/ · 5)   v1.3.0
+   SHINE · KEY SKILLS CARD  (app component · App-login · cards/ · 5)   v1.4.0
    Profile › Key Skills: your skills as tags, and the two actions.
 
      ┌──────────────────────────────────────┐
      │ [Product Management] [Critical Thinking]│  tags     the tags atom (atoms/tags) · Extra small · label only · 8 apart
      │ [Agile Scrum Master] [Team Management]  │
      │                                         │  20
-     │ [ + Add New ]  [ Edit Skills ]          │  actions  buttons atom · Primary · sm + Secondary · sm
+     │ [   + Add New   ] [   Edit Skills   ] │  actions  buttons atom · Primary · sm · fill + Secondary · sm · fill —
+     │                                         │           fluid: the two share the card's width, 12 apart (v1.4.0)
      └──────────────────────────────────────┘
    Empty (no skills yet): .card--empty + .scard--empty — icon, one line, Primary · sm · block.
 
@@ -1891,7 +1892,7 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
     <!-- ═══ KEY SKILLS · cards/key-skills-card ═══ -->
     <section class="pf-sec" data-section="skills" aria-labelledby="pfSkillsT">
       <div class="pf-sec-head"><h2 class="pf-sec-title" id="pfSkillsT">Key <em>Skills</em></h2></div>
-      <div class="card scard"><div class="scard-tags"><span class="tag tag--xs"><span class="tag-label">Product Management</span></span><span class="tag tag--xs"><span class="tag-label">Critical Thinking</span></span><span class="tag tag--xs"><span class="tag-label">Agile Scrum Master</span></span><span class="tag tag--xs"><span class="tag-label">Team Management</span></span><span class="tag tag--xs"><span class="tag-label">Visual Design</span></span><span class="tag tag--xs"><span class="tag-label">Product Thinking</span></span><span class="tag tag--xs"><span class="tag-label">Design Systems</span></span><span class="tag tag--xs"><span class="tag-label">User Research</span></span></div><div class="scard-actions"><button type="button" class="btn btn--primary btn--sm" data-pf="add-skill"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Add New</button><button type="button" class="btn btn--secondary btn--sm" data-pf="edit-skills">Edit Skills</button></div></div>
+      <div class="card scard"><div class="scard-tags"><span class="tag tag--xs"><span class="tag-label">Product Management</span></span><span class="tag tag--xs"><span class="tag-label">Critical Thinking</span></span><span class="tag tag--xs"><span class="tag-label">Agile Scrum Master</span></span><span class="tag tag--xs"><span class="tag-label">Team Management</span></span><span class="tag tag--xs"><span class="tag-label">Visual Design</span></span><span class="tag tag--xs"><span class="tag-label">Product Thinking</span></span><span class="tag tag--xs"><span class="tag-label">Design Systems</span></span><span class="tag tag--xs"><span class="tag-label">User Research</span></span></div><div class="scard-actions"><button type="button" class="btn btn--primary btn--sm btn--fill" data-pf="add-skill"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Add New</button><button type="button" class="btn btn--secondary btn--sm btn--fill" data-pf="edit-skills">Edit Skills</button></div></div>
     </section>
 
     <!-- ═══ EMPLOYMENT HISTORY · cards/work-education-card ═══ -->
