@@ -4,18 +4,245 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#161B22" />
-<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.5 (2026-10-21)
+<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.6 (2026-10-21)
      Built from the mobile view (≤ 480 px) of <Shine Revamp>/profile-index.html, on the design system
-     (design-system/DESIGN-SYSTEM.md + component-system.md): semantic tokens only, DS atoms (A.02 Button, A.04 Badge,
+     (design-system/DESIGN-SYSTEM.md + component-system.md): semantic tokens only, the buttons atom (atoms/buttons), DS atoms (A.04 Badge,
      A.05 Tag, A.08 Avatar, A.09 Toast). No menu / title on this tab (v1.1, user): the full-bleed hero starts at the top
      under the top-app-bar component's floating bar in its dark tone (v2.0: the same bar as Home — photo + job-search status). Bottom tab bar =
      shared component (Me active). Sections: hero (status · strength dial · next step), Your Resume, Profile Overview
      (professional · personal · contact), Key Skills, Employment History, Education History, Links (empty).
      Cards (v1.5): every card sits in the shared card container (app-components/cards/card-container · .card).
+     Buttons (v1.6): every button is the buttons atom (app-components/atoms/buttons · .btn), inlined first.
      Not built yet (taps show what they will open): editors, resume upload / viewer, status sheet, photo, item menus. -->
 <title>Shine — Profile</title>
 <link rel="preload" href="fonts/plus-jakarta-sans-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="fonts/plus-jakarta-sans-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="fonts/fonts.css"><script src="native.js"></script>
 
+<!-- ▼ COMPONENT · buttons v1.2.1 · verbatim copy of App-login/app-components/atoms/buttons/buttons.css — do not edit here -->
+<style data-component="buttons">
+/* ═══════════════════════════════════════════════════════════════════════
+   SHINE · BUTTONS  (app component · App-login · atoms/)          v1.2.1
+   Every button in the logged-in app: four types × two tones, four sizes, with an optional icon or icon only.
+   Built on design-system A.02 Button (component-system.md) and the buttons already used on My Jobs, Docket and
+   Profile. "Brand" here is the app's black (A.02 Primary · Neutral) — brand blue stays the search CTA's alone.
+
+     type          brand (black, default)                    destructive (.btn--destructive)
+     ─────────────────────────────────────────────────────────────────────────────────────────────
+     Primary       [■ Apply now ]  black fill · white text    [■ Remove ]  red fill · white text
+     Secondary     [□ View      ]  warm white · grey edge     [□ Remove ]  warm white · red edge · red text
+     Muted         [▤ Filters   ]  grey fill · black text     [▤ Remove ]  pale red fill · red text
+     Link            Job details   text only · black            Remove      text only · red
+
+   Classes
+     .btn                                   base — always
+     .btn--primary | --secondary | --muted | --link            type (pick one)
+     .btn--destructive                      tone (default: brand = black)
+     .btn--sm 40 | --md 44 (default) | --lg 48 | --xl 56       size (A.02)
+     .btn--icon                             icon only: square, glyph only, aria-label required
+     .btn--block                            full width            .btn--fill  shares a row (flex 1, padding 12)
+     .btn--flush                            Link only: pulls the text / glyph onto the content edge (margin = −padding)
+     .btn--pill                             fully round (nav / filter pills; actions stay radius 12)
+     .btn--on-dark                          primary on a dark surface (white fill, black text)
+     [aria-pressed="true"]                  toggle on (bookmark saved): brand-subtle fill + brand glyph
+     :disabled / [aria-disabled="true"]     disabled · [aria-busy="true"] + .btn-spinner  loading
+     [data-state="hover|pressed|focus"]     shows a state statically — guidelines and screenshots only
+   Anatomy: [leading svg] label [trailing svg | .badge] — gap spacing.inline.md 8 (badge 12); icons inherit the text
+   colour; icon-only glyphs are content.neutral.muted (A.02 Icon-only). The edge is an inset shadow, never a border,
+   so 1.5 px renders as 1.5 px on Android too (Chromium floors border widths to whole pixels).
+
+   ▶ BEFORE CHANGING IT: read README.md here and component-system.md A.02. Semantic tokens only.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.btn {
+  /* COLOUR — DESIGN-SYSTEM.md §2.2 (light) */
+  --btn-inverse: #0D1117;                   /* surface.inverse.base — primary fill */
+  --btn-inverse-hover: #344054;             /* surface.inverse-state.hover */
+  --btn-inverse-pressed: #4A5260;           /* surface.inverse-state.pressed */
+  --btn-on-fill: #FFFFFF;                   /* primary text: content.on-fill-dark.base (light) → content.inverse.base (dark) */
+  --btn-on-intense: #FFFFFF;                /* content.on-fill-dark.base — text on red; the same in both themes */
+  --btn-ink: #0D1117;                       /* content.neutral.base */
+  --btn-ink-muted: #344054;                 /* content.neutral.muted — icon-only glyph (A.02 Icon-only) */
+  --btn-base: #FAF9F6;                      /* surface.neutral.base — secondary fill (warm white) */
+  --btn-muted: #EEF1F5;                     /* surface.neutral.muted — muted fill */
+  --btn-state-hover: #EEF1F5;               /* surface.neutral-state.hover */
+  --btn-state-pressed: #E4E7EC;             /* surface.neutral-state.pressed */
+  --btn-stroke: #E4E7EC;                    /* stroke.neutral.base — secondary edge */
+  --btn-neg: #B42318;                       /* surface.status.negative-intense (red/600 in both themes) */
+  --btn-neg-text: #B42318;                  /* content.status.negative */
+  --btn-neg-stroke: #B42318;                /* stroke.status.negative */
+  --btn-neg-hover: #8B1A14;                 /* surface.status.negative-intense-hover — hover and pressed (as the sheet) */
+  --btn-neg-subtle: #FEF2F2;                /* surface.status.negative-subtle */
+  --btn-neg-subtle-hover: #FEE4E4;          /* surface.status.negative-subtle-hover (PROPOSED · red/100) */
+  --btn-brand-subtle: #EBF0FF;              /* surface.brand.brand-subtle — toggle on */
+  --btn-brand: #0B3FCC;                     /* content.neutral.brand — toggle on glyph */
+  --btn-disabled-bg: rgba(13, 17, 23, .08); /* stroke.neutral.disabled (black-25) */
+  --btn-disabled-fg: rgba(13, 17, 23, .36); /* content.neutral.disabled (black-75) */
+  --btn-focus: #1A56FF;                     /* stroke.neutral.focus */
+  /* ELEVATION — §2.5 */
+  --btn-lifted: 0 4px 12px rgba(13, 17, 23, .08), 0 2px 4px rgba(13, 17, 23, .04);   /* elevation.neutral.lifted — filled · hover */
+  --btn-raised-sh: 0 1px 3px rgba(13, 17, 23, .08), 0 1px 2px rgba(13, 17, 23, .04); /* elevation.neutral.raised — filled · pressed */
+  --btn-ring: 0 0 0 4px rgba(26, 86, 255, .10);                                       /* elevation.focus.default */
+  /* ON A DARK SURFACE — the Profile hero is dark in both themes, so these never flip */
+  --btn-on-dark-bg: #FFFFFF;                /* cool-neutral/white */
+  --btn-on-dark-fg: #0D1117;                /* cool-neutral/black */
+  --btn-on-dark-hover: #EEF1F5;             /* cool-neutral/100 */
+  --btn-on-dark-pressed: #E4E7EC;           /* cool-neutral/200 */
+  --btn-on-dark-focus: #7EA3FF;             /* brand/300 — the focus outline that reads on dark */
+  --btn-none: 0 0 #0000;                    /* "no shadow" that can sit in a box-shadow list */
+  /* SHAPE · SPACE · TYPE — §2.1 / §2.3 / §2.4 */
+  --btn-radius: 12px;                       /* size.radius.lg — every action button */
+  --btn-stroke-w: 1.5px;                    /* size.stroke.default — outlined edge */
+  --btn-gap: 8px;                           /* spacing.inline.md — icon ↔ label */
+  --btn-font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;   /* typeface.family.brand */
+  --btn-dur: 150ms;                         /* motion — proposed */
+
+  /* size md (default) — A.02 */
+  --_h: 44px;                               /* size.control.md */
+  --_px: 16px;                              /* spacing.inset.xl */
+  --_fs: 12px; --_lh: 12px;                 /* Label / md bold */
+  --_ic: 16px;                              /* size.icon.md */
+  --_ic-only: 20px;                         /* size.icon.lg — icon-only glyph */
+  /* type primary (default) */
+  --_bg: var(--btn-inverse); --_fg: var(--btn-on-fill); --_bd: transparent;
+  --_bg-h: var(--btn-inverse-hover); --_bg-p: var(--btn-inverse-pressed);
+  --_sh-h: var(--btn-lifted); --_sh-p: var(--btn-raised-sh); --_lift: translateY(-1px);
+  --_edge: inset 0 0 0 var(--btn-stroke-w) var(--_bd);   /* the edge: an inset shadow (size.stroke.default) */
+
+  position: relative; box-sizing: border-box;
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--btn-gap);
+  height: var(--_h); min-width: var(--_h); margin: 0; padding: 0 var(--_px);
+  border: 0; border-radius: var(--btn-radius);
+  background: var(--_bg); color: var(--_fg); box-shadow: var(--_edge), var(--btn-none);
+  font: 700 var(--_fs)/var(--_lh) var(--btn-font); letter-spacing: 0; text-align: center; text-decoration: none; white-space: nowrap;
+  cursor: pointer; -webkit-appearance: none; appearance: none; -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  -webkit-font-smoothing: antialiased; user-select: none; -webkit-user-select: none;
+  transition: background-color var(--btn-dur), color var(--btn-dur), box-shadow var(--btn-dur), transform var(--btn-dur);
+}
+/* icons bring their own drawing (the app's icon markup: stroke icons fill="none" stroke="currentColor"; solid icons
+   fill="currentColor"); the atom only sizes them, colours them through currentColor and sets the stroke weight */
+.btn > svg { display: block; flex: none; width: var(--_ic); height: var(--_ic); }
+.btn > svg:not([stroke-width]) { stroke-width: 2px; }   /* size.stroke.thick — an icon that sets its own weight keeps it */
+
+/* ── Sizes (A.02.4) ─────────────────────────────────────────────── */
+.btn--sm { --_h: 40px; --_px: 16px; --_fs: 12px; --_lh: 12px; --_ic: 14px; --_ic-only: 16px; }   /* size.control.sm · inset.xl · Label/md · icon.sm (icon only: icon.md) */
+.btn--md { --_h: 44px; --_px: 16px; --_fs: 12px; --_lh: 12px; --_ic: 16px; --_ic-only: 20px; }   /* size.control.md · inset.xl · Label/md · icon.md */
+.btn--lg { --_h: 48px; --_px: 22px; --_fs: 14px; --_lh: 14px; --_ic: 16px; --_ic-only: 20px; }   /* size.control.lg · inset.xxl · Label/lg · icon.md */
+.btn--xl { --_h: 56px; --_px: 22px; --_fs: 14px; --_lh: 14px; --_ic: 16px; --_ic-only: 20px; }   /* size.control.xl · inset.xxl · Label/lg · icon.md */
+
+/* ── Types × tones ──────────────────────────────────────────────── */
+/* 1 · Primary — the one main action of a region */
+.btn--primary { --_bg: var(--btn-inverse); --_fg: var(--btn-on-fill); --_bd: transparent;
+  --_bg-h: var(--btn-inverse-hover); --_bg-p: var(--btn-inverse-pressed); --_sh-h: var(--btn-lifted); --_sh-p: var(--btn-raised-sh); --_lift: translateY(-1px); }
+.btn--primary.btn--destructive { --_bg: var(--btn-neg); --_fg: var(--btn-on-intense);
+  --_bg-h: var(--btn-neg-hover); --_bg-p: var(--btn-neg-hover); }   /* pressed = hover colour + raised (bottom sheet today) */
+/* 2 · Secondary — outlined: the alternative next to a primary. Hover lifts and presses like every filled or outlined
+   button (A.02.5 — one motion for Primary, Secondary and Muted; only Link stays flat) */
+.btn--secondary { --_bg: var(--btn-base); --_fg: var(--btn-ink); --_bd: var(--btn-stroke);
+  --_bg-h: var(--btn-state-hover); --_bg-p: var(--btn-state-pressed); }
+.btn--secondary.btn--destructive { --_fg: var(--btn-neg-text); --_bd: var(--btn-neg-stroke);
+  --_bg-h: var(--btn-neg-subtle); --_bg-p: var(--btn-neg-subtle-hover); }
+/* 3 · Muted — tinted fill, no edge: quiet actions and pills that sit on white */
+.btn--muted { --_bg: var(--btn-muted); --_fg: var(--btn-ink); --_bd: transparent;
+  --_bg-h: var(--btn-state-pressed); --_bg-p: var(--btn-state-pressed); }
+.btn--muted.btn--destructive { --_bg: var(--btn-neg-subtle); --_fg: var(--btn-neg-text);
+  --_bg-h: var(--btn-neg-subtle-hover); --_bg-p: var(--btn-neg-subtle-hover); }
+/* 4 · Link — text only, the lowest weight; padding 12 so the tap area stays a button. Hover and pressed share one
+   tint (A.02 Ghost; the Profile icon buttons and the sheet's ghost button today) */
+.btn--link { --_bg: transparent; --_fg: var(--btn-ink); --_bd: transparent; --_px: 12px;   /* spacing.inset.lg (A.02 tertiary) */
+  --_bg-h: var(--btn-state-hover); --_bg-p: var(--btn-state-hover); --_sh-h: var(--btn-none); --_sh-p: var(--btn-none); --_lift: none; }
+.btn--link.btn--destructive { --_fg: var(--btn-neg-text);
+  --_bg-h: var(--btn-neg-subtle); --_bg-p: var(--btn-neg-subtle); }
+
+/* ── States (A.02.5) — hover on pointer devices only; data-state shows a state in the guidelines ── */
+@media (hover: hover) {
+  .btn:hover:not(:active):not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]) {
+    background: var(--_bg-h); box-shadow: var(--_edge), var(--_sh-h); transform: var(--_lift);
+  }
+}
+.btn[data-state="hover"] { background: var(--_bg-h); box-shadow: var(--_edge), var(--_sh-h); transform: var(--_lift); }
+.btn:active:not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]),
+.btn[data-state="pressed"] { background: var(--_bg-p); box-shadow: var(--_edge), var(--_sh-p); transform: none; }
+.btn:focus { outline: none; }
+.btn:focus-visible, .btn[data-state="focus"] {   /* stroke.neutral.focus outline + elevation.focus.default ring; the edge stays */
+  outline: 2px solid var(--btn-focus); outline-offset: 2px; box-shadow: var(--_edge), var(--btn-ring);
+}
+.btn:disabled, .btn[aria-disabled="true"] {
+  --_bd: transparent; background: var(--btn-disabled-bg); color: var(--btn-disabled-fg);
+  box-shadow: var(--_edge); transform: none; cursor: default; pointer-events: none;
+}
+.btn--secondary:disabled, .btn--secondary[aria-disabled="true"] { --_bd: var(--btn-disabled-bg); background: transparent; }
+.btn--link:disabled, .btn--link[aria-disabled="true"] { background: transparent; }
+
+/* loading — keep the label, add a spinner in front; the button stays its size */
+.btn[aria-busy="true"] { cursor: progress; pointer-events: none; }
+.btn-spinner {
+  flex: none; width: var(--_ic); height: var(--_ic); box-sizing: border-box; border-radius: 1024px;   /* size.radius.full */
+  border: 2px solid currentColor; border-right-color: transparent; animation: btn-spin 700ms linear infinite;
+}
+@keyframes btn-spin { to { transform: rotate(360deg); } }
+
+/* ── Icon only — square, glyph only (aria-label required) ───────── */
+.btn--icon { width: var(--_h); padding: 0; }
+.btn--icon > svg { width: var(--_ic-only); height: var(--_ic-only); }
+/* A.02 Icon-only: the glyph is content.neutral.muted on every non-filled brand type (share, save, edit, ⋮, +) */
+.btn--icon:not(.btn--primary):not(.btn--destructive) { --_fg: var(--btn-ink-muted); }
+.btn--icon[aria-busy="true"] svg { display: none; }                   /* loading: the spinner replaces the glyph */
+.btn--icon .btn-spinner { width: var(--_ic-only); height: var(--_ic-only); }
+
+/* toggle on (e.g. bookmark saved) — the app's "selected" pair, any type except primary */
+.btn[aria-pressed="true"]:not(.btn--primary) {
+  --_bg: var(--btn-brand-subtle); --_fg: var(--btn-brand); --_bd: var(--btn-brand-subtle);
+  --_bg-h: var(--btn-brand-subtle); --_bg-p: var(--btn-brand-subtle);
+}
+.btn[aria-pressed="true"]:not(.btn--primary) > svg { fill: currentColor; }
+
+/* ── Layout and shape ───────────────────────────────────────────── */
+.btn--block { display: flex; width: 100%; }
+.btn--fill { flex: 1 1 0; min-width: 0; --_px: 12px; }   /* shares a row with other buttons: label centred, padding spacing.inset.lg */
+@media (max-width: 359px) { .btn--fill.btn--lg, .btn--fill.btn--xl { --_px: 8px; --_fs: 12px; --_lh: 12px; } }   /* two labels fit on 320 phones */
+.btn--pill { border-radius: 1024px; }      /* size.radius.full — nav / filter pills only */
+/* Link only: the text (or glyph) lines up with the content edge — the button's padding hangs outside it */
+.btn--link.btn--flush { margin-inline: calc(var(--_px) * -1); }
+.btn--link.btn--icon.btn--flush { margin: calc((var(--_ic-only) - var(--_h)) / 2); }
+/* a trailing badge (A.04, e.g. +22 on Upload resume) sits 12 from the label (spacing.inline.lg) */
+.btn > .badge { margin-left: 4px; }
+
+/* primary on a permanently dark surface (the Profile hero): white fill, black text — in both themes */
+.btn--primary.btn--on-dark { --_bg: var(--btn-on-dark-bg); --_fg: var(--btn-on-dark-fg); --_bg-h: var(--btn-on-dark-hover); --_bg-p: var(--btn-on-dark-pressed); --btn-focus: var(--btn-on-dark-focus); }
+
+/* ── Dark theme — the dark column of §2.2 (App-login pages are light-only today) ── */
+[data-theme="dark"] .btn {
+  --btn-inverse: #FAF9F6;                   /* surface.inverse.base · warm-100 */
+  --btn-inverse-hover: #EEF1F5;             /* surface.inverse-state.hover · cool-100 */
+  --btn-inverse-pressed: #E4E7EC;           /* surface.inverse-state.pressed · cool-200 */
+  --btn-on-fill: #0D1117;                   /* A.02: primary text in dark = content.inverse.base · black */
+  --btn-ink: #F7F9FB;                       /* content.neutral.base · cool-50 */
+  --btn-ink-muted: #C8CED7;                 /* content.neutral.muted · cool-300 */
+  --btn-base: #0D1117;                      /* surface.neutral.base · black */
+  --btn-muted: #161B22;                     /* surface.neutral.muted · cool-900 */
+  --btn-state-hover: #344054;               /* surface.neutral-state.hover · cool-700 */
+  --btn-state-pressed: #4A5260;             /* surface.neutral-state.pressed · cool-600 */
+  --btn-stroke: #4A5260;                    /* stroke.neutral.base · cool-600 */
+  --btn-neg-text: #FCA5A0;                  /* content.status.negative · red-300 */
+  --btn-neg-stroke: #F87171;                /* stroke.status.negative · red-400 */
+  --btn-neg-subtle: #1C0404;                /* surface.status.negative-subtle · red-950 */
+  --btn-neg-subtle-hover: #380808;          /* proposed · red-900 */
+  --btn-brand-subtle: #06184F;              /* surface.brand.brand-subtle · brand-900 */
+  --btn-brand: #7EA3FF;                     /* content.neutral.brand · brand-300 */
+  --btn-disabled-bg: rgba(255, 255, 255, .08); /* stroke.neutral.disabled · white-25 */
+  --btn-disabled-fg: rgba(255, 255, 255, .36); /* content.neutral.disabled · white-75 */
+  --btn-focus: #7EA3FF;                     /* stroke.neutral.focus · brand-300 */
+  --btn-lifted: 0 4px 12px rgba(13, 17, 23, .45), 0 2px 4px rgba(13, 17, 23, .30);   /* elevation.neutral.lifted (dark α) */
+  --btn-raised-sh: 0 1px 3px rgba(13, 17, 23, .40), 0 1px 2px rgba(13, 17, 23, .25); /* elevation.neutral.raised (dark α) */
+  --btn-ring: 0 0 0 4px rgba(26, 86, 255, .20);                                       /* elevation.focus.default (dark α) */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn { transition: none; }
+  .btn:hover, .btn[data-state="hover"] { transform: none !important; }
+  .btn-spinner { animation-duration: 1.6s; }
+}
+</style>
+<!-- ▲ COMPONENT · buttons -->
 <style>
 /* ═══════════════════════════════════════════════════════════════════════
    SHINE APP · PROFILE (Me tab) — page styles · v1 (2026-10-19)
@@ -29,7 +256,8 @@
    • Semantic tokens only (DESIGN-SYSTEM.md §2). The layer below declares the
      primitives once (§1, values only) and maps every semantic token the page
      uses; page rules never touch a primitive or a raw colour.
-   • Atoms follow component-system.md: A.02 Button (.btn), A.04 Badge (.badge),
+   • Buttons: the app's buttons atom (app-components/atoms/buttons, inlined before this sheet — .btn).
+   • Atoms follow component-system.md: A.04 Badge (.badge),
      A.05 Tag (.tag), A.09 Toast (.toast). Photo + status = top-app-bar floating bar (dark tone).
    • App frame: gutter spacing.layout.sm (24), like My Jobs / Docket.
    • Light only (page build). Proposed tokens are marked PROPOSED.
@@ -146,43 +374,8 @@ html.in-app { --pf-safe-top: 0px; }
 .pf { padding: 0 var(--spacing-layout-sm) var(--spacing-section-lg); background: var(--surface-neutral-base); }   /* gutter 24 · the hero bleeds past it · own surface: on iPhone the page background turns dark while the hero is at the top (status bar) */
 .pf-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }   /* page name for screen readers (no visible title on this tab) */
 
-/* ── A.02 Button (sm · lg; primary · secondary · ghost-icon · icon-only) ── */
-.btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: var(--spacing-inline-md);
-  height: var(--size-control-sm); padding: 0 var(--spacing-inset-xl);
-  border: 0; border-radius: var(--size-radius-lg); cursor: pointer; white-space: nowrap; text-decoration: none;
-  font: var(--weight-bold) var(--type-label-md-size)/var(--type-label-md-line) var(--font-brand);
-  transition: background-color .15s ease, box-shadow .15s ease, transform .15s ease;
-}
-.btn svg { width: var(--size-icon-sm); height: var(--size-icon-sm); flex: none; stroke-width: var(--size-stroke-thick); }
-.btn:focus { outline: none; }
-.btn:focus-visible { outline: var(--size-stroke-thick) solid var(--stroke-neutral-focus); outline-offset: var(--size-stroke-thick); box-shadow: var(--elevation-focus-default); }
-.btn--lg { height: var(--size-control-lg); padding: 0 var(--spacing-inset-xxl); font-size: var(--type-label-lg-size); line-height: var(--type-label-lg-line); }
-.btn--lg svg { width: var(--size-icon-md); height: var(--size-icon-md); }
-.btn--shape-full { border-radius: var(--size-radius-full); }
-.btn--block { display: flex; width: 100%; }
-.btn--primary { background: var(--surface-inverse-base); color: var(--content-on-fill-dark-base); }
-.btn--primary:active { background: var(--surface-inverse-state-pressed); }
-.btn--secondary { background: transparent; color: var(--content-neutral-base); box-shadow: inset 0 0 0 var(--size-stroke-default) var(--stroke-neutral-base); }
-.btn--secondary:active { background: var(--surface-neutral-state-pressed); }
-/* PROPOSED A.02 variant "on dark": the high-emphasis action on a permanently dark surface (hero) — light fill */
-.btn--on-dark { background: var(--surface-neutral-raised); color: var(--content-neutral-base); }
-.btn--on-dark:active { background: var(--surface-neutral-state-pressed); }
-.btn--icon { width: var(--size-control-sm); padding: 0; background: var(--surface-neutral-raised); color: var(--content-neutral-muted); box-shadow: inset 0 0 0 var(--size-stroke-thin) var(--stroke-neutral-base); }
-.btn--icon svg { width: var(--size-icon-md); height: var(--size-icon-md); }
-.btn--icon:active { background: var(--surface-neutral-state-pressed); }
-/* icon-only ghost: 40 hit area around a 16 glyph that sits on the card's content edge — the negative margins
-   (derived from the tokens) keep the row's own height, so the glyph lines up like the reference's bare icon */
-.btn--ghost-icon {
-  width: var(--size-control-sm); padding: 0; background: transparent; color: var(--content-neutral-muted);
-  margin: calc((var(--size-icon-md) - var(--size-control-sm)) / 2);
-}
-.btn--ghost-icon svg { width: var(--size-icon-md); height: var(--size-icon-md); }
-.btn--ghost-icon:active { background: var(--surface-neutral-state-hover); }
-@media (hover: hover) {
-  .btn--primary:hover { background: var(--surface-inverse-state-hover); }
-  .btn--secondary:hover, .btn--icon:hover, .btn--ghost-icon:hover, .btn--on-dark:hover { background: var(--surface-neutral-state-hover); }
-}
+/* ── Buttons: the buttons atom (atoms/buttons) — Primary · Secondary · Link, sizes sm / lg, icon, fill, block,
+   flush, on-dark. The page only places them (margins, rows); it never restyles one. ── */
 
 /* ── A.04 Badge (md) ── */
 .badge {
@@ -262,7 +455,7 @@ html.in-app { --pf-safe-top: 0px; }
   font: var(--weight-medium) var(--type-body-md-size)/var(--type-body-md-line) var(--font-brand);
   color: var(--content-on-fill-dark-muted);
 }
-.pf-next { margin-top: var(--spacing-section-lg); gap: var(--spacing-inline-lg); }
+.pf-next { margin-top: var(--spacing-section-lg); }   /* the +22 badge sits 12 from the label (the atom's badge slot) */
 
 /* ── Sections ─────────────────────────────────────────────────────────── */
 .pf-sec { padding-top: var(--spacing-section-lg); }
@@ -291,7 +484,6 @@ html.in-app { --pf-safe-top: 0px; }
 /* separator dot (A.11 Separator · dot) */
 .pf-dot { width: var(--size-separator-dot); height: var(--size-separator-dot); border-radius: var(--size-radius-full); background: currentColor; flex: none; }
 .pf-actions { display: flex; gap: var(--spacing-inline-lg); margin-top: var(--spacing-stack-lg); }
-.pf-actions--fill > .btn { flex: 1 1 0; }
 .pf-actions--wide { margin-top: var(--spacing-stack-xl); }
 
 /* overview cards */
@@ -1310,7 +1502,7 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
       </div>
       <h2 class="pf-headline">Outdated profiles <em>lose recruiter attention</em></h2>
       <p class="pf-concern">Upload your latest resume to boost visibility.</p>
-      <button type="button" class="btn btn--lg btn--block btn--on-dark pf-next" data-pf="upload">Upload resume <span class="badge badge--notice">+22 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></span></button>
+      <button type="button" class="btn btn--primary btn--on-dark btn--lg btn--block pf-next" data-pf="upload">Upload resume <span class="badge badge--notice">+22 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></span></button>
     </section>
 
     <!-- ═══ YOUR RESUME ═══ -->
@@ -1320,8 +1512,8 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
         <p class="pf-file">Rakesh_Product Designer.pdf</p>
         <p class="pf-meta"><span>2 MB</span><span class="pf-dot" aria-hidden="true"></span><span>Updated 15 Jan’ 2025</span></p>
         <div class="pf-actions pf-actions--fill">
-          <button type="button" class="btn btn--primary" data-pf="upload"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>Upload New</button>
-          <button type="button" class="btn btn--secondary" data-pf="view-resume">View</button>
+          <button type="button" class="btn btn--primary btn--sm btn--fill" data-pf="upload"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>Upload New</button>
+          <button type="button" class="btn btn--secondary btn--sm btn--fill" data-pf="view-resume">View</button>
         </div>
       </div>
     </section>
@@ -1331,7 +1523,7 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
       <div class="pf-sec-head"><h2 class="pf-sec-title" id="pfOverviewT">Profile <em>Overview</em></h2></div>
       <div class="pf-stack">
         <div class="card pf-card">
-          <p class="pf-eyebrow">Professional details <button type="button" class="btn btn--ghost-icon" data-pf="edit-professional" aria-label="Edit professional details"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M14.2069 5.0861L11.4144 2.29297C11.3215 2.20009 11.2113 2.12641 11.0899 2.07614C10.9686 2.02587 10.8385 2 10.7072 2C10.5759 2 10.4458 2.02587 10.3245 2.07614C10.2031 2.12641 10.0929 2.20009 10 2.29297L2.29313 10.0005C2.19987 10.093 2.12593 10.2031 2.0756 10.3245C2.02528 10.4458 1.99959 10.576 2.00001 10.7073V13.5005C2.00001 13.7657 2.10536 14.02 2.2929 14.2076C2.48043 14.3951 2.73479 14.5005 3.00001 14.5005H5.79313C5.9245 14.5009 6.05464 14.4752 6.17599 14.4249C6.29735 14.3746 6.40748 14.3006 6.50001 14.2073L14.2069 6.50047C14.2998 6.40761 14.3734 6.29736 14.4237 6.17602C14.474 6.05468 14.4999 5.92463 14.4999 5.79329C14.4999 5.66195 14.474 5.53189 14.4237 5.41055C14.3734 5.28921 14.2998 5.17896 14.2069 5.0861ZM12 7.29297L9.20688 4.50047L10.7069 3.00047L13.5 5.79297L12 7.29297Z" fill="currentColor"/></svg></button></p>
+          <p class="pf-eyebrow">Professional details <button type="button" class="btn btn--link btn--sm btn--icon btn--flush" data-pf="edit-professional" aria-label="Edit professional details"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M14.2069 5.0861L11.4144 2.29297C11.3215 2.20009 11.2113 2.12641 11.0899 2.07614C10.9686 2.02587 10.8385 2 10.7072 2C10.5759 2 10.4458 2.02587 10.3245 2.07614C10.2031 2.12641 10.0929 2.20009 10 2.29297L2.29313 10.0005C2.19987 10.093 2.12593 10.2031 2.0756 10.3245C2.02528 10.4458 1.99959 10.576 2.00001 10.7073V13.5005C2.00001 13.7657 2.10536 14.02 2.2929 14.2076C2.48043 14.3951 2.73479 14.5005 3.00001 14.5005H5.79313C5.9245 14.5009 6.05464 14.4752 6.17599 14.4249C6.29735 14.3746 6.40748 14.3006 6.50001 14.2073L14.2069 6.50047C14.2998 6.40761 14.3734 6.29736 14.4237 6.17602C14.474 6.05468 14.4999 5.92463 14.4999 5.79329C14.4999 5.66195 14.474 5.53189 14.4237 5.41055C14.3734 5.28921 14.2998 5.17896 14.2069 5.0861ZM12 7.29297L9.20688 4.50047L10.7069 3.00047L13.5 5.79297L12 7.29297Z" fill="currentColor"/></svg></button></p>
           <div class="pf-row"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.91235 3.16698C6.87695 3.43814 6.87594 3.74629 6.87594 4.125V4.16667H12.2926V4.125C12.2926 3.74629 12.2916 3.43814 12.2562 3.16698C12.2215 2.90145 12.1592 2.7227 12.0701 2.59389C11.9174 2.37292 11.5255 2.08333 10.2509 2.08333H8.91761C7.64302 2.08333 7.25115 2.37292 7.09843 2.59389C7.0094 2.7227 6.94702 2.90145 6.91235 3.16698ZM13.5426 4.16667L13.5426 4.10335C13.5426 3.7504 13.5427 3.36491 13.4957 3.00515C13.447 2.6324 13.3427 2.23667 13.0984 1.88319C12.5845 1.13957 11.643 0.833332 10.2509 0.833332H8.91761C7.52553 0.833332 6.58407 1.13957 6.07013 1.88319C5.82582 2.23667 5.72154 2.6324 5.67287 3.00515C5.6259 3.3649 5.62592 3.7504 5.62594 4.10334L5.62594 4.16667H5.41747C3.56494 4.16667 2.29992 4.59548 1.56208 5.47269C0.831399 6.34139 0.7619 7.48264 0.879007 8.54678L1.50353 15.2083L1.50436 15.2166C1.59615 16.0733 1.81118 17.0126 2.57612 17.7114C3.33541 18.4051 4.51176 18.75 6.2508 18.75H12.9175C14.6565 18.75 15.8329 18.4051 16.5921 17.7114C17.3571 17.0126 17.5721 16.0733 17.6639 15.2166L18.2395 9.07727C18.2473 9.03706 18.2512 8.99611 18.251 8.95506L18.2893 8.54676C18.4064 7.48263 18.3369 6.34138 17.6062 5.47269C16.8683 4.59548 15.6033 4.16667 13.7508 4.16667H13.5426ZM5.41747 5.41667C3.71166 5.41667 2.90584 5.81702 2.51868 6.27731C2.12558 6.74467 2.01493 7.4469 2.12201 8.41459L2.12316 8.42499L2.14753 8.68589C3.72926 9.76284 5.48807 10.4607 7.29261 10.7649V10.625C7.29261 10.6159 7.29261 10.6068 7.29261 10.5976C7.29257 10.4133 7.29252 10.2266 7.30945 10.0742C7.32671 9.91888 7.37286 9.66086 7.57984 9.45389C7.78681 9.24691 8.04482 9.20077 8.20015 9.18351C8.35254 9.16658 8.53929 9.16662 8.72357 9.16666C8.7327 9.16666 8.74183 9.16667 8.75094 9.16667H10.4176C10.4267 9.16667 10.4359 9.16666 10.445 9.16666C10.6293 9.16662 10.816 9.16658 10.9684 9.18351C11.1237 9.20077 11.3817 9.24691 11.5887 9.45389C11.7957 9.66086 11.8418 9.91888 11.8591 10.0742C11.876 10.2266 11.876 10.4133 11.8759 10.5976C11.8759 10.6068 11.8759 10.6159 11.8759 10.625V10.7472C13.6892 10.4198 15.4498 9.71286 17.0272 8.61718L17.0462 8.41458C17.1533 7.44689 17.0427 6.74467 16.6496 6.27731C16.2624 5.81702 15.4566 5.41667 13.7508 5.41667H5.41747ZM16.879 10.1974C15.3095 11.1285 13.6046 11.7328 11.8619 12.018C11.8573 12.0789 11.8512 12.1397 11.8431 12.1998C11.809 12.4519 11.7343 12.7381 11.5514 12.9992C11.1615 13.556 10.473 13.75 9.58428 13.75C8.70047 13.75 8.01371 13.5585 7.62228 13.0062C7.43824 12.7465 7.36206 12.4614 7.32696 12.2092C7.31887 12.151 7.31268 12.0921 7.30795 12.0332C5.56714 11.7688 3.86399 11.1721 2.29474 10.2562L2.74768 15.0874C2.83105 15.8619 3.00364 16.4089 3.41923 16.7886C3.84119 17.1741 4.63984 17.5 6.2508 17.5H12.9175C14.5284 17.5 15.3271 17.1741 15.749 16.7886C16.1646 16.4089 16.3372 15.8619 16.4206 15.0874L16.879 10.1974ZM8.54327 10.4173C8.54263 10.4768 8.54261 10.5446 8.54261 10.625V11.4833C8.54261 11.7179 8.54466 11.8905 8.56503 12.0369C8.58462 12.1777 8.61573 12.2462 8.6421 12.2834C8.67151 12.3249 8.81808 12.5 9.58428 12.5C10.3539 12.5 10.4988 12.3232 10.5275 12.2821C10.5541 12.2442 10.5851 12.1746 10.6044 12.0322C10.6244 11.8841 10.6259 11.7108 10.6259 11.475V10.625C10.6259 10.5446 10.6259 10.4768 10.6253 10.4173C10.5658 10.4167 10.498 10.4167 10.4176 10.4167H8.75094C8.67057 10.4167 8.60276 10.4167 8.54327 10.4173Z" fill="currentColor"/></svg><span>Lead Product Designer</span></div>
           <div class="pf-row"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7.56365 9.95849C7.19899 9.95174 6.8951 10.2421 6.88834 10.6135C6.88834 10.7959 6.96263 10.9782 7.09094 11.1133L10.3594 14.1994C10.481 14.3142 10.6498 14.375 10.8254 14.375C11.1968 14.375 11.5007 14.0711 11.5007 13.6997C11.5007 13.5106 11.4264 13.335 11.2914 13.2067L9.23842 11.2618C9.80569 11.1876 10.3324 10.9309 10.7444 10.5258C11.0618 10.1948 11.2981 9.78966 11.4264 9.35071H12.1288C12.5002 9.35071 12.8041 9.04682 12.8041 8.6754C12.8041 8.30398 12.5002 8.00009 12.1288 8.00009H11.4197C11.3657 7.72996 11.2779 7.52737 11.1698 7.39231H12.1288C12.5002 7.39231 12.8041 7.08842 12.8041 6.717C12.8041 6.34558 12.5002 6.04169 12.1288 6.04169H7.5569C7.18548 6.04169 6.88159 6.34558 6.88159 6.717C6.88159 7.08842 7.18548 7.39231 7.5569 7.39231H8.86025C9.31946 7.39231 9.72465 7.5949 9.95425 8.00009H7.55015C7.17873 8.00009 6.87484 8.30398 6.87484 8.6754C6.87484 9.04682 7.17873 9.35071 7.55015 9.35071H9.95425C9.90023 9.43175 9.83945 9.50603 9.77192 9.58032C9.52881 9.82343 9.1979 9.95849 8.86025 9.95849H7.56365Z" fill="currentColor"/>
 <path fill-rule="evenodd" clip-rule="evenodd" d="M9.99984 1.04169C5.05229 1.04169 1.0415 5.05247 1.0415 10C1.0415 14.9476 5.05229 18.9584 9.99984 18.9584C14.9474 18.9584 18.9582 14.9476 18.9582 10C18.9582 5.05247 14.9474 1.04169 9.99984 1.04169ZM2.2915 10C2.2915 5.74283 5.74264 2.29169 9.99984 2.29169C14.257 2.29169 17.7082 5.74283 17.7082 10C17.7082 14.2572 14.257 17.7084 9.99984 17.7084C5.74264 17.7084 2.2915 14.2572 2.2915 10Z" fill="currentColor"/></svg><span>₹15 LPA</span></div>
@@ -1340,22 +1532,22 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
           <div class="pf-row"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.0031 2.29166C7.15583 2.28973 4.37095 3.94192 3.62659 7.21325C2.74571 11.1051 5.15715 14.4801 7.42557 16.6664C8.86766 18.0508 11.1343 18.0491 12.5664 16.667L12.5675 16.6659C14.8441 14.4796 17.2551 11.1128 16.3742 7.22132L16.3742 7.22129C15.6337 3.94975 12.8506 2.29358 10.0031 2.29166ZM17.5933 6.94533C16.7004 3.00023 13.3211 1.0439 10.004 1.04166C6.68677 1.03942 3.30509 2.99127 2.40765 6.93636L2.4075 6.937C1.37192 11.5116 4.2269 15.3197 6.55837 17.5667L6.55915 17.5674C8.48365 19.4157 11.5163 19.4173 13.4341 17.5667C15.774 15.3195 18.6289 11.5199 17.5933 6.94533ZM10.0004 6.61666C8.90965 6.61666 8.02541 7.5009 8.02541 8.59166C8.02541 9.68242 8.90965 10.5667 10.0004 10.5667C11.0912 10.5667 11.9754 9.68242 11.9754 8.59166C11.9754 7.5009 11.0912 6.61666 10.0004 6.61666ZM6.77541 8.59166C6.77541 6.81054 8.21929 5.36666 10.0004 5.36666C11.7815 5.36666 13.2254 6.81054 13.2254 8.59166C13.2254 10.3728 11.7815 11.8167 10.0004 11.8167C8.21929 11.8167 6.77541 10.3728 6.77541 8.59166Z" fill="currentColor"/></svg><span>Gurugram, Haryana</span></div>
         </div>
         <div class="card pf-card">
-          <p class="pf-eyebrow">Personal details <button type="button" class="btn btn--ghost-icon" data-pf="edit-personal" aria-label="Edit personal details"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M14.2069 5.0861L11.4144 2.29297C11.3215 2.20009 11.2113 2.12641 11.0899 2.07614C10.9686 2.02587 10.8385 2 10.7072 2C10.5759 2 10.4458 2.02587 10.3245 2.07614C10.2031 2.12641 10.0929 2.20009 10 2.29297L2.29313 10.0005C2.19987 10.093 2.12593 10.2031 2.0756 10.3245C2.02528 10.4458 1.99959 10.576 2.00001 10.7073V13.5005C2.00001 13.7657 2.10536 14.02 2.2929 14.2076C2.48043 14.3951 2.73479 14.5005 3.00001 14.5005H5.79313C5.9245 14.5009 6.05464 14.4752 6.17599 14.4249C6.29735 14.3746 6.40748 14.3006 6.50001 14.2073L14.2069 6.50047C14.2998 6.40761 14.3734 6.29736 14.4237 6.17602C14.474 6.05468 14.4999 5.92463 14.4999 5.79329C14.4999 5.66195 14.474 5.53189 14.4237 5.41055C14.3734 5.28921 14.2998 5.17896 14.2069 5.0861ZM12 7.29297L9.20688 4.50047L10.7069 3.00047L13.5 5.79297L12 7.29297Z" fill="currentColor"/></svg></button></p>
+          <p class="pf-eyebrow">Personal details <button type="button" class="btn btn--link btn--sm btn--icon btn--flush" data-pf="edit-personal" aria-label="Edit personal details"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M14.2069 5.0861L11.4144 2.29297C11.3215 2.20009 11.2113 2.12641 11.0899 2.07614C10.9686 2.02587 10.8385 2 10.7072 2C10.5759 2 10.4458 2.02587 10.3245 2.07614C10.2031 2.12641 10.0929 2.20009 10 2.29297L2.29313 10.0005C2.19987 10.093 2.12593 10.2031 2.0756 10.3245C2.02528 10.4458 1.99959 10.576 2.00001 10.7073V13.5005C2.00001 13.7657 2.10536 14.02 2.2929 14.2076C2.48043 14.3951 2.73479 14.5005 3.00001 14.5005H5.79313C5.9245 14.5009 6.05464 14.4752 6.17599 14.4249C6.29735 14.3746 6.40748 14.3006 6.50001 14.2073L14.2069 6.50047C14.2998 6.40761 14.3734 6.29736 14.4237 6.17602C14.474 6.05468 14.4999 5.92463 14.4999 5.79329C14.4999 5.66195 14.474 5.53189 14.4237 5.41055C14.3734 5.28921 14.2998 5.17896 14.2069 5.0861ZM12 7.29297L9.20688 4.50047L10.7069 3.00047L13.5 5.79297L12 7.29297Z" fill="currentColor"/></svg></button></p>
           <div class="pf-row"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 1.875A3.958 3.958 0 1 0 10 9.792a3.958 3.958 0 0 0 0-7.917Zm0 6.667a2.708 2.708 0 1 1 0-5.417 2.708 2.708 0 0 1 0 5.417ZM10 10.625c-3.875 0-7.083 2.292-7.083 5.625v.625a.625.625 0 0 0 .625.625h12.916a.625.625 0 0 0 .625-.625v-.625c0-3.333-3.208-5.625-7.083-5.625Zm-5.833 5.625c0-2.396 2.583-4.375 5.833-4.375s5.833 1.979 5.833 4.375H4.167Z" fill="currentColor"/></svg><span>Rakesh Mallick</span></div>
           <div class="pf-row"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M16.25 1.875H13.125a.625.625 0 0 0 0 1.25h1.616l-1.964 1.965a5.417 5.417 0 1 0 .884.884L15.625 4.009V5.625a.625.625 0 1 0 1.25 0V2.5a.625.625 0 0 0-.625-.625ZM9.375 12.5a4.167 4.167 0 1 1 0-8.333 4.167 4.167 0 0 1 0 8.333Z" fill="currentColor"/></svg><span>Male</span></div>
           <div class="pf-nudge">
             <p>Add DOB, languages &amp; disability status.</p>
-            <button type="button" class="btn btn--primary" data-pf="add-personal">Add details</button>
+            <button type="button" class="btn btn--primary btn--sm" data-pf="add-personal">Add details</button>
           </div>
         </div>
         <div class="card pf-card">
-          <p class="pf-eyebrow">Contact details <button type="button" class="btn btn--ghost-icon" data-pf="edit-contact" aria-label="Edit contact details"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M14.2069 5.0861L11.4144 2.29297C11.3215 2.20009 11.2113 2.12641 11.0899 2.07614C10.9686 2.02587 10.8385 2 10.7072 2C10.5759 2 10.4458 2.02587 10.3245 2.07614C10.2031 2.12641 10.0929 2.20009 10 2.29297L2.29313 10.0005C2.19987 10.093 2.12593 10.2031 2.0756 10.3245C2.02528 10.4458 1.99959 10.576 2.00001 10.7073V13.5005C2.00001 13.7657 2.10536 14.02 2.2929 14.2076C2.48043 14.3951 2.73479 14.5005 3.00001 14.5005H5.79313C5.9245 14.5009 6.05464 14.4752 6.17599 14.4249C6.29735 14.3746 6.40748 14.3006 6.50001 14.2073L14.2069 6.50047C14.2998 6.40761 14.3734 6.29736 14.4237 6.17602C14.474 6.05468 14.4999 5.92463 14.4999 5.79329C14.4999 5.66195 14.474 5.53189 14.4237 5.41055C14.3734 5.28921 14.2998 5.17896 14.2069 5.0861ZM12 7.29297L9.20688 4.50047L10.7069 3.00047L13.5 5.79297L12 7.29297Z" fill="currentColor"/></svg></button></p>
+          <p class="pf-eyebrow">Contact details <button type="button" class="btn btn--link btn--sm btn--icon btn--flush" data-pf="edit-contact" aria-label="Edit contact details"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M14.2069 5.0861L11.4144 2.29297C11.3215 2.20009 11.2113 2.12641 11.0899 2.07614C10.9686 2.02587 10.8385 2 10.7072 2C10.5759 2 10.4458 2.02587 10.3245 2.07614C10.2031 2.12641 10.0929 2.20009 10 2.29297L2.29313 10.0005C2.19987 10.093 2.12593 10.2031 2.0756 10.3245C2.02528 10.4458 1.99959 10.576 2.00001 10.7073V13.5005C2.00001 13.7657 2.10536 14.02 2.2929 14.2076C2.48043 14.3951 2.73479 14.5005 3.00001 14.5005H5.79313C5.9245 14.5009 6.05464 14.4752 6.17599 14.4249C6.29735 14.3746 6.40748 14.3006 6.50001 14.2073L14.2069 6.50047C14.2998 6.40761 14.3734 6.29736 14.4237 6.17602C14.474 6.05468 14.4999 5.92463 14.4999 5.79329C14.4999 5.66195 14.474 5.53189 14.4237 5.41055C14.3734 5.28921 14.2998 5.17896 14.2069 5.0861ZM12 7.29297L9.20688 4.50047L10.7069 3.00047L13.5 5.79297L12 7.29297Z" fill="currentColor"/></svg></button></p>
           <div class="pf-row"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M13.5414 18.3333H6.45891C5.1949 18.3333 4.1665 17.3049 4.1665 16.0409V3.95906C4.1665 2.69505 5.1949 1.66666 6.45891 1.66666H13.5414C14.8054 1.66666 15.8338 2.69505 15.8338 3.95906V16.0409C15.8338 17.3049 14.8054 18.3333 13.5414 18.3333ZM6.45891 2.91851C5.88514 2.91851 5.4184 3.38529 5.4184 3.95906V16.0409C5.4184 16.6147 5.88514 17.0815 6.45891 17.0815H13.5414C14.1152 17.0815 14.582 16.6147 14.582 16.0409V3.95906C14.582 3.38529 14.1152 2.91851 13.5414 2.91851H6.45891Z" fill="currentColor"/>
 <path d="M10.0003 15.6107C9.97346 15.6107 9.94622 15.6095 9.91942 15.6067C9.89303 15.6043 9.86623 15.5999 9.83987 15.5947C9.81388 15.5895 9.78748 15.5827 9.76228 15.5751C9.7366 15.5675 9.71136 15.5584 9.68669 15.5479C9.66189 15.5379 9.6375 15.5263 9.6139 15.5139C9.5903 15.5011 9.5671 15.4875 9.54511 15.4727C9.52271 15.4579 9.50111 15.4419 9.48031 15.4247C9.43843 15.3908 9.40021 15.3526 9.36629 15.3107C9.34949 15.2903 9.33309 15.2683 9.31833 15.2459C9.30352 15.2237 9.28977 15.2007 9.27714 15.1772C9.26458 15.1535 9.25322 15.1292 9.2431 15.1044C9.2327 15.08 9.22395 15.0544 9.21595 15.0292C9.20839 15.0036 9.20155 14.9772 9.19631 14.9512C9.19111 14.9248 9.18715 14.898 9.18435 14.8716C9.18159 14.8448 9.18035 14.8176 9.18035 14.7908C9.18035 14.7644 9.18159 14.7372 9.18435 14.7104C9.18715 14.6837 9.19114 14.6571 9.19631 14.6308C9.20155 14.6048 9.20839 14.5784 9.21595 14.5529C9.23165 14.5017 9.25214 14.4522 9.27714 14.4049C9.28994 14.3813 9.30354 14.3581 9.31833 14.3357C9.33309 14.3137 9.34949 14.2917 9.36629 14.2713C9.38309 14.2501 9.40152 14.2301 9.42032 14.2113C9.43912 14.1921 9.45948 14.1741 9.48031 14.1569C9.50111 14.1401 9.52267 14.1241 9.54511 14.1093C9.5671 14.0945 9.5903 14.0805 9.6139 14.0681C9.6375 14.0557 9.66189 14.0441 9.68669 14.0337C9.71142 14.0235 9.73665 14.0146 9.76228 14.0069C9.78748 13.9989 9.81388 13.9925 9.83987 13.9873C9.86623 13.9817 9.89303 13.9777 9.91942 13.9753C9.97302 13.9697 10.0275 13.9697 10.0806 13.9753C10.1074 13.9777 10.1342 13.9817 10.1602 13.9873C10.1866 13.9925 10.2126 13.9989 10.2382 14.0069C10.2638 14.0145 10.289 14.0237 10.3138 14.0337C10.3382 14.0441 10.3626 14.0557 10.3862 14.0681C10.4098 14.0805 10.433 14.0945 10.4554 14.1093C10.4778 14.1241 10.4994 14.1401 10.5202 14.1569C10.541 14.174 10.5609 14.1921 10.5798 14.2113C10.5989 14.2301 10.617 14.2501 10.6342 14.2713C10.6681 14.3128 10.6978 14.3575 10.7229 14.4049C10.7354 14.4285 10.747 14.4529 10.7574 14.4773C10.7775 14.5269 10.7932 14.5783 10.8042 14.6308C10.8094 14.6571 10.8133 14.6837 10.8161 14.7104C10.8186 14.7372 10.8202 14.7644 10.8202 14.7908C10.8202 14.8176 10.8186 14.8448 10.8161 14.8716C10.8133 14.8983 10.8094 14.9249 10.8042 14.9512C10.7932 15.0036 10.7775 15.0548 10.7574 15.1044C10.747 15.1292 10.7354 15.1536 10.7229 15.1772C10.7104 15.2008 10.6967 15.2238 10.6818 15.2459C10.6522 15.2909 10.618 15.3327 10.5798 15.3707C10.5609 15.3895 10.541 15.4079 10.5202 15.4247C10.4994 15.4419 10.4778 15.4579 10.4554 15.4727C10.433 15.4875 10.4098 15.5011 10.3862 15.5139C10.3626 15.5263 10.3382 15.5379 10.3138 15.5479C10.289 15.5584 10.2638 15.5674 10.2382 15.5751C10.2126 15.5827 10.1866 15.5895 10.1602 15.5947C10.1342 15.5999 10.1074 15.6043 10.0806 15.6067C10.0542 15.6095 10.0271 15.6107 10.0003 15.6107ZM10.9549 5.00158H9.04545C8.69973 5.00158 8.41952 4.72133 8.41952 4.37566C8.41952 4.02998 8.69973 3.74973 9.04545 3.74973H10.9549C11.3006 3.74973 11.5808 4.02998 11.5808 4.37566C11.5808 4.72133 11.3006 5.00158 10.9549 5.00158Z" fill="currentColor"/></svg><span>+91 75855 59696</span></div>
           <div class="pf-row"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M17.0989 6.97545C17.0989 5.74282 16.7499 4.96365 16.2353 4.48578C15.7124 4.00021 14.9207 3.7345 13.8579 3.7345H6.14174C5.07894 3.7345 4.28726 4.00021 3.76434 4.48578C3.24974 4.96365 2.90079 5.74282 2.90079 6.97545V12.3768C2.90079 13.6094 3.24974 14.3886 3.76434 14.8665C4.28726 15.352 5.07894 15.6177 6.14174 15.6177H13.8579C14.9207 15.6177 15.7124 15.352 16.2353 14.8665C16.7499 14.3886 17.0989 13.6094 17.0989 12.3768V6.97545ZM13.4729 6.879C13.7393 6.66631 14.1275 6.70985 14.3402 6.97621C14.5529 7.24259 14.5093 7.63078 14.243 7.84352L11.8279 9.77257L11.8272 9.77332C10.8074 10.5851 9.18475 10.585 8.16498 9.77332L8.16347 9.77182L5.75593 7.84277L5.70846 7.80133C5.48519 7.58203 5.46035 7.22492 5.66023 6.97545C5.86009 6.72603 6.21363 6.67286 6.47631 6.84283L6.52755 6.87975L8.93359 8.80729L9.04511 8.88717C9.62488 9.25925 10.5244 9.23253 11.0586 8.80729L13.4729 6.879ZM18.3332 12.3768C18.3332 13.8448 17.9105 14.9947 17.0748 15.7707C16.2474 16.539 15.11 16.852 13.8579 16.852H6.14174C4.88972 16.852 3.75232 16.539 2.92491 15.7707C2.0892 14.9947 1.6665 13.8448 1.6665 12.3768V6.97545C1.6665 5.50746 2.0892 4.35754 2.92491 3.58153C3.75232 2.81326 4.88972 2.50021 6.14174 2.50021H13.8579C15.11 2.50021 16.2474 2.81326 17.0748 3.58153C17.9105 4.35754 18.3332 5.50746 18.3332 6.97545V12.3768Z" fill="currentColor"/></svg><span>xyz@gmail.com</span></div>
           <div class="pf-nudge">
             <p>Get 3× more recruiter responses.</p>
-            <button type="button" class="btn btn--primary" data-pf="verify">Verify contact</button>
+            <button type="button" class="btn btn--primary btn--sm" data-pf="verify">Verify contact</button>
           </div>
         </div>
       </div>
@@ -1371,8 +1563,8 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
           <span class="tag">Design Systems</span><span class="tag">User Research</span>
         </div>
         <div class="pf-actions pf-actions--wide">
-          <button type="button" class="btn btn--primary" data-pf="add-skill"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Add New</button>
-          <button type="button" class="btn btn--secondary" data-pf="edit-skills">Edit Skills</button>
+          <button type="button" class="btn btn--primary btn--sm" data-pf="add-skill"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Add New</button>
+          <button type="button" class="btn btn--secondary btn--sm" data-pf="edit-skills">Edit Skills</button>
         </div>
       </div>
     </section>
@@ -1381,7 +1573,7 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
     <section class="pf-sec" data-section="employment" aria-labelledby="pfEmpT">
       <div class="pf-sec-head">
         <h2 class="pf-sec-title" id="pfEmpT">Employment <em>History</em></h2>
-        <button type="button" class="btn btn--icon" data-pf="add-employment" aria-label="Add employment"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+        <button type="button" class="btn btn--secondary btn--sm btn--icon" data-pf="add-employment" aria-label="Add employment"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
       </div>
       <div class="pf-list">
         <div class="card pf-card pf-item">
@@ -1390,7 +1582,7 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
             <p class="pf-item-sub">BharatPe</p>
             <p class="pf-meta pf-meta--sm"><span>Aug’ 2024 — Present</span><span class="pf-dot" aria-hidden="true"></span><span>2.5 Years</span></p>
           </div>
-          <button type="button" class="btn btn--ghost-icon" data-pf="item-menu" aria-label="Options for Sr. Product Manager, BharatPe"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10.9261 8.61414C10.652 8.431 10.3298 8.33325 10.0002 8.33325C9.55813 8.33325 9.13421 8.50885 8.82165 8.82141C8.50909 9.13397 8.3335 9.55789 8.3335 9.99992C8.3335 10.3296 8.43124 10.6518 8.61438 10.9259C8.79752 11.2 9.05781 11.4136 9.36236 11.5397C9.6669 11.6659 10.002 11.6989 10.3253 11.6346C10.6486 11.5703 10.9456 11.4115 11.1787 11.1784C11.4118 10.9453 11.5705 10.6484 11.6348 10.3251C11.6991 10.0018 11.6661 9.66666 11.54 9.36211C11.4138 9.05757 11.2002 8.79727 10.9261 8.61414Z" fill="currentColor"/>
+          <button type="button" class="btn btn--link btn--sm btn--icon btn--flush" data-pf="item-menu" aria-label="Options for Sr. Product Manager, BharatPe"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10.9261 8.61414C10.652 8.431 10.3298 8.33325 10.0002 8.33325C9.55813 8.33325 9.13421 8.50885 8.82165 8.82141C8.50909 9.13397 8.3335 9.55789 8.3335 9.99992C8.3335 10.3296 8.43124 10.6518 8.61438 10.9259C8.79752 11.2 9.05781 11.4136 9.36236 11.5397C9.6669 11.6659 10.002 11.6989 10.3253 11.6346C10.6486 11.5703 10.9456 11.4115 11.1787 11.1784C11.4118 10.9453 11.5705 10.6484 11.6348 10.3251C11.6991 10.0018 11.6661 9.66666 11.54 9.36211C11.4138 9.05757 11.2002 8.79727 10.9261 8.61414Z" fill="currentColor"/>
 <path d="M8.3335 4.99992C8.3335 5.32955 8.43124 5.65179 8.61438 5.92587C8.79752 6.19995 9.05781 6.41357 9.36236 6.53972C9.6669 6.66586 10.002 6.69887 10.3253 6.63456C10.6486 6.57025 10.9456 6.41152 11.1787 6.17843C11.4118 5.94534 11.5705 5.64837 11.6348 5.32507C11.6991 5.00177 11.6661 4.66666 11.54 4.36211C11.4138 4.05757 11.2002 3.79727 10.9261 3.61414C10.652 3.431 10.3298 3.33325 10.0002 3.33325C9.55813 3.33325 9.13421 3.50885 8.82165 3.82141C8.50909 4.13397 8.3335 4.55789 8.3335 4.99992Z" fill="currentColor"/>
 <path d="M8.3335 14.9999C8.3335 15.3296 8.43124 15.6518 8.61438 15.9259C8.79752 16.2 9.05781 16.4136 9.36236 16.5397C9.6669 16.6659 10.002 16.6989 10.3253 16.6346C10.6486 16.5703 10.9456 16.4115 11.1787 16.1784C11.4118 15.9453 11.5705 15.6484 11.6348 15.3251C11.6991 15.0018 11.6661 14.6667 11.54 14.3621C11.4138 14.0576 11.2002 13.7973 10.9261 13.6141C10.652 13.431 10.3298 13.3333 10.0002 13.3333C9.55814 13.3333 9.13421 13.5088 8.82165 13.8214C8.50909 14.134 8.3335 14.5579 8.3335 14.9999Z" fill="currentColor"/></svg></button>
         </div>
@@ -1400,7 +1592,7 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
             <p class="pf-item-sub">Paytm</p>
             <p class="pf-meta pf-meta--sm"><span>Jan’ 2022 — Aug’ 2024</span><span class="pf-dot" aria-hidden="true"></span><span>2.7 Years</span></p>
           </div>
-          <button type="button" class="btn btn--ghost-icon" data-pf="item-menu" aria-label="Options for Sr. Product Designer, Paytm"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10.9261 8.61414C10.652 8.431 10.3298 8.33325 10.0002 8.33325C9.55813 8.33325 9.13421 8.50885 8.82165 8.82141C8.50909 9.13397 8.3335 9.55789 8.3335 9.99992C8.3335 10.3296 8.43124 10.6518 8.61438 10.9259C8.79752 11.2 9.05781 11.4136 9.36236 11.5397C9.6669 11.6659 10.002 11.6989 10.3253 11.6346C10.6486 11.5703 10.9456 11.4115 11.1787 11.1784C11.4118 10.9453 11.5705 10.6484 11.6348 10.3251C11.6991 10.0018 11.6661 9.66666 11.54 9.36211C11.4138 9.05757 11.2002 8.79727 10.9261 8.61414Z" fill="currentColor"/>
+          <button type="button" class="btn btn--link btn--sm btn--icon btn--flush" data-pf="item-menu" aria-label="Options for Sr. Product Designer, Paytm"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10.9261 8.61414C10.652 8.431 10.3298 8.33325 10.0002 8.33325C9.55813 8.33325 9.13421 8.50885 8.82165 8.82141C8.50909 9.13397 8.3335 9.55789 8.3335 9.99992C8.3335 10.3296 8.43124 10.6518 8.61438 10.9259C8.79752 11.2 9.05781 11.4136 9.36236 11.5397C9.6669 11.6659 10.002 11.6989 10.3253 11.6346C10.6486 11.5703 10.9456 11.4115 11.1787 11.1784C11.4118 10.9453 11.5705 10.6484 11.6348 10.3251C11.6991 10.0018 11.6661 9.66666 11.54 9.36211C11.4138 9.05757 11.2002 8.79727 10.9261 8.61414Z" fill="currentColor"/>
 <path d="M8.3335 4.99992C8.3335 5.32955 8.43124 5.65179 8.61438 5.92587C8.79752 6.19995 9.05781 6.41357 9.36236 6.53972C9.6669 6.66586 10.002 6.69887 10.3253 6.63456C10.6486 6.57025 10.9456 6.41152 11.1787 6.17843C11.4118 5.94534 11.5705 5.64837 11.6348 5.32507C11.6991 5.00177 11.6661 4.66666 11.54 4.36211C11.4138 4.05757 11.2002 3.79727 10.9261 3.61414C10.652 3.431 10.3298 3.33325 10.0002 3.33325C9.55813 3.33325 9.13421 3.50885 8.82165 3.82141C8.50909 4.13397 8.3335 4.55789 8.3335 4.99992Z" fill="currentColor"/>
 <path d="M8.3335 14.9999C8.3335 15.3296 8.43124 15.6518 8.61438 15.9259C8.79752 16.2 9.05781 16.4136 9.36236 16.5397C9.6669 16.6659 10.002 16.6989 10.3253 16.6346C10.6486 16.5703 10.9456 16.4115 11.1787 16.1784C11.4118 15.9453 11.5705 15.6484 11.6348 15.3251C11.6991 15.0018 11.6661 14.6667 11.54 14.3621C11.4138 14.0576 11.2002 13.7973 10.9261 13.6141C10.652 13.431 10.3298 13.3333 10.0002 13.3333C9.55814 13.3333 9.13421 13.5088 8.82165 13.8214C8.50909 14.134 8.3335 14.5579 8.3335 14.9999Z" fill="currentColor"/></svg></button>
         </div>
@@ -1411,7 +1603,7 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
     <section class="pf-sec" data-section="education" aria-labelledby="pfEduT">
       <div class="pf-sec-head">
         <h2 class="pf-sec-title" id="pfEduT">Education <em>History</em></h2>
-        <button type="button" class="btn btn--icon" data-pf="add-education" aria-label="Add education"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+        <button type="button" class="btn btn--secondary btn--sm btn--icon" data-pf="add-education" aria-label="Add education"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
       </div>
       <div class="pf-list">
         <div class="card pf-card pf-item">
@@ -1420,7 +1612,7 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
             <p class="pf-item-sub">BIT Bhilai</p>
             <p class="pf-meta pf-meta--sm"><span>2020 — 2024</span><span class="pf-dot" aria-hidden="true"></span><span>GPA: 9.8</span></p>
           </div>
-          <button type="button" class="btn btn--ghost-icon" data-pf="item-menu" aria-label="Options for B.Tech, BIT Bhilai"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10.9261 8.61414C10.652 8.431 10.3298 8.33325 10.0002 8.33325C9.55813 8.33325 9.13421 8.50885 8.82165 8.82141C8.50909 9.13397 8.3335 9.55789 8.3335 9.99992C8.3335 10.3296 8.43124 10.6518 8.61438 10.9259C8.79752 11.2 9.05781 11.4136 9.36236 11.5397C9.6669 11.6659 10.002 11.6989 10.3253 11.6346C10.6486 11.5703 10.9456 11.4115 11.1787 11.1784C11.4118 10.9453 11.5705 10.6484 11.6348 10.3251C11.6991 10.0018 11.6661 9.66666 11.54 9.36211C11.4138 9.05757 11.2002 8.79727 10.9261 8.61414Z" fill="currentColor"/>
+          <button type="button" class="btn btn--link btn--sm btn--icon btn--flush" data-pf="item-menu" aria-label="Options for B.Tech, BIT Bhilai"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10.9261 8.61414C10.652 8.431 10.3298 8.33325 10.0002 8.33325C9.55813 8.33325 9.13421 8.50885 8.82165 8.82141C8.50909 9.13397 8.3335 9.55789 8.3335 9.99992C8.3335 10.3296 8.43124 10.6518 8.61438 10.9259C8.79752 11.2 9.05781 11.4136 9.36236 11.5397C9.6669 11.6659 10.002 11.6989 10.3253 11.6346C10.6486 11.5703 10.9456 11.4115 11.1787 11.1784C11.4118 10.9453 11.5705 10.6484 11.6348 10.3251C11.6991 10.0018 11.6661 9.66666 11.54 9.36211C11.4138 9.05757 11.2002 8.79727 10.9261 8.61414Z" fill="currentColor"/>
 <path d="M8.3335 4.99992C8.3335 5.32955 8.43124 5.65179 8.61438 5.92587C8.79752 6.19995 9.05781 6.41357 9.36236 6.53972C9.6669 6.66586 10.002 6.69887 10.3253 6.63456C10.6486 6.57025 10.9456 6.41152 11.1787 6.17843C11.4118 5.94534 11.5705 5.64837 11.6348 5.32507C11.6991 5.00177 11.6661 4.66666 11.54 4.36211C11.4138 4.05757 11.2002 3.79727 10.9261 3.61414C10.652 3.431 10.3298 3.33325 10.0002 3.33325C9.55813 3.33325 9.13421 3.50885 8.82165 3.82141C8.50909 4.13397 8.3335 4.55789 8.3335 4.99992Z" fill="currentColor"/>
 <path d="M8.3335 14.9999C8.3335 15.3296 8.43124 15.6518 8.61438 15.9259C8.79752 16.2 9.05781 16.4136 9.36236 16.5397C9.6669 16.6659 10.002 16.6989 10.3253 16.6346C10.6486 16.5703 10.9456 16.4115 11.1787 16.1784C11.4118 15.9453 11.5705 15.6484 11.6348 15.3251C11.6991 15.0018 11.6661 14.6667 11.54 14.3621C11.4138 14.0576 11.2002 13.7973 10.9261 13.6141C10.652 13.431 10.3298 13.3333 10.0002 13.3333C9.55814 13.3333 9.13421 13.5088 8.82165 13.8214C8.50909 14.134 8.3335 14.5579 8.3335 14.9999Z" fill="currentColor"/></svg></button>
         </div>
@@ -1430,7 +1622,7 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
             <p class="pf-item-sub">BIT Bhilai</p>
             <p class="pf-meta pf-meta--sm"><span>2022 — 2024</span><span class="pf-dot" aria-hidden="true"></span><span>Full Time</span></p>
           </div>
-          <button type="button" class="btn btn--ghost-icon" data-pf="item-menu" aria-label="Options for B.Tech, BIT Bhilai, full time"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10.9261 8.61414C10.652 8.431 10.3298 8.33325 10.0002 8.33325C9.55813 8.33325 9.13421 8.50885 8.82165 8.82141C8.50909 9.13397 8.3335 9.55789 8.3335 9.99992C8.3335 10.3296 8.43124 10.6518 8.61438 10.9259C8.79752 11.2 9.05781 11.4136 9.36236 11.5397C9.6669 11.6659 10.002 11.6989 10.3253 11.6346C10.6486 11.5703 10.9456 11.4115 11.1787 11.1784C11.4118 10.9453 11.5705 10.6484 11.6348 10.3251C11.6991 10.0018 11.6661 9.66666 11.54 9.36211C11.4138 9.05757 11.2002 8.79727 10.9261 8.61414Z" fill="currentColor"/>
+          <button type="button" class="btn btn--link btn--sm btn--icon btn--flush" data-pf="item-menu" aria-label="Options for B.Tech, BIT Bhilai, full time"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10.9261 8.61414C10.652 8.431 10.3298 8.33325 10.0002 8.33325C9.55813 8.33325 9.13421 8.50885 8.82165 8.82141C8.50909 9.13397 8.3335 9.55789 8.3335 9.99992C8.3335 10.3296 8.43124 10.6518 8.61438 10.9259C8.79752 11.2 9.05781 11.4136 9.36236 11.5397C9.6669 11.6659 10.002 11.6989 10.3253 11.6346C10.6486 11.5703 10.9456 11.4115 11.1787 11.1784C11.4118 10.9453 11.5705 10.6484 11.6348 10.3251C11.6991 10.0018 11.6661 9.66666 11.54 9.36211C11.4138 9.05757 11.2002 8.79727 10.9261 8.61414Z" fill="currentColor"/>
 <path d="M8.3335 4.99992C8.3335 5.32955 8.43124 5.65179 8.61438 5.92587C8.79752 6.19995 9.05781 6.41357 9.36236 6.53972C9.6669 6.66586 10.002 6.69887 10.3253 6.63456C10.6486 6.57025 10.9456 6.41152 11.1787 6.17843C11.4118 5.94534 11.5705 5.64837 11.6348 5.32507C11.6991 5.00177 11.6661 4.66666 11.54 4.36211C11.4138 4.05757 11.2002 3.79727 10.9261 3.61414C10.652 3.431 10.3298 3.33325 10.0002 3.33325C9.55813 3.33325 9.13421 3.50885 8.82165 3.82141C8.50909 4.13397 8.3335 4.55789 8.3335 4.99992Z" fill="currentColor"/>
 <path d="M8.3335 14.9999C8.3335 15.3296 8.43124 15.6518 8.61438 15.9259C8.79752 16.2 9.05781 16.4136 9.36236 16.5397C9.6669 16.6659 10.002 16.6989 10.3253 16.6346C10.6486 16.5703 10.9456 16.4115 11.1787 16.1784C11.4118 15.9453 11.5705 15.6484 11.6348 15.3251C11.6991 15.0018 11.6661 14.6667 11.54 14.3621C11.4138 14.0576 11.2002 13.7973 10.9261 13.6141C10.652 13.431 10.3298 13.3333 10.0002 13.3333C9.55814 13.3333 9.13421 13.5088 8.82165 13.8214C8.50909 14.134 8.3335 14.5579 8.3335 14.9999Z" fill="currentColor"/></svg></button>
         </div>
@@ -1441,13 +1633,13 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
     <section class="pf-sec" data-section="links" aria-labelledby="pfLinksT">
       <div class="pf-sec-head">
         <h2 class="pf-sec-title" id="pfLinksT">Links</h2>
-        <button type="button" class="btn btn--icon" data-pf="add-link" aria-label="Add link"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+        <button type="button" class="btn btn--secondary btn--sm btn--icon" data-pf="add-link" aria-label="Add link"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
       </div>
       <div class="card card--empty pf-empty">
         <span class="badge badge--violet">Get 40% faster shortlisting</span>
         <span class="pf-empty-ic" role="img" aria-label="Link">🔗</span>
         <p>Prove your work and online presence — add projects, certs and social profiles.</p>
-        <button type="button" class="btn btn--primary btn--block" data-pf="add-link">Add a link</button>
+        <button type="button" class="btn btn--primary btn--sm btn--block" data-pf="add-link">Add a link</button>
       </div>
     </section>
 

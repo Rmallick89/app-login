@@ -647,6 +647,232 @@ html.stn-on .mr-sheet .mr-scroll { padding-bottom: calc(16px + var(--stn-lift, 0
 .toast { bottom: calc(var(--stb-bar-h) + 12px + var(--stn-lift, 0px)); white-space: nowrap; }   /* + tab-nudge when it shows */
 .toast svg { flex-shrink: 0; }
 </style>
+<!-- ▼ COMPONENT · buttons v1.2.1 · verbatim copy of App-login/app-components/atoms/buttons/buttons.css — do not edit here -->
+<style data-component="buttons">
+/* ═══════════════════════════════════════════════════════════════════════
+   SHINE · BUTTONS  (app component · App-login · atoms/)          v1.2.1
+   Every button in the logged-in app: four types × two tones, four sizes, with an optional icon or icon only.
+   Built on design-system A.02 Button (component-system.md) and the buttons already used on My Jobs, Docket and
+   Profile. "Brand" here is the app's black (A.02 Primary · Neutral) — brand blue stays the search CTA's alone.
+
+     type          brand (black, default)                    destructive (.btn--destructive)
+     ─────────────────────────────────────────────────────────────────────────────────────────────
+     Primary       [■ Apply now ]  black fill · white text    [■ Remove ]  red fill · white text
+     Secondary     [□ View      ]  warm white · grey edge     [□ Remove ]  warm white · red edge · red text
+     Muted         [▤ Filters   ]  grey fill · black text     [▤ Remove ]  pale red fill · red text
+     Link            Job details   text only · black            Remove      text only · red
+
+   Classes
+     .btn                                   base — always
+     .btn--primary | --secondary | --muted | --link            type (pick one)
+     .btn--destructive                      tone (default: brand = black)
+     .btn--sm 40 | --md 44 (default) | --lg 48 | --xl 56       size (A.02)
+     .btn--icon                             icon only: square, glyph only, aria-label required
+     .btn--block                            full width            .btn--fill  shares a row (flex 1, padding 12)
+     .btn--flush                            Link only: pulls the text / glyph onto the content edge (margin = −padding)
+     .btn--pill                             fully round (nav / filter pills; actions stay radius 12)
+     .btn--on-dark                          primary on a dark surface (white fill, black text)
+     [aria-pressed="true"]                  toggle on (bookmark saved): brand-subtle fill + brand glyph
+     :disabled / [aria-disabled="true"]     disabled · [aria-busy="true"] + .btn-spinner  loading
+     [data-state="hover|pressed|focus"]     shows a state statically — guidelines and screenshots only
+   Anatomy: [leading svg] label [trailing svg | .badge] — gap spacing.inline.md 8 (badge 12); icons inherit the text
+   colour; icon-only glyphs are content.neutral.muted (A.02 Icon-only). The edge is an inset shadow, never a border,
+   so 1.5 px renders as 1.5 px on Android too (Chromium floors border widths to whole pixels).
+
+   ▶ BEFORE CHANGING IT: read README.md here and component-system.md A.02. Semantic tokens only.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.btn {
+  /* COLOUR — DESIGN-SYSTEM.md §2.2 (light) */
+  --btn-inverse: #0D1117;                   /* surface.inverse.base — primary fill */
+  --btn-inverse-hover: #344054;             /* surface.inverse-state.hover */
+  --btn-inverse-pressed: #4A5260;           /* surface.inverse-state.pressed */
+  --btn-on-fill: #FFFFFF;                   /* primary text: content.on-fill-dark.base (light) → content.inverse.base (dark) */
+  --btn-on-intense: #FFFFFF;                /* content.on-fill-dark.base — text on red; the same in both themes */
+  --btn-ink: #0D1117;                       /* content.neutral.base */
+  --btn-ink-muted: #344054;                 /* content.neutral.muted — icon-only glyph (A.02 Icon-only) */
+  --btn-base: #FAF9F6;                      /* surface.neutral.base — secondary fill (warm white) */
+  --btn-muted: #EEF1F5;                     /* surface.neutral.muted — muted fill */
+  --btn-state-hover: #EEF1F5;               /* surface.neutral-state.hover */
+  --btn-state-pressed: #E4E7EC;             /* surface.neutral-state.pressed */
+  --btn-stroke: #E4E7EC;                    /* stroke.neutral.base — secondary edge */
+  --btn-neg: #B42318;                       /* surface.status.negative-intense (red/600 in both themes) */
+  --btn-neg-text: #B42318;                  /* content.status.negative */
+  --btn-neg-stroke: #B42318;                /* stroke.status.negative */
+  --btn-neg-hover: #8B1A14;                 /* surface.status.negative-intense-hover — hover and pressed (as the sheet) */
+  --btn-neg-subtle: #FEF2F2;                /* surface.status.negative-subtle */
+  --btn-neg-subtle-hover: #FEE4E4;          /* surface.status.negative-subtle-hover (PROPOSED · red/100) */
+  --btn-brand-subtle: #EBF0FF;              /* surface.brand.brand-subtle — toggle on */
+  --btn-brand: #0B3FCC;                     /* content.neutral.brand — toggle on glyph */
+  --btn-disabled-bg: rgba(13, 17, 23, .08); /* stroke.neutral.disabled (black-25) */
+  --btn-disabled-fg: rgba(13, 17, 23, .36); /* content.neutral.disabled (black-75) */
+  --btn-focus: #1A56FF;                     /* stroke.neutral.focus */
+  /* ELEVATION — §2.5 */
+  --btn-lifted: 0 4px 12px rgba(13, 17, 23, .08), 0 2px 4px rgba(13, 17, 23, .04);   /* elevation.neutral.lifted — filled · hover */
+  --btn-raised-sh: 0 1px 3px rgba(13, 17, 23, .08), 0 1px 2px rgba(13, 17, 23, .04); /* elevation.neutral.raised — filled · pressed */
+  --btn-ring: 0 0 0 4px rgba(26, 86, 255, .10);                                       /* elevation.focus.default */
+  /* ON A DARK SURFACE — the Profile hero is dark in both themes, so these never flip */
+  --btn-on-dark-bg: #FFFFFF;                /* cool-neutral/white */
+  --btn-on-dark-fg: #0D1117;                /* cool-neutral/black */
+  --btn-on-dark-hover: #EEF1F5;             /* cool-neutral/100 */
+  --btn-on-dark-pressed: #E4E7EC;           /* cool-neutral/200 */
+  --btn-on-dark-focus: #7EA3FF;             /* brand/300 — the focus outline that reads on dark */
+  --btn-none: 0 0 #0000;                    /* "no shadow" that can sit in a box-shadow list */
+  /* SHAPE · SPACE · TYPE — §2.1 / §2.3 / §2.4 */
+  --btn-radius: 12px;                       /* size.radius.lg — every action button */
+  --btn-stroke-w: 1.5px;                    /* size.stroke.default — outlined edge */
+  --btn-gap: 8px;                           /* spacing.inline.md — icon ↔ label */
+  --btn-font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;   /* typeface.family.brand */
+  --btn-dur: 150ms;                         /* motion — proposed */
+
+  /* size md (default) — A.02 */
+  --_h: 44px;                               /* size.control.md */
+  --_px: 16px;                              /* spacing.inset.xl */
+  --_fs: 12px; --_lh: 12px;                 /* Label / md bold */
+  --_ic: 16px;                              /* size.icon.md */
+  --_ic-only: 20px;                         /* size.icon.lg — icon-only glyph */
+  /* type primary (default) */
+  --_bg: var(--btn-inverse); --_fg: var(--btn-on-fill); --_bd: transparent;
+  --_bg-h: var(--btn-inverse-hover); --_bg-p: var(--btn-inverse-pressed);
+  --_sh-h: var(--btn-lifted); --_sh-p: var(--btn-raised-sh); --_lift: translateY(-1px);
+  --_edge: inset 0 0 0 var(--btn-stroke-w) var(--_bd);   /* the edge: an inset shadow (size.stroke.default) */
+
+  position: relative; box-sizing: border-box;
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--btn-gap);
+  height: var(--_h); min-width: var(--_h); margin: 0; padding: 0 var(--_px);
+  border: 0; border-radius: var(--btn-radius);
+  background: var(--_bg); color: var(--_fg); box-shadow: var(--_edge), var(--btn-none);
+  font: 700 var(--_fs)/var(--_lh) var(--btn-font); letter-spacing: 0; text-align: center; text-decoration: none; white-space: nowrap;
+  cursor: pointer; -webkit-appearance: none; appearance: none; -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  -webkit-font-smoothing: antialiased; user-select: none; -webkit-user-select: none;
+  transition: background-color var(--btn-dur), color var(--btn-dur), box-shadow var(--btn-dur), transform var(--btn-dur);
+}
+/* icons bring their own drawing (the app's icon markup: stroke icons fill="none" stroke="currentColor"; solid icons
+   fill="currentColor"); the atom only sizes them, colours them through currentColor and sets the stroke weight */
+.btn > svg { display: block; flex: none; width: var(--_ic); height: var(--_ic); }
+.btn > svg:not([stroke-width]) { stroke-width: 2px; }   /* size.stroke.thick — an icon that sets its own weight keeps it */
+
+/* ── Sizes (A.02.4) ─────────────────────────────────────────────── */
+.btn--sm { --_h: 40px; --_px: 16px; --_fs: 12px; --_lh: 12px; --_ic: 14px; --_ic-only: 16px; }   /* size.control.sm · inset.xl · Label/md · icon.sm (icon only: icon.md) */
+.btn--md { --_h: 44px; --_px: 16px; --_fs: 12px; --_lh: 12px; --_ic: 16px; --_ic-only: 20px; }   /* size.control.md · inset.xl · Label/md · icon.md */
+.btn--lg { --_h: 48px; --_px: 22px; --_fs: 14px; --_lh: 14px; --_ic: 16px; --_ic-only: 20px; }   /* size.control.lg · inset.xxl · Label/lg · icon.md */
+.btn--xl { --_h: 56px; --_px: 22px; --_fs: 14px; --_lh: 14px; --_ic: 16px; --_ic-only: 20px; }   /* size.control.xl · inset.xxl · Label/lg · icon.md */
+
+/* ── Types × tones ──────────────────────────────────────────────── */
+/* 1 · Primary — the one main action of a region */
+.btn--primary { --_bg: var(--btn-inverse); --_fg: var(--btn-on-fill); --_bd: transparent;
+  --_bg-h: var(--btn-inverse-hover); --_bg-p: var(--btn-inverse-pressed); --_sh-h: var(--btn-lifted); --_sh-p: var(--btn-raised-sh); --_lift: translateY(-1px); }
+.btn--primary.btn--destructive { --_bg: var(--btn-neg); --_fg: var(--btn-on-intense);
+  --_bg-h: var(--btn-neg-hover); --_bg-p: var(--btn-neg-hover); }   /* pressed = hover colour + raised (bottom sheet today) */
+/* 2 · Secondary — outlined: the alternative next to a primary. Hover lifts and presses like every filled or outlined
+   button (A.02.5 — one motion for Primary, Secondary and Muted; only Link stays flat) */
+.btn--secondary { --_bg: var(--btn-base); --_fg: var(--btn-ink); --_bd: var(--btn-stroke);
+  --_bg-h: var(--btn-state-hover); --_bg-p: var(--btn-state-pressed); }
+.btn--secondary.btn--destructive { --_fg: var(--btn-neg-text); --_bd: var(--btn-neg-stroke);
+  --_bg-h: var(--btn-neg-subtle); --_bg-p: var(--btn-neg-subtle-hover); }
+/* 3 · Muted — tinted fill, no edge: quiet actions and pills that sit on white */
+.btn--muted { --_bg: var(--btn-muted); --_fg: var(--btn-ink); --_bd: transparent;
+  --_bg-h: var(--btn-state-pressed); --_bg-p: var(--btn-state-pressed); }
+.btn--muted.btn--destructive { --_bg: var(--btn-neg-subtle); --_fg: var(--btn-neg-text);
+  --_bg-h: var(--btn-neg-subtle-hover); --_bg-p: var(--btn-neg-subtle-hover); }
+/* 4 · Link — text only, the lowest weight; padding 12 so the tap area stays a button. Hover and pressed share one
+   tint (A.02 Ghost; the Profile icon buttons and the sheet's ghost button today) */
+.btn--link { --_bg: transparent; --_fg: var(--btn-ink); --_bd: transparent; --_px: 12px;   /* spacing.inset.lg (A.02 tertiary) */
+  --_bg-h: var(--btn-state-hover); --_bg-p: var(--btn-state-hover); --_sh-h: var(--btn-none); --_sh-p: var(--btn-none); --_lift: none; }
+.btn--link.btn--destructive { --_fg: var(--btn-neg-text);
+  --_bg-h: var(--btn-neg-subtle); --_bg-p: var(--btn-neg-subtle); }
+
+/* ── States (A.02.5) — hover on pointer devices only; data-state shows a state in the guidelines ── */
+@media (hover: hover) {
+  .btn:hover:not(:active):not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]) {
+    background: var(--_bg-h); box-shadow: var(--_edge), var(--_sh-h); transform: var(--_lift);
+  }
+}
+.btn[data-state="hover"] { background: var(--_bg-h); box-shadow: var(--_edge), var(--_sh-h); transform: var(--_lift); }
+.btn:active:not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]),
+.btn[data-state="pressed"] { background: var(--_bg-p); box-shadow: var(--_edge), var(--_sh-p); transform: none; }
+.btn:focus { outline: none; }
+.btn:focus-visible, .btn[data-state="focus"] {   /* stroke.neutral.focus outline + elevation.focus.default ring; the edge stays */
+  outline: 2px solid var(--btn-focus); outline-offset: 2px; box-shadow: var(--_edge), var(--btn-ring);
+}
+.btn:disabled, .btn[aria-disabled="true"] {
+  --_bd: transparent; background: var(--btn-disabled-bg); color: var(--btn-disabled-fg);
+  box-shadow: var(--_edge); transform: none; cursor: default; pointer-events: none;
+}
+.btn--secondary:disabled, .btn--secondary[aria-disabled="true"] { --_bd: var(--btn-disabled-bg); background: transparent; }
+.btn--link:disabled, .btn--link[aria-disabled="true"] { background: transparent; }
+
+/* loading — keep the label, add a spinner in front; the button stays its size */
+.btn[aria-busy="true"] { cursor: progress; pointer-events: none; }
+.btn-spinner {
+  flex: none; width: var(--_ic); height: var(--_ic); box-sizing: border-box; border-radius: 1024px;   /* size.radius.full */
+  border: 2px solid currentColor; border-right-color: transparent; animation: btn-spin 700ms linear infinite;
+}
+@keyframes btn-spin { to { transform: rotate(360deg); } }
+
+/* ── Icon only — square, glyph only (aria-label required) ───────── */
+.btn--icon { width: var(--_h); padding: 0; }
+.btn--icon > svg { width: var(--_ic-only); height: var(--_ic-only); }
+/* A.02 Icon-only: the glyph is content.neutral.muted on every non-filled brand type (share, save, edit, ⋮, +) */
+.btn--icon:not(.btn--primary):not(.btn--destructive) { --_fg: var(--btn-ink-muted); }
+.btn--icon[aria-busy="true"] svg { display: none; }                   /* loading: the spinner replaces the glyph */
+.btn--icon .btn-spinner { width: var(--_ic-only); height: var(--_ic-only); }
+
+/* toggle on (e.g. bookmark saved) — the app's "selected" pair, any type except primary */
+.btn[aria-pressed="true"]:not(.btn--primary) {
+  --_bg: var(--btn-brand-subtle); --_fg: var(--btn-brand); --_bd: var(--btn-brand-subtle);
+  --_bg-h: var(--btn-brand-subtle); --_bg-p: var(--btn-brand-subtle);
+}
+.btn[aria-pressed="true"]:not(.btn--primary) > svg { fill: currentColor; }
+
+/* ── Layout and shape ───────────────────────────────────────────── */
+.btn--block { display: flex; width: 100%; }
+.btn--fill { flex: 1 1 0; min-width: 0; --_px: 12px; }   /* shares a row with other buttons: label centred, padding spacing.inset.lg */
+@media (max-width: 359px) { .btn--fill.btn--lg, .btn--fill.btn--xl { --_px: 8px; --_fs: 12px; --_lh: 12px; } }   /* two labels fit on 320 phones */
+.btn--pill { border-radius: 1024px; }      /* size.radius.full — nav / filter pills only */
+/* Link only: the text (or glyph) lines up with the content edge — the button's padding hangs outside it */
+.btn--link.btn--flush { margin-inline: calc(var(--_px) * -1); }
+.btn--link.btn--icon.btn--flush { margin: calc((var(--_ic-only) - var(--_h)) / 2); }
+/* a trailing badge (A.04, e.g. +22 on Upload resume) sits 12 from the label (spacing.inline.lg) */
+.btn > .badge { margin-left: 4px; }
+
+/* primary on a permanently dark surface (the Profile hero): white fill, black text — in both themes */
+.btn--primary.btn--on-dark { --_bg: var(--btn-on-dark-bg); --_fg: var(--btn-on-dark-fg); --_bg-h: var(--btn-on-dark-hover); --_bg-p: var(--btn-on-dark-pressed); --btn-focus: var(--btn-on-dark-focus); }
+
+/* ── Dark theme — the dark column of §2.2 (App-login pages are light-only today) ── */
+[data-theme="dark"] .btn {
+  --btn-inverse: #FAF9F6;                   /* surface.inverse.base · warm-100 */
+  --btn-inverse-hover: #EEF1F5;             /* surface.inverse-state.hover · cool-100 */
+  --btn-inverse-pressed: #E4E7EC;           /* surface.inverse-state.pressed · cool-200 */
+  --btn-on-fill: #0D1117;                   /* A.02: primary text in dark = content.inverse.base · black */
+  --btn-ink: #F7F9FB;                       /* content.neutral.base · cool-50 */
+  --btn-ink-muted: #C8CED7;                 /* content.neutral.muted · cool-300 */
+  --btn-base: #0D1117;                      /* surface.neutral.base · black */
+  --btn-muted: #161B22;                     /* surface.neutral.muted · cool-900 */
+  --btn-state-hover: #344054;               /* surface.neutral-state.hover · cool-700 */
+  --btn-state-pressed: #4A5260;             /* surface.neutral-state.pressed · cool-600 */
+  --btn-stroke: #4A5260;                    /* stroke.neutral.base · cool-600 */
+  --btn-neg-text: #FCA5A0;                  /* content.status.negative · red-300 */
+  --btn-neg-stroke: #F87171;                /* stroke.status.negative · red-400 */
+  --btn-neg-subtle: #1C0404;                /* surface.status.negative-subtle · red-950 */
+  --btn-neg-subtle-hover: #380808;          /* proposed · red-900 */
+  --btn-brand-subtle: #06184F;              /* surface.brand.brand-subtle · brand-900 */
+  --btn-brand: #7EA3FF;                     /* content.neutral.brand · brand-300 */
+  --btn-disabled-bg: rgba(255, 255, 255, .08); /* stroke.neutral.disabled · white-25 */
+  --btn-disabled-fg: rgba(255, 255, 255, .36); /* content.neutral.disabled · white-75 */
+  --btn-focus: #7EA3FF;                     /* stroke.neutral.focus · brand-300 */
+  --btn-lifted: 0 4px 12px rgba(13, 17, 23, .45), 0 2px 4px rgba(13, 17, 23, .30);   /* elevation.neutral.lifted (dark α) */
+  --btn-raised-sh: 0 1px 3px rgba(13, 17, 23, .40), 0 1px 2px rgba(13, 17, 23, .25); /* elevation.neutral.raised (dark α) */
+  --btn-ring: 0 0 0 4px rgba(26, 86, 255, .20);                                       /* elevation.focus.default (dark α) */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn { transition: none; }
+  .btn:hover, .btn[data-state="hover"] { transform: none !important; }
+  .btn-spinner { animation-duration: 1.6s; }
+}
+</style>
+<!-- ▲ COMPONENT · buttons -->
 <!-- ▼ COMPONENT · menu-button v1.1.0 — verbatim copy of App-login/app-components/menu-button/menu-button.css (read README.md there before changing; resync every copy) -->
 <style data-component="menu-button">
 /* ═══════════════════════════════════════════════════════════════════════
@@ -1812,14 +2038,13 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
 }
 </style>
 <!-- ▲ COMPONENT · card-container -->
-<!-- ▼ COMPONENT · job-card v2.1.0 · verbatim copy of App-login/app-components/cards/job-card/job-card.css — do not edit here -->
+<!-- ▼ COMPONENT · job-card v2.2.0 · verbatim copy of App-login/app-components/cards/job-card/job-card.css — do not edit here -->
 <style data-component="job-card">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · JOB CARD  (app component · App-login · cards/)        v2.1.0
+   SHINE · JOB CARD  (app component · App-login · cards/)        v2.2.0
    One card for every job in the logged-in app, built from the design system:
    M.02 Job Card · Portrait (the mobile job list), composed of the M.02 logo,
-   A.04 Badge, A.03 Pill (unread dot), A.02 Button (Primary · Neutral,
-   Secondary, Tertiary, Icon-only). Cards only: the expired row (nav-card), the Expired-page
+   A.04 Badge, A.03 Pill (unread dot) and the app's BUTTONS ATOM (atoms/buttons — A.02). Cards only: the expired row (nav-card), the Expired-page
    note (alert) and day headers (page) are not part of this component.
 
      ┌──────────────────────────────────────┐
@@ -1831,11 +2056,11 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
      │ (● Actively hiring) (Early applicant)  │  A.04 Badge md
      │ Recruiter note…                        │  Body / md medium          (optional)
      │ ◯ 6 to 10 Yrs · ◯ 25–45 Lacs · ◯ …     │  meta rows · 28 frame · icon 14
-     │ Job details ›                          │  A.02 Tertiary sm          (invite)
+     │ Job details ›                          │  Link · sm · flush         (invite)
      │ ──────────────────────────────────── │
      │ Required: A · B · C                    │  skills                    (optional)
      │ ──────────────────────────────────── │
-     │ [share] [save] [   Apply now   ]       │  A.02 Icon-only md · Primary · Neutral md
+     │ [share] [save] [   Apply now   ]       │  Secondary · xl · icon ×2 · Primary · xl · fill
      │  or  (Applied)          2 days ago     │  outcome · A.04 Badge md + Body / sm
      └──────────────────────────────────────┘
 
@@ -1844,6 +2069,9 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
    the radius.xl 16 corners and, with .card--interactive, the hover (subtle grey edge + lifted + 1 px up) and focus ring.
    Markup: <article class="card card--interactive jcard jcard--active"> (expired: no card--interactive). This file
    styles only what is inside the card · sections stack.lg 14.
+   Buttons (v2.2.0): every button is the buttons atom — atoms/buttons/buttons.css, loaded before this file. The card only
+   places them (the actions row, 12 apart; the Job details trim). The jcard-ib / jcard-save / jcard-cta / jcard-link class
+   names stay on the buttons as hooks for scripts and tests; they carry no look.
    Variants (cards/README): 2.1 Job card (state active/done/expired) · 2.2 Recruiter's invite (ctx invite, state invite)
    · 2.3 Matched job (ctx match) · 2.4 Saved job (ctx saved, saved: true).
    ▶ BEFORE CHANGING IT: read README.md here and component-system.md M.02. Semantic tokens only.
@@ -1852,13 +2080,8 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
 .jcard, .jcard-list {
   /* COLOUR — DESIGN-SYSTEM.md §2.2 (light; the app is light-only) */
   --jc-surface-raised: #FFFFFF;             /* surface.neutral.raised — the unread dot's halo (the card surface itself: card container) */
-  --jc-surface-base: #FAF9F6;               /* surface.neutral.base — warm white: secondary buttons at rest (user) */
   --jc-surface-muted: #EEF1F5;              /* surface.neutral.muted */
-  --jc-state-hover: #EEF1F5;                /* surface.neutral-state.hover */
-  --jc-state-pressed: #E4E7EC;              /* surface.neutral-state.pressed */
   --jc-inverse: #0D1117;                    /* surface.inverse.base */
-  --jc-inverse-hover: #344054;              /* surface.inverse-state.hover */
-  --jc-inverse-pressed: #4A5260;            /* surface.inverse-state.pressed */
   --jc-brand-subtle: #EBF0FF;               /* surface.brand.brand-subtle */
   --jc-brand-intense: #1A56FF;              /* surface.brand.brand-intense — unread dot */
   --jc-positive-subtle: #EAFAF0;            /* surface.status.positive-subtle */
@@ -1870,7 +2093,6 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
   --jc-muted: #344054;                      /* content.neutral.muted */
   --jc-faded: #667085;                      /* content.neutral.faded */
   --jc-brand: #0B3FCC;                      /* content.neutral.brand */
-  --jc-brand-hover: #0A33A6;                /* content.neutral.brand-hover */
   --jc-on-dark: #FFFFFF;                    /* content.on-fill-dark.base */
   --jc-on-light: #0D1117;                   /* content.on-fill-light.base */
   --jc-positive: #027A48;                   /* content.status.positive */
@@ -1879,8 +2101,7 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
   --jc-pink: #BE185D;                       /* content.decorative.pink */
   --jc-violet: #6F46E0;                     /* content.decorative.violet */
   --jc-line: #E4E7EC;                       /* stroke.neutral.base — meta icon frames */
-  --jc-line-subtle: #EEF1F5;                /* stroke.neutral.muted — separators, secondary-button outlines (user: subtler); = the container edge */
-  --jc-focus: #1A56FF;                      /* stroke.neutral.focus */
+  --jc-line-subtle: #EEF1F5;                /* stroke.neutral.muted — separators (user: subtler); = the container edge */
   --jc-av-pink: #BE185D;                    /* surface.decorative.pink-intense */
   --jc-av-violet: #6F46E0;                  /* surface.decorative.violet-intense */
   --jc-av-aqua: #0F766A;                    /* surface.decorative.aqua-intense */
@@ -1888,20 +2109,14 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
   --jc-av-lime: #C4FF38;                    /* surface.decorative.lime-intense */
   --jc-av-ey: #FFE419;                      /* surface.decorative.electric-yellow-intense */
   /* ELEVATION — §2.5 */
-  --jc-lifted: 0 4px 12px rgba(13, 17, 23, .08), 0 2px 4px rgba(13, 17, 23, .04);   /* elevation.neutral.lifted */
-  --jc-raised: 0 1px 3px rgba(13, 17, 23, .08), 0 1px 2px rgba(13, 17, 23, .04);    /* elevation.neutral.raised */
-  --jc-ring: 0 0 0 4px rgba(26, 86, 255, .10);                                       /* elevation.focus.default */
   --jc-halo-brand: 0 0 0 3px rgba(26, 86, 255, .18);                                 /* elevation.halo.brand (proposed, A.04) */
   /* SPACE · SIZE — §2.3 / §2.4 */
   --jc-stack: 14px;          /* spacing.stack.lg — between sections (user: more room; = M.02 landscape rhythm) */
   --jc-row-gap: 12px;        /* spacing.stack.md — between meta rows */
   --jc-inline: 8px;          /* spacing.inline.md */
-  --jc-control: 56px;        /* size.control.xl — A.02 “xl 56 for job card CTAs” (v1.3, user: taller buttons; was md 44) */
-  --jc-btn-gap: 12px;        /* spacing.inline.lg — between the card's buttons (v1.3, user: more room; was inline.md 8) */
-  --jc-radius-ctl: 12px;     /* size.radius.lg — A.02 buttons, A.07 alert */
+  --jc-btn-gap: 12px;        /* spacing.inline.lg — between the card's buttons (= the atom's side-by-side rule) */
   --jc-radius-logo: 8px;     /* size.radius.md — M.02 square company logo */
   --jc-font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;   /* typeface.family.brand */
-  --jc-dur: 150ms;           /* motion — proposed */
 }
 
 /* ── List (page level) ───────────────────────────────────────────── */
@@ -1979,14 +2194,9 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
 .jcard-meta li > span:last-child { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .jcard-ico { width: 28px; height: 28px; flex: none; display: grid; place-items: center; border-radius: 1024px; border: 1px solid var(--jc-line); color: var(--jc-faded); }
 .jcard-ico svg { width: 14px; height: 14px; }                           /* size.icon.sm */
-.jcard-link {                                                           /* A.02 Tertiary · sm, text on the content edge */
-  justify-self: start; display: inline-flex; align-items: center; gap: var(--jc-inline); height: 40px;
-  margin: -4px -12px; padding: 0 12px; border: 0; border-radius: var(--jc-radius-ctl); background: transparent; cursor: pointer;   /* inset.lg */
-  font: 700 12px/12px var(--jc-font); color: var(--jc-brand); transition: background-color var(--jc-dur), color var(--jc-dur);     /* Label / md bold */
-}
-.jcard-link svg { width: 14px; height: 14px; }                          /* size.icon.sm */
-@media (hover: hover) { .jcard-link:hover { background: var(--jc-brand-subtle); color: var(--jc-brand-hover); } }
-.jcard-link:focus-visible { outline: none; box-shadow: var(--jc-ring); }
+/* Job details — the atom's Link · sm · flush (its text sits on the content edge); the card trims 4 above and below so
+   the 40 tap area doesn't push the facts apart */
+.jcard-facts > .jcard-link { justify-self: start; margin-block: -4px; }
 
 /* skills — M.02 skills row: Label / md semibold label · Label / lg bold list · faded dots */
 .jcard-skills { display: flex; align-items: center; gap: var(--jc-inline); min-width: 0; padding: var(--jc-stack) 0; border-bottom: 1px solid var(--jc-line-subtle); }
@@ -1997,37 +2207,8 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
 /* ── Actions ──────────────────────────────────────────────────────── */
 .jcard-actions { display: flex; align-items: center; gap: var(--jc-btn-gap); padding-top: var(--jc-stack); margin-top: auto; }
 
-/* A.02 Icon-only · md 44, radius.lg, glyph 20 content.neutral.muted. At rest (user, v1.1): warm white surface.neutral.base +
-   1 px stroke.neutral.muted — Docket's quiet look. Saved (user): brand subtle + filled content.neutral.brand glyph. */
-.jcard-ib {
-  width: var(--jc-control); height: var(--jc-control); flex: none; display: grid; place-items: center; padding: 0;
-  border-radius: var(--jc-radius-ctl); border: 1px solid var(--jc-line-subtle); background: var(--jc-surface-base); color: var(--jc-muted);
-  cursor: pointer; -webkit-tap-highlight-color: transparent;
-  transition: background-color var(--jc-dur), border-color var(--jc-dur), color var(--jc-dur), box-shadow var(--jc-dur), transform var(--jc-dur);
-}
-.jcard-ib svg { width: 20px; height: 20px; }                            /* size.icon.lg */
-@media (hover: hover) { .jcard-ib:hover { background: var(--jc-state-hover); box-shadow: var(--jc-raised); transform: translateY(-1px); } }
-.jcard-ib:active { background: var(--jc-state-pressed); box-shadow: var(--jc-raised); transform: none; }
-.jcard-ib[aria-pressed="true"] { background: var(--jc-brand-subtle); border-color: var(--jc-brand-subtle); color: var(--jc-brand); }
-.jcard-ib[aria-pressed="true"] svg { fill: currentColor; }
-.jcard-ib:focus-visible { outline: none; box-shadow: var(--jc-ring); }
-
-/* A.02 Primary · Neutral xl (Apply now / Interested) · Secondary xl (Not interested — warm white at rest, user v1.1) */
-.jcard-cta {
-  flex: 1 1 0; min-width: 0; height: var(--jc-control); padding: 0 12px;                        /* inset.lg — fill-width, label centred; two-up on a phone card can't hold A.02 xl's 22 with a 14 label */
-  display: inline-flex; align-items: center; justify-content: center; gap: var(--jc-inline);
-  border: 0; border-radius: var(--jc-radius-ctl); background: var(--jc-inverse); color: var(--jc-on-dark);
-  font: 700 14px/14px var(--jc-font); white-space: nowrap; cursor: pointer; -webkit-tap-highlight-color: transparent;   /* A.02 xl · Label / lg bold */
-  transition: background-color var(--jc-dur), box-shadow var(--jc-dur), transform var(--jc-dur);
-}
-.jcard-cta svg { width: 16px; height: 16px; }                           /* size.icon.md */
-@media (max-width: 359px) { .jcard-cta { padding: 0 8px; font-size: 12px; line-height: 12px; } }   /* phones under 360: inset.md + A.02 md label (Label / md bold 12) so “Not interested” fits two-up */
-@media (hover: hover) { .jcard-cta:hover { background: var(--jc-inverse-hover); box-shadow: var(--jc-lifted); transform: translateY(-1px); } }
-.jcard-cta:active { background: var(--jc-inverse-pressed); box-shadow: var(--jc-raised); transform: none; }
-.jcard-cta--secondary { background: var(--jc-surface-base); color: var(--jc-ink); border: 1.5px solid var(--jc-line-subtle); }        /* warm white at rest (user) · size.stroke.default */
-@media (hover: hover) { .jcard-cta--secondary:hover { background: var(--jc-state-hover); box-shadow: none; } }
-.jcard-cta--secondary:active { background: var(--jc-state-pressed); box-shadow: none; }
-.jcard-cta:focus-visible { outline: none; box-shadow: var(--jc-ring); }
+/* the buttons themselves: the buttons atom — share and save Secondary · xl · icon (save toggles with aria-pressed),
+   Apply now / Interested Primary · xl · fill, Not interested Secondary · xl · fill. Nothing to style here. */
 
 /* outcome — done / expired: no buttons, only what happened (A.04 Badge md) and when (Body / sm medium) */
 .jcard-actions--outcome { justify-content: space-between; gap: 12px; }
@@ -2040,8 +2221,6 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
 .jcard--expired * { pointer-events: none; }
 
 @media (prefers-reduced-motion: reduce) {
-  .jcard-ib, .jcard-cta, .jcard-link { transition: none; }      /* the card itself: card container */
-  .jcard-ib:hover, .jcard-cta:hover { transform: none; }
   .jcard-badge-dot { animation: none; }
 }
 </style>
@@ -2178,10 +2357,10 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
 @media (prefers-reduced-motion: reduce) { .ncard { transition: none; } }
 </style>
 <!-- ▲ COMPONENT · nav-card -->
-<!-- ▼ COMPONENT · bottom-sheet v2.6.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
+<!-- ▼ COMPONENT · bottom-sheet v2.7.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
 <style data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BOTTOM SHEET  (app component · App-login)            v2.6.0
+   SHINE · BOTTOM SHEET  (app component · App-login)            v2.7.0
    The one container behind every slide-up panel in the logged-in app.
    Built on App-logout's bottom sheet (v1.2.1 — same ShineSheet engine:
    stacking, focus trap, scroll lock, drag-to-dismiss, keyboard-aware,
@@ -2299,7 +2478,7 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
 
   /* SPACING — §2.3 (mobile) */
   --bs-spacing-inset-md: 8px;   --bs-spacing-inset-xl: 16px;  --bs-spacing-inset-xxl: 22px; --bs-spacing-inset-lg: 12px;
-  --bs-spacing-inline-sm: 4px;  --bs-spacing-inline-md: 8px;
+  --bs-spacing-inline-sm: 4px;  --bs-spacing-inline-md: 8px;  --bs-spacing-inline-lg: 12px;
   --bs-spacing-stack-3xs: 2px;  --bs-spacing-stack-xs: 8px;   --bs-spacing-stack-md: 12px;
   --bs-spacing-stack-xl: 20px;  --bs-spacing-stack-xxl: 24px;
   --bs-spacing-section-lg: 32px; --bs-spacing-section-xl: 48px;
@@ -2362,7 +2541,7 @@ html.in-app .bs { --bs-safe: 0px; }
     --bs-eyebrow-sm-size: 12px; --bs-eyebrow-sm-lh: 12px; --bs-eyebrow-sm-ls: 1.5px;
     --bs-eyebrow-md-size: 14px; --bs-eyebrow-md-lh: 14px; --bs-eyebrow-md-ls: 2px;
     --bs-spacing-inset-md: 10px; --bs-spacing-inset-xl: 20px; --bs-spacing-inset-xxl: 32px; --bs-spacing-inset-lg: 14px;
-    --bs-spacing-inline-sm: 6px; --bs-spacing-inline-md: 10px;
+    --bs-spacing-inline-sm: 6px; --bs-spacing-inline-md: 10px; --bs-spacing-inline-lg: 16px;
     --bs-spacing-stack-3xs: 4px; --bs-spacing-stack-xs: 10px; --bs-spacing-stack-md: 16px;
     --bs-spacing-stack-xl: 32px; --bs-spacing-stack-xxl: 28px;
     --bs-spacing-section-lg: 48px; --bs-spacing-section-xl: 64px; --bs-spacing-layout-sm: 32px;
@@ -2560,7 +2739,7 @@ html.in-app .bs { --bs-safe: 0px; }
 .bs-head--display:has(.bs-close) .bs-heading { padding-right: calc(var(--bs-sheet-close-md) + var(--bs-close-offset) - var(--bs-gutter) + var(--bs-spacing-inline-md)); }
 
 /* focus — stroke.neutral.focus outline + elevation.focus.default ring */
-.bs :focus-visible { outline: var(--bs-stroke-thick) solid var(--bs-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--bs-elevation-focus-default); }
+.bs :focus-visible:not(.btn) { outline: var(--bs-stroke-thick) solid var(--bs-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--bs-elevation-focus-default); }   /* atom buttons draw their own focus (v2.7.0) */
 .bs:focus-visible { outline: none; box-shadow: var(--bs-elevation-neutral-modal); }   /* the sheet itself takes focus on open: no ring */
 
 /* ══ 2 · BODY ═════════════════════════════════════════════════════════ */
@@ -2590,12 +2769,14 @@ html.in-app .bs { --bs-safe: 0px; }
 .bs-body--gutter > .bs-bottom { padding-left: 0; padding-right: 0; }
 .bs-body > .bs-bottom:first-child { padding-top: 0; }   /* nothing above it in the body: the heading's spacing is enough */
 
-/* buttons — A.02: stacked with spacing.stack.xs, or a row with spacing.inline.md */
+/* buttons — the buttons atom (atoms/buttons, A.02), size lg: stacked with spacing.stack.xs, or a row with spacing.inline.lg */
 .bs-actions { display: flex; flex-direction: column; gap: var(--bs-btn-gap); }
-.bs-actions--row { flex-direction: row; gap: var(--bs-spacing-inline-md); }
+.bs-actions--row { flex-direction: row; gap: var(--bs-spacing-inline-lg); }   /* v2.7.0: 12 — the buttons atom's side-by-side gap (was inline.md 8) */
 .bs-actions--row > * { flex: 1 1 0; min-width: 0; }
 
-/* Button · DS A.02, size lg (control.lg 48 · radius.lg · inset.xxl · Label / lg bold) */
+/* .bs-btn — DEPRECATED (v2.7.0): App-login sheets use the buttons atom (atoms/buttons: .btn .btn--{type} .btn--lg).
+   Kept only for this folder's spec and demo pages until they move; don't use it in a new sheet.
+   Button · DS A.02, size lg (control.lg 48 · radius.lg · inset.xxl · Label / lg bold) */
 .bs-btn {
   appearance: none; -webkit-appearance: none; margin: 0;
   display: inline-flex; align-items: center; justify-content: center; gap: var(--bs-spacing-inline-md);
@@ -2773,28 +2954,15 @@ html.in-app .bs { --bs-safe: 0px; }
   font: 500 var(--shs-body-lg-size)/var(--shs-body-lg-lh) var(--shs-font);
   text-overflow: ellipsis; white-space: nowrap;
 }
-.shs-copy {
-  flex: none; display: inline-flex; align-items: center; gap: var(--shs-inline-md);
-  height: var(--shs-control-sm); padding: 0 var(--shs-inset-xl);
-  border: 0; border-radius: var(--shs-radius-md);
-  background: var(--shs-surface-inverse-base); color: var(--shs-content-on-fill-dark-base);
-  font: 700 var(--shs-label-md-size)/var(--shs-label-md-lh) var(--shs-font); letter-spacing: 0;
-  white-space: nowrap; cursor: pointer; -webkit-appearance: none; appearance: none;
-  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
-  transition: background-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
-}
-.shs-copy svg { flex: none; width: var(--shs-icon-sm); height: var(--shs-icon-sm); }
-@media (hover: hover) { .shs-copy:hover { background: var(--shs-surface-inverse-state-hover); box-shadow: var(--shs-elevation-neutral-lifted); transform: translateY(var(--shs-lift-up)); } }
-.shs-copy:active { background: var(--shs-surface-inverse-state-pressed); box-shadow: var(--shs-elevation-neutral-raised); transform: none; }
-.shs-copy:focus { outline: none; }
-.shs-copy:focus-visible { outline: 2px solid var(--shs-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--shs-elevation-focus-default); }
+/* Copy — the buttons atom (Primary · sm, atoms/buttons); the sheet only keeps it beside the link and swaps its icon */
+.shs-copy { flex: none; }
 .shs-copy .shs-ic-done { display: none; }
 .shs-copy.is-copied .shs-ic-copy { display: none; }
 .shs-copy.is-copied .shs-ic-done { display: block; }
 
 .shs-status { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
-@media (prefers-reduced-motion: reduce) { .shs-chip, .shs-link, .shs-copy { transition: none; } .shs-copy:hover { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .shs-chip, .shs-link { transition: none; } }
 </style>
 <!-- ▲ PAGE · share-sheet -->
 <link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Shine Login"><meta name="apple-mobile-web-app-status-bar-style" content="default"><link rel="apple-touch-icon" href="icons/icon-180.png"><link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png"><link rel="apple-touch-startup-image" href="icons/launch-640x1136.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-750x1334.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1242x2208.png" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1125x2436.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-828x1792.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1242x2688.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1170x2532.png" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1284x2778.png" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1179x2556.png" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1290x2796.png" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1206x2622.png" media="(device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1320x2868.png" media="(device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1260x2736.png" media="(device-width: 420px) and (device-height: 912px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><script>if("serviceWorker" in navigator)addEventListener("load",function(){navigator.serviceWorker.register("sw.js")})</script>
@@ -3747,7 +3915,7 @@ html.in-app .bs { --bs-safe: 0px; }
      its body (channel chips + job link with Copy) is this page's content — same markup on My Jobs and Docket. Opened by openShare(). -->
   <div class="bs bs--pad-bottom" id="shareSheet" hidden>
     <div class="bs-top"><div class="bs-handle" aria-hidden="true"></div><div class="bs-head bs-head--display bs-head--lg"><div class="bs-heading"><p class="bs-eyebrow bs-eyebrow--badge"><span class="bs-eyebrow-dot" aria-hidden="true"></span>Share this job</p><h2 class="bs-title">Send this role to a friend.</h2></div><button class="bs-close" type="button" data-bs-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div></div>
-    <div class="bs-body bs-body--gutter"><div class="shs"><div class="shs-channels" role="group" aria-label="Share on"><button class="shs-chip shs-chip--linkedin" type="button" data-shs="linkedin" aria-label="Share on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5V9h3v10zm-1.5-11.3a1.75 1.75 0 110-3.5 1.75 1.75 0 010 3.5zM19 19h-3v-5.5c0-1.4-.5-2.3-1.7-2.3-1 0-1.5.6-1.7 1.2-.1.2-.1.5-.1.8V19h-3V9h3v1.3A3 3 0 0115 8.8c2 0 3.4 1.3 3.4 4.1V19z"/></svg>LinkedIn</button><button class="shs-chip shs-chip--x" type="button" data-shs="x" aria-label="Share on X"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.9 3H22l-7.3 8.4L23 21h-6.7l-5.2-6.8L5 21H2l7.8-9L1.8 3h6.9l4.7 6.2L18.9 3zm-2.4 16h1.9L7.6 5H5.6l10.9 14z"/></svg>X</button><button class="shs-chip shs-chip--facebook" type="button" data-shs="facebook" aria-label="Share on Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 10-11.6 9.9v-7h-2.5V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.3v7A10 10 0 0022 12z"/></svg>Facebook</button><button class="shs-chip shs-chip--email" type="button" data-shs="email" aria-label="Share on Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Email</button><button class="shs-chip shs-chip--whatsapp" type="button" data-shs="whatsapp" aria-label="Share on WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.5 3.5A11.94 11.94 0 0012 0C5.4 0 .1 5.3.1 11.9c0 2.1.6 4.1 1.6 5.9L0 24l6.4-1.7c1.7 1 3.6 1.5 5.6 1.5 6.6 0 11.9-5.3 11.9-11.9 0-3.2-1.2-6.2-3.4-8.4zM12 21.7c-1.8 0-3.6-.5-5.1-1.4l-.4-.2-3.8 1 1-3.7-.2-.4c-1-1.6-1.6-3.4-1.6-5.2 0-5.5 4.5-9.9 10-9.9 2.7 0 5.2 1 7 2.9 1.9 1.9 2.9 4.4 2.9 7 .1 5.5-4.4 9.9-9.8 9.9zm5.4-7.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.4-1.5-.9-.8-1.5-1.8-1.6-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5s-.7-1.7-.9-2.4c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4s-1 1-1 2.4 1.1 2.8 1.2 3c.1.2 2.1 3.2 5 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4 0-.1-.3-.2-.6-.3z"/></svg>WhatsApp</button></div><div class="shs-link"><input class="shs-url" type="text" readonly aria-label="Job link" value=""><button class="shs-copy" type="button" data-shs="copy"><svg class="shs-ic-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg><svg class="shs-ic-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span class="shs-copy-lbl">Copy</span></button></div><p class="shs-status" role="status" aria-live="polite"></p></div></div>
+    <div class="bs-body bs-body--gutter"><div class="shs"><div class="shs-channels" role="group" aria-label="Share on"><button class="shs-chip shs-chip--linkedin" type="button" data-shs="linkedin" aria-label="Share on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5V9h3v10zm-1.5-11.3a1.75 1.75 0 110-3.5 1.75 1.75 0 010 3.5zM19 19h-3v-5.5c0-1.4-.5-2.3-1.7-2.3-1 0-1.5.6-1.7 1.2-.1.2-.1.5-.1.8V19h-3V9h3v1.3A3 3 0 0115 8.8c2 0 3.4 1.3 3.4 4.1V19z"/></svg>LinkedIn</button><button class="shs-chip shs-chip--x" type="button" data-shs="x" aria-label="Share on X"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.9 3H22l-7.3 8.4L23 21h-6.7l-5.2-6.8L5 21H2l7.8-9L1.8 3h6.9l4.7 6.2L18.9 3zm-2.4 16h1.9L7.6 5H5.6l10.9 14z"/></svg>X</button><button class="shs-chip shs-chip--facebook" type="button" data-shs="facebook" aria-label="Share on Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 10-11.6 9.9v-7h-2.5V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.3v7A10 10 0 0022 12z"/></svg>Facebook</button><button class="shs-chip shs-chip--email" type="button" data-shs="email" aria-label="Share on Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Email</button><button class="shs-chip shs-chip--whatsapp" type="button" data-shs="whatsapp" aria-label="Share on WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.5 3.5A11.94 11.94 0 0012 0C5.4 0 .1 5.3.1 11.9c0 2.1.6 4.1 1.6 5.9L0 24l6.4-1.7c1.7 1 3.6 1.5 5.6 1.5 6.6 0 11.9-5.3 11.9-11.9 0-3.2-1.2-6.2-3.4-8.4zM12 21.7c-1.8 0-3.6-.5-5.1-1.4l-.4-.2-3.8 1 1-3.7-.2-.4c-1-1.6-1.6-3.4-1.6-5.2 0-5.5 4.5-9.9 10-9.9 2.7 0 5.2 1 7 2.9 1.9 1.9 2.9 4.4 2.9 7 .1 5.5-4.4 9.9-9.8 9.9zm5.4-7.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.4-1.5-.9-.8-1.5-1.8-1.6-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5s-.7-1.7-.9-2.4c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4s-1 1-1 2.4 1.1 2.8 1.2 3c.1.2 2.1 3.2 5 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4 0-.1-.3-.2-.6-.3z"/></svg>WhatsApp</button></div><div class="shs-link"><input class="shs-url" type="text" readonly aria-label="Job link" value=""><button class="btn btn--primary btn--sm shs-copy" type="button" data-shs="copy"><svg class="shs-ic-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg><svg class="shs-ic-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span class="shs-copy-lbl">Copy</span></button></div><p class="shs-status" role="status" aria-live="polite"></p></div></div>
   </div>
   <!-- ▲ PAGE · share-sheet-markup -->
 
@@ -3765,17 +3933,17 @@ html.in-app .bs { --bs-safe: 0px; }
     <div class="bs-body bs-body--gutter">
       <div class="bs-bottom">
         <div class="bs-actions bs-actions--row">
-          <button class="bs-btn bs-btn--secondary" data-bs-close type="button">Keep it</button>
-          <button class="bs-btn bs-btn--destructive" data-mj="cfyes" type="button">Remove</button>
+          <button class="btn btn--secondary btn--lg btn--fill" data-bs-close type="button">Keep it</button>
+          <button class="btn btn--primary btn--destructive btn--lg btn--fill" data-mj="cfyes" type="button">Remove</button>
         </div>
       </div>
     </div>
   </div>
 
-<!-- ▼ COMPONENT · bottom-sheet v2.6.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.js — do not edit here -->
+<!-- ▼ COMPONENT · bottom-sheet v2.7.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.js — do not edit here -->
 <script data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BOTTOM SHEET  (app component · App-login)            v2.6.0
+   SHINE · BOTTOM SHEET  (app component · App-login)            v2.7.0
    Pair with bottom-sheet.css. Zero dependencies, no build step.
    Engine = App-logout's ShineSheet v1.2.1; v2.0 adds the three-section anatomy;
    v2.1 aligns every value with design-system/DESIGN-SYSTEM.md.
@@ -3799,7 +3967,7 @@ html.in-app .bs { --bs-safe: 0px; }
        </div>
        <div class="bs-body">…content, scrolls…</div>          2 · BODY
        <div class="bs-bottom">                                3 · BOTTOM
-         <div class="bs-actions bs-actions--row"><button class="bs-btn bs-btn--secondary">…</button>…</div>
+         <div class="bs-actions bs-actions--row"><button class="btn btn--secondary btn--lg">…</button>…</div>   (buttons atom)
          <p class="bs-terms">…</p>                            optional
          <p class="bs-trust"><svg…/>…</p>                     optional
        </div>
@@ -4203,7 +4371,7 @@ html.in-app .bs { --bs-safe: 0px; }
   // re-measure an auto sheet after the page swaps its content (optional — a MutationObserver already does this)
   function refresh(target) { var el = $(target); if (el && el.__bs) { syncCta(el); syncScroll(el); } }
 
-  global.ShineSheet = { open: open, close: close, toggle: toggle, isOpen: isOpen, top: top, closeAll: closeAll, init: init, refresh: refresh, version: '2.6.0' };
+  global.ShineSheet = { open: open, close: close, toggle: toggle, isOpen: isOpen, top: top, closeAll: closeAll, init: init, refresh: refresh, version: '2.7.0' };
 })(window);
 </script>
 <!-- ▲ COMPONENT · bottom-sheet -->
@@ -4374,11 +4542,11 @@ html.in-app .bs { --bs-safe: 0px; }
 })(window);
 </script>
   <!-- ▲ COMPONENT · sub-view -->
-<!-- ▼ COMPONENT · job-card v2.1.0 · verbatim copy of App-login/app-components/cards/job-card/job-card.js — do not edit here -->
+<!-- ▼ COMPONENT · job-card v2.2.0 · verbatim copy of App-login/app-components/cards/job-card/job-card.js — do not edit here -->
 <script data-component="job-card">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · JOB CARD  (app component · App-login · cards/)        v2.1.0
-   Pair with job-card.css (and cards/card-container/card-container.css before it). One renderer for every job card.
+   SHINE · JOB CARD  (app component · App-login · cards/)        v2.2.0
+   Pair with job-card.css (and, before it, atoms/buttons/buttons.css and cards/card-container/card-container.css). One renderer for every job card.
    Each card renders as <article class="card card--interactive jcard …"> — the shared card container draws its
    surface, edge, shadow, padding and corners (expired cards leave out card--interactive: inert).
    Variants (cards/README): 2.1 Job card { state: active | done | expired } · 2.2 Recruiter's invite
@@ -4436,22 +4604,22 @@ html.in-app .bs { --bs-safe: 0px; }
     return '<button class="' + cls + '" type="button" data-jc-act="' + a + '" data-id="' + esc(id) + '"' + (label ? ' aria-label="' + label + '"' : '') + (extra || '') + '>' + inner + '</button>';
   }
   function saveBtn(id, on) {
-    return act(on ? 'unsave' : 'save', id, on ? 'Saved — remove job' : 'Save job', IC.save, 'jcard-ib jcard-save', ' aria-pressed="' + (on ? 'true' : 'false') + '"');
+    return act(on ? 'unsave' : 'save', id, on ? 'Saved — remove job' : 'Save job', IC.save, 'btn btn--secondary btn--xl btn--icon jcard-ib jcard-save', ' aria-pressed="' + (on ? 'true' : 'false') + '"');
   }
   var OUT = { applied: ['positive', 'Applied'], interested: ['positive', 'Interest sent'], declined: ['neutral', 'Not interested'], expired: ['neutral', 'Expired'] };
   function state(j) { return j.state || 'active'; }
   function actions(j) {
     var st = state(j), id = j.id;
     if (st === 'invite')
-      return act('decline', id, '', 'Not interested', 'jcard-cta jcard-cta--secondary') + act('interested', id, '', 'Interested' + IC.arrow, 'jcard-cta');
+      return act('decline', id, '', 'Not interested', 'btn btn--secondary btn--xl btn--fill jcard-cta jcard-cta--secondary') + act('interested', id, '', 'Interested' + IC.arrow, 'btn btn--primary btn--xl btn--fill jcard-cta');
     if (st === 'done' || st === 'expired') {
       var o = OUT[st === 'expired' ? 'expired' : (j.outcome || 'applied')] || OUT.applied;
       return '<span class="jcard-badge jcard-badge--' + o[0] + '">' + o[1] + '</span>' +
              (j.when ? '<span class="jcard-when">' + esc(j.when) + '</span>' : '');
     }
     var ext = j.apply === 'external';
-    return act('share', id, 'Share', IC.share, 'jcard-ib') + saveBtn(id, !!j.saved) +
-      act('apply', id, ext ? 'Apply now on the company site' : 'Apply now', 'Apply now' + (ext ? IC.external : ''), 'jcard-cta', ' data-apply="' + (ext ? 'external' : 'native') + '"');   // M.02 portrait wording
+    return act('share', id, 'Share', IC.share, 'btn btn--secondary btn--xl btn--icon jcard-ib') + saveBtn(id, !!j.saved) +
+      act('apply', id, ext ? 'Apply now on the company site' : 'Apply now', 'Apply now' + (ext ? IC.external : ''), 'btn btn--primary btn--xl btn--fill jcard-cta', ' data-apply="' + (ext ? 'external' : 'native') + '"');   // M.02 portrait wording
   }
   function html(j) {
     var lg = j.logo || {}, c = lg.color || color(j.name), m = j.meta || {};
@@ -4470,7 +4638,7 @@ html.in-app .bs { --bs-safe: 0px; }
       (badges ? '<div class="jcard-badges">' + badges + '</div>' : '') +
       (j.desc ? '<p class="jcard-desc">' + esc(j.desc) + '</p>' : '') +
       '<div class="jcard-facts"><ul class="jcard-meta">' + row(IC.bag, m.exp) + row(IC.pay, m.pay) + row(IC.pin, m.loc) + '</ul>' +
-        (j.details && st === 'invite' ? act('details', j.id, '', 'Job details' + IC.chev, 'jcard-link') : '') + '</div>' +
+        (j.details && st === 'invite' ? act('details', j.id, '', 'Job details' + IC.chev, 'btn btn--link btn--sm btn--flush jcard-link') : '') + '</div>' +
       (j.skills && j.skills.length ? '<div class="jcard-skills"><span class="jcard-skills-label">Required:</span><span class="jcard-skills-list">' +
         j.skills.map(esc).join('<i aria-hidden="true">·</i>') + '</span></div>' : '') +
       '<div class="jcard-actions' + (ro ? ' jcard-actions--outcome' : '') + '">' + actions(j) + '</div>' +
@@ -4491,7 +4659,7 @@ html.in-app .bs { --bs-safe: 0px; }
   document.addEventListener('keydown', function (e) {
     if ((e.key === 'Enter' || e.key === ' ') && e.target.classList && e.target.classList.contains('jcard')) { e.preventDefault(); e.target.click(); }
   });
-  global.ShineJobCard = { version: '2.1.0', html: html, list: function (js) { return js.map(html).join(''); }, setSaved: setSaved, icons: IC };
+  global.ShineJobCard = { version: '2.2.0', html: html, list: function (js) { return js.map(html).join(''); }, setSaved: setSaved, icons: IC };
 })(window);
 </script>
 <!-- ▲ COMPONENT · job-card -->
