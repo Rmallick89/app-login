@@ -1718,10 +1718,10 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
 }
 </style>
 <!-- ▲ COMPONENT · top-app-bar -->
-<!-- ▼ COMPONENT · card-container v1.1.0 · verbatim copy of App-login/app-components/cards/card-container/card-container.css — do not edit here -->
+<!-- ▼ COMPONENT · card-container v1.3.0 · verbatim copy of App-login/app-components/cards/card-container/card-container.css — do not edit here -->
 <style data-component="card-container">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · CARD CONTAINER  (app component · App-login · cards/)   v1.1.0
+   SHINE · CARD CONTAINER  (app component · App-login · cards/)   v1.3.0
    The ONE parent container every card in the app sits in — job cards, the nav card, every Profile card
    (Upload resume, details, key skills, employment & education, links) and any card built later.
    A card component never draws its own background, edge, shadow, corners or padding: it puts `.card` on
@@ -1731,7 +1731,7 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
      │ ░░░░░░░░░░░░░ 22 ░░░░░░░░░░░░░░░░░░ │ ← inset    spacing.inset.xxl, all four sides
      │ 22   card content (the component)  22 │ ← surface  surface.neutral.raised
      │ ░░░░░░░░░░░░░ 22 ░░░░░░░░░░░░░░░░░░ │
-     ╰──────────────────────────────────────╯ ← corners  size.radius.2xl 24 · shadow: soft resting shadow
+     ╰──────────────────────────────────────╯ ← corners  size.radius.xl 16 · shadow: soft resting shadow
 
    Classes
      .card               the container (any element: article, section, div, a, button)
@@ -1739,6 +1739,9 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
                          + 1 px up, keyboard focus = the same grey edge + focus ring. A card is a surface, not a
                          control: its edge never turns brand blue (v1.1.0, user). Leave it off for cards that only hold content or
                          whose controls are inside (Profile cards) and for inert cards (expired jobs).
+     .card--empty        a card's EMPTY STATE only (nothing added yet, e.g. Profile › Links): grey surface
+                         (surface.neutral.muted), flat (no shadow), edge stroke.neutral.base; same inset and corners.
+                         Once the card has content it drops the modifier (v1.2.0, user).
    Tokens other components may read (never redefine): --card-inset (full-bleed strips: negative margins
    of var(--card-inset)), --card-radius, --card-stroke (separators inside a card).
 
@@ -1760,7 +1763,7 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
   --card-ring: 0 0 0 4px rgba(26, 86, 255, .10);                                             /* elevation.focus.default */
   /* SPACE · SIZE — §2.3 / §2.4 */
   --card-inset: 22px;                       /* spacing.inset.xxl — M.02 card padding (mobile) */
-  --card-radius: 24px;                      /* size.radius.2xl (user: the job card's corners; M.02 says xl 16) */
+  --card-radius: 16px;                      /* size.radius.xl — M.02 card corners (user v1.3.0; was size.radius.2xl 24) */
   --card-stroke-w: 1px;                     /* size.stroke.thin */
   --card-dur: 150ms;                        /* motion — proposed */
 
@@ -1790,6 +1793,18 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
   --card-shadow: 0 6px 22px -8px rgba(13, 17, 23, .40), 0 2px 4px -1px rgba(13, 17, 23, .25);   /* soft · dark α as raised */
   --card-shadow-hover: 0 4px 12px rgba(13, 17, 23, .45), 0 2px 4px rgba(13, 17, 23, .30);       /* lifted · dark */
   --card-ring: 0 0 0 4px rgba(126, 163, 255, .25);
+}
+/* empty state (v1.2.0, user): grey and flat — reads as "nothing here yet", not as a card to scan. Same inset 22 and
+   corners 16 as every card; only the surface, the edge and the shadow change. */
+.card--empty {
+  --card-surface: #EEF1F5;                  /* surface.neutral.muted — the grey it had before the rule */
+  --card-stroke: #E4E7EC;                   /* stroke.neutral.base — visible on the grey surface (muted would vanish) */
+  --card-shadow: none;                      /* elevation.neutral.flat */
+}
+[data-theme="dark"] .card--empty {
+  --card-surface: #161B22;                  /* surface.neutral.muted · cool-900 */
+  --card-stroke: #4A5260;                   /* stroke.neutral.base · cool-600 */
+  --card-shadow: none;
 }
 @media (prefers-reduced-motion: reduce) {
   .card--interactive { transition: none; }
@@ -1826,7 +1841,7 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
 
    Container (v2.1.0): the shared card container — cards/card-container/card-container.css, loaded first. It draws the
    surface (surface.neutral.raised), the 1 px stroke.neutral.muted edge, the soft resting shadow, the inset.xxl 22 padding,
-   the radius.2xl 24 corners and, with .card--interactive, the M.02 hover (brand edge + lifted + 1 px up) and focus ring.
+   the radius.xl 16 corners and, with .card--interactive, the hover (subtle grey edge + lifted + 1 px up) and focus ring.
    Markup: <article class="card card--interactive jcard jcard--active"> (expired: no card--interactive). This file
    styles only what is inside the card · sections stack.lg 14.
    Variants (cards/README): 2.1 Job card (state active/done/expired) · 2.2 Recruiter's invite (ctx invite, state invite)
@@ -2124,7 +2139,7 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
 
      ┌──────────────────────────────────────────────┐
      │ (◷)  3 expired                            ›  │   container: cards/card-container (v1.1.0) — the same
-     │      Closed after you saved them             │   surface, edge, soft shadow, inset 22 and corners 24 as
+     │      Closed after you saved them             │   surface, edge, soft shadow, inset 22 and corners 16 as
      └──────────────────────────────────────────────┘   every card · icon disc 40 · icon 20 · chevron 16
 
    Markup: <button class="card card--interactive ncard"> (ShineNavCard.html writes it). The container draws the
