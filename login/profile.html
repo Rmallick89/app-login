@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#161B22" />
-<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.9 (2026-10-21)
+<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.10 (2026-10-21)
      Built from the mobile view (≤ 480 px) of <Shine Revamp>/profile-index.html, on the design system
      (design-system/DESIGN-SYSTEM.md + component-system.md): semantic tokens only, the buttons atom (atoms/buttons), DS atoms (A.04 Badge,
      A.05 Tag, A.08 Avatar, A.09 Toast). No menu / title on this tab (v1.1, user): the full-bleed hero starts at the top
@@ -17,7 +17,7 @@
      work-education-card, links-card), inlined after card-container — four text levels, icons from atoms/icons, no nudges
      (a nudge is an alert, added later). New last section: Job Preferences.
      Links (v1.9): one links card per category — certification, portfolio, project, social profile (was the empty state).
-     Tags (v1.8): Key Skills shows the tags atom (app-components/atoms/tags · .tag, Small, label only), inlined after buttons.
+     Tags (v1.8): Key Skills shows the tags atom (app-components/atoms/tags · .tag, inlined after buttons) — v1.10: Extra small, label only.
      Not built yet (taps show what they will open): editors, resume upload / viewer, status sheet, photo, item menus. -->
 <title>Shine — Profile</title>
 <link rel="preload" href="fonts/plus-jakarta-sans-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="fonts/plus-jakarta-sans-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="fonts/fonts.css"><script src="native.js"></script>
@@ -278,10 +278,10 @@
 }
 </style>
 <!-- ▲ COMPONENT · buttons -->
-<!-- ▼ COMPONENT · tags v1.0.1 · verbatim copy of App-login/app-components/atoms/tags/tags.css — do not edit here -->
+<!-- ▼ COMPONENT · tags v1.1.0 · verbatim copy of App-login/app-components/atoms/tags/tags.css — do not edit here -->
 <style data-component="tags">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TAGS  (app component · App-login · atoms/)          v1.0.1
+   SHINE · TAGS  (app component · App-login · atoms/)          v1.1.0
    A label for a skill, a place, a role or any attribute — with an optional leading icon and an optional remove ×.
    Built from the user's reference (2026-10-21: Large · Medium · Small × Default · Hover · Focused · Disabled ·
    Highlighted) on design-system A.05 Tag (component-system.md), semantic tokens only.
@@ -289,11 +289,11 @@
      ┌───────────────────────────────┐
      │  ☆   Value   ×                │   [leading icon] label [remove ×] — each icon optional, the label never
      └───────────────────────────────┘
-       lg 40 · md 36 (default) · sm 32 tall, corners 12
+       lg 40 · md 36 (default) · sm 32 · xs 28 tall, corners 12 (xs: 8)
 
    Classes
      .tag                         base — always (md by default)
-     .tag--lg | --md | --sm       size
+     .tag--lg | --md | --sm | --xs  size (xs = extra small, v1.1.0)
      .tag--highlighted            highlighted: notice tint, notice edge, leading icon in the notice colour
                                   (use the icons atom's star-filled)
      .tag--disabled               disabled (with its × as <button disabled>) — also [aria-disabled="true"]
@@ -331,6 +331,8 @@
   --tag-gap: 8px;                           /* spacing.inline.md — icon ↔ label ↔ × */
   --tag-ic: 16px;                           /* size.icon.md */
   --tag-radius: 12px;                       /* size.radius.lg */
+  --tag-fs: 14px;                           /* Label / lg — label size */
+  --tag-lh: 20px;                           /* the label line: room for g, p, y (it clips for the …) */
   --tag-edge-w: 1px;                        /* size.stroke.thin */
   --tag-focus-w: 2px;                       /* size.stroke.thick */
   --tag-ring-w: 4px;                        /* elevation.focus.default spread */
@@ -341,18 +343,19 @@
   box-sizing: border-box; display: inline-flex; align-items: center; gap: var(--tag-gap); max-width: 100%; min-width: 0;
   height: var(--tag-h); padding: 0 var(--tag-px); border-radius: var(--tag-radius);
   background: var(--_bg); color: var(--_fg); box-shadow: inset 0 0 0 var(--tag-edge-w) var(--_edge), var(--_ring);
-  font: 700 14px/14px var(--tag-font);      /* Label / lg · bold */
+  font: 700 var(--tag-fs)/var(--tag-fs) var(--tag-font);   /* Label / lg · bold (xs: Label / md) */
   white-space: nowrap; vertical-align: middle; cursor: default; -webkit-font-smoothing: antialiased;
   transition: background-color var(--tag-dur), box-shadow var(--tag-dur);
 }
 .tag *, .tag *::before, .tag *::after { box-sizing: border-box; }
 .tag > svg, .tag-x > svg { display: block; flex: none; width: var(--tag-ic); height: var(--tag-ic); color: var(--_ic-c); }
-.tag-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; line-height: 20px; }   /* it clips for the …, so it needs room for g, p, y */
+.tag-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; line-height: var(--tag-lh); }   /* it clips for the …, so it needs room for g, p, y */
 
 /* sizes — Large · Medium · Small (reference), label the same in all three */
 .tag--lg { --tag-h: 40px; --tag-px: 16px; --tag-gap: 12px; --tag-ic: 20px; }   /* size.control.sm · inset.xl · inline.lg · icon.lg */
 .tag--md { --tag-h: 36px; --tag-px: 12px; --tag-gap: 8px;  --tag-ic: 16px; }   /* A.05 lg · inset.lg · inline.md · icon.md */
 .tag--sm { --tag-h: 32px; --tag-px: 12px; --tag-gap: 8px;  --tag-ic: 16px; }   /* A.05 md · inset.lg · inline.md · icon.md */
+.tag--xs { --tag-h: 28px; --tag-px: 8px;  --tag-gap: 4px;  --tag-ic: 14px; --tag-fs: 12px; --tag-lh: 16px; --tag-radius: 8px; }   /* extra small: inset.md · inline.sm · icon.sm · Label / md 12 · radius.md 8 */
 
 /* the remove × — a real button; its hit area reaches the tag's edge without changing the tag's size */
 .tag-x {
@@ -623,14 +626,14 @@
 .dcard-row > span { min-width: 0; overflow-wrap: anywhere; font: var(--card-sub1-font); color: var(--card-sub1-color); }   /* 3 Subtext 1 */
 </style>
 <!-- ▲ COMPONENT · profile-info-card -->
-<!-- ▼ COMPONENT · key-skills-card v1.2.0 · verbatim copy of App-login/app-components/cards/key-skills-card/key-skills-card.css — do not edit here -->
+<!-- ▼ COMPONENT · key-skills-card v1.3.0 · verbatim copy of App-login/app-components/cards/key-skills-card/key-skills-card.css — do not edit here -->
 <style data-component="key-skills-card">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · KEY SKILLS CARD  (app component · App-login · cards/ · 5)   v1.2.0
+   SHINE · KEY SKILLS CARD  (app component · App-login · cards/ · 5)   v1.3.0
    Profile › Key Skills: your skills as tags, and the two actions.
 
      ┌──────────────────────────────────────┐
-     │ [Product Management] [Critical Thinking]│  tags     the tags atom (atoms/tags) · Small · label only · 8 apart
+     │ [Product Management] [Critical Thinking]│  tags     the tags atom (atoms/tags) · Extra small · label only · 8 apart
      │ [Agile Scrum Master] [Team Management]  │
      │                                         │  20
      │ [ + Add New ]  [ Edit Skills ]          │  actions  buttons atom · Primary · sm + Secondary · sm
@@ -639,7 +642,7 @@
 
    Text (v1.1.0): every line is one of the card text levels from cards/card-container (1 Eyebrow · 2 Header ·
    3 Subtext 1 · 4 Subtext 2) — this file never sets its own text size, weight or colour.
-   Tags (v1.2.0): each skill is the tags atom — <span class="tag tag--sm"><span class="tag-label">…</span></span>,
+   Tags (v1.3.0): each skill is the tags atom, extra small — <span class="tag tag--xs"><span class="tag-label">…</span></span>,
    display only (no ×). This file only lays them out; the atom draws them.
    Container: the shared card container (cards/card-container) — this file styles only what is inside.
    Markup: <div class="card scard">.  Buttons (atoms/buttons) and tags (atoms/tags) are loaded before this file.
@@ -1888,7 +1891,7 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
     <!-- ═══ KEY SKILLS · cards/key-skills-card ═══ -->
     <section class="pf-sec" data-section="skills" aria-labelledby="pfSkillsT">
       <div class="pf-sec-head"><h2 class="pf-sec-title" id="pfSkillsT">Key <em>Skills</em></h2></div>
-      <div class="card scard"><div class="scard-tags"><span class="tag tag--sm"><span class="tag-label">Product Management</span></span><span class="tag tag--sm"><span class="tag-label">Critical Thinking</span></span><span class="tag tag--sm"><span class="tag-label">Agile Scrum Master</span></span><span class="tag tag--sm"><span class="tag-label">Team Management</span></span><span class="tag tag--sm"><span class="tag-label">Visual Design</span></span><span class="tag tag--sm"><span class="tag-label">Product Thinking</span></span><span class="tag tag--sm"><span class="tag-label">Design Systems</span></span><span class="tag tag--sm"><span class="tag-label">User Research</span></span></div><div class="scard-actions"><button type="button" class="btn btn--primary btn--sm" data-pf="add-skill"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Add New</button><button type="button" class="btn btn--secondary btn--sm" data-pf="edit-skills">Edit Skills</button></div></div>
+      <div class="card scard"><div class="scard-tags"><span class="tag tag--xs"><span class="tag-label">Product Management</span></span><span class="tag tag--xs"><span class="tag-label">Critical Thinking</span></span><span class="tag tag--xs"><span class="tag-label">Agile Scrum Master</span></span><span class="tag tag--xs"><span class="tag-label">Team Management</span></span><span class="tag tag--xs"><span class="tag-label">Visual Design</span></span><span class="tag tag--xs"><span class="tag-label">Product Thinking</span></span><span class="tag tag--xs"><span class="tag-label">Design Systems</span></span><span class="tag tag--xs"><span class="tag-label">User Research</span></span></div><div class="scard-actions"><button type="button" class="btn btn--primary btn--sm" data-pf="add-skill"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Add New</button><button type="button" class="btn btn--secondary btn--sm" data-pf="edit-skills">Edit Skills</button></div></div>
     </section>
 
     <!-- ═══ EMPLOYMENT HISTORY · cards/work-education-card ═══ -->
