@@ -1485,10 +1485,10 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
 html.stn-on body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px + var(--stn-lift, 0px)) !important; }
 </style>
 <!-- ▲ COMPONENT · tab-nudge -->
-<!-- ▼ COMPONENT · top-app-bar v3.0.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v3.0.1 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
 <style data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v3.0.0
+   SHINE · TOP APP BAR  (app component · App-login)              v3.0.1
    One top bar for every logged-in screen: ONE floating bar (any items, light
    or dark) and the title bar, on one shared frame, so the leading item, the
    logo / title and the trailing action sit on exactly the same spot — and
@@ -1680,11 +1680,13 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
    readable in the gaps around the pill either. Same idea as the iOS scroll-edge effect; both platforms. */
 .stp--float::before {
   content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;   /* z −1 stays inside the bar: the sticky bar (z 80) is its own stacking context */
-  background: var(--stp-surface-neutral-base-translucent);
+  /* v3.0.1: an image layer, never a background-color — iOS 26 tints the status bar from the background-color of a
+     fixed element at the top edge (ignoring opacity) and kept the light tint after the bar went back to dark */
+  background: linear-gradient(var(--stp-surface-neutral-base-translucent), var(--stp-surface-neutral-base-translucent));
   -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - var(--stp-edge-fade)), transparent);
           mask-image: linear-gradient(to bottom, #000 calc(100% - var(--stp-edge-fade)), transparent);
-  opacity: 0; transition: opacity var(--stp-dur) var(--stp-ease), background-color var(--stp-dur) var(--stp-ease);
+  opacity: 0; transition: opacity var(--stp-dur) var(--stp-ease);
 }
 .stp--float.is-scrolled::before { opacity: 1; }
 .stp--float .stp-anchor { left: calc(var(--stp-anchor) - var(--stp-pill-margin)); }
@@ -1734,7 +1736,7 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
 .stp--float.stp--dark.is-scrolled:not(.is-lifted) .stp-row {
   -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%);
 }
-.stp--float.stp--dark:not(.is-lifted)::before { background: transparent; }
+.stp--float.stp--dark:not(.is-lifted)::before { background: none; }
 /* iPhone (v2.2.1, from the user's iPhone test: no blur showed): Safari draws a backdrop-filter unreliably when it is
    inside a position: sticky element (WebKit bugs 298709 / 301145) or switched on from none later, so on iPhone
    · the dark bar (it takes no room anyway) is position: fixed instead of sticky — the same spot on the screen;
@@ -3067,10 +3069,10 @@ html.in-app .bs { --bs-safe: 0px; }
         <!-- ▲ COMPONENT · segment-control -->
         </div>
       </header>
-<!-- ▼ COMPONENT · top-app-bar v3.0.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v3.0.1 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
 <script data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v3.0.0
+   SHINE · TOP APP BAR  (app component · App-login)              v3.0.1
    Pair with top-app-bar.css. The menu button is part of this component (v2.3.0). Its buttons (menu, back,
    Search Jobs, status) are the buttons atom (atoms/buttons, inlined before this component) — v3.0.0.
 
@@ -3184,8 +3186,16 @@ html.in-app .bs { --bs-safe: 0px; }
         el.__stpLifted = lifted;
         el.querySelectorAll('.stp-row .btn').forEach(function (b) { b.classList.toggle('btn--on-dark', !lifted); });
       }
-      // iPhone status bar = the body's background colour: dark while the dark section is under the top edge
-      if (html.getAttribute('data-platform') === 'ios') html.classList.toggle('stp-top-dark', !!sr && sr.top <= 1 && sr.bottom > 0);
+      // iPhone status bar = the body's background colour: dark while the dark section is under the top edge.
+      // v3.0.1: also while the page is pulled down past its top (iOS rubber-band: scrollY < 0 moves the section down
+      // a few px) — a flick back to the top always bounces, and the last frames of the bounce left it light
+      var raw = y(el.__stpT);
+      if (html.getAttribute('data-platform') === 'ios') {
+        var dark = !!sr && sr.bottom > 0 && (sr.top <= 1 || raw <= 0);
+        html.classList.toggle('stp-top-dark', dark);
+        var tc = doc.querySelector('meta[name="theme-color"]');   // older Safari tints from it (iOS 26 ignores it)
+        if (tc) { if (!tc.__stpBase) tc.__stpBase = tc.getAttribute('content'); tc.setAttribute('content', dark ? tc.__stpBase : getComputedStyle(doc.body).backgroundColor); }
+      }
     }
   }
   function initials(name) {                                 // A.08: first letters of the first and last word, 1–2
@@ -3333,6 +3343,12 @@ html.in-app .bs { --bs-safe: 0px; }
       var again = function () { if (el.__stpT) paint(el); };   // repaint once it exists (first frame at the top: dark status bar on iPhone)
       if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', again, { once: true });
       global.addEventListener('load', again); global.addEventListener('pageshow', again); global.addEventListener('resize', again);
+      // v3.0.1: paint once more after the scroll has come to rest (momentum + the top bounce end without a last
+      // scroll event on some phones) — scrollend where there is one, and a few frames after the finger lifts
+      var t = el.__stpT === global || !el.__stpT ? global : el.__stpT, settle = [];
+      t.addEventListener('scrollend', again, { passive: true });
+      global.addEventListener('touchend', function () { settle.forEach(global.clearTimeout); settle = [120, 360, 700, 1200].map(function (ms) { return global.setTimeout(again, ms); }); }, { passive: true });
+      doc.addEventListener('visibilitychange', function () { if (!doc.hidden) again(); });
     }
     return el;
   }
@@ -3345,7 +3361,7 @@ html.in-app .bs { --bs-safe: 0px; }
     doc.dispatchEvent(new CustomEvent('shine:menu', { detail: { button: b, page: b.getAttribute('data-page') || '' } }));
   });
   global.ShineTopBar = {
-    version: '3.0.0', mount: mount, initials: initials,
+    version: '3.0.1', mount: mount, initials: initials,
     update: function () { bars.forEach(function (b) { if (b.__stpT) paint(b); }); },
     reveal: function () { bars.forEach(function (b) { if (b.__stpReveal) b.__stpReveal(); }); }   // bring a tucked row back
   };
