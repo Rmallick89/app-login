@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#161B22" />
-<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.12 (2026-10-21) — status bar stays dark on scrolling back to the hero (top-app-bar v3.0.1)
+<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.13 (2026-10-21) — status bar: dark at the hero, opaque warm white past it (top-app-bar v3.0.2)
      Built from the mobile view (≤ 480 px) of <Shine Revamp>/profile-index.html, on the design system
      (design-system/DESIGN-SYSTEM.md + component-system.md): semantic tokens only, the buttons atom (atoms/buttons), DS atoms (A.04 Badge,
      A.05 Tag, A.08 Avatar, A.09 Toast). No menu / title on this tab (v1.1, user): the full-bleed hero starts at the top
@@ -1213,10 +1213,10 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
 }
 </style>
 <!-- ▲ COMPONENT · bottom-tab-bar -->
-<!-- ▼ COMPONENT · top-app-bar v3.0.1 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v3.0.2 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
 <style data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v3.0.1
+   SHINE · TOP APP BAR  (app component · App-login)              v3.0.2
    One top bar for every logged-in screen: ONE floating bar (any items, light
    or dark) and the title bar, on one shared frame, so the leading item, the
    logo / title and the trailing action sit on exactly the same spot — and
@@ -1410,7 +1410,15 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
   content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;   /* z −1 stays inside the bar: the sticky bar (z 80) is its own stacking context */
   /* v3.0.1: an image layer, never a background-color — iOS 26 tints the status bar from the background-color of a
      fixed element at the top edge (ignoring opacity) and kept the light tint after the bar went back to dark */
-  background: linear-gradient(var(--stp-surface-neutral-base-translucent), var(--stp-surface-neutral-base-translucent));
+  /* v3.0.2 (user: "elements visible behind the status bar" once the hero has gone): the status-bar strip of the edge
+     (the bar's top padding, --stp-safe-top) is the OPAQUE page surface, surface.neutral.base — nothing passing under
+     it shows; only the 6 above / below and the 8 at the sides of the pill stay frosted. A dark section that is still
+     under the strip (--stp-over, set by the script on the dark bar: how much of the strip it still covers) shows
+     through over that height, so the strip turns warm white exactly where the section ends — 0 % visible = all white. */
+  background: linear-gradient(to bottom,
+    transparent 0, transparent var(--stp-over, 0px),
+    var(--stp-surface-neutral-base) var(--stp-over, 0px), var(--stp-surface-neutral-base) var(--stp-safe-top),
+    var(--stp-surface-neutral-base-translucent) var(--stp-safe-top), var(--stp-surface-neutral-base-translucent) 100%);
   -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - var(--stp-edge-fade)), transparent);
           mask-image: linear-gradient(to bottom, #000 calc(100% - var(--stp-edge-fade)), transparent);
@@ -1557,10 +1565,10 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
       <div class="stp-end"><button class="btn btn--muted btn--sm btn--pill btn--on-dark stp-status" type="button" data-pf="status" aria-haspopup="dialog" aria-expanded="false">Actively Looking<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button></div>
     </div>
   </header>
-  <!-- ▼ COMPONENT · top-app-bar v3.0.1 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
+  <!-- ▼ COMPONENT · top-app-bar v3.0.2 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
 <script data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v3.0.1
+   SHINE · TOP APP BAR  (app component · App-login)              v3.0.2
    Pair with top-app-bar.css. The menu button is part of this component (v2.3.0). Its buttons (menu, back,
    Search Jobs, status) are the buttons atom (atoms/buttons, inlined before this component) — v3.0.0.
 
@@ -1670,6 +1678,11 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
       var sr = sec && sec.getBoundingClientRect();
       var lifted = sr && row ? sr.bottom <= row.getBoundingClientRect().bottom : v > 0;
       el.classList.toggle('is-lifted', lifted);
+      // v3.0.2: how much of the status-bar strip (the bar's top padding) the dark section still covers — the scroll edge
+      // paints the strip warm white below that line (top-app-bar.css), so page content never shows behind the status bar
+      var strip = parseFloat(global.getComputedStyle(el).paddingTop) || 0, top0 = el.getBoundingClientRect().top;
+      var over = sr && lifted ? Math.max(0, Math.min(strip, sr.bottom - top0)) : strip;
+      el.style.setProperty('--stp-over', over.toFixed(1) + 'px');
       if (el.__stpLifted !== lifted) {                    // buttons (atom): white on the dark pill, plain on the light one
         el.__stpLifted = lifted;
         el.querySelectorAll('.stp-row .btn').forEach(function (b) { b.classList.toggle('btn--on-dark', !lifted); });
@@ -1677,13 +1690,10 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
       // iPhone status bar = the body's background colour: dark while the dark section is under the top edge.
       // v3.0.1: also while the page is pulled down past its top (iOS rubber-band: scrollY < 0 moves the section down
       // a few px) — a flick back to the top always bounces, and the last frames of the bounce left it light
-      var raw = y(el.__stpT);
-      if (html.getAttribute('data-platform') === 'ios') {
-        var dark = !!sr && sr.bottom > 0 && (sr.top <= 1 || raw <= 0);
-        html.classList.toggle('stp-top-dark', dark);
-        var tc = doc.querySelector('meta[name="theme-color"]');   // older Safari tints from it (iOS 26 ignores it)
-        if (tc) { if (!tc.__stpBase) tc.__stpBase = tc.getAttribute('content'); tc.setAttribute('content', dark ? tc.__stpBase : getComputedStyle(doc.body).backgroundColor); }
-      }
+      var raw = y(el.__stpT), dark = !!sr && sr.bottom > 0 && (sr.top <= 1 || raw <= 0);
+      if (html.getAttribute('data-platform') === 'ios') html.classList.toggle('stp-top-dark', dark);
+      var tc = doc.querySelector('meta[name="theme-color"]');     // browsers that tint from it (older Safari, Chrome) — v3.0.2: every platform
+      if (tc) { if (!tc.__stpBase) tc.__stpBase = tc.getAttribute('content'); tc.setAttribute('content', dark ? tc.__stpBase : '#FAF9F6'); }   /* surface.neutral.base */
     }
   }
   function initials(name) {                                 // A.08: first letters of the first and last word, 1–2
@@ -1849,7 +1859,7 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
     doc.dispatchEvent(new CustomEvent('shine:menu', { detail: { button: b, page: b.getAttribute('data-page') || '' } }));
   });
   global.ShineTopBar = {
-    version: '3.0.1', mount: mount, initials: initials,
+    version: '3.0.2', mount: mount, initials: initials,
     update: function () { bars.forEach(function (b) { if (b.__stpT) paint(b); }); },
     reveal: function () { bars.forEach(function (b) { if (b.__stpReveal) b.__stpReveal(); }); }   // bring a tucked row back
   };
