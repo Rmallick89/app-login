@@ -17,13 +17,14 @@
 <title>Shine — Profile</title>
 <link rel="preload" href="fonts/plus-jakarta-sans-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="fonts/plus-jakarta-sans-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="fonts/fonts.css"><script src="native.js"></script>
 
-<!-- ▼ COMPONENT · buttons v1.2.1 · verbatim copy of App-login/app-components/atoms/buttons/buttons.css — do not edit here -->
+<!-- ▼ COMPONENT · buttons v1.3.0 · verbatim copy of App-login/app-components/atoms/buttons/buttons.css — do not edit here -->
 <style data-component="buttons">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BUTTONS  (app component · App-login · atoms/)          v1.2.1
+   SHINE · BUTTONS  (app component · App-login · atoms/)          v1.3.0
    Every button in the logged-in app: four types × two tones, four sizes, with an optional icon or icon only.
-   Built on design-system A.02 Button (component-system.md) and the buttons already used on My Jobs, Docket and
-   Profile. "Brand" here is the app's black (A.02 Primary · Neutral) — brand blue stays the search CTA's alone.
+   Built on design-system A.02 Button (component-system.md) and the buttons used on Home, My Jobs, Docket and
+   Profile (cards, sheets and the top app bar). "Brand" here is the app's black (A.02 Primary · Neutral) — brand
+   blue is the one exception tone, .btn--accent (A.02 Primary · Brand), and it belongs to Search Jobs alone.
 
      type          brand (black, default)                    destructive (.btn--destructive)
      ─────────────────────────────────────────────────────────────────────────────────────────────
@@ -31,22 +32,29 @@
      Secondary     [□ View      ]  warm white · grey edge     [□ Remove ]  warm white · red edge · red text
      Muted         [▤ Filters   ]  grey fill · black text     [▤ Remove ]  pale red fill · red text
      Link            Job details   text only · black            Remove      text only · red
+     exception     Primary + .btn--accent  [● Search Jobs ]  brand-blue fill + blue glow — search only (A.02 Primary · Brand)
 
    Classes
      .btn                                   base — always
      .btn--primary | --secondary | --muted | --link            type (pick one)
      .btn--destructive                      tone (default: brand = black)
+     .btn--accent                           Primary only: brand blue + glow — the top bar's Search Jobs, nothing else
      .btn--sm 40 | --md 44 (default) | --lg 48 | --xl 56       size (A.02)
      .btn--icon                             icon only: square, glyph only, aria-label required
+     .btn--icon-lg                          icon only, navigation glyph 20 at sm (menu, back) — action glyphs stay 16
      .btn--block                            full width            .btn--fill  shares a row (flex 1, padding 12)
      .btn--flush                            Link only: pulls the text / glyph onto the content edge (margin = −padding)
-     .btn--pill                             fully round (nav / filter pills; actions stay radius 12)
-     .btn--on-dark                          primary on a dark surface (white fill, black text)
+     .btn--pill                             fully round — bar / navigation buttons only (README › Pill buttons)
+     .btn--on-dark                          Primary or Muted on a dark surface (white fill, black text)
      [aria-pressed="true"]                  toggle on (bookmark saved): brand-subtle fill + brand glyph
+     [aria-haspopup] + [aria-expanded]      opens a sheet / menu (status, sort): trailing chevron, expanded while open
      :disabled / [aria-disabled="true"]     disabled · [aria-busy="true"] + .btn-spinner  loading
      [data-state="hover|pressed|focus"]     shows a state statically — guidelines and screenshots only
    Anatomy: [leading svg] label [trailing svg | .badge] — gap spacing.inline.md 8 (badge 12); icons inherit the text
-   colour; icon-only glyphs are content.neutral.muted (A.02 Icon-only). The edge is an inset shadow, never a border,
+   colour; icon-only glyphs are content.neutral.muted (A.02 Icon-only), except on Muted (it has a fill, so the
+   glyph keeps content.neutral.base). Hover exists only with a mouse or trackpad (@media (hover: hover)) — on a
+   phone a button shows rest, pressed, focus (keyboard / switch access), disabled and loading, so its REST look must
+   read as a button on its own. The edge is an inset shadow, never a border,
    so 1.5 px renders as 1.5 px on Android too (Chromium floors border widths to whole pixels).
 
    ▶ BEFORE CHANGING IT: read README.md here and component-system.md A.02. Semantic tokens only.
@@ -87,6 +95,13 @@
   --btn-on-dark-hover: #EEF1F5;             /* cool-neutral/100 */
   --btn-on-dark-pressed: #E4E7EC;           /* cool-neutral/200 */
   --btn-on-dark-focus: #7EA3FF;             /* brand/300 — the focus outline that reads on dark */
+  /* EXCEPTION TONE · .btn--accent (A.02 Primary · Brand — search only); the same blue in both themes */
+  --btn-accent: #1A56FF;                    /* surface.brand.brand-intense · brand/500 */
+  --btn-accent-hover: #0B3FCC;              /* surface.brand.brand-intense-hover · brand/600 */
+  --btn-accent-pressed: #0A33A6;            /* surface.brand.brand-intense-pressed · brand/700 */
+  --btn-accent-raised: 0 6px 14px -4px rgba(26, 86, 255, .45);    /* elevation.brand.raised — at rest */
+  --btn-accent-lifted: 0 16px 40px -12px rgba(26, 86, 255, .40);  /* elevation.brand.lifted — hover */
+  --btn-accent-subtle: 0 8px 24px -10px rgba(26, 86, 255, .18);   /* elevation.brand.subtle — pressed */
   --btn-none: 0 0 #0000;                    /* "no shadow" that can sit in a box-shadow list */
   /* SHAPE · SPACE · TYPE — §2.1 / §2.3 / §2.4 */
   --btn-radius: 12px;                       /* size.radius.lg — every action button */
@@ -104,6 +119,7 @@
   /* type primary (default) */
   --_bg: var(--btn-inverse); --_fg: var(--btn-on-fill); --_bd: transparent;
   --_bg-h: var(--btn-inverse-hover); --_bg-p: var(--btn-inverse-pressed);
+  --_sh: var(--btn-none);                   /* rest elevation — none, except the accent's glow */
   --_sh-h: var(--btn-lifted); --_sh-p: var(--btn-raised-sh); --_lift: translateY(-1px);
   --_edge: inset 0 0 0 var(--btn-stroke-w) var(--_bd);   /* the edge: an inset shadow (size.stroke.default) */
 
@@ -111,7 +127,7 @@
   display: inline-flex; align-items: center; justify-content: center; gap: var(--btn-gap);
   height: var(--_h); min-width: var(--_h); margin: 0; padding: 0 var(--_px);
   border: 0; border-radius: var(--btn-radius);
-  background: var(--_bg); color: var(--_fg); box-shadow: var(--_edge), var(--btn-none);
+  background: var(--_bg); color: var(--_fg); box-shadow: var(--_edge), var(--_sh);
   font: 700 var(--_fs)/var(--_lh) var(--btn-font); letter-spacing: 0; text-align: center; text-decoration: none; white-space: nowrap;
   cursor: pointer; -webkit-appearance: none; appearance: none; -webkit-tap-highlight-color: transparent; touch-action: manipulation;
   -webkit-font-smoothing: antialiased; user-select: none; -webkit-user-select: none;
@@ -134,15 +150,21 @@
   --_bg-h: var(--btn-inverse-hover); --_bg-p: var(--btn-inverse-pressed); --_sh-h: var(--btn-lifted); --_sh-p: var(--btn-raised-sh); --_lift: translateY(-1px); }
 .btn--primary.btn--destructive { --_bg: var(--btn-neg); --_fg: var(--btn-on-intense);
   --_bg-h: var(--btn-neg-hover); --_bg-p: var(--btn-neg-hover); }   /* pressed = hover colour + raised (bottom sheet today) */
-/* 2 · Secondary — outlined: the alternative next to a primary. Hover lifts and presses like every filled or outlined
-   button (A.02.5 — one motion for Primary, Secondary and Muted; only Link stays flat) */
+/* 1b · Primary · accent — THE EXCEPTION: brand blue with a blue glow at rest (A.02 Primary · Brand). Search only —
+   the top bar's Search Jobs; every other primary is black. It glows instead of moving: no lift on hover */
+.btn--primary.btn--accent { --_bg: var(--btn-accent); --_fg: var(--btn-on-intense);
+  --_bg-h: var(--btn-accent-hover); --_bg-p: var(--btn-accent-pressed);
+  --_sh: var(--btn-accent-raised); --_sh-h: var(--btn-accent-lifted); --_sh-p: var(--btn-accent-subtle); --_lift: none; }
+/* 2 · Secondary — outlined: the alternative next to a primary. Hover lifts and presses like Primary (A.02.5 — one
+   motion for Primary and Secondary; Muted and Link stay flat) */
 .btn--secondary { --_bg: var(--btn-base); --_fg: var(--btn-ink); --_bd: var(--btn-stroke);
   --_bg-h: var(--btn-state-hover); --_bg-p: var(--btn-state-pressed); }
 .btn--secondary.btn--destructive { --_fg: var(--btn-neg-text); --_bd: var(--btn-neg-stroke);
   --_bg-h: var(--btn-neg-subtle); --_bg-p: var(--btn-neg-subtle-hover); }
-/* 3 · Muted — tinted fill, no edge: quiet actions and pills that sit on white */
+/* 3 · Muted — tinted fill, no edge: quiet actions and the bar's pills (menu, back, status). Flat (v1.3.0): only the
+   fill changes on hover / press — it never lifts, so bar buttons don't jump under the finger */
 .btn--muted { --_bg: var(--btn-muted); --_fg: var(--btn-ink); --_bd: transparent;
-  --_bg-h: var(--btn-state-pressed); --_bg-p: var(--btn-state-pressed); }
+  --_bg-h: var(--btn-state-pressed); --_bg-p: var(--btn-state-pressed); --_sh-h: var(--btn-none); --_sh-p: var(--btn-none); --_lift: none; }
 .btn--muted.btn--destructive { --_bg: var(--btn-neg-subtle); --_fg: var(--btn-neg-text);
   --_bg-h: var(--btn-neg-subtle-hover); --_bg-p: var(--btn-neg-subtle-hover); }
 /* 4 · Link — text only, the lowest weight; padding 12 so the tap area stays a button. Hover and pressed share one
@@ -183,8 +205,11 @@
 /* ── Icon only — square, glyph only (aria-label required) ───────── */
 .btn--icon { width: var(--_h); padding: 0; }
 .btn--icon > svg { width: var(--_ic-only); height: var(--_ic-only); }
-/* A.02 Icon-only: the glyph is content.neutral.muted on every non-filled brand type (share, save, edit, ⋮, +) */
-.btn--icon:not(.btn--primary):not(.btn--destructive) { --_fg: var(--btn-ink-muted); }
+/* A.02 Icon-only: the glyph is content.neutral.muted on Secondary and Link (share, save, edit, ⋮, +). Muted keeps
+   content.neutral.base — its fill already says "button", and menu / back are primary navigation */
+.btn--icon:not(.btn--primary):not(.btn--destructive):not(.btn--muted) { --_fg: var(--btn-ink-muted); }
+/* navigation glyph (menu, back): size.icon.lg 20 at every size — action glyphs (save, share, +) keep the size's own */
+.btn--icon.btn--icon-lg { --_ic-only: 20px; }
 .btn--icon[aria-busy="true"] svg { display: none; }                   /* loading: the spinner replaces the glyph */
 .btn--icon .btn-spinner { width: var(--_ic-only); height: var(--_ic-only); }
 
@@ -199,15 +224,17 @@
 .btn--block { display: flex; width: 100%; }
 .btn--fill { flex: 1 1 0; min-width: 0; --_px: 12px; }   /* shares a row with other buttons: label centred, padding spacing.inset.lg */
 @media (max-width: 359px) { .btn--fill.btn--lg, .btn--fill.btn--xl { --_px: 8px; --_fs: 12px; --_lh: 12px; } }   /* two labels fit on 320 phones */
-.btn--pill { border-radius: 1024px; }      /* size.radius.full — nav / filter pills only */
+.btn--pill { border-radius: 1024px; }      /* size.radius.full — bar / navigation buttons only (README › Pill buttons) */
 /* Link only: the text (or glyph) lines up with the content edge — the button's padding hangs outside it */
 .btn--link.btn--flush { margin-inline: calc(var(--_px) * -1); }
 .btn--link.btn--icon.btn--flush { margin: calc((var(--_ic-only) - var(--_h)) / 2); }
 /* a trailing badge (A.04, e.g. +22 on Upload resume) sits 12 from the label (spacing.inline.lg) */
 .btn > .badge { margin-left: 4px; }
 
-/* primary on a permanently dark surface (the Profile hero): white fill, black text — in both themes */
-.btn--primary.btn--on-dark { --_bg: var(--btn-on-dark-bg); --_fg: var(--btn-on-dark-fg); --_bg-h: var(--btn-on-dark-hover); --_bg-p: var(--btn-on-dark-pressed); --btn-focus: var(--btn-on-dark-focus); }
+/* on a permanently dark surface (the Profile hero, the dark top bar over it): white fill, black text — in both
+   themes. Primary (Upload resume) and Muted (the bar's status pill) take it; on Muted it is the resting fill that
+   reads on dark, so the role (quiet choice) stays the same while the surface changes */
+.btn--primary.btn--on-dark, .btn--muted.btn--on-dark { --_bg: var(--btn-on-dark-bg); --_fg: var(--btn-on-dark-fg); --_bg-h: var(--btn-on-dark-hover); --_bg-p: var(--btn-on-dark-pressed); --btn-focus: var(--btn-on-dark-focus); }
 
 /* ── Dark theme — the dark column of §2.2 (App-login pages are light-only today) ── */
 [data-theme="dark"] .btn {
@@ -234,6 +261,9 @@
   --btn-lifted: 0 4px 12px rgba(13, 17, 23, .45), 0 2px 4px rgba(13, 17, 23, .30);   /* elevation.neutral.lifted (dark α) */
   --btn-raised-sh: 0 1px 3px rgba(13, 17, 23, .40), 0 1px 2px rgba(13, 17, 23, .25); /* elevation.neutral.raised (dark α) */
   --btn-ring: 0 0 0 4px rgba(26, 86, 255, .20);                                       /* elevation.focus.default (dark α) */
+  --btn-accent-raised: 0 6px 14px -4px rgba(26, 86, 255, .55);    /* elevation.brand.raised (dark α) */
+  --btn-accent-lifted: 0 16px 40px -12px rgba(26, 86, 255, .50);  /* elevation.brand.lifted (dark α) */
+  --btn-accent-subtle: 0 8px 24px -10px rgba(26, 86, 255, .30);   /* elevation.brand.subtle (dark α) */
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -821,10 +851,10 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
 }
 </style>
 <!-- ▲ COMPONENT · bottom-tab-bar -->
-<!-- ▼ COMPONENT · top-app-bar v2.2.1 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v3.0.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
 <style data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v2.2.1
+   SHINE · TOP APP BAR  (app component · App-login)              v3.0.0
    One top bar for every logged-in screen: ONE floating bar (any items, light
    or dark) and the title bar, on one shared frame, so the leading item, the
    logo / title and the trailing action sit on exactly the same spot — and
@@ -842,7 +872,7 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
    Shared frame (every bar, both platforms)
      gutter G 24 (spacing.layout.sm): glyphs and text start / end on it
      row 48 (size.control.lg) · 8 above / below (spacing.inset.md) → bar 64
-     leading slot 14 → 54 (40, size.control.sm): menu-button · the photo
+     leading slot 14 → 54 (40, size.control.sm): the menu (.stp-menu) · the photo
      (.stp-avatar) · on a sub-view the back button .stp-back
      anchor (logo / title) at 62 = leading 54 + 8 (spacing.inline.md)
      trailing hit areas end at screen − 14 (icon / text on G)
@@ -851,9 +881,9 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
      a pill that wraps the 40 items with ONE inset all round — 6
      (spacing.inset.sm) — so every item sits concentric: pill 52 = 40 + 6 + 6,
      6 above / below it (bar 64), 8 from the screen (spacing.inset.md).
-     Items, any mix: leading .mb (menu) or .stp-avatar (photo, A.08 lg 40);
-     anchor .stp-logo (optional); end .stp-cta (A.02 brand sm) or
-     .stp-status (A.02 sm, chevron) — all 40.
+     Items, any mix: leading .stp-menu (menu) or .stp-avatar (photo, A.08 lg 40);
+     anchor .stp-logo (optional); end .stp-cta (Search Jobs) or .stp-status
+     (status picker, chevron) — all 40.
      Tone: light by default (frosted white + lifted shadow). .stp--dark = the
      bar sits over a dark top section: it takes no room (the section starts
      under it and pads by var(--stp-float-h)), faint light pill on the dark,
@@ -885,7 +915,15 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
 
    ▶ BEFORE ADDING OR CHANGING IT: read README.md in this folder.
    • Semantic tokens only (DESIGN-SYSTEM.md §2); the scoped layer names them.
-   • Pair with top-app-bar.js (ShineTopBar) and menu-button.
+   • Pair with top-app-bar.js (ShineTopBar). The menu button is part of this component (v2.3.0;
+     it was the separate menu-button component until then).
+   • Buttons (v3.0.0): menu, back, Search Jobs and the status pill ARE the buttons atom
+     (app-components/atoms/buttons, inlined BEFORE this file) — sm 40 pills:
+       menu / back   .btn.btn--muted.btn--sm.btn--icon.btn--icon-lg.btn--pill  + .stp-menu / .stp-back
+       Search Jobs   .btn.btn--primary.btn--accent.btn--sm.btn--pill           + .stp-cta
+       status        .btn.btn--muted.btn--sm.btn--pill (+ .btn--on-dark)       + .stp-status
+     This file only PLACES them (slot, 48 touch target, hidden); their look is the atom's. The script
+     adds / removes .btn--on-dark on the dark bar's buttons as it turns light (.is-lifted) and back.
    ═══════════════════════════════════════════════════════════════════════ */
 
 :root { --stp-safe-top: env(safe-area-inset-top, 0px); }
@@ -913,21 +951,15 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
   --stp-surface-neutral-raised-translucent: rgba(255, 255, 255, .96);
                                                            /* surface.neutral.raised-translucent (PROPOSED, same as the tab bar) */
   --stp-stroke-neutral-muted: #EEF1F5;                     /* stroke.neutral.muted — scroll hairline */
-  --stp-surface-brand-intense: #1A56FF;                    /* surface.brand.brand-intense — Search Jobs */
+  --stp-surface-brand-intense: #1A56FF;                    /* surface.brand.brand-intense — the photo (A.08, user) */
   --stp-surface-brand-intense-hover: #0B3FCC;              /* surface.brand.brand-intense-hover */
   --stp-surface-brand-intense-pressed: #0A33A6;            /* surface.brand.brand-intense-pressed */
-  --stp-content-on-fill-dark-base: #FFFFFF;                /* content.on-fill-dark.base — CTA label */
+  --stp-content-on-fill-dark-base: #FFFFFF;                /* content.on-fill-dark.base — the photo's initials */
   --stp-elevation-neutral-lifted: 0 4px 12px rgba(13, 17, 23, .08), 0 2px 4px rgba(13, 17, 23, .04);
                                                            /* elevation.neutral.lifted — "sticky headers, floating groups" */
-  --stp-elevation-brand-raised: 0 6px 14px -4px rgba(26, 86, 255, .45);   /* elevation.brand.raised — CTA at rest */
-  --stp-elevation-brand-lifted: 0 16px 40px -12px rgba(26, 86, 255, .40); /* elevation.brand.lifted — CTA hover */
-  --stp-elevation-brand-subtle: 0 8px 24px -10px rgba(26, 86, 255, .18);  /* elevation.brand.subtle — CTA pressed */
   --stp-elevation-focus-default: 0 0 0 4px rgba(26, 86, 255, .10);        /* elevation.focus.default */
   --stp-stroke-neutral-focus: #1A56FF;                     /* stroke.neutral.focus */
-  --stp-surface-neutral-state-hover: #EEF1F5;              /* surface.neutral-state.hover — back button */
-  --stp-surface-neutral-state-pressed: #E4E7EC;            /* surface.neutral-state.pressed — back button, status pressed */
   /* floating bar items · dark tone (v2.0.0) */
-  --stp-surface-neutral-muted: #EEF1F5;                    /* surface.neutral.muted — status on the light pill */
   --stp-surface-on-fill-dark-subtle: rgba(255, 255, 255, .06);
                                                            /* surface.on-fill-dark.subtle (PROPOSED) — pill on the dark hero */
   /* blur: written out as literal values wherever it is used — WebKit (iPhone) can drop a backdrop-filter whose value
@@ -943,8 +975,8 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
   --stp-pad-y: 8px;                /* spacing.inset.md — above / below the row */
   --stp-row: 48px;                 /* size.control.lg */
   --stp-row-ios: 44px;             /* size.control.md — iOS standard navigation bar 44 pt */
-  --stp-hit: 40px;                 /* size.control.sm — menu / icon buttons, CTA */
-  --stp-icon: 20px;                /* size.icon.lg — menu glyph */
+  --stp-hit: 40px;                 /* size.control.sm — the bar's buttons (atom .btn--sm) and the photo */
+  --stp-icon: 20px;                /* size.icon.lg — menu / back glyph (atom .btn--icon-lg): it sits on the gutter */
   --stp-hit-edge: calc(var(--stp-gutter) - (var(--stp-hit) - var(--stp-icon)) / 2);   /* 14 */
   --stp-pill-margin: 8px;          /* spacing.inset.md — pill to screen edge */
   --stp-pill-inset: calc(var(--stp-hit-edge) - var(--stp-pill-margin));                 /* 6 = spacing.inset.sm — all four sides */
@@ -958,7 +990,6 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
   --stp-font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;   /* typeface.family.brand */
   /* Title: 20 / 24 bold −0.2 — the Heading / md step one size up (unit/20 · unit/24, its ≥768 values);
      between Heading / md mobile 18 and Heading / lg mobile 22 */
-  /* Label / md bold: 12 / 12 — Search Jobs (A.02 btn--sm) */
 
   /* MOTION — proposed */
   --stp-dur: 200ms; --stp-ease: ease;
@@ -986,23 +1017,13 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
   margin: var(--stp-pad-y) 0;
   padding: 0 var(--stp-hit-edge);
 }
-.stp-row > .mb, .stp-row > .stp-back { margin: 0; position: relative; }   /* the frame places them; no optical offsets */
-.stp-row > .mb::after, .stp-row > .stp-back::after { content: ""; position: absolute; inset: -4px; }   /* 48 touch target (Android) */
+.stp-row .btn { flex: none; margin: 0; }   /* the bar's buttons (atom): the frame places them — no optical offsets, never squeezed */
+.stp-row .btn[hidden] { display: none !important; }   /* the atom is inline-flex; [hidden] must still win (menu ⇄ back) */
+.stp-row > .stp-menu::after, .stp-row > .stp-back::after { content: ""; position: absolute; inset: -4px; }   /* 48 touch target (Android) */
 
-/* back button — takes the menu's slot on a sub-view; same 40 round ghost button as the menu (A.02 icon-only) */
-.stp-back {
-  flex: none; display: inline-grid; place-items: center;
-  width: var(--stp-hit); height: var(--stp-hit); padding: 0; border: none; border-radius: var(--stp-radius-full);
-  background: transparent; color: var(--stp-content-neutral-base); cursor: pointer;
-  -webkit-appearance: none; appearance: none; -webkit-tap-highlight-color: transparent; touch-action: manipulation;
-  transition: background-color 140ms ease, box-shadow 140ms ease;
-}
-.stp-back[hidden] { display: none !important; }
-.stp-back svg { display: block; width: var(--stp-icon); height: var(--stp-icon); fill: none; stroke: currentColor; stroke-width: 2px; stroke-linecap: round; stroke-linejoin: round; }   /* size.icon.lg · size.stroke.thick */
-@media (hover: hover) { .stp-back:hover { background: var(--stp-surface-neutral-state-hover); } }
-.stp-back:active { background: var(--stp-surface-neutral-state-pressed); }
-.stp-back:focus { outline: none; }
-.stp-back:focus-visible { outline: 2px solid var(--stp-stroke-neutral-focus); outline-offset: 0; box-shadow: var(--stp-elevation-focus-default); }
+/* menu ☰ (.stp-menu) and back ← (.stp-back, the menu's slot on a sub-view): atom Muted · sm · icon-only · icon-lg ·
+   pill — the grey disc on every tab (v3.0.0, user: phones have no hover, so the resting fill shows it is a button).
+   A tap on the menu fires `shine:menu` on document (top-app-bar.js). Nothing here styles them. */
 .stp-anchor {                                     /* logo or title — starts at 62 */
   position: absolute; left: var(--stp-anchor); top: 50%; transform: translateY(-50%);
   display: flex; align-items: center; min-width: 0; max-width: calc(100% - var(--stp-anchor) - var(--stp-hit-edge));
@@ -1037,21 +1058,7 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
 .stp-logo img { display: block; height: 100%; width: auto; }
 .stp-logo:focus-visible { outline: 2px solid var(--stp-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--stp-elevation-focus-default); }   /* radius.md 8 */
 
-/* Search Jobs — DS A.02 Button · brand · sm · shape-full */
-.stp-cta {
-  display: inline-flex; align-items: center; gap: 8px;          /* spacing.inline.md — A.02 icon ↔ label */
-  height: var(--stp-hit); padding: 0 16px;                       /* spacing.inset.xl */
-  border: none; border-radius: var(--stp-radius-full);
-  background: var(--stp-surface-brand-intense); color: var(--stp-content-on-fill-dark-base);
-  box-shadow: var(--stp-elevation-brand-raised);
-  font: 700 12px/12px var(--stp-font);                           /* Label / md bold */
-  text-decoration: none; white-space: nowrap; cursor: pointer;
-  transition: background-color var(--stp-dur) var(--stp-ease), box-shadow var(--stp-dur) var(--stp-ease);
-}
-.stp-cta svg { width: 14px; height: 14px; flex: none; stroke-width: 2px; }   /* size.icon.sm · size.stroke.thick */
-@media (hover: hover) { .stp-cta:hover { background: var(--stp-surface-brand-intense-hover); box-shadow: var(--stp-elevation-brand-lifted); } }
-.stp-cta:active { background: var(--stp-surface-brand-intense-pressed); box-shadow: var(--stp-elevation-brand-subtle); }
-.stp-cta:focus-visible { outline: 2px solid var(--stp-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--stp-elevation-focus-default); }
+/* Search Jobs (.stp-cta): atom Primary · accent · sm · pill — the exception tone, A.02 Primary · Brand, search only */
 
 /* photo — DS A.08 Avatar · lg 40, in the leading slot (14 → 54, like the menu): initials (Label / md bold 12) until
    there is a photo (an <img> inside). Colour (v2.2.0, user): the brand fill — surface.brand.brand-intense with
@@ -1072,28 +1079,15 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
 .stp-row > .stp-avatar::after { content: ""; position: absolute; inset: -4px; }   /* 48 touch target (Android) */
 .stp-avatar:focus { outline: none; }
 .stp-avatar:focus-visible { outline: 2px solid var(--stp-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--stp-elevation-focus-default); }
-/* status / choice button — DS A.02 Button · sm · shape-full with a trailing chevron, the same size as Search Jobs:
-   40 · 16 inside · Label / md bold · chevron 14 (stroke 2) · 8 gap. Light pill: muted fill; dark pill: white fill */
-.stp-status {
-  display: inline-flex; align-items: center; gap: 8px;                       /* spacing.inline.md */
-  height: var(--stp-hit); padding: 0 16px;                                   /* spacing.inset.xl */
-  border: none; border-radius: var(--stp-radius-full);
-  background: var(--stp-surface-neutral-muted); color: var(--stp-content-neutral-base);
-  font: 700 12px/12px var(--stp-font);                                        /* Label / md bold */
-  white-space: nowrap; cursor: pointer; -webkit-appearance: none; appearance: none; touch-action: manipulation;
-  transition: background-color var(--stp-dur) var(--stp-ease);
-}
-.stp-status svg { width: 14px; height: 14px; flex: none; fill: none; stroke: currentColor; stroke-width: 2px; stroke-linecap: round; stroke-linejoin: round; }   /* size.icon.sm · size.stroke.thick */
-@media (hover: hover) { .stp-status:hover { background: var(--stp-surface-neutral-state-pressed); } }
-.stp-status:active { background: var(--stp-surface-neutral-state-pressed); }
-.stp-status:focus { outline: none; }
-.stp-status:focus-visible { outline: 2px solid var(--stp-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--stp-elevation-focus-default); }
+/* status / picker (.stp-status): atom Muted · sm · pill with a trailing chevron, aria-haspopup + aria-expanded. On the
+   dark bar it carries .btn--on-dark (white pill) — in the markup from the start, so there is no flash — and the
+   script takes it off while the bar is lifted (light pill → the grey Muted pill) and puts it back over the hero. */
 
 /* Dark tone · the bar sits over a dark top section (the Me tab's hero). Same pill, same 64 bar.
    It takes no room (negative bottom margin as tall as the bar): the section starts under it and pads its content by
    var(--stp-float-h). Over the section: a faint light pill, white status. Once the section (data-stp-over) has
    scrolled away the script sets .is-lifted and the dark rules stop applying, so the bar IS the light pill (frosted
-   white + lifted shadow, muted status) for the rest of the page — and turns dark again when the section comes back. */
+   white + lifted shadow, grey Muted status) for the rest of the page — and turns dark again when the section comes back. */
 .stp--float.stp--dark { margin-bottom: calc(-1 * var(--stp-float-h)); }
 .stp--float.stp--dark:not(.is-lifted) { color: var(--stp-content-on-fill-dark-base); }
 .stp--float.stp--dark:not(.is-lifted) .stp-row {
@@ -1118,10 +1112,7 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
   -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%);
 }
 [data-platform="ios"] .stp--float::before { opacity: 1; }
-.stp--dark:not(.is-lifted) .stp-status { background: var(--stp-surface-neutral-raised); }
-@media (hover: hover) { .stp--dark:not(.is-lifted) .stp-status:hover { background: var(--stp-surface-neutral-state-hover); } }
-.stp--dark:not(.is-lifted) .stp-status:active { background: var(--stp-surface-neutral-state-pressed); }
-/* a menu on the dark pill: use mb--filled (light disc, like the photo) — the plain ghost menu would vanish */
+/* a menu on the dark pill takes .btn--on-dark too (white disc, like the status) — the script handles it the same way */
 
 /* ── Title variant (My Jobs, Docket) ──────────────────────────────── */
 .stp--title { background: var(--stp-surface-neutral-base); }
@@ -1171,7 +1162,7 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
   -webkit-backdrop-filter: none; backdrop-filter: none;
 }
 [data-platform="ios"] .stp--title.is-scrolled::after { opacity: var(--stp-p); }
-[data-platform="ios"] .stp-row > .mb::after, [data-platform="ios"] .stp-row > .stp-back::after { inset: -2px; }    /* 44 touch target */
+[data-platform="ios"] .stp-row > .stp-menu::after, [data-platform="ios"] .stp-row > .stp-back::after { inset: -2px; }    /* 44 touch target */
 
 /* ── Hide on scroll (title bar · data-stp-hide · v1.1.0) ─────────────
    .stp--hides is set by the script once it has padded the list, so without
@@ -1185,8 +1176,8 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
 .stp--title.is-tucked .stp-row { visibility: hidden; pointer-events: none; }   /* out of reach for taps and the screen reader's swipe order */
 
 @media (prefers-reduced-motion: reduce) {
-  .stp--title, .stp--title::after, .stp-cta, .stp-back, .stp--title.stp-anim, .stp--title.stp-anim .stp-row,
-  .stp--float .stp-row, .stp-status, .stp-avatar, .stp--float::before { transition: none; }
+  .stp--title, .stp--title::after, .stp--title.stp-anim, .stp--title.stp-anim .stp-row,
+  .stp--float .stp-row, .stp-avatar, .stp--float::before { transition: none; }
 }
 </style>
 <!-- ▲ COMPONENT · top-app-bar -->
@@ -1199,28 +1190,31 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
   <header class="stp stp--float stp--dark" data-shine-topbar data-stp-over="#pfHero">
     <div class="stp-row">
       <button class="stp-avatar" type="button" data-pf="photo" data-name="Rakesh Mallick" aria-label="Update profile photo"></button>
-      <div class="stp-end"><button class="stp-status" type="button" data-pf="status" aria-haspopup="dialog">Actively Looking<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button></div>
+      <div class="stp-end"><button class="btn btn--muted btn--sm btn--pill btn--on-dark stp-status" type="button" data-pf="status" aria-haspopup="dialog" aria-expanded="false">Actively Looking<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button></div>
     </div>
   </header>
-  <!-- ▼ COMPONENT · top-app-bar v2.2.1 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
+  <!-- ▼ COMPONENT · top-app-bar v3.0.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
 <script data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v2.2.1
-   Pair with top-app-bar.css and the menu-button component.
+   SHINE · TOP APP BAR  (app component · App-login)              v3.0.0
+   Pair with top-app-bar.css. The menu button is part of this component (v2.3.0). Its buttons (menu, back,
+   Search Jobs, status) are the buttons atom (atoms/buttons, inlined before this component) — v3.0.0.
 
    Markup — floating bar, light (Home):
      <header class="stp stp--float" data-shine-topbar>
        <div class="stp-row">
-         <button class="mb" type="button" data-shine-menu data-page="home" aria-label="Menu">…</button>
+         <button class="btn btn--muted btn--sm btn--icon btn--icon-lg btn--pill stp-menu" type="button" data-shine-menu data-page="home" aria-label="Menu">
+           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+         </button>
          <a class="stp-anchor stp-logo" href="#"><img src="…" alt="Shine.com"></a>
-         <div class="stp-end"><a class="stp-cta" href="#">…Search Jobs</a></div>
+         <div class="stp-end"><a class="btn btn--primary btn--accent btn--sm btn--pill stp-cta" href="#"><svg …search/>Search Jobs</a></div>
        </div>
      </header>
    Markup — title (My Jobs, Docket):
      <header class="stp stp--title" data-shine-topbar data-stp-scroll="#mjList">
        <div class="stp-row">
-         <button class="mb" …></button>
-         <button class="stp-back" type="button" aria-label="Back" hidden><svg viewBox="0 0 24 24"><path d="M19 12H5M11 18l-6-6 6-6"/></svg></button>
+         <button class="btn btn--muted btn--sm btn--icon btn--icon-lg btn--pill stp-menu" type="button" data-shine-menu data-page="jobs" aria-label="Menu">…</button>
+         <button class="btn btn--muted btn--sm btn--icon btn--icon-lg btn--pill stp-back" type="button" aria-label="Back" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg></button>
          <div class="stp-anchor"><h1 class="stp-title">My Jobs.</h1></div>
        </div>
        <div class="stp-below">…segment control…</div>
@@ -1229,7 +1223,7 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
      <header class="stp stp--float stp--dark" data-shine-topbar data-stp-over="#hero">
        <div class="stp-row">
          <button class="stp-avatar" type="button" data-name="Rakesh Mallick" aria-label="Profile photo"></button>
-         <div class="stp-end"><button class="stp-status" type="button" aria-haspopup="dialog">Actively Looking<svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button></div>
+         <div class="stp-end"><button class="btn btn--muted btn--sm btn--pill btn--on-dark stp-status" type="button" aria-haspopup="dialog" aria-expanded="false">Actively Looking<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button></div>
        </div>
      </header>
 
@@ -1274,6 +1268,11 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
        button stays in reach
    Platform: sets <html data-platform="ios|android"> once (iPhone / iPad →
    ios, anything else → android) unless the page already set it.
+   Menu (.stp-menu, v2.3.0): a tap fires `shine:menu` on document, detail { button, page } (page = data-page).
+     The menu itself isn't built yet — pages show a placeholder on that event.
+   Dark bar (v3.0.0): its buttons carry .btn--on-dark (atom: white pill) while the bar is over its dark section;
+     the script takes it off while the bar is lifted (the light pill) and puts it back when the section returns.
+     Start them with .btn--on-dark in the markup (the bar starts over the section — no flash).
    Behaviour: .is-scrolled when the content is scrolled; --stp-p runs
    0 → 1 over the first 40 px (fades the iPhone scroll-edge hairline in).
    Hiding bars also get .stp--hides, .is-tucked (row fully away) and fire
@@ -1307,6 +1306,10 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
       var sr = sec && sec.getBoundingClientRect();
       var lifted = sr && row ? sr.bottom <= row.getBoundingClientRect().bottom : v > 0;
       el.classList.toggle('is-lifted', lifted);
+      if (el.__stpLifted !== lifted) {                    // buttons (atom): white on the dark pill, plain on the light one
+        el.__stpLifted = lifted;
+        el.querySelectorAll('.stp-row .btn').forEach(function (b) { b.classList.toggle('btn--on-dark', !lifted); });
+      }
       // iPhone status bar = the body's background colour: dark while the dark section is under the top edge
       if (html.getAttribute('data-platform') === 'ios') html.classList.toggle('stp-top-dark', !!sr && sr.top <= 1 && sr.bottom > 0);
     }
@@ -1460,8 +1463,15 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
     return el;
   }
   function init() { doc.querySelectorAll('[data-shine-topbar]:not(style):not(script)').forEach(mount); }
+  // menu (v2.3.0 — was the menu-button component): any [data-shine-menu] fires shine:menu on document
+  doc.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-shine-menu]');
+    if (!b || /^(STYLE|SCRIPT)$/.test(b.tagName)) return;
+    e.preventDefault();
+    doc.dispatchEvent(new CustomEvent('shine:menu', { detail: { button: b, page: b.getAttribute('data-page') || '' } }));
+  });
   global.ShineTopBar = {
-    version: '2.2.1', mount: mount, initials: initials,
+    version: '3.0.0', mount: mount, initials: initials,
     update: function () { bars.forEach(function (b) { if (b.__stpT) paint(b); }); },
     reveal: function () { bars.forEach(function (b) { if (b.__stpReveal) b.__stpReveal(); }); }   // bring a tucked row back
   };
