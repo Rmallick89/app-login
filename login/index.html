@@ -3321,10 +3321,10 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
 html.stn-on body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px + var(--stn-lift, 0px)) !important; }
 </style>
 <!-- ▲ COMPONENT · tab-nudge -->
-<!-- ▼ COMPONENT · top-app-bar v3.0.2 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v3.0.3 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
 <style data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v3.0.2
+   SHINE · TOP APP BAR  (app component · App-login)              v3.0.3
    One top bar for every logged-in screen: ONE floating bar (any items, light
    or dark) and the title bar, on one shared frame, so the leading item, the
    logo / title and the trailing action sit on exactly the same spot — and
@@ -3412,6 +3412,21 @@ html.in-app { --stp-float-h: 64px; }
    content below the dark section its own background (surface.neutral.base), so only the status bar / overscroll see it. */
 :root { --stp-top-dark: #161B22; }                       /* surface.inverse.muted — the hero's top colour */
 html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark); }
+/* Status-bar strip (v3.0.3, floating bars): one fixed, OPAQUE block exactly the height of the status bar (safe area),
+   added by the script. iOS takes the status-bar colour from a fixed element's solid background-color at the top
+   edge, and draws page content behind the status bar when there is none — so the strip always has one, switched
+   instantly (no transition: a colour caught mid-fade stuck in v3.0.0):
+     · dark (#161B22) while the bar's dark section still covers the whole strip (Profile hero at the top, bounce too)
+     · surface.neutral.base (#FAF9F6) otherwise — Home always; Profile once any page content reaches the strip,
+       so nothing passing under the status bar is ever visible.
+   The body background follows the same rule (html.stp-top-dark). Android app: the WebView sits below the status bar
+   (strip height 0, the shell samples its colour). Hidden while a bottom sheet is open (its scrim tints the bar). */
+.stp-strip {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 81; height: var(--stp-safe-top); pointer-events: none;
+  background-color: #FAF9F6;                               /* surface.neutral.base */
+}
+.stp-strip[data-tone="dark"] { background-color: var(--stp-top-dark); }   /* surface.inverse.muted — the hero's top colour */
+html.in-app .stp-strip, html.bs-lock .stp-strip { display: none; }
 
 .stp {
   /* COLOUR — §2.2 (light) */
@@ -3518,15 +3533,7 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
   content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;   /* z −1 stays inside the bar: the sticky bar (z 80) is its own stacking context */
   /* v3.0.1: an image layer, never a background-color — iOS 26 tints the status bar from the background-color of a
      fixed element at the top edge (ignoring opacity) and kept the light tint after the bar went back to dark */
-  /* v3.0.2 (user: "elements visible behind the status bar" once the hero has gone): the status-bar strip of the edge
-     (the bar's top padding, --stp-safe-top) is the OPAQUE page surface, surface.neutral.base — nothing passing under
-     it shows; only the 6 above / below and the 8 at the sides of the pill stay frosted. A dark section that is still
-     under the strip (--stp-over, set by the script on the dark bar: how much of the strip it still covers) shows
-     through over that height, so the strip turns warm white exactly where the section ends — 0 % visible = all white. */
-  background: linear-gradient(to bottom,
-    transparent 0, transparent var(--stp-over, 0px),
-    var(--stp-surface-neutral-base) var(--stp-over, 0px), var(--stp-surface-neutral-base) var(--stp-safe-top),
-    var(--stp-surface-neutral-base-translucent) var(--stp-safe-top), var(--stp-surface-neutral-base-translucent) 100%);
+  background: linear-gradient(var(--stp-surface-neutral-base-translucent), var(--stp-surface-neutral-base-translucent));   /* the status-bar strip is .stp-strip (v3.0.3) */
   -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - var(--stp-edge-fade)), transparent);
           mask-image: linear-gradient(to bottom, #000 calc(100% - var(--stp-edge-fade)), transparent);
@@ -3676,10 +3683,10 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
         </div>
       </div>
     </header>
-<!-- ▼ COMPONENT · top-app-bar v3.0.2 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v3.0.3 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
 <script data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v3.0.2
+   SHINE · TOP APP BAR  (app component · App-login)              v3.0.3
    Pair with top-app-bar.css. The menu button is part of this component (v2.3.0). Its buttons (menu, back,
    Search Jobs, status) are the buttons atom (atoms/buttons, inlined before this component) — v3.0.0.
 
@@ -3784,29 +3791,37 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
     var v = Math.max(0, y(el.__stpT));
     el.classList.toggle('is-scrolled', v > 0);
     el.style.setProperty('--stp-p', Math.min(1, v / RANGE).toFixed(3));
+    if (el.classList.contains('stp--float') && !el.classList.contains('stp--dark') && strip()) tone('base');
     if (el.classList.contains('stp--dark')) {             // dark floating bar: lifts once its dark section has left
       var over = el.getAttribute('data-stp-over'), sec = over && doc.querySelector(over), row = el.querySelector('.stp-row');
       var sr = sec && sec.getBoundingClientRect();
       var lifted = sr && row ? sr.bottom <= row.getBoundingClientRect().bottom : v > 0;
       el.classList.toggle('is-lifted', lifted);
-      // v3.0.2: how much of the status-bar strip (the bar's top padding) the dark section still covers — the scroll edge
-      // paints the strip warm white below that line (top-app-bar.css), so page content never shows behind the status bar
-      var strip = parseFloat(global.getComputedStyle(el).paddingTop) || 0, top0 = el.getBoundingClientRect().top;
-      var over = sr && lifted ? Math.max(0, Math.min(strip, sr.bottom - top0)) : strip;
-      el.style.setProperty('--stp-over', over.toFixed(1) + 'px');
+      // v3.0.3: the status-bar strip (.stp-strip) is dark only while the section still covers all of it
+      var sh = strip() ? stripEl.offsetHeight : 0;
+      var darkTop = !!sr && sr.bottom > sh + 0.5;         // Android app: sh 0 → while any of it is under the top edge
       if (el.__stpLifted !== lifted) {                    // buttons (atom): white on the dark pill, plain on the light one
         el.__stpLifted = lifted;
         el.querySelectorAll('.stp-row .btn').forEach(function (b) { b.classList.toggle('btn--on-dark', !lifted); });
       }
-      // iPhone status bar = the body's background colour: dark while the dark section is under the top edge.
-      // v3.0.1: also while the page is pulled down past its top (iOS rubber-band: scrollY < 0 moves the section down
-      // a few px) — a flick back to the top always bounces, and the last frames of the bounce left it light
-      var raw = y(el.__stpT), dark = !!sr && sr.bottom > 0 && (sr.top <= 1 || raw <= 0);
+      // the strip, the body background (iPhone) and theme-color all follow one rule: dark while the section covers
+      // the whole strip — the top bounce included (the strip is fixed; the section only moves down)
+      var dark = darkTop;
+      if (stripEl) tone(dark ? 'dark' : 'base');
       if (html.getAttribute('data-platform') === 'ios') html.classList.toggle('stp-top-dark', dark);
       var tc = doc.querySelector('meta[name="theme-color"]');     // browsers that tint from it (older Safari, Chrome) — v3.0.2: every platform
       if (tc) { if (!tc.__stpBase) tc.__stpBase = tc.getAttribute('content'); tc.setAttribute('content', dark ? tc.__stpBase : '#FAF9F6'); }   /* surface.neutral.base */
     }
   }
+  // v3.0.3: the status-bar strip — one per page, made for the first floating bar (top-app-bar.css .stp-strip)
+  var stripEl = null;
+  function strip() {
+    if (stripEl) return stripEl;
+    if (!doc.body || !doc.querySelector('.stp--float[data-shine-topbar]')) return null;
+    stripEl = doc.createElement('div'); stripEl.className = 'stp-strip'; stripEl.setAttribute('aria-hidden', 'true');
+    doc.body.appendChild(stripEl); return stripEl;
+  }
+  function tone(t) { if (stripEl && stripEl.getAttribute('data-tone') !== t) stripEl.setAttribute('data-tone', t); }
   function initials(name) {                                 // A.08: first letters of the first and last word, 1–2
     var w = String(name || '').trim().split(/\s+/).filter(Boolean);
     if (!w.length) return '';
@@ -3970,7 +3985,7 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
     doc.dispatchEvent(new CustomEvent('shine:menu', { detail: { button: b, page: b.getAttribute('data-page') || '' } }));
   });
   global.ShineTopBar = {
-    version: '3.0.2', mount: mount, initials: initials,
+    version: '3.0.3', mount: mount, initials: initials,
     update: function () { bars.forEach(function (b) { if (b.__stpT) paint(b); }); },
     reveal: function () { bars.forEach(function (b) { if (b.__stpReveal) b.__stpReveal(); }); }   // bring a tucked row back
   };
