@@ -11,7 +11,7 @@ The app opens on its splash (`splash.html`, dark midnight navy #0C1731, ≈ 2.4 
 then a sunrise glow rises from the bottom), which hands over to the logged-in homepage (`index.html`). The homepage
 sends a fresh launch to the splash itself (once per session), so the installed icon always starts with the splash.
 The Jobs tab opens My Jobs (`my-jobs.html`: Recommended · Saved · Applied, with the App-logout JSRP job cards) and the
-Docket tab opens the Docket screen (`docket.html`); the Me tab opens the Profile page (`profile.html`), whose cards are the shared card components in `App-login/app-components/cards/` (resume, profile info, key skills, work & education, links — with a new Job Preferences section at the end). The tabs keep a native
+Docket tab opens the Docket screen (`docket.html`); the Me tab opens the Profile page (`profile.html`), whose cards are the shared card components in `App-login/app-components/cards/` (resume, profile info, key skills, work & education, links — with a new Job Preferences section at the end); the skills are the shared tags atom `App-login/app-components/atoms/tags`. The tabs keep a native
 history (swipe back returns to the previous tab). Menu, search, job/company/job-details pages, the check-in sheets and the
 profile editors aren't built yet — those taps stay on their screen.
 The bottom tab bar is the shared component `App-login/app-components/bottom-tab-bar` (v1.3.1): 104 pt tall on iPhones with a

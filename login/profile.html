@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#161B22" />
-<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.7 (2026-10-21)
+<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.8 (2026-10-21)
      Built from the mobile view (≤ 480 px) of <Shine Revamp>/profile-index.html, on the design system
      (design-system/DESIGN-SYSTEM.md + component-system.md): semantic tokens only, the buttons atom (atoms/buttons), DS atoms (A.04 Badge,
      A.05 Tag, A.08 Avatar, A.09 Toast). No menu / title on this tab (v1.1, user): the full-bleed hero starts at the top
@@ -16,6 +16,7 @@
      Cards (v1.7): every card is a card component (app-components/cards/: resume-card, profile-info-card, key-skills-card,
      work-education-card, links-card), inlined after card-container — four text levels, icons from atoms/icons, no nudges
      (a nudge is an alert, added later). New last section: Job Preferences.
+     Tags (v1.8): Key Skills shows the tags atom (app-components/atoms/tags · .tag, Small, label only), inlined after buttons.
      Not built yet (taps show what they will open): editors, resume upload / viewer, status sheet, photo, item menus. -->
 <title>Shine — Profile</title>
 <link rel="preload" href="fonts/plus-jakarta-sans-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="fonts/plus-jakarta-sans-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="fonts/fonts.css"><script src="native.js"></script>
@@ -276,6 +277,127 @@
 }
 </style>
 <!-- ▲ COMPONENT · buttons -->
+<!-- ▼ COMPONENT · tags v1.0.1 · verbatim copy of App-login/app-components/atoms/tags/tags.css — do not edit here -->
+<style data-component="tags">
+/* ═══════════════════════════════════════════════════════════════════════
+   SHINE · TAGS  (app component · App-login · atoms/)          v1.0.1
+   A label for a skill, a place, a role or any attribute — with an optional leading icon and an optional remove ×.
+   Built from the user's reference (2026-10-21: Large · Medium · Small × Default · Hover · Focused · Disabled ·
+   Highlighted) on design-system A.05 Tag (component-system.md), semantic tokens only.
+
+     ┌───────────────────────────────┐
+     │  ☆   Value   ×                │   [leading icon] label [remove ×] — each icon optional, the label never
+     └───────────────────────────────┘
+       lg 40 · md 36 (default) · sm 32 tall, corners 12
+
+   Classes
+     .tag                         base — always (md by default)
+     .tag--lg | --md | --sm       size
+     .tag--highlighted            highlighted: notice tint, notice edge, leading icon in the notice colour
+                                  (use the icons atom's star-filled)
+     .tag--disabled               disabled (with its × as <button disabled>) — also [aria-disabled="true"]
+     .tag-label                   the label (one line, ends with … when it doesn't fit)
+     .tag-x                       the remove ×: a <button type="button" aria-label="Remove …"> holding the close icon
+     [data-state="hover|focus"]   shows a state statically — guidelines and screenshots only
+   States: a tag on its own is a label, not a control (A.05) — it has no hover or focus. A tag WITH a remove × gets
+   them: hover (mouse / trackpad only) and keyboard focus on its × draw on the whole tag.
+   Icons: the icons atom (atoms/icons), inlined; the tag only sizes them and colours them (currentColor).
+   The edge is an inset shadow, never a border, so 1 and 2 px render exactly on Android too.
+
+   ▶ BEFORE CHANGING IT: read README.md here and component-system.md A.05. Semantic tokens only.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.tag {
+  /* COLOUR — DESIGN-SYSTEM.md §2.2 (light) */
+  --tag-bg: #F0F5FF;                        /* surface.brand.brand-faint — PROPOSED: brand/50, the reference's pale blue (the DS
+                                               has brand/50 only as surface.neutral-state.selected, which means "selected") */
+  --tag-edge: #EEF1F5;                      /* stroke.neutral.muted */
+  --tag-bg-hover: #EEF1F5;                  /* surface.neutral-state.hover */
+  --tag-edge-hover: #EEF1F5;                /* stroke.neutral.muted — the edge melts into the hover fill */
+  --tag-text: #344054;                      /* content.neutral.muted */
+  --tag-icon: #667085;                      /* content.neutral.faded — leading icon and × */
+  --tag-focus: #1A56FF;                     /* stroke.neutral.focus */
+  --tag-ring: #E4E7EC;                      /* stroke.neutral.base — the grey ring around a focused tag */
+  --tag-dis-bg: #E4E7EC;                    /* surface.neutral.sunken */
+  --tag-dis-edge: rgba(13, 17, 23, .08);    /* stroke.neutral.disabled (black-25) */
+  --tag-dis-fg: rgba(13, 17, 23, .36);      /* content.neutral.disabled (black-75) — label and icons */
+  --tag-hi-bg: #FFF4ED;                     /* surface.status.notice-subtle */
+  --tag-hi-edge: #D97706;                   /* stroke.status.notice */
+  --tag-hi-icon: #A35A04;                   /* content.status.notice — the highlighted leading icon */
+  /* SIZE · SPACE — §2.3 / §2.4 (md) */
+  --tag-h: 36px;                            /* A.05 lg height */
+  --tag-px: 12px;                           /* spacing.inset.lg */
+  --tag-gap: 8px;                           /* spacing.inline.md — icon ↔ label ↔ × */
+  --tag-ic: 16px;                           /* size.icon.md */
+  --tag-radius: 12px;                       /* size.radius.lg */
+  --tag-edge-w: 1px;                        /* size.stroke.thin */
+  --tag-focus-w: 2px;                       /* size.stroke.thick */
+  --tag-ring-w: 4px;                        /* elevation.focus.default spread */
+  --tag-font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;   /* typeface.family.brand */
+  --tag-dur: 150ms;                         /* motion — proposed */
+  --_bg: var(--tag-bg); --_edge: var(--tag-edge); --_fg: var(--tag-text); --_ic-c: var(--tag-icon); --_ring: 0 0 0 0 transparent;
+
+  box-sizing: border-box; display: inline-flex; align-items: center; gap: var(--tag-gap); max-width: 100%; min-width: 0;
+  height: var(--tag-h); padding: 0 var(--tag-px); border-radius: var(--tag-radius);
+  background: var(--_bg); color: var(--_fg); box-shadow: inset 0 0 0 var(--tag-edge-w) var(--_edge), var(--_ring);
+  font: 700 14px/14px var(--tag-font);      /* Label / lg · bold */
+  white-space: nowrap; vertical-align: middle; cursor: default; -webkit-font-smoothing: antialiased;
+  transition: background-color var(--tag-dur), box-shadow var(--tag-dur);
+}
+.tag *, .tag *::before, .tag *::after { box-sizing: border-box; }
+.tag > svg, .tag-x > svg { display: block; flex: none; width: var(--tag-ic); height: var(--tag-ic); color: var(--_ic-c); }
+.tag-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; line-height: 20px; }   /* it clips for the …, so it needs room for g, p, y */
+
+/* sizes — Large · Medium · Small (reference), label the same in all three */
+.tag--lg { --tag-h: 40px; --tag-px: 16px; --tag-gap: 12px; --tag-ic: 20px; }   /* size.control.sm · inset.xl · inline.lg · icon.lg */
+.tag--md { --tag-h: 36px; --tag-px: 12px; --tag-gap: 8px;  --tag-ic: 16px; }   /* A.05 lg · inset.lg · inline.md · icon.md */
+.tag--sm { --tag-h: 32px; --tag-px: 12px; --tag-gap: 8px;  --tag-ic: 16px; }   /* A.05 md · inset.lg · inline.md · icon.md */
+
+/* the remove × — a real button; its hit area reaches the tag's edge without changing the tag's size */
+.tag-x {
+  position: relative; flex: none; display: grid; place-items: center; margin: 0; padding: 0; border: 0; border-radius: var(--tag-radius);
+  background: none; color: inherit; font: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.tag-x::before { content: ""; position: absolute; inset: calc((var(--tag-ic) - var(--tag-h)) / 2) calc(var(--tag-px) * -1) calc((var(--tag-ic) - var(--tag-h)) / 2) calc(var(--tag-gap) * -1); }
+.tag-x:focus-visible { outline: none; }    /* the focus ring is drawn on the whole tag (below) */
+
+/* hover — only a tag with a remove ×, only with a mouse or trackpad */
+@media (hover: hover) {
+  .tag:not(.tag--highlighted):not(.tag--disabled):not([aria-disabled="true"]):not(:has(.tag-x:focus-visible)):has(.tag-x:not(:disabled)):hover { --_bg: var(--tag-bg-hover); --_edge: var(--tag-edge-hover); }
+}
+.tag[data-state="hover"] { --_bg: var(--tag-bg-hover); --_edge: var(--tag-edge-hover); }
+/* focus — keyboard on the ×: 2 px focus edge + 4 px grey ring, on the hover fill */
+.tag:has(.tag-x:focus-visible), .tag[data-state="focus"] {
+  --_bg: var(--tag-bg-hover); --_edge: var(--tag-focus); --tag-edge-w: var(--tag-focus-w); --_ring: 0 0 0 var(--tag-ring-w) var(--tag-ring);
+}
+/* highlighted — notice tint and edge; the leading icon (star-filled) takes the notice colour */
+.tag--highlighted { --_bg: var(--tag-hi-bg); --_edge: var(--tag-hi-edge); }
+.tag--highlighted > svg:first-child { color: var(--tag-hi-icon); }
+/* disabled — sunken grey, faint edge, disabled text and icons; the × doesn't act */
+.tag--disabled, .tag[aria-disabled="true"] { --_bg: var(--tag-dis-bg); --_edge: var(--tag-dis-edge); --_fg: var(--tag-dis-fg); --_ic-c: var(--tag-dis-fg); --_ring: 0 0 0 0 transparent; }
+.tag--disabled > svg:first-child, .tag[aria-disabled="true"] > svg:first-child { color: var(--tag-dis-fg); }
+.tag--disabled .tag-x, .tag[aria-disabled="true"] .tag-x, .tag-x:disabled { cursor: default; pointer-events: none; }
+
+/* the same tokens, dark column of §2.2 */
+[data-theme="dark"] .tag {
+  --tag-bg: #06184F;                        /* surface.brand.brand-faint (PROPOSED) · brand-900 */
+  --tag-edge: #344054;                      /* stroke.neutral.muted · cool-700 */
+  --tag-bg-hover: #344054;                  /* surface.neutral-state.hover · cool-700 */
+  --tag-edge-hover: #344054;
+  --tag-text: #C8CED7;                      /* content.neutral.muted · cool-300 */
+  --tag-icon: #98A2B3;                      /* content.neutral.faded · cool-400 */
+  --tag-focus: #7EA3FF;                     /* stroke.neutral.focus · brand-300 */
+  --tag-ring: #4A5260;                      /* stroke.neutral.base · cool-600 */
+  --tag-dis-bg: #0D1117;                    /* surface.neutral.sunken · black */
+  --tag-dis-edge: rgba(255, 255, 255, .08); /* stroke.neutral.disabled · white-25 */
+  --tag-dis-fg: rgba(255, 255, 255, .36);   /* content.neutral.disabled · white-75 */
+  --tag-hi-bg: #211100;                     /* surface.status.notice-subtle · amber-950 */
+  --tag-hi-edge: #FAB663;                   /* stroke.status.notice · amber-400 */
+  --tag-hi-icon: #FAB663;                   /* content.status.notice · amber-400 */
+}
+@media (prefers-reduced-motion: reduce) { .tag { transition: none; } }
+</style>
+<!-- ▲ COMPONENT · tags -->
 <!-- ▼ COMPONENT · card-container v1.4.0 · verbatim copy of App-login/app-components/cards/card-container/card-container.css — do not edit here -->
 <style data-component="card-container">
 /* ═══════════════════════════════════════════════════════════════════════
@@ -500,15 +622,15 @@
 .dcard-row > span { min-width: 0; overflow-wrap: anywhere; font: var(--card-sub1-font); color: var(--card-sub1-color); }   /* 3 Subtext 1 */
 </style>
 <!-- ▲ COMPONENT · profile-info-card -->
-<!-- ▼ COMPONENT · key-skills-card v1.1.0 · verbatim copy of App-login/app-components/cards/key-skills-card/key-skills-card.css — do not edit here -->
+<!-- ▼ COMPONENT · key-skills-card v1.2.0 · verbatim copy of App-login/app-components/cards/key-skills-card/key-skills-card.css — do not edit here -->
 <style data-component="key-skills-card">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · KEY SKILLS CARD  (app component · App-login · cards/ · 5)   v1.1.0
+   SHINE · KEY SKILLS CARD  (app component · App-login · cards/ · 5)   v1.2.0
    Profile › Key Skills: your skills as tags, and the two actions.
 
      ┌──────────────────────────────────────┐
-     │ (Product Management) (Critical Thinking)│  tags     A.05 Tag md · outlined · 8 apart
-     │ (Agile Scrum Master) (Team Management)  │
+     │ [Product Management] [Critical Thinking]│  tags     the tags atom (atoms/tags) · Small · label only · 8 apart
+     │ [Agile Scrum Master] [Team Management]  │
      │                                         │  20
      │ [ + Add New ]  [ Edit Skills ]          │  actions  buttons atom · Primary · sm + Secondary · sm
      └──────────────────────────────────────┘
@@ -516,20 +638,18 @@
 
    Text (v1.1.0): every line is one of the card text levels from cards/card-container (1 Eyebrow · 2 Header ·
    3 Subtext 1 · 4 Subtext 2) — this file never sets its own text size, weight or colour.
+   Tags (v1.2.0): each skill is the tags atom — <span class="tag tag--sm"><span class="tag-label">…</span></span>,
+   display only (no ×). This file only lays them out; the atom draws them.
    Container: the shared card container (cards/card-container) — this file styles only what is inside.
-   Markup: <div class="card scard">.  Buttons: the buttons atom (atoms/buttons), loaded before this file.
+   Markup: <div class="card scard">.  Buttons (atoms/buttons) and tags (atoms/tags) are loaded before this file.
    ▶ BEFORE CHANGING IT: read README.md here and cards/card-container/README.md. Semantic tokens only.
    ═══════════════════════════════════════════════════════════════════════ */
 
 .scard {
   /* COLOUR — DESIGN-SYSTEM.md §2.2 (light) */
-  --sc-ink: #0D1117;                        /* content.neutral.base — tag text */
-  --sc-raised: #FFFFFF;                     /* surface.neutral.raised — tag fill, empty icon disc */
-  --sc-line: #E4E7EC;                       /* stroke.neutral.base — tag edge */
+  --sc-raised: #FFFFFF;                     /* surface.neutral.raised — empty icon disc */
   --sc-lifted: 0 4px 12px rgba(13, 17, 23, .08), 0 2px 4px rgba(13, 17, 23, .04);   /* elevation.neutral.lifted */
   /* SPACE · SIZE — §2.3 / §2.4 */
-  --sc-tag-h: 32px;                         /* A.05 Tag md height */
-  --sc-tag-pad: 12px;                       /* spacing.inset.lg */
   --sc-gap-row: 8px;                        /* spacing.stack.xs — between tag rows */
   --sc-gap-col: 8px;                        /* spacing.inline.md — between tags */
   --sc-stack-md: 12px;                      /* spacing.stack.md */
@@ -538,18 +658,12 @@
   --sc-inline-lg: 12px;                     /* spacing.inline.lg — between buttons */
   --sc-disc: 56px;                          /* size.avatar.xl — empty-state icon disc */
   --sc-font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;   /* typeface.family.brand */
-  min-width: 0; font-family: var(--sc-font); color: var(--sc-ink); -webkit-font-smoothing: antialiased;
+  min-width: 0; font-family: var(--sc-font); color: var(--card-header-color); -webkit-font-smoothing: antialiased;
 }
 .scard *, .scard *::before, .scard *::after { box-sizing: border-box; }
 :where(.scard) p { margin: 0; }   /* zero specificity: the parts below set their own spacing */
 
 .scard-tags { display: flex; flex-wrap: wrap; gap: var(--sc-gap-row) var(--sc-gap-col); }
-/* A.05 Tag · md · outlined (a label, not a control) */
-.scard-tag {
-  display: inline-flex; align-items: center; height: var(--sc-tag-h); padding: 0 var(--sc-tag-pad); border-radius: 1024px;
-  background: var(--sc-raised); color: var(--sc-ink); box-shadow: inset 0 0 0 1px var(--sc-line);
-  font: 700 12px/12px var(--sc-font); cursor: default;                                                  /* Label / md bold */
-}
 .scard-actions { display: flex; gap: var(--sc-inline-lg); margin-top: var(--sc-stack-xl); }
 
 /* empty — no skills yet (container: .card--empty) */
@@ -1773,7 +1887,7 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
     <!-- ═══ KEY SKILLS · cards/key-skills-card ═══ -->
     <section class="pf-sec" data-section="skills" aria-labelledby="pfSkillsT">
       <div class="pf-sec-head"><h2 class="pf-sec-title" id="pfSkillsT">Key <em>Skills</em></h2></div>
-      <div class="card scard"><div class="scard-tags"><span class="scard-tag">Product Management</span><span class="scard-tag">Critical Thinking</span><span class="scard-tag">Agile Scrum Master</span><span class="scard-tag">Team Management</span><span class="scard-tag">Visual Design</span><span class="scard-tag">Product Thinking</span><span class="scard-tag">Design Systems</span><span class="scard-tag">User Research</span></div><div class="scard-actions"><button type="button" class="btn btn--primary btn--sm" data-pf="add-skill"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Add New</button><button type="button" class="btn btn--secondary btn--sm" data-pf="edit-skills">Edit Skills</button></div></div>
+      <div class="card scard"><div class="scard-tags"><span class="tag tag--sm"><span class="tag-label">Product Management</span></span><span class="tag tag--sm"><span class="tag-label">Critical Thinking</span></span><span class="tag tag--sm"><span class="tag-label">Agile Scrum Master</span></span><span class="tag tag--sm"><span class="tag-label">Team Management</span></span><span class="tag tag--sm"><span class="tag-label">Visual Design</span></span><span class="tag tag--sm"><span class="tag-label">Product Thinking</span></span><span class="tag tag--sm"><span class="tag-label">Design Systems</span></span><span class="tag tag--sm"><span class="tag-label">User Research</span></span></div><div class="scard-actions"><button type="button" class="btn btn--primary btn--sm" data-pf="add-skill"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Add New</button><button type="button" class="btn btn--secondary btn--sm" data-pf="edit-skills">Edit Skills</button></div></div>
     </section>
 
     <!-- ═══ EMPLOYMENT HISTORY · cards/work-education-card ═══ -->
