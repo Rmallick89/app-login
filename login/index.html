@@ -3321,10 +3321,10 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
 html.stn-on body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px + var(--stn-lift, 0px)) !important; }
 </style>
 <!-- ▲ COMPONENT · tab-nudge -->
-<!-- ▼ COMPONENT · top-app-bar v3.0.4 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v3.0.5 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
 <style data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v3.0.4
+   SHINE · TOP APP BAR  (app component · App-login)              v3.0.5
    One top bar for every logged-in screen: ONE floating bar (any items, light
    or dark) and the title bar, on one shared frame, so the leading item, the
    logo / title and the trailing action sit on exactly the same spot — and
@@ -3424,7 +3424,12 @@ html.stp-top-dark, html.stp-top-dark body { background-color: var(--stp-top-dark
    the page surface. Switched instantly (a fade made the tint lag). Nothing passes visibly under the status bar. */
 .stp-strip {
   position: fixed; top: 0; left: 0; right: 0; z-index: 81; pointer-events: none;
-  height: calc(var(--stp-safe-top) + 6px);                 /* + the pill's 6 top margin (--stp-pill-pad-y) */
+  /* v3.0.5 (user's iPhone: stuck dark): Safari reads a fixed element's background-color only when its box is more than
+     10 px tall — a thinner one is sampled from its pixels instead, which on a home-screen app (safe area 0 → 6 px)
+     never updated. So the box is 10 px deeper than what shows, and clip-path paints only the status-bar area + the
+     6 above the pill: Safari sees a 16+ px solid bar, the pill and its shadow look exactly as before. */
+  height: calc(var(--stp-safe-top) + 16px);
+  -webkit-clip-path: inset(0 0 10px 0); clip-path: inset(0 0 10px 0);   /* visible: safe area + 6 (--stp-pill-pad-y) */
   background-color: #FAF9F6;                               /* surface.neutral.base */
 }
 .stp-strip[data-tone="dark"] { background-color: var(--stp-top-dark); }   /* surface.inverse.muted */
@@ -3685,10 +3690,10 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
         </div>
       </div>
     </header>
-<!-- ▼ COMPONENT · top-app-bar v3.0.4 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v3.0.5 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
 <script data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v3.0.4
+   SHINE · TOP APP BAR  (app component · App-login)              v3.0.5
    Pair with top-app-bar.css. The menu button is part of this component (v2.3.0). Its buttons (menu, back,
    Search Jobs, status) are the buttons atom (atoms/buttons, inlined before this component) — v3.0.0.
 
@@ -3988,7 +3993,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     doc.dispatchEvent(new CustomEvent('shine:menu', { detail: { button: b, page: b.getAttribute('data-page') || '' } }));
   });
   global.ShineTopBar = {
-    version: '3.0.4', mount: mount, initials: initials,
+    version: '3.0.5', mount: mount, initials: initials,
     update: function () { bars.forEach(function (b) { if (b.__stpT) paint(b); }); },
     reveal: function () { bars.forEach(function (b) { if (b.__stpReveal) b.__stpReveal(); }); }   // bring a tucked row back
   };
