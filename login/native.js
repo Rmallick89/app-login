@@ -182,10 +182,26 @@
     var now = performance.now(); if (force !== true && now - lastS < 66) return;   // at most ~15 samples/s while scrolling
     lastS = now;
     var w = innerWidth, h = innerHeight;
-    var key = barHex(barColour(0, w, 1)) + '|' + barHex(barColour(0, w, h - 2));
+    var key = topColour(w) + '|' + barHex(barColour(0, w, h - 2));
     if (key === sent) return; sent = key;
     var k = key.split('|'); try { N.setBars(k[0], k[1]); } catch (e) {}
   }
+  /* status bar: a page with the top app bar's status-bar strip (.stp-strip, floating bars) DECLARES its colour —
+     the strip's own (dark over the Profile hero, the page surface once the bar lifts); no sampling, no in-between
+     greys. Other pages: sampled as before. */
+  function stripColour() {
+    var s = document.querySelector('.stp-strip'); if (!s || !s.offsetHeight) return null;
+    var c = bsRgba(getComputedStyle(s).backgroundColor); return c && c[3] >= 0.995 ? barHex(c.slice(0, 3)) : null;
+  }
+  function topColour(w) { return stripColour() || barHex(barColour(0, w, 1)); }
+  /* the strip changed tone (top-app-bar fires shine:statusbar on the frame the bar lifts / drops back): set the status
+     bar on that frame, without the cross-fade, so it moves with the pill */
+  document.addEventListener('shine:statusbar', function () {
+    var c = stripColour(); if (!c) return;
+    var k = sent.split('|'), nav = k[1] || barHex(barColour(0, innerWidth, innerHeight - 2));
+    sent = c + '|' + nav; lastS = performance.now();
+    try { if (N.setBarsNow) N.setBarsNow(c, nav); else N.setBars(c, nav); } catch (e) {}
+  });
   var raf = 0;
   function schedule() {                     // sample now and while transitions settle (sheets slide, scrims fade)
     if (!raf) raf = requestAnimationFrame(function () { raf = 0; sampleBars(); });

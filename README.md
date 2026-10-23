@@ -5,7 +5,7 @@ The logged-in Shine app (`App-login/`) as an iPhone home-screen web app — the 
 
 | Folder | App name | Opens |
 |---|---|---|
-| `login/` | Shine Login | splash → logged-in homepage (`App Dashboard/app-home-login.html`) · Jobs tab → `My Jobs/my-jobs.html` · Docket tab → `Docket/docket.html` · Me tab → `Profile/profile.html` |
+| `login/` | Shine Login | splash → logged-in homepage (`App Dashboard/app-home-login.html`) · Jobs tab → `My Jobs/my-jobs.html` · Docket tab → `Docket/docket.html` · Me tab → `Profile/profile.html` · a job card → `JD Page/jd-page.html` (`jd.html`) |
 
 The app opens on its splash (`splash.html`, dark midnight navy #0C1731, ≈ 2.4 s — two shooting stars meet at the logo,
 then a sunrise glow rises from the bottom), which hands over to the logged-in homepage (`index.html`). The homepage
@@ -21,6 +21,9 @@ Reduce Motion on).
 Swiping back inside Docket › Expired or My Jobs › Saved › Expired returns to the list (shared sub-view helper
 `App-login/app-components/sub-view`).
 Every job on My Jobs and Docket is the shared job-card component (`App-login/app-components/cards/job-card`, v2.1.0, on the shared card container `cards/card-container`; the expired row is `app-components/cards/nav-card` and the Expired-page note `app-components/alert`): active cards act, Applied / Action Taken cards only show what you did and when, expired cards are grey and open from the expired nudge.
+Tapping a job card opens the job (`jd.html`, the JD page): on My Jobs any card but an expired one, on Docket a matched
+or saved job and an Action Taken card — anywhere on the card — and a recruiter's invite through its **Job details** link.
+Swiping back returns to the same tab and scroll; a save or an application made on the JD page shows on the list.
 The top bar is the shared top-app-bar component `App-login/app-components/top-app-bar` (v3.0.0 — its menu, back, Search Jobs and status are the buttons atom `app-components/atoms/buttons`, v1.3.0): Home's floating brand
 bar and the title bar on My Jobs / Docket share one frame, so the menu (part of the top app bar since v2.3.0, always first), the logo /
 title and the right edge sit on the same spot on every tab. Titles are 20 / 24 bold. On iPhone the title bar is the standard 44 pt bar right under the status bar, nothing in the header moves

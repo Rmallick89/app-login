@@ -1933,10 +1933,10 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 }
 </style>
 <!-- ▲ COMPONENT · card-container -->
-<!-- ▼ COMPONENT · job-card v2.2.0 · verbatim copy of App-login/app-components/cards/job-card/job-card.css — do not edit here -->
+<!-- ▼ COMPONENT · job-card v2.5.0 · verbatim copy of App-login/app-components/cards/job-card/job-card.css — do not edit here -->
 <style data-component="job-card">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · JOB CARD  (app component · App-login · cards/)        v2.2.0
+   SHINE · JOB CARD  (app component · App-login · cards/)        v2.5.0
    One card for every job in the logged-in app, built from the design system:
    M.02 Job Card · Portrait (the mobile job list), composed of the M.02 logo,
    A.04 Badge, A.03 Pill (unread dot) and the app's BUTTONS ATOM (atoms/buttons — A.02). Cards only: the expired row (nav-card), the Expired-page
@@ -1962,13 +1962,13 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
    Container (v2.1.0): the shared card container — cards/card-container/card-container.css, loaded first. It draws the
    surface (surface.neutral.raised), the 1 px stroke.neutral.muted edge, the soft resting shadow, the inset.xxl 22 padding,
    the radius.xl 16 corners and, with .card--interactive, the hover (subtle grey edge + lifted + 1 px up) and focus ring.
-   Markup: <article class="card card--interactive jcard jcard--active"> (expired: no card--interactive). This file
+   Markup: <article class="card card--interactive jcard jcard--active"> (expired and, since v2.5.0, invite: no card--interactive). This file
    styles only what is inside the card · sections stack.lg 14.
    Buttons (v2.2.0): every button is the buttons atom — atoms/buttons/buttons.css, loaded before this file. The card only
    places them (the actions row, 12 apart; the Job details trim). The jcard-ib / jcard-save / jcard-cta / jcard-link class
    names stay on the buttons as hooks for scripts and tests; they carry no look.
    Variants (cards/README): 2.1 Job card (state active/done/expired) · 2.2 Recruiter's invite (ctx invite, state invite)
-   · 2.3 Matched job (ctx match) · 2.4 Saved job (ctx saved, saved: true).
+   · 2.3 Matched job (ctx match) · 2.4 Saved job (ctx saved, saved: true) · 2.5 JD job card (ShineJobCard.jd — v2.3.0).
    ▶ BEFORE CHANGING IT: read README.md here and component-system.md M.02. Semantic tokens only.
    ═══════════════════════════════════════════════════════════════════════ */
 
@@ -1997,6 +1997,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
   --jc-violet: #6F46E0;                     /* content.decorative.violet */
   --jc-line: #E4E7EC;                       /* stroke.neutral.base — meta icon frames */
   --jc-line-subtle: #EEF1F5;                /* stroke.neutral.muted — separators (user: subtler); = the container edge */
+  --jc-focus: #1A56FF;                      /* stroke.neutral.focus — the JD job card's company link */
   --jc-av-pink: #BE185D;                    /* surface.decorative.pink-intense */
   --jc-av-violet: #6F46E0;                  /* surface.decorative.violet-intense */
   --jc-av-aqua: #0F766A;                    /* surface.decorative.aqua-intense */
@@ -2067,7 +2068,9 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 }
 
 /* role · badges · note */
-.jcard-role { margin: 0 0 var(--jc-stack); font: 700 18px/22px var(--jc-font); letter-spacing: -.2px; text-wrap: pretty; }   /* Heading / md bold (M.02) */
+/* the role — ONE size on every variant (v2.3.1, user): Heading / md bold 18 / 22 · −0.2 (M.02); only the spacing around it differs */
+.jcard-role, .jcard-jd-role { font: 700 18px/22px var(--jc-font); letter-spacing: -.2px; text-wrap: pretty; }
+.jcard-role { margin: 0 0 var(--jc-stack); }
 .jcard-badges { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: var(--jc-stack); }                    /* inline.sm */
 .jcard-badge {                                                          /* A.04 Badge md */
   display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 1024px;   /* unit/4 · inset.md · inline.sm */
@@ -2114,6 +2117,78 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 .jcard--expired .jcard-role, .jcard--expired .jcard-name, .jcard--expired .jcard-skills-list,
 .jcard--expired .jcard-meta li, .jcard--expired .jcard-desc { color: var(--jc-faded); }
 .jcard--expired * { pointer-events: none; }
+
+/* ── 2.5 JD job card (v2.3.0) — the job at the top of the JD page ─────────────────────────────────────────────
+   badges · role · posted · company · facts grid · actions (· similar-jobs strip). Not a tap target: rendered without
+   card--interactive, and the click handler only reports its buttons. Badges and the outcome row are the card's own
+   (.jcard-badge · .jcard-when); buttons are the buttons atom. */
+.jcard--jd .jcard-badges { margin-bottom: 20px; }   /* stack.xl — more room between the pills and the role (v2.3.2, user) */
+.jcard-jd-role { margin: 0; }   /* the screen's heading (h1) — same size as every card's role (rule above) */
+.jcard-jd-by {
+  display: flex; align-items: center; flex-wrap: wrap; gap: var(--jc-inline); margin: 8px 0 0;                /* inline.md · stack.xs */
+  font: 500 12px/18px var(--jc-font); color: var(--jc-faded);                                                   /* Body / sm medium */
+}
+.jcard-jd-when { display: inline-flex; align-items: center; gap: 4px; }                                        /* inline.sm */
+.jcard-jd-when svg { width: 14px; height: 14px; }                                                              /* size.icon.sm — icons atom: clock */
+.jcard-jd-dot { width: 3px; height: 3px; border-radius: 1024px; background: currentColor; }
+.jcard-jd-co {                                                                                                 /* the company — opens its page */
+  margin: 0; padding: 0; border: 0; border-radius: 4px; background: none; cursor: pointer;
+  font: 600 12px/18px var(--jc-font); color: var(--jc-muted); -webkit-tap-highlight-color: transparent;         /* Body / sm semibold */
+}
+.jcard-jd-co:focus { outline: none; }
+.jcard-jd-co:focus-visible { outline: 2px solid var(--jc-focus); outline-offset: 2px; }
+.jcard-jd-facts {                                                                                               /* Location · Experience · Salary · Type */
+  display: grid; grid-template-columns: 1fr 1fr; gap: 20px 16px; margin: 20px 0 0; padding: 20px 0;             /* stack.xl · inset.xl */
+  border-top: 1px solid var(--jc-line-subtle); border-bottom: 1px solid var(--jc-line-subtle);
+}
+.jcard-jd-facts > div { min-width: 0; }
+.jcard-jd-facts dt { margin: 0; font: 700 10px/10px var(--jc-font); letter-spacing: 1px; text-transform: uppercase; color: var(--jc-faded); }   /* Eyebrow / sm */
+.jcard-jd-facts dd { margin: 8px 0 0; font: 700 14px/20px var(--jc-font); overflow-wrap: anywhere; }            /* Label / lg bold (line 20: a wrapped value keeps its rhythm) */
+.jcard--jd .jcard-actions { padding-top: 20px; margin-top: 0; }                                                  /* stack.xl under the facts */
+.jcard-jd-done { display: flex; align-items: center; gap: var(--jc-inline); margin: 20px 0 0; }
+.jcard-jd-done + .jcard-actions { padding-top: var(--jc-stack); }
+.jcard-jd-done .jcard-badge svg { width: 12px; height: 12px; }                                                   /* size.icon.xs — icons atom: check */
+/* under 360 the atom tightens a fill label; with two icon buttons beside it the arrow would touch the edges */
+@media (max-width: 359px) { .jcard--jd .jcard-actions .btn--fill > svg { display: none; } }
+/* similar-jobs strip — the card's last part, edge to edge (the container's inset); highlighted on the brand-subtle fill of
+   the Docket "Matched…" strip (v2.3.2, user) — the fill marks its edge, so no separator */
+.jcard-jd-strip {
+  display: flex; align-items: center; gap: var(--jc-row-gap);
+  margin: 20px calc(var(--card-inset) * -1) calc(var(--card-inset) * -1); padding: 12px var(--card-inset);       /* inset.lg */
+  background: var(--jc-brand-subtle);                                                                            /* surface.brand.brand-subtle */
+}
+.jcard-jd-strip-text { flex: 1 1 0; min-width: 0; font: 600 14px/20px var(--jc-font); color: var(--jc-ink); }   /* Body / md semibold · content.neutral.base */
+/* the stack (v2.4.0, v2.4.1 smaller): up to three company logos + the total — 28 squares, corners 8, 5 overlap; the left tile sits on top
+   so every mark shows whole; a 2 ring in the strip's own colour cuts each edge; marks sit in an 18 box (same visual size) */
+.jcard-jd-stack { flex: none; display: flex; }
+.jcard-jd-tile {
+  position: relative; box-sizing: border-box; display: grid; place-items: center; width: 28px; height: 28px; margin-left: -5px; border-radius: 8px;
+  box-shadow: 0 0 0 2px var(--jc-brand-subtle); font: 700 11px/1 var(--jc-font); font-style: normal; color: var(--jc-on-dark);   /* Label / md bold */
+}
+.jcard-jd-tile:first-child { margin-left: 0; }
+.jcard-jd-tile:nth-child(1) { z-index: 4; } .jcard-jd-tile:nth-child(2) { z-index: 3; } .jcard-jd-tile:nth-child(3) { z-index: 2; } .jcard-jd-tile:nth-child(4) { z-index: 1; }
+.jcard-jd-tile--logo { padding: 6px; background-color: var(--jc-surface-raised); background-repeat: no-repeat; background-position: center; background-size: contain; background-origin: content-box; }   /* the company's own mark on white */
+.jcard-jd-tile--count { padding-left: 5px; background: var(--jc-brand-intense); font-variant-numeric: tabular-nums; }   /* the total; clears the tile on top of it */
+.jcard-jd-tile.jcard-logo--lime, .jcard-jd-tile.jcard-logo--ey { color: var(--jc-on-light); }
+/* narrow phones keep the line on one row: fewer logos, never a smaller text (the count always stays) */
+/* sized by the strip's own width (a container query), so it holds wherever the card sits: content under 296 (a 390 phone) two logos,
+   under 266 (a 360 phone) one and tighter gaps */
+.jcard-jd-strip { container: jc-strip / inline-size; }
+@container jc-strip (max-width: 295px) { .jcard-jd-tile:not(.jcard-jd-tile--count):nth-child(3) { display: none; } }
+@container jc-strip (max-width: 265px) { .jcard-jd-tile:not(.jcard-jd-tile--count):nth-child(2) { display: none; } .jcard-jd-stack { margin-right: -4px; } .jcard-jd-go { margin-left: -4px; } }
+/* the round arrow — 28 circle, arrow 14 (icons atom: arrow-right), 44 tap area. Smaller than the buttons atom's smallest
+   button (sm 40): kept in the card for now (user's pick, sample E) — a candidate for an xs round icon button in the atom */
+.jcard-jd-go {
+  position: relative; flex: none; display: grid; place-items: center; width: 28px; height: 28px; margin: 0 -2px 0 0; padding: 0; border: 0; border-radius: 1024px;
+  background: var(--jc-surface-raised); box-shadow: inset 0 0 0 1px var(--jc-line); color: var(--jc-ink);           /* surface.neutral.raised · stroke.neutral.base */
+  cursor: pointer; -webkit-tap-highlight-color: transparent; transition: background-color 150ms ease;
+}
+.jcard-jd-go::after { content: ""; position: absolute; inset: -8px; border-radius: inherit; }                          /* 44 tap area */
+.jcard-jd-go svg { width: 14px; height: 14px; }                                                                    /* size.icon.sm */
+@media (hover: hover) { .jcard-jd-go:hover { background: var(--jc-surface-muted); } }
+.jcard-jd-go:active { background: var(--jc-surface-muted); }                                                       /* surface.neutral-state.hover */
+.jcard-jd-go:focus { outline: none; }
+.jcard-jd-go:focus-visible { outline: 2px solid var(--jc-focus); outline-offset: 2px; }
 
 @media (prefers-reduced-motion: reduce) {
   .jcard-badge-dot { animation: none; }
@@ -3403,7 +3478,7 @@ html.in-app .bs { --bs-safe: 0px; }
 })(window);
 </script>
 <!-- ▲ COMPONENT · top-app-bar -->
-      <div class="mr-scroll" id="mjList"></div>
+      <div class="mr-scroll" id="mjList" data-href-jd="jd.html"></div>
     </section>
     <nav data-shine-tabbar data-active="jobs" data-dot="docket" data-href-home="index.html" data-href-docket="docket.html" data-href-me="profile.html"></nav>
     <div data-shine-tabnudge data-tab="docket" data-id="docket-invites" data-count="5" data-text="recruiters invited you to apply" data-text-one="recruiter invited you to apply"></div>   <!-- tab-nudge: recruiter invites waiting in Docket (demo count = Docket › Action Pending invites) -->
@@ -4452,33 +4527,46 @@ html.in-app .bs { --bs-safe: 0px; }
 })(window);
 </script>
   <!-- ▲ COMPONENT · sub-view -->
-<!-- ▼ COMPONENT · job-card v2.2.0 · verbatim copy of App-login/app-components/cards/job-card/job-card.js — do not edit here -->
+<!-- ▼ COMPONENT · job-card v2.5.0 · verbatim copy of App-login/app-components/cards/job-card/job-card.js — do not edit here -->
 <script data-component="job-card">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · JOB CARD  (app component · App-login · cards/)        v2.2.0
+   SHINE · JOB CARD  (app component · App-login · cards/)        v2.5.0
    Pair with job-card.css (and, before it, atoms/buttons/buttons.css and cards/card-container/card-container.css). One renderer for every job card.
    Each card renders as <article class="card card--interactive jcard …"> — the shared card container draws its
    surface, edge, shadow, padding and corners (expired cards leave out card--interactive: inert).
    Variants (cards/README): 2.1 Job card { state: active | done | expired } · 2.2 Recruiter's invite
    { ctx: { kind: 'invite' }, state: 'invite' } · 2.3 Matched job { ctx: { kind: 'match' } } · 2.4 Saved job
-   { ctx: { kind: 'saved' }, saved: true }.
+   { ctx: { kind: 'saved' }, saved: true } · 2.5 JD job card — ShineJobCard.jd(job), the job at the top of the JD page (v2.3.0).
 
    ShineJobCard.html(job)  → markup for one card
    ShineJobCard.list(jobs) → markup for several (wrap them in .jcard-list)
    ShineJobCard.setSaved(cardOrId, on)  → bookmark state (aria-pressed + label)
+   ShineJobCard.jd(job)    → markup for the JD job card (2.5) — see "JD job card" below
+   ShineJobCard.replace(card, job) → swaps a rendered card for a new render of the same variant (e.g. after applying)
    Event: 'shine:jobcard' bubbles from the card on any tap,
           detail { action, id, card, button } — action: open | details | share | save | unsave |
-          apply | decline | interested. Cancelable; the page owns what happens next.
+          apply | decline | interested · JD job card also: similar | company (it never fires open — not a tap target).
+          Cancelable; the page owns what happens next.
 
    job = {
      id, name, sub, logo: { text, person?, color? },   // color: violet|pink|aqua|cyan|lime|ey (default: hash of name)
      ctx?: { kind: 'invite'|'match'|'saved', text },   // Docket: why the card is here (kept on done / expired cards)
      role, badges?: ['actively'|'early'|'urgent' | { kind, text }], desc?, meta: { exp, pay, loc }, details?, skills?: [],
      state: 'active'  → Share · Save · Apply            { saved?, apply?: 'native'|'external' }
-          | 'invite'  → Not interested · Interested     (+ "Job details" link when details: true)
+          | 'invite'  → Not interested · Interested + "Job details" link (default; details: false hides it) —
+                        not a tap target (v2.5.0): the link opens the job, the card body does nothing
           | 'done'    → read-only outcome row           { outcome: 'applied'|'interested'|'declined', when }
           | 'expired' → grey, inert, "Expired" + when   { when }
      unread?                                            // Docket pending only: A.03 Pill dot on the logo
+   }
+   JD job card (2.5) = {
+     id, role, posted, company, badges?, facts?: [[label, value], …] (Location · Experience · Salary · Type),
+     state: 'active'  → Share · Save · Apply Now — the list cards' order (+ the similar-jobs strip when similar > 0)
+                                                        { saved?, apply?: 'native'|'external', similar? }
+     similar?: N  |  { count: N, logos: [{ name, src? | text?, color? }, …] }   // the strip: up to 3 logos + the total (99+) · "Similar jobs found" · round arrow
+          | 'applied' → Applied + when · Share · Explore Similar Jobs   { when }
+          | 'expired' → Expired + when · Share · Explore Similar Jobs   { when }
+     level?: heading level of the role (default 1 — it is the screen's heading)
    }
    Cards only. The list around them is the page's: the expired row is the nav-card component, the Expired-page note
    is the alert component, day headers are page markup.
@@ -4538,7 +4626,8 @@ html.in-app .bs { --bs-safe: 0px; }
       var k = typeof b === 'string' ? b : b.kind, d = BADGES[k]; if (!d) return '';
       return '<span class="jcard-badge jcard-badge--' + d[0] + '">' + d[1] + esc(typeof b === 'string' ? d[2] : (b.text || d[2])) + '</span>'; }).join('');
     var st = state(j), ex = st === 'expired', ro = st === 'done' || ex;
-    return '<article class="card' + (ex ? '' : ' card--interactive') + ' jcard jcard--' + st + (j.unread && !ro ? ' jcard--unread' : '') + '" data-id="' + esc(j.id) + '" data-state="' + st + '" tabindex="' + (ex ? '-1' : '0') + '"' + (ex ? ' aria-disabled="true"' : '') + '>' +
+    var tap = !ex && st !== 'invite';                   // v2.5.0: the whole card opens the job — except an invite (its Job details link does) and expired cards
+    return '<article class="card' + (tap ? ' card--interactive' : '') + ' jcard jcard--' + st + (j.unread && !ro ? ' jcard--unread' : '') + '" data-id="' + esc(j.id) + '" data-state="' + st + '"' + (tap ? ' tabindex="0"' : ex ? ' tabindex="-1" aria-disabled="true"' : '') + '>' +
       (j.ctx ? '<div class="jcard-ctx jcard-ctx--' + j.ctx.kind + '">' + (CTX[j.ctx.kind] || '') + '<span>' + esc(j.ctx.text) + '</span></div>' : '') +
       '<div class="jcard-head">' +                       // name + time left, logo right (v1.2)
         '<div class="jcard-who"><span class="jcard-name">' + esc(j.name) + (j.unread && !ro ? '<span class="jc-sr"> · new</span>' : '') + '</span>' + (j.sub ? '<span class="jcard-sub">' + esc(j.sub) + '</span>' : '') + '</div>' +
@@ -4548,7 +4637,7 @@ html.in-app .bs { --bs-safe: 0px; }
       (badges ? '<div class="jcard-badges">' + badges + '</div>' : '') +
       (j.desc ? '<p class="jcard-desc">' + esc(j.desc) + '</p>' : '') +
       '<div class="jcard-facts"><ul class="jcard-meta">' + row(IC.bag, m.exp) + row(IC.pay, m.pay) + row(IC.pin, m.loc) + '</ul>' +
-        (j.details && st === 'invite' ? act('details', j.id, '', 'Job details' + IC.chev, 'btn btn--link btn--sm btn--flush jcard-link') : '') + '</div>' +
+        (st === 'invite' && j.details !== false ? act('details', j.id, 'Job details: ' + esc(j.role), 'Job details' + IC.chev, 'btn btn--link btn--sm btn--flush jcard-link') : '') + '</div>' +   // v2.5.0: on by default — the invite's way into the job
       (j.skills && j.skills.length ? '<div class="jcard-skills"><span class="jcard-skills-label">Required:</span><span class="jcard-skills-list">' +
         j.skills.map(esc).join('<i aria-hidden="true">·</i>') + '</span></div>' : '') +
       '<div class="jcard-actions' + (ro ? ' jcard-actions--outcome' : '') + '">' + actions(j) + '</div>' +
@@ -4560,16 +4649,75 @@ html.in-app .bs { --bs-safe: 0px; }
     b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.setAttribute('data-jc-act', on ? 'unsave' : 'save');
     b.setAttribute('aria-label', on ? 'Saved — remove job' : 'Save job');
   }
+
+  /* ── 2.5 JD job card (v2.3.0) — the job at the top of the JD page ─────────────────────────────────────────────
+     Same job, shown in full: badges · role (the screen's heading) · posted · company · the facts grid · the actions.
+     Not a tap target (no card--interactive): only its buttons act. */
+  var AT = {   // from atoms/icons (icons.json, verbatim) — the JD job card takes its new icons from the icons atom (cards README)
+    'clock': '<svg aria-hidden="true" focusable="false" data-icon="clock" viewBox="0 0 20 20" fill="none"><path d="M10.0003 2.29166C5.7455 2.29166 2.29199 5.74517 2.29199 9.99999C2.29199 14.2548 5.7455 17.7083 10.0003 17.7083C14.2551 17.7083 17.7087 14.2548 17.7087 9.99999C17.7087 5.74517 14.2551 2.29166 10.0003 2.29166ZM1.04199 9.99999C1.04199 5.05481 5.05515 1.04166 10.0003 1.04166C14.9455 1.04166 18.9587 5.05481 18.9587 9.99999C18.9587 14.9452 14.9455 18.9583 10.0003 18.9583C5.05515 18.9583 1.04199 14.9452 1.04199 9.99999ZM9.69199 5.63332C10.0372 5.63332 10.317 5.91315 10.317 6.25832V9.67499C10.317 9.80294 10.3659 9.98841 10.4745 10.1789C10.5832 10.3695 10.7178 10.5058 10.8273 10.5706L10.8289 10.5716L13.4123 12.1133C13.7087 12.2902 13.8056 12.6739 13.6287 12.9703C13.4518 13.2667 13.0681 13.3636 12.7717 13.1867L10.19 11.646C10.1897 11.6458 10.1895 11.6457 10.1892 11.6455C9.84904 11.4437 9.57567 11.1261 9.38866 10.7981C9.20146 10.4699 9.06699 10.072 9.06699 9.67499V6.25832C9.06699 5.91315 9.34681 5.63332 9.69199 5.63332Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/></svg>',
+    'arrow-right': '<svg aria-hidden="true" focusable="false" data-icon="arrow-right" viewBox="0 0 20 20" fill="none"><path d="M17.8045 10.1385L11.8047 16.1383C11.6796 16.2634 11.5099 16.3336 11.333 16.3336C11.1561 16.3336 10.9865 16.2634 10.8614 16.1383C10.7363 16.0132 10.666 15.8435 10.666 15.6666C10.666 15.4897 10.7363 15.3201 10.8614 15.195L15.7237 10.3335H2.66664C2.48984 10.3335 2.32028 10.2632 2.19526 10.1382C2.07024 10.0132 2 9.84362 2 9.66682C2 9.49001 2.07024 9.32045 2.19526 9.19543C2.32028 9.07041 2.48984 9.00017 2.66664 9.00017H15.7237L10.8614 4.13867C10.7363 4.01358 10.666 3.84392 10.666 3.66702C10.666 3.49011 10.7363 3.32045 10.8614 3.19536C10.9865 3.07027 11.1561 3 11.333 3C11.5099 3 11.6796 3.07027 11.8047 3.19536L17.8045 9.19517C17.8665 9.25708 17.9156 9.3306 17.9492 9.41153C17.9827 9.49246 18 9.57921 18 9.66682C18 9.75443 17.9827 9.84117 17.9492 9.9221C17.9156 10.003 17.8665 10.0766 17.8045 10.1385Z" fill="currentColor"/></svg>',
+    'check': '<svg aria-hidden="true" focusable="false" data-icon="check" viewBox="0 0 20 20" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.071 15.244L7.364 15.435L7.708 15.500L8.050 15.429L8.340 15.233L17.240 6.233L17.433 5.940L17.500 5.595L17.430 5.251L17.233 4.960L16.940 4.767L16.595 4.700L16.251 4.770L15.960 4.967L7.689 13.331L3.891 9.646L3.565 9.515L3.214 9.519L2.891 9.658L2.756 9.771L2.565 10.065L2.500 10.411L2.573 10.754L2.658 10.909Z" fill="currentColor"/></svg>'
+  };
+  function badgesOf(j) {
+    return (j.badges || []).map(function (b) {
+      var k = typeof b === 'string' ? b : b.kind, d = BADGES[k]; if (!d) return '';
+      return '<span class="jcard-badge jcard-badge--' + d[0] + '">' + d[1] + esc(typeof b === 'string' ? d[2] : (b.text || d[2])) + '</span>'; }).join('');
+  }
+  var JD_OUT = { applied: ['positive', AT.check + 'Applied'], expired: ['neutral', 'Expired'] };
+  function jd(j) {
+    var st = JD_OUT[j.state] ? j.state : 'active', id = j.id, ext = j.apply === 'external', lv = Math.min(6, Math.max(1, j.level || 1));
+    var sim = j.similar && typeof j.similar === 'object' ? j.similar : { count: +j.similar || 0, logos: [] };
+    var b = badgesOf(j), n = +sim.count || 0, rid = 'jcjd-' + String(id).replace(/[^\w-]/g, '') + '-role';
+    var facts = (j.facts || []).map(function (f) { return '<div><dt>' + esc(f[0]) + '</dt><dd>' + esc(f[1]) + '</dd></div>'; }).join('');
+    var share = act('share', id, 'Share job', IC.share, 'btn btn--secondary btn--xl btn--icon jcard-ib');
+    var bottom = st === 'active'
+      ? '<div class="jcard-actions jcard-jd-actions">' + share + saveBtn(id, !!j.saved) +       // Share · Save · Apply — as every job card (v2.3.2)
+          act('apply', id, ext ? 'Apply now on the company site' : '', 'Apply Now' + (ext ? IC.external : IC.arrow), 'btn btn--primary btn--xl btn--fill jcard-cta', ' data-apply="' + (ext ? 'external' : 'native') + '"') + '</div>'
+      : '<p class="jcard-jd-done"><span class="jcard-badge jcard-badge--' + JD_OUT[st][0] + '">' + JD_OUT[st][1] + '</span>' +
+          (j.when ? '<span class="jcard-when">' + esc(j.when) + '</span>' : '') + '</p>' +
+        '<div class="jcard-actions jcard-jd-actions">' + share + act('similar', id, '', 'Explore Similar Jobs' + IC.arrow, 'btn btn--primary btn--xl btn--fill jcard-cta') + '</div>';
+    return '<section class="card jcard jcard--jd jcard--jd-' + st + '" data-variant="jd" data-id="' + esc(id) + '" data-state="' + st + '" aria-labelledby="' + rid + '">' +
+      (b ? '<div class="jcard-badges">' + b + '</div>' : '') +
+      '<h' + lv + ' class="jcard-jd-role" id="' + rid + '">' + esc(j.role) + '</h' + lv + '>' +
+      '<p class="jcard-jd-by">' + (j.posted ? '<span class="jcard-jd-when">' + AT.clock + esc(j.posted) + '</span>' : '') +
+        (j.posted && j.company ? '<span class="jcard-jd-dot" aria-hidden="true"></span>' : '') +
+        (j.company ? act('company', id, '', esc(j.company), 'jcard-jd-co') : '') + '</p>' +
+      (facts ? '<dl class="jcard-jd-facts">' + facts + '</dl>' : '') +
+      bottom +
+      (st === 'active' && n > 0 ? strip(id, n, sim.logos || []) : '') +
+    '</section>';
+  }
+  /* the similar-jobs strip (v2.4.0, user's pick — sample E): a stack of up to three company logos + the total, the line
+     "Similar jobs found", a round arrow that opens them */
+  function strip(id, n, logos) {
+    var ls = logos.slice(0, 3), names = ls.map(function (l) { return l.name; }).filter(Boolean), total = n > 99 ? '99+' : String(n);
+    var tiles = ls.map(function (l) {
+      return l.src ? '<i class="jcard-jd-tile jcard-jd-tile--logo" style="background-image:url(\'' + esc(l.src) + '\')"></i>'
+                   : '<i class="jcard-jd-tile jcard-logo--' + (l.color || color(l.name)) + '">' + esc(l.text || String(l.name || '').slice(0, 1)) + '</i>';
+    }).join('') + '<i class="jcard-jd-tile jcard-jd-tile--count">' + total + '</i>';
+    var sr = n + ' similar job' + (n === 1 ? '' : 's') + ' found' + (names.length ? ', at ' + names.join(', ') + (n > names.length ? ' and more' : '') : '');
+    return '<div class="jcard-jd-strip"><span class="jcard-jd-stack" aria-hidden="true">' + tiles + '</span>' +
+      '<span class="jcard-jd-strip-text"><span aria-hidden="true">Similar jobs found</span><span class="jc-sr">' + esc(sr) + '</span></span>' +
+      act('similar', id, 'Explore ' + n + ' similar job' + (n === 1 ? '' : 's'), AT['arrow-right'], 'jcard-jd-go') + '</div>';
+  }
+  function replace(card, j) {
+    if (typeof card === 'string') card = document.querySelector('.jcard[data-id="' + card + '"]');
+    if (!card) return null;
+    var t = document.createElement('div'); t.innerHTML = card.getAttribute('data-variant') === 'jd' ? jd(j) : html(j);
+    var el = t.firstChild; card.parentNode.replaceChild(el, card); return el;
+  }
   document.addEventListener('click', function (e) {
     var card = e.target.closest && e.target.closest('.jcard'); if (!card || card.classList.contains('jcard--expired')) return;
     var b = e.target.closest('[data-jc-act]');
+    if (!b && card.getAttribute('data-variant') === 'jd') return;     // the JD job card is not a tap target — only its buttons act
+    if (!b && card.classList.contains('jcard--invite')) return;       // v2.5.0: nor is a recruiter's invite — Job details opens the job
     card.dispatchEvent(new CustomEvent('shine:jobcard', { bubbles: true, cancelable: true,
       detail: { action: b ? b.getAttribute('data-jc-act') : 'open', id: card.getAttribute('data-id'), card: card, button: b || null } }));
   });
   document.addEventListener('keydown', function (e) {
     if ((e.key === 'Enter' || e.key === ' ') && e.target.classList && e.target.classList.contains('jcard')) { e.preventDefault(); e.target.click(); }
   });
-  global.ShineJobCard = { version: '2.2.0', html: html, list: function (js) { return js.map(html).join(''); }, setSaved: setSaved, icons: IC };
+  global.ShineJobCard = { version: '2.5.0', html: html, list: function (js) { return js.map(html).join(''); }, jd: jd, replace: replace, setSaved: setSaved, icons: IC };
 })(window);
 </script>
 <!-- ▲ COMPONENT · job-card -->
@@ -4827,6 +4975,51 @@ html.in-app .bs { --bs-safe: 0px; }
   function shareUrl(t, c){ return 'https://shine.com/j/' + (t + ' ' + (c || '')).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }   // demo link (real jobs carry their own URL)
   function find(id){ for (var i = 0; i < JOBS.length; i++) if (JOBS[i].id === id) return JOBS[i]; return null; }
 
+
+  // ── the job's page (JD page, v2.5.0 job card): a card tap opens it ─────────────────────────────────
+  // The tapped job goes over in sessionStorage 'shine:jd'; this list's state goes in RET_KEY so Back returns to the same
+  // tab and scroll with your changes kept; the JD page reports what you did there in 'shine:jd-result'.
+  var JD_KEY = 'shine:jd', RES_KEY = 'shine:jd-result';
+  function goJD(payload, snap){
+    var href = list.getAttribute('data-href-jd');
+    if (!href){ say('Opens the job'); return; }
+    try {
+      sessionStorage.setItem(JD_KEY, JSON.stringify(payload));
+      sessionStorage.setItem(RET_KEY, JSON.stringify(snap));
+      sessionStorage.removeItem(RES_KEY);
+    } catch (e) {}
+    location.href = href + '?job=' + encodeURIComponent(payload.id);
+  }
+  function takeReturn(){   // once, on the way back from the JD page
+    var r = null, res = null;
+    try {
+      r = JSON.parse(sessionStorage.getItem(RET_KEY) || 'null'); res = JSON.parse(sessionStorage.getItem(RES_KEY) || 'null');
+      sessionStorage.removeItem(RET_KEY); sessionStorage.removeItem(RES_KEY);
+    } catch (e) {}
+    return r ? { snap: r, res: res && res.from === FROM ? res : null } : null;
+  }
+  function facts(loc, exp, pay){ return [['Location', loc], ['Experience', exp], ['Salary', pay], ['Type', 'Full Time']]; }
+  var RET_KEY = 'shine:return:jobs', FROM = 'jobs';
+  function openJD(j){
+    var c = jc(j), done = c.state === 'done';
+    goJD({ id: j.id, from: FROM, role: c.role, company: c.name, posted: c.sub, badges: c.badges, skills: c.skills || [],
+           facts: facts(c.meta.loc, c.meta.exp, c.meta.pay), state: done ? 'applied' : 'active', when: done ? c.when : '',
+           saved: !!j.saved, apply: c.apply || 'native', logo: c.logo, poster: { kind: 'company', name: c.name } },
+         { tab: tab, scroll: list.scrollTop, seq: saveSeq,
+           jobs: JOBS.map(function(x){ return [x.id, !!x.saved, x.savedGroup, x.savedOrder, x.appliedDays, x.appliedAt || null]; }) });
+  }
+  function restore(){
+    var b = takeReturn(); if (!b) return null;
+    (b.snap.jobs || []).forEach(function(a){ var x = find(a[0]); if (!x) return; x.saved = a[1]; x.savedGroup = a[2]; x.savedOrder = a[3]; x.appliedDays = a[4]; x.appliedAt = a[5] || undefined; });
+    if (typeof b.snap.seq === 'number') saveSeq = b.snap.seq;
+    var r = b.res, j = r && find(r.id);
+    if (j){
+      if (typeof r.saved === 'boolean' && r.saved !== !!j.saved){ j.saved = r.saved; if (r.saved){ j.savedGroup = 'Saved today'; j.savedOrder = --saveSeq; } }
+      if (r.applied && j.appliedDays == null){ j.appliedDays = 0; j.appliedAt = r.appliedAt || nowLabel(); }
+    }
+    return b.snap;
+  }
+
   // ── unsave confirmation (shared bottom sheet) ──
   var pending = null;
   document.addEventListener('shine:sheet-close', function(e){ if (e.target.id === 'mjCf') pending = null; });
@@ -4861,7 +5054,7 @@ html.in-app .bs { --bs-safe: 0px; }
     var d = e.detail, j = find(d.id);
     if (!j) return;                                   // expired cards are inert
     var a = d.action;
-    if (a === 'open'){ say('Opens job detail'); return; }
+    if (a === 'open'){ openJD(j); return; }   // the whole card (active · applied) opens the job's page
     if (a === 'share'){ openShare({ url: shareUrl(j.title, j.co), title: j.title, company: j.co, trigger: d.button }); return; }   // share sheet (page block, bottom-sheet component)
     if (a === 'unsave'){ pending = j.id; ShineSheet.open('#mjCf', { trigger: d.button }); return; }
     if (a === 'save'){
@@ -4885,7 +5078,17 @@ html.in-app .bs { --bs-safe: 0px; }
     e.preventDefault();   // keeps the tab bar's own default (scroll the window to the top) from running
   });
 
-  if (view === 'expired') render(); else setTab(tab);
+  // back from the JD page → the same tab and scroll; otherwise the usual start
+  var back = (view === 'expired') ? null : restore();
+  if (view === 'expired') render();
+  else {
+    if (back && back.tab) tab = back.tab;
+    setTab(tab);
+    if (back){
+      var put = function(){ list.scrollTop = back.scroll || 0; syncScroll(); };
+      put(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(put);
+    }
+  }
 })();
   </script>
 </body>
