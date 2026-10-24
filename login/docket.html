@@ -2221,11 +2221,15 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 @media (prefers-reduced-motion: reduce) { .ncard { transition: none; } }
 </style>
 <!-- ▲ COMPONENT · nav-card -->
-<!-- ▼ COMPONENT · bottom-sheet v2.7.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
+<!-- ▼ COMPONENT · bottom-sheet v2.8.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
 <style data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BOTTOM SHEET  (app component · App-login)            v2.7.0
-   The one container behind every slide-up panel in the logged-in app.
+   SHINE · BOTTOM SHEET  (app component · App-login)            v2.8.0
+   The one container behind every slide-up panel in the logged-in app — in TWO VARIATIONS:
+     1 · BOTTOM SHEET  .bs            slides up from the bottom edge, the page shows above it
+                                      (pickers, confirmations, nudges, OTP, short asks)
+     2 · FULL-SCREEN   .bs.bs--full   (v2.8.0) takes the whole screen on a phone, a centred dialog on desktop
+                                      (editing forms: profile photo, details, skills, employment, education, links)
    Built on App-logout's bottom sheet (v1.2.1 — same ShineSheet engine:
    stacking, focus trap, scroll lock, drag-to-dismiss, keyboard-aware,
    iOS 26 status-bar tint) and refined into THREE SECTIONS:
@@ -2384,6 +2388,12 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 
   /* bottom inset: device safe area; ignored inside the Android app (see header) */
   --bs-safe: env(safe-area-inset-bottom, 0px);
+  /* top inset (full-screen, v2.8.0): the status bar / notch; ignored inside the Android app (the WebView sits below it) */
+  --bs-safe-top: env(safe-area-inset-top, 0px);
+
+  /* FULL-SCREEN (v2.8.0) — the screen title is Heading / lg (22/26 mobile · 24/28 desktop), profile-index's form-modal title */
+  --bs-title-full-size: var(--bs-heading-lg-size); --bs-title-full-lh: var(--bs-heading-lg-lh); --bs-title-full-ls: var(--bs-heading-lg-ls);
+  --bs-full-w: 560px;                                    /* desktop dialog width — profile-index .li-pf-modal--md */
 
   /* motion — PROPOSED motion.sheet-* (DS has no motion section yet) */
   --bs-ease: cubic-bezier(.32,.72,0,1);
@@ -2394,7 +2404,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
   /* stacking — ShineSheet assigns z = --bs-z + 2·depth (+1 for the sheet) */
   --bs-z: 100;
 }
-html.in-app .bs { --bs-safe: 0px; }
+html.in-app .bs { --bs-safe: 0px; --bs-safe-top: 0px; }
 
 /* desktop breakpoint (≥768px) — responsive tokens per §2.1 / §2.3 */
 @media (min-width: 768px) {
@@ -2402,6 +2412,7 @@ html.in-app .bs { --bs-safe: 0px; }
     --bs-display-sm-size: 32px; --bs-display-sm-lh: 36px; --bs-display-sm-ls: -0.4px;
     --bs-heading-lg-size: 24px; --bs-heading-lg-lh: 28px; --bs-heading-lg-ls: -0.3px;
     --bs-title-lg-size: var(--bs-heading-lg-size); --bs-title-lg-lh: var(--bs-heading-lg-lh); --bs-title-lg-ls: var(--bs-heading-lg-ls);
+    --bs-title-full-size: var(--bs-heading-lg-size); --bs-title-full-lh: var(--bs-heading-lg-lh); --bs-title-full-ls: var(--bs-heading-lg-ls);
     --bs-eyebrow-sm-size: 12px; --bs-eyebrow-sm-lh: 12px; --bs-eyebrow-sm-ls: 1.5px;
     --bs-eyebrow-md-size: 14px; --bs-eyebrow-md-lh: 14px; --bs-eyebrow-md-ls: 2px;
     --bs-spacing-inset-md: 10px; --bs-spacing-inset-xl: 20px; --bs-spacing-inset-xxl: 32px; --bs-spacing-inset-lg: 14px;
@@ -2701,6 +2712,56 @@ html.in-app .bs { --bs-safe: 0px; }
 /* sheets without a bottom section still clear the home indicator */
 .bs--pad-bottom { padding-bottom: max(var(--bs-inline-end), calc(var(--bs-safe) + var(--bs-sticky-pad))); }   /* v2.5.1: same end as an inline bottom (24 · safe area + 16) */
 
+/* ══ VARIATION 2 · FULL-SCREEN  .bs.bs--full  (v2.8.0) ═══════════════════
+   Studied from profile-index.html's form modals on a phone (≤ 480): edge to edge, no corners, the body
+   scrolls, the bottom (Save changes + secure note) pins to the bottom edge, the title sits top-left with a
+   close top-right, and the whole screen slides up with the sheet's own motion. Same three sections, same
+   engine (stacking, focus trap, scroll lock, Escape / Android Back, events) — no handle and no drag-to-dismiss
+   (a whole screen of fields is not swiped away). Its bottom section is always STICKY.
+     Phone (< 768)   the screen: top 0 → bottom 0, under the status bar (top safe area), no radius, no shadow;
+                     the scrim stays under it for a stacked sheet's sake; html/body take its surface colour so
+                     the status bar is white with it (iOS).
+     Desktop (≥ 768) a centred dialog, 560 wide, all corners size.radius.2xl, elevation.neutral.modal, at most
+                     88 % of the window tall — profile-index's desktop modal (scale .96 → 1 + fade).
+   A bottom sheet can open over it (a combo-box list, a confirmation): it stacks with its own scrim. */
+.bs.bs--full {
+  top: 0; max-height: none;
+  border-radius: 0; box-shadow: none;
+}
+.bs--full .bs-handle { display: none; }
+.bs--full > .bs-top { padding-top: var(--bs-safe-top); background: inherit; }
+/* the screen title: Heading / lg, the close (32, icon 14) on its first line, inset.xl above, stack.xxl to the content */
+.bs--full .bs-head, .bs--full .bs-head.bs-head--lg, .bs--full .bs-head.bs-head--md {
+  --bs-h-size: var(--bs-title-full-size); --bs-h-lh: var(--bs-title-full-lh); --bs-h-ls: var(--bs-title-full-ls);
+  --bs-h-sub-size: var(--bs-body-md-size); --bs-h-sub-lh: var(--bs-body-md-lh);
+  --bs-h-sub-color: var(--bs-content-neutral-muted); --bs-h-sub-gap: var(--bs-spacing-stack-xs);
+  display: flex; align-items: flex-start; gap: var(--bs-spacing-inline-lg);
+  padding: var(--bs-spacing-inset-xl) var(--bs-gutter) var(--bs-spacing-stack-xxl);
+}
+.bs--full .bs-head .bs-close {
+  position: relative; top: auto; right: auto;
+  width: var(--bs-sheet-close-md); height: var(--bs-sheet-close-md);
+  margin-top: calc((var(--bs-h-lh) - var(--bs-sheet-close-md)) / 2);    /* centred on the title's first line */
+}
+.bs--full .bs-head .bs-close::after { inset: -4px; }                     /* 32 + 2·4 = 40 hit area */
+.bs--full .bs-head .bs-close svg { width: var(--bs-icon-sm); height: var(--bs-icon-sm); }
+.bs--full .bs-head .bs-heading { padding-right: 0; }
+.bs--full > .bs-body { padding-bottom: var(--bs-spacing-stack-xxl); }   /* the last field clears the pinned bottom */
+.bs--full.bs--pad-bottom > .bs-body { padding-bottom: 0; }
+
+@media (min-width: 768px) {
+  .bs.bs--full {
+    top: 50%; left: 50%; right: auto; bottom: auto;
+    width: min(var(--bs-full-w), calc(100vw - 2 * var(--bs-gutter))); max-height: min(88vh, 880px);
+    border-radius: var(--bs-radius-2xl); box-shadow: var(--bs-elevation-neutral-modal);
+    opacity: 0; transform: translate3d(-50%, -48%, 0) scale(.96);
+    transition: transform 220ms ease, opacity 220ms ease;
+  }
+  .bs.bs--full.is-open { opacity: 1; transform: translate3d(-50%, -50%, 0) scale(1); transition-duration: 220ms; }
+  .bs--full > .bs-top { padding-top: 0; }
+  .bs--full > .bs-bottom { padding-bottom: var(--bs-sticky-pad); }
+}
+
 /* ── On-screen keyboard — ShineSheet sets html.bs-kb + --bs-kb / --bs-vvh ──
    The sheet keeps its place at the bottom edge and its surface continues
    behind the keyboard (native iOS look); the content is padded up by the
@@ -2709,6 +2770,11 @@ html.in-app .bs { --bs-safe: 0px; }
 .bs-kb .bs-body > .bs-bottom { padding-bottom: var(--bs-gutter); }
 .bs-kb .bs > .bs-bottom { padding-bottom: var(--bs-sticky-pad); }
 .bs-kb .bs--pad-bottom:not(.bs--nested) { padding-bottom: calc(var(--bs-spacing-stack-xxl) + var(--bs-kb, 0px)); }
+/* full-screen on a phone (v2.8.0): fills exactly the visible area above the keyboard (--bs-vvt = how far iOS
+   scrolled the page up) — the title stays on screen and the bottom section rides on the keyboard */
+@media (max-width: 767px) {
+  .bs-kb .bs.bs--full:not(.bs--nested) { top: var(--bs-vvt, 0px); bottom: auto; height: var(--bs-vvh, 100%); max-height: none; padding-bottom: 0; }
+}
 
 /* page scroll lock (set on <html> by ShineSheet) */
 .bs-lock, .bs-lock body { overflow: hidden !important; }
@@ -3645,10 +3711,10 @@ html.in-app .bs { --bs-safe: 0px; }
     <span id="toastMsg">Done</span>
   </div>
 
-<!-- ▼ COMPONENT · bottom-sheet v2.7.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.js — do not edit here -->
+<!-- ▼ COMPONENT · bottom-sheet v2.8.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.js — do not edit here -->
 <script data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BOTTOM SHEET  (app component · App-login)            v2.7.0
+   SHINE · BOTTOM SHEET  (app component · App-login)            v2.8.0
    Pair with bottom-sheet.css. Zero dependencies, no build step.
    Engine = App-logout's ShineSheet v1.2.1; v2.0 adds the three-section anatomy;
    v2.1 aligns every value with design-system/DESIGN-SYSTEM.md.
@@ -3700,6 +3766,9 @@ html.in-app .bs { --bs-safe: 0px; }
      data-bs-cta="…"           inline | sticky | auto
      .bs--nested               opens inside its parent .bs and covers it
      .bs--inverse              dark sheet
+     .bs--full                 VARIATION 2 · FULL-SCREEN (v2.8.0): the whole screen on a phone, a centred
+                               dialog on desktop — no handle, no drag, bottom always sticky, status bar
+                               takes its surface (see bottom-sheet.css)
 
    Events (dispatched on the sheet, bubbling):
      shine:sheet-open    cancelable   detail { trigger }
@@ -3739,6 +3808,9 @@ html.in-app .bs { --bs-safe: 0px; }
   }
   function attr(el, name, val) { return el.getAttribute(name) === val; }
   function isNested(el) { return el.classList.contains('bs--nested'); }
+  var phone = global.matchMedia && global.matchMedia('(max-width: 767px)');
+  function isFull(el) { return el.classList.contains('bs--full'); }
+  function fullScreen(el) { return isFull(el) && !isNested(el) && (!phone || phone.matches); }   // full-screen showing as a screen (phone)
   function dismissible(el) { return !attr(el, 'data-bs-dismiss', 'false'); }
   function durationOf(el) {
     if (reduced && reduced.matches) return 0;
@@ -3771,12 +3843,12 @@ html.in-app .bs { --bs-safe: 0px; }
     var bottom = body && el.querySelector(':scope > .bs-body > .bs-bottom, :scope > .bs-bottom');
     if (bottom) {
       st.bottom = bottom;
-      st.cta = el.getAttribute('data-bs-cta');
+      st.cta = isFull(el) ? 'sticky' : el.getAttribute('data-bs-cta');      // full-screen: the bottom is always pinned
       var wrote = bottom.parentNode === body ? 'inline' : 'sticky';
       placeCta(el, st.cta === 'inline' || st.cta === 'sticky' ? st.cta : st.cta === 'auto' ? 'inline' : wrote, true);
     }
     // 1 · top section — drag to dismiss from here only, so body scrolling is never hijacked
-    if (!attr(el, 'data-bs-drag', 'false')) {
+    if (!attr(el, 'data-bs-drag', 'false') && !isFull(el)) {          // full-screen: no drag-to-dismiss
       Array.prototype.forEach.call(el.querySelectorAll(':scope > .bs-top, :scope > .bs-handle, :scope > .bs-head'), function (h) { dragify(el, h); });
     }
     return st;
@@ -3897,8 +3969,9 @@ html.in-app .bs { --bs-safe: 0px; }
   var kb = { on: false, raf: 0, px: 0 };
   function kbSet(px, h) {
     var r = doc.documentElement;
-    if (px > 0) { r.style.setProperty('--bs-kb', px + 'px'); r.style.setProperty('--bs-vvh', Math.round(h) + 'px'); r.classList.add('bs-kb'); }
-    else { r.style.removeProperty('--bs-kb'); r.style.removeProperty('--bs-vvh'); r.classList.remove('bs-kb'); }
+    var vv = global.visualViewport, vt = vv ? Math.max(0, Math.round(vv.offsetTop)) : 0;
+    if (px > 0) { r.style.setProperty('--bs-kb', px + 'px'); r.style.setProperty('--bs-vvh', Math.round(h) + 'px'); r.style.setProperty('--bs-vvt', vt + 'px'); r.classList.add('bs-kb'); }
+    else { r.style.removeProperty('--bs-kb'); r.style.removeProperty('--bs-vvh'); r.style.removeProperty('--bs-vvt'); r.classList.remove('bs-kb'); }
     if (px !== kb.px) {
       kb.px = px;
       stack.forEach(function (el) { if (el.__bs && el.__bs.bottom) { syncCta(el); syncScroll(el); } });
@@ -3929,8 +4002,10 @@ html.in-app .bs { --bs-safe: 0px; }
   function rgba(s) { var m = /rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:[,\s/]+([\d.]+))?/.exec(s || ''); return m ? [+m[1], +m[2], +m[3], m[4] === undefined ? 1 : +m[4]] : null; }
   function tint() {
     var r = doc.documentElement, b = doc.body; if (!b) return;
-    var scrims = stack.filter(function (el) { return el.__bs.scrim && !isNested(el); }).map(function (el) { return el.__bs.scrim; });
-    if (!scrims.length) {
+    // v2.8.0: a full-screen on a phone covers the status bar area with its surface → the bar takes that colour;
+    // a sheet stacked over it dims that colour with its own scrim
+    var layers = stack.filter(function (el) { return !isNested(el) && (el.__bs.scrim || fullScreen(el)); });
+    if (!layers.length) {
       if (tintSaved) { r.style.backgroundColor = tintSaved[0]; b.style.backgroundColor = tintSaved[1]; tintSaved = null; }
       return;
     }
@@ -3941,7 +4016,9 @@ html.in-app .bs { --bs-safe: 0px; }
       tintSaved = [r.style.backgroundColor, b.style.backgroundColor, base];
     }
     var col = tintSaved[2].slice(0, 3);
-    scrims.forEach(function (sc) {                       // stacked scrims compound
+    layers.forEach(function (el) {                       // stacked scrims compound; a full-screen resets to its surface
+      if (fullScreen(el)) { var f = rgba(getComputedStyle(el).backgroundColor); if (f && f[3] > 0.5) { col = f.slice(0, 3); return; } }
+      var sc = el.__bs.scrim; if (!sc) return;
       var c = rgba(getComputedStyle(sc).getPropertyValue('--bs-scrim-c')) || [13, 17, 23, 0.24];
       col = [0, 1, 2].map(function (k) { return c[k] * c[3] + col[k] * (1 - c[3]); });
     });
@@ -4038,7 +4115,7 @@ html.in-app .bs { --bs-safe: 0px; }
   function dragify(el, handle) {
     var y0 = 0, t0 = 0, dy = 0, active = false, pid = null;
     handle.addEventListener('pointerdown', function (e) {
-      if (!isOpen(el) || !dismissible(el) || e.button > 0) return;
+      if (!isOpen(el) || !dismissible(el) || isFull(el) || e.button > 0) return;   // a sheet that opens full-screen another time never drags
       if (e.target.closest('button, a, input, select, textarea, [role="button"]')) return;
       active = true; pid = e.pointerId; y0 = e.clientY; t0 = e.timeStamp; dy = 0;
       try { handle.setPointerCapture(pid); } catch (x) {}
@@ -4076,7 +4153,7 @@ html.in-app .bs { --bs-safe: 0px; }
   // re-measure an auto sheet after the page swaps its content (optional — a MutationObserver already does this)
   function refresh(target) { var el = $(target); if (el && el.__bs) { syncCta(el); syncScroll(el); } }
 
-  global.ShineSheet = { open: open, close: close, toggle: toggle, isOpen: isOpen, top: top, closeAll: closeAll, init: init, refresh: refresh, version: '2.7.0' };
+  global.ShineSheet = { open: open, close: close, toggle: toggle, isOpen: isOpen, top: top, closeAll: closeAll, init: init, refresh: refresh, version: '2.8.0' };
 })(window);
 </script>
 <!-- ▲ COMPONENT · bottom-sheet -->
