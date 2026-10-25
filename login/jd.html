@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <script data-ios-nozoom>(function () { var iOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); var m = document.querySelector('meta[name="viewport"]'); if (iOS && m && !/maximum-scale/.test(m.content)) m.content += ', maximum-scale=1'; })();</script>
 <meta name="theme-color" content="#FAF9F6" />
-<!-- SHINE APP · JOB DETAILS (JD) — App-login/JD Page/  · v1.6 (2026-10-25) — Edit your details uses Small fields (40 tall · label 12), the app size · v1.5 (2026-10-23) — for review · opened from the job cards on My Jobs and Docket
+<!-- SHINE APP · JOB DETAILS (JD) — App-login/JD Page/  · v1.7 (2026-10-25) — the field you tap lands 20 below the lifted heading (bottom-sheet v2.12.0) · v1.6: Edit your details uses Small fields (40 tall · label 12), the app size · v1.5 (2026-10-23) — for review · opened from the job cards on My Jobs and Docket
      v1.1: the job and the company are components now — job card 2.5 JD job card (ShineJobCard.jd) and company card (ShineCompanyCard).
      Built from the mobile responsive view of <Shine Revamp>/jd-page3.html: the same sections, copy and flow —
      the job (badges · role · posted · meta · Apply Now · save · share · similar-jobs strip), Skills For This Role,
@@ -1567,10 +1567,10 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 
 </style>
 <!-- ▲ COMPONENT · top-app-bar -->
-<!-- ▼ COMPONENT · bottom-sheet v2.11.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
+<!-- ▼ COMPONENT · bottom-sheet v2.12.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
 <style data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BOTTOM SHEET  (app component · App-login)            v2.11.0
+   SHINE · BOTTOM SHEET  (app component · App-login)            v2.12.0
    The one container behind every slide-up panel in the logged-in app — in TWO VARIATIONS:
      1 · BOTTOM SHEET  .bs            slides up from the bottom edge, the page shows above it
                                       (pickers, confirmations, nudges, OTP, short asks)
@@ -1730,6 +1730,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
   --bs-inline-top: var(--bs-spacing-section-lg);         /* content → inline bottom (v2.6: 24 → 32) */
   --bs-inline-end: var(--bs-spacing-stack-xxl);          /* under the inline bottom (v2.4: 48 → 24) */
   --bs-sticky-pad: var(--bs-spacing-inset-xl);           /* sticky bottom padding          */
+  --bs-anchor-gap: var(--bs-spacing-stack-xl);           /* lifted top bar → the field the focus anchor brings up (v2.12.0: was 0) = a form's field-to-field gap */
   --bs-max-h: 90vh;
 
   /* bottom inset: device safe area; ignored inside the Android app (see header) */
@@ -2158,7 +2159,8 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
   .bs-kb .bs.bs--full:not(.bs--nested) > .bs-body { padding-bottom: var(--bs-spacing-stack-xxl); }
 }
 
-/* v2.11.0 · focus anchor — the room at the end of a body that lets its last fields glide up to the first field's place */
+/* v2.11.0 · focus anchor — the room at the end of a body that lets its last fields glide up to the landing line
+   (v2.12.0: the first field's place, but never closer than --bs-anchor-gap 20 — a form's field gap — to the top bar's edge) */
 .bs-anchor-space { display: block; flex: none; width: 100%; margin: 0; padding: 0; pointer-events: none; }
 
 /* page scroll lock (set on <html> by ShineSheet) */
@@ -2172,6 +2174,7 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
   .bs-btn { transition: none; }
   .bs-btn:hover { transform: none !important; }
 }
+
 </style>
 <!-- ▲ COMPONENT · bottom-sheet -->
 <!-- ▼ PAGE · share-sheet — same block on My Jobs, Docket and the JD page -->
@@ -3020,10 +3023,10 @@ button { font-family: inherit; }
   <!-- ▲ PAGE · share-sheet-markup -->
 
 <div class="jdp-toast" id="jdToast" role="status" aria-live="polite"><svg aria-hidden="true" focusable="false" data-icon="ic_check-outline" viewBox="0 0 20 20" fill="none"><path d="M7.071 15.244L7.364 15.435L7.708 15.5L8.05 15.429L8.34 15.233L17.24 6.23295L17.433 5.93995L17.5 5.59495L17.43 5.25095L17.233 4.95995L16.94 4.76695L16.595 4.69995L16.251 4.76995L15.96 4.96695L7.689 13.331L3.891 9.64595L3.565 9.51495L3.214 9.51895L2.891 9.65795L2.756 9.77095L2.565 10.065L2.5 10.411L2.573 10.754L2.658 10.909L7.071 15.244Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/></svg><span id="jdToastMsg"></span></div>
-<!-- ▼ COMPONENT · bottom-sheet v2.11.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.js — do not edit here -->
+<!-- ▼ COMPONENT · bottom-sheet v2.12.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.js — do not edit here -->
 <script data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BOTTOM SHEET  (app component · App-login)            v2.11.0
+   SHINE · BOTTOM SHEET  (app component · App-login)            v2.12.0
    Pair with bottom-sheet.css. Zero dependencies, no build step.
    Engine = App-logout's ShineSheet v1.2.1; v2.0 adds the three-section anatomy;
    v2.1 aligns every value with design-system/DESIGN-SYSTEM.md.
@@ -3097,7 +3100,7 @@ button { font-family: inherit; }
      aria-expanded · reduced motion respected · closed = [hidden] ·
      keyboard-aware (content padded above the on-screen keyboard, surface runs
      on behind it) · focus anchor (v2.11.0: on a touch screen the text field you tap glides up to where the
-     form's first field sits, and stays there while you type) · status-bar tint (html/body dimmed while a scrim is up,
+     form's first field sits, and stays there while you type; v2.12.0: one field gap, 20, under the top bar) · status-bar tint (html/body dimmed while a scrim is up,
      so iOS 26 Safari's status bar dims with the page).
    ═══════════════════════════════════════════════════════════════════════ */
 (function (global) {
@@ -3357,9 +3360,14 @@ button { font-family: inherit; }
      body instead of panning the whole screen — and gone once the body is back in range.
      Where: every full-screen form; a bottom sheet only when its body scrolls (a 1–2 field ask stays put above the
      keyboard). Opt out: data-bs-anchor="off" on a sheet or a field. A field's block can be named with
-     [data-bs-anchor-box]; the line it lands on with [data-bs-anchor-top] (default: the body's first .field). */
+     [data-bs-anchor-box]; the line it lands on with [data-bs-anchor-top] (default: the body's first .field).
+     v2.12.0 · the landing line keeps a gap under the top bar: once the body scrolls the bar lifts (its shadow), and a
+     field flush against it looked cramped (user's iPhone screenshot) — so the line is the first field's place or
+     --bs-anchor-gap below the bar's edge, whichever is lower: 20 (spacing.stack.xl), the gap between a form's fields,
+     so the field above tucks exactly under the bar instead of peeking out. */
   var touch = global.matchMedia ? global.matchMedia('(hover: none) and (pointer: coarse)') : { matches: false };
   var anc = { el: null, body: null, raf: 0, outT: 0 }, ANC_MS = 280;
+  function ancGap(body) { var g = parseFloat(getComputedStyle(body).getPropertyValue('--bs-anchor-gap')); return isNaN(g) ? 20 : g; }
   function relTop(x, body) { return x.getBoundingClientRect().top - body.getBoundingClientRect().top + body.scrollTop; }
   function ancBody(a) {                                // the sheet body this text field anchors in (or null)
     if (!touch.matches || !editable(a) || a.readOnly || a.disabled) return null;
@@ -3409,7 +3417,8 @@ button { font-family: inherit; }
     body.__bsCH = Math.max(body.__bsCH || 0, body.clientHeight);
     anc.el = a; anc.body = body; body.classList.add('bs-body--anchored');
     var first = body.querySelector('[data-bs-anchor-top]') || body.querySelector('.field'), box = a.closest('[data-bs-anchor-box]') || a.closest('.field') || a;
-    var to = Math.max(0, Math.round(relTop(box, body) - (first ? relTop(first, body) : 0)));
+    var line = Math.max(first ? relTop(first, body) : 0, ancGap(body));   // v2.12.0: never flush against the lifted top bar
+    var to = Math.max(0, Math.round(relTop(box, body) - line));
     space(body, Math.max(room(body, to), room(body, body.scrollTop)));   // grow first — never shrink under the scroll mid-glide
     glide(body, to, function () { if (anc.body === body && anc.el === a) space(body, room(body, to)); });
   }
@@ -3691,6 +3700,7 @@ button { font-family: inherit; }
 
   global.ShineSheet = { open: open, close: close, toggle: toggle, isOpen: isOpen, top: top, closeAll: closeAll, init: init, refresh: refresh, version: '2.11.0' };
 })(window);
+
 </script>
 <!-- ▲ COMPONENT · bottom-sheet -->
 <!-- ▼ PAGE · share-sheet — same block on My Jobs, Docket and the JD page -->
