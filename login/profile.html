@@ -11,7 +11,7 @@
   })();
 </script>
 <meta name="theme-color" content="#161B22" />
-<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.24 (2026-10-25) — every inline list is the inline dropdown component (Small · combo box v4.0.0); chips fields show “Added” · v1.23: full-screen headings: Display · Large (modal v2.10.0) · v1.22: full-screens fade through (modal v2.9.0, the user's option C) · v1.21: iPhone status bar on full-screens (modal v2.8.3: page pinned at scroll 0 while a full-screen is up · strip hit-testable) · status-bar strip (modal v2.8.2) · short lists without search · lists never behind the keyboard (combo box v3.1.0)
+<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.25 (2026-10-25) — Small dropdown rows get room for a finger (38, inline-dropdown v1.4.1) · v1.24: every inline list is the inline dropdown component (Small · combo box v4.0.0); chips fields show “Added” · v1.23: full-screen headings: Display · Large (modal v2.10.0) · v1.22: full-screens fade through (modal v2.9.0, the user's option C) · v1.21: iPhone status bar on full-screens (modal v2.8.3: page pinned at scroll 0 while a full-screen is up · strip hit-testable) · status-bar strip (modal v2.8.2) · short lists without search · lists never behind the keyboard (combo box v3.1.0)
      Built from the mobile view (≤ 480 px) of <Shine Revamp>/profile-index.html, on the design system
      (design-system/DESIGN-SYSTEM.md + component-system.md): semantic tokens only, the buttons atom (atoms/buttons), DS atoms (A.04 Badge,
      A.05 Tag, A.08 Avatar, A.09 Toast). No menu / title on this tab (v1.1, user): the full-bleed hero starts at the top
@@ -1229,10 +1229,10 @@ legend.field-label--hidden { float: none; width: 1px; }
 @media (prefers-reduced-motion: reduce) { .field-trailing[data-combo-btn="caret"] svg { transition: none; } .field-spin { animation-duration: 2s; } }
 </style>
 <!-- ▲ COMPONENT · combo-box -->
-<!-- ▼ COMPONENT · inline-dropdown v1.4.0 · verbatim copy of App-login/app-components/inline-dropdown/inline-dropdown.css — do not edit here -->
+<!-- ▼ COMPONENT · inline-dropdown v1.4.1 · verbatim copy of App-login/app-components/inline-dropdown/inline-dropdown.css — do not edit here -->
 <style data-component="inline-dropdown">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · INLINE DROPDOWN  (app component · App-login · app-components/inline-dropdown/)      v1.4.0
+   SHINE · INLINE DROPDOWN  (app component · App-login · app-components/inline-dropdown/)      v1.4.1
    The list that opens right under a field, inside the page or sheet — for the combo input (type to narrow, then
    pick) and the dropdown input (pick only). One look, one behaviour, everywhere a field shows options inline.
    Built on design-system tokens only (DESIGN-SYSTEM.md §2), light and dark. Pair with inline-dropdown.js.
@@ -1247,7 +1247,7 @@ legend.field-label--hidden { float: none; width: 1px; }
      │ ＋ Use “Gurgaon”                          │   .dropdown-option--free   keep what you typed
      └──────────────────────────────────────────┘   .dropdown-note      searching · no matches · type more · couldn’t load
    4½ rows show, then the list scrolls (the half row says there is more). Its size is its own — by device, never the
-   field's: .dropdown--sm phone & mobile view (default: rows 32, text 12, icons 14) · --md tablet (44 · 14 · 16) · --lg computer (48 · 16 · 16). It opens above the field when
+   field's: .dropdown--sm phone & mobile view (default: rows 38, text 12, icons 14) · --md tablet (44 · 14 · 16) · --lg computer (48 · 16 · 16). It opens above the field when
    there is no room below (the keyboard), and inside a scrolling sheet it scrolls the field up first so it fits.
 
    ▶ BEFORE BUILDING WITH IT: read README.md and inline-dropdown-spec.html (the guideline) in this folder.
@@ -1350,7 +1350,7 @@ legend.field-label--hidden { float: none; width: 1px; }
 
 /* SIZE — the list's own, by the device it shows on (never the field's): create({ size }) · data-dropdown-size */
 .dropdown--sm {                                                                     /* phone & mobile view — the default (v1.4.0): everything a step smaller */
-  --dd-row: 32px; --dd-row-py: 6px;                                                  /* row 32 · spacing.inset.sm 6 */
+  --dd-row: 38px; --dd-row-py: 10px;                                                 /* row 38 · padding 10 × 8 (v1.4.1: more room for a finger; the text stays 12) */
   --dd-fs: 12px; --dd-lh: 18px;                                                      /* Body / sm — row text */
   --dd-ic: 14px; --dd-row-gap: 6px;                                                  /* size.icon.sm · spacing.inline.sm (desktop) */
   --dd-badge-fs: 10px; --dd-badge-py: 3px;                                           /* A.04 Badge sm: Label / sm 10 · padding 3 × 8 */
@@ -4767,10 +4767,10 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 })(window);
 </script>
 <!-- ▲ COMPONENT · bottom-sheet -->
-<!-- ▼ COMPONENT · inline-dropdown v1.4.0 · verbatim copy of App-login/app-components/inline-dropdown/inline-dropdown.js — do not edit here -->
+<!-- ▼ COMPONENT · inline-dropdown v1.4.1 · verbatim copy of App-login/app-components/inline-dropdown/inline-dropdown.js — do not edit here -->
 <script data-component="inline-dropdown">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · INLINE DROPDOWN  (app component · App-login · app-components/inline-dropdown/)      v1.4.0
+   SHINE · INLINE DROPDOWN  (app component · App-login · app-components/inline-dropdown/)      v1.4.1
    Pair with inline-dropdown.css. Zero dependencies, no build step. Global: ShineDropdown.
 
    The list under a field. One pick at a time, two ways to use it (mode):
@@ -4792,7 +4792,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
        heading: 'Popular cities',  // a heading over the list before anything is typed
        value:   'Pune',            // what is chosen now (value or label)
        empty:   'No matches for “{q}”',
-       size:    'sm',              // the list’s own size, by device — never the field’s: 'sm' phone & mobile view (default: 32 rows, 12 text, 14 icons) · 'md' tablet (44) · 'lg' computer (48, 16 text)
+       size:    'sm',              // the list’s own size, by device — never the field’s: 'sm' phone & mobile view (default: 38 rows, 12 text, 14 icons) · 'md' tablet (44) · 'lg' computer (48, 16 text)
        addedText: 'Added',         // the badge on rows that are already added
        placement: 'auto',          // 'auto' (under; above when there is no room) · 'below' · 'above'
        openOnFocus: true,          // search (select opens on tap / ↓ / Enter / Space)
@@ -5156,7 +5156,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
   function get(el) { if (!el) return null; if (el.__dd) return el.__dd; if (el.__ddHost) return el.__ddHost; var h = el.closest && el.closest('[data-dropdown]'); return h ? fromMarkup(h) : null; }
   if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', function () { init(); }); else init();
 
-  global.ShineDropdown = { create: create, init: init, get: get, version: '1.4.0' };
+  global.ShineDropdown = { create: create, init: init, get: get, version: '1.4.1' };
 })(window);
 </script>
 <!-- ▲ COMPONENT · inline-dropdown -->
