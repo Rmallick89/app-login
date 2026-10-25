@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <script data-ios-nozoom>(function () { var iOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); var m = document.querySelector('meta[name="viewport"]'); if (iOS && m && !/maximum-scale/.test(m.content)) m.content += ', maximum-scale=1'; })();</script>
 <meta name="theme-color" content="#FAF9F6" />
-<!-- SHINE APP · JOB DETAILS (JD) — App-login/JD Page/  · v2.4 (2026-10-25) — the top bar's byline: the name is the job card's company style (12 semibold, muted), POSTED BY smaller (top app bar v3.2.0) · v2.3: Similar Jobs: the stacked job cards are back to the job card's own sizes and spacing (the v2.1 compact sizes undone); kept: Secondary View all, the wider front card, the role in two lines at most · v2.2: Similar Jobs: more room between the parts of the stacked cards (sections 14, meta rows 12, buttons 12) · v2.1: Similar Jobs: View all is a Secondary button; the front card is wider; the cards in the stack are compact (smaller text and buttons, role in two lines at most — this section only) · v2.0: Similar Jobs is a fanned card stack of 4 (swipe the front card; dots) — the Tools-promo stack of company-index2.html with the job card inside · v1.9: 20 between a card heading and its body (skills, description) · an 8 section band before Similar Jobs · v1.8: bottom sheets get the new look: floating ×, corners 32, darker scrim (bottom-sheet v3.0.0) · v1.7: the field you tap lands 20 below the lifted heading (bottom-sheet v2.12.0) · v1.6: Edit your details uses Small fields (40 tall · label 12), the app size · v1.5 (2026-10-23) — for review · opened from the job cards on My Jobs and Docket
+<!-- SHINE APP · JOB DETAILS (JD) — App-login/JD Page/  · v2.5 (2026-10-25) — a job opened from My Jobs / Docket shows the full company card (sample about, socials, Founded, Headquarters, website, brand wash) · v2.4: the top bar's byline: the name is the job card's company style (12 semibold, muted), POSTED BY smaller (top app bar v3.2.0) · v2.3: Similar Jobs: the stacked job cards are back to the job card's own sizes and spacing (the v2.1 compact sizes undone); kept: Secondary View all, the wider front card, the role in two lines at most · v2.2: Similar Jobs: more room between the parts of the stacked cards (sections 14, meta rows 12, buttons 12) · v2.1: Similar Jobs: View all is a Secondary button; the front card is wider; the cards in the stack are compact (smaller text and buttons, role in two lines at most — this section only) · v2.0: Similar Jobs is a fanned card stack of 4 (swipe the front card; dots) — the Tools-promo stack of company-index2.html with the job card inside · v1.9: 20 between a card heading and its body (skills, description) · an 8 section band before Similar Jobs · v1.8: bottom sheets get the new look: floating ×, corners 32, darker scrim (bottom-sheet v3.0.0) · v1.7: the field you tap lands 20 below the lifted heading (bottom-sheet v2.12.0) · v1.6: Edit your details uses Small fields (40 tall · label 12), the app size · v1.5 (2026-10-23) — for review · opened from the job cards on My Jobs and Docket
      v1.1: the job and the company are components now — job card 2.5 JD job card (ShineJobCard.jd) and company card (ShineCompanyCard).
      Built from the mobile responsive view of <Shine Revamp>/jd-page3.html: the same sections, copy and flow —
      the job (badges · role · posted · meta · Apply Now · save · share · similar-jobs strip), Skills For This Role,
@@ -4618,7 +4618,32 @@ button { font-family: inherit; }
     about: 'The API platform used by more than 40 million developers to build and use APIs.',
     socials: [{ kind: 'linkedin', href: 'https://www.linkedin.com/company/postman-platform' }, { kind: 'x', href: 'https://x.com/getpostman' }, { kind: 'youtube', href: 'https://www.youtube.com/@postman' }],
     facts: [['Founded', '2014'], ['Headquarters', 'San Francisco']], website: 'https://www.postman.com' };
-  if (P) CO = { id: P.id + '-co', name: P.company, logo: P.logo && P.logo.text ? { text: P.logo.text } : undefined };   /* what the card knows: name + mark */
+  if (P) CO = sampleCompany(P);   /* v2.5: the full company card for any job opened from a list (sample data until the API) */
+  /* v2.5 · a job opened from My Jobs / Docket only carries the company's name and mark; the card is filled with
+     sample details so it shows in full, as the company card component is built (user: "use dummy information").
+     Same company → same details every time (picked by a hash of its name). The brand wash takes the colour of the
+     logo tile (the company card's own colour rule), so tile and wash always match. */
+  function sampleCompany(p) {
+    var name = p.company || 'Company', h = 0, i;
+    for (i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+    var pick = function (list, k) { return list[(h >>> (k || 0)) % list.length]; };
+    var TILE = ['violet', 'aqua', 'pink', 'cyan', 'lime', 'ey'];                  // the company card's tile colours (its hash rule)
+    var HEX = { violet: '#6F46E0', aqua: '#0F766A', pink: '#BE185D', cyan: '#0E7490', lime: '#C4FF38', ey: '#FFE419' };   // surface.decorative.*-intense
+    var tile = (p.logo && p.logo.color) || TILE[h % TILE.length];
+    var core = name.replace(/\s*\b(pvt\.?|private|ltd\.?|limited|llp|inc\.?|corp\.?|co\.)(?=\s|$)/gi, '').replace(/[.,]+$/, '').trim() || name;
+    var site = slug(core).replace(/-/g, '');
+    var f = {}; (p.facts || []).forEach(function (x) { f[x[0]] = x[1]; });
+    var loc = String(f.Location || '').split(/[,·]/)[0].trim();
+    var hq = loc && !/all india|remote|anywhere/i.test(loc) ? loc : pick(['Bengaluru', 'Gurugram', 'Mumbai', 'Pune', 'Hyderabad', 'Noida', 'Chennai'], 3);
+    var logo = p.logo && (p.logo.src || p.logo.svg || p.logo.img) ? p.logo : { text: (p.logo && p.logo.text) || undefined, color: tile };
+    return {
+      id: (p.id || site) + '-co', name: name, verified: true, brand: HEX[tile] || HEX.violet, logo: logo,
+      about: core + ' builds products used by millions of people across India, with teams in product, engineering, sales and operations.',
+      socials: [{ kind: 'linkedin', href: 'https://www.linkedin.com/company/' + slug(core) }, { kind: 'x', href: 'https://x.com/' + site }, { kind: 'youtube', href: 'https://www.youtube.com/@' + site }],
+      facts: [['Founded', String(2004 + (h % 15))], ['Headquarters', hq]],
+      website: 'https://www.' + site + '.com'
+    };
+  }
   $('#jdCompanyCard').innerHTML = ShineCompanyCard.html(CO);
   /* what you did here goes back to the list you came from (it applies it when you return) */
   function report(o) {
