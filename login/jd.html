@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <script data-ios-nozoom>(function () { var iOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); var m = document.querySelector('meta[name="viewport"]'); if (iOS && m && !/maximum-scale/.test(m.content)) m.content += ', maximum-scale=1'; })();</script>
 <meta name="theme-color" content="#FAF9F6" />
-<!-- SHINE APP · JOB DETAILS (JD) — App-login/JD Page/  · v2.5 (2026-10-25) — a job opened from My Jobs / Docket shows the full company card (sample about, socials, Founded, Headquarters, website, brand wash) · v2.4: the top bar's byline: the name is the job card's company style (12 semibold, muted), POSTED BY smaller (top app bar v3.2.0) · v2.3: Similar Jobs: the stacked job cards are back to the job card's own sizes and spacing (the v2.1 compact sizes undone); kept: Secondary View all, the wider front card, the role in two lines at most · v2.2: Similar Jobs: more room between the parts of the stacked cards (sections 14, meta rows 12, buttons 12) · v2.1: Similar Jobs: View all is a Secondary button; the front card is wider; the cards in the stack are compact (smaller text and buttons, role in two lines at most — this section only) · v2.0: Similar Jobs is a fanned card stack of 4 (swipe the front card; dots) — the Tools-promo stack of company-index2.html with the job card inside · v1.9: 20 between a card heading and its body (skills, description) · an 8 section band before Similar Jobs · v1.8: bottom sheets get the new look: floating ×, corners 32, darker scrim (bottom-sheet v3.0.0) · v1.7: the field you tap lands 20 below the lifted heading (bottom-sheet v2.12.0) · v1.6: Edit your details uses Small fields (40 tall · label 12), the app size · v1.5 (2026-10-23) — for review · opened from the job cards on My Jobs and Docket
+<!-- SHINE APP · JOB DETAILS (JD) — App-login/JD Page/  · v2.8 (2026-10-25) — every job shows Industry · Department at the end of its full description (a job opened from My Jobs / Docket gets sample values read off its role and company) · v2.7: company card: on a two-line company name the verified tick follows the last word instead of sitting at the card's edge (company-card v1.2.3) · v2.6: Job Description: no "~X% shown" / "Full description" note beside the heading (the Read full description button already says it) · v2.5: a job opened from My Jobs / Docket shows the full company card (sample about, socials, Founded, Headquarters, website, brand wash) · v2.4: the top bar's byline: the name is the job card's company style (12 semibold, muted), POSTED BY smaller (top app bar v3.2.0) · v2.3: Similar Jobs: the stacked job cards are back to the job card's own sizes and spacing (the v2.1 compact sizes undone); kept: Secondary View all, the wider front card, the role in two lines at most · v2.2: Similar Jobs: more room between the parts of the stacked cards (sections 14, meta rows 12, buttons 12) · v2.1: Similar Jobs: View all is a Secondary button; the front card is wider; the cards in the stack are compact (smaller text and buttons, role in two lines at most — this section only) · v2.0: Similar Jobs is a fanned card stack of 4 (swipe the front card; dots) — the Tools-promo stack of company-index2.html with the job card inside · v1.9: 20 between a card heading and its body (skills, description) · an 8 section band before Similar Jobs · v1.8: bottom sheets get the new look: floating ×, corners 32, darker scrim (bottom-sheet v3.0.0) · v1.7: the field you tap lands 20 below the lifted heading (bottom-sheet v2.12.0) · v1.6: Edit your details uses Small fields (40 tall · label 12), the app size · v1.5 (2026-10-23) — for review · opened from the job cards on My Jobs and Docket
      v1.1: the job and the company are components now — job card 2.5 JD job card (ShineJobCard.jd) and company card (ShineCompanyCard).
      Built from the mobile responsive view of <Shine Revamp>/jd-page3.html: the same sections, copy and flow —
      the job (badges · role · posted · meta · Apply Now · save · share · similar-jobs strip), Skills For This Role,
@@ -836,11 +836,11 @@
 
 </style>
 <!-- ▲ COMPONENT · job-card -->
-<!-- ▼ COMPONENT · company-card v1.2.2 · verbatim copy of App-login/app-components/cards/company-card/company-card.css — do not edit here -->
+<!-- ▼ COMPONENT · company-card v1.2.3 · verbatim copy of App-login/app-components/cards/company-card/company-card.css — do not edit here -->
 <style data-component="company-card">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · COMPANY CARD  (app component · App-login · cards/)    v1.2.2
-   One card for a company: logo · name (+ verified) · about · social profiles · facts (Founded · Employees …) · website.
+   SHINE · COMPANY CARD  (app component · App-login · cards/)    v1.2.3
+   One card for a company: logo · name (+ verified, right after the last word) · about · social profiles · facts (Founded · Employees …) · website.
    Every part but the name is optional — leave one out and the card closes up. Rendered by company-card.js
    (ShineCompanyCard.html). First used on the JD page (App-login/JD Page/jd-page.html), from jd-page3.html's company card.
 
@@ -920,9 +920,13 @@
 .ccard-logo--cyan   { background: var(--cc-av-cyan);   color: var(--cc-on-dark); }
 .ccard-logo--lime   { background: var(--cc-av-lime);   color: var(--cc-on-light); }
 .ccard-logo--ey     { background: var(--cc-av-ey);     color: var(--cc-on-light); }
-.ccard-name { display: flex; align-items: center; gap: 6px; min-width: 0; margin: 0; font: 700 18px/22px var(--cc-font); letter-spacing: -.2px; }   /* Heading / md bold */
-.ccard-name-text { min-width: 0; overflow-wrap: anywhere; }
-.ccard-verified { flex: none; display: inline-grid; color: var(--cc-positive); }
+/* name + ✓ (v1.2.3): text flow, not a flex row — the tick follows the last word on whichever line it ends, 6 after it,
+   centred on that line exactly as on a one-line name (was: a flex column of its own, so a two-line name pushed the tick
+   to the card's edge, midway between the lines) */
+.ccard-name { display: block; flex: 0 1 auto; min-width: 0; margin: 0; font: 700 18px/22px var(--cc-font); letter-spacing: -.2px; }   /* Heading / md bold */
+.ccard-name-text { overflow-wrap: anywhere; }
+.ccard-name-end { white-space: nowrap; }                                                                         /* last word + ✓ never part */
+.ccard-verified { display: inline-block; margin-left: 6px; vertical-align: -3px; color: var(--cc-positive); }  /* spacing.inline.sm · centred on the line */
 .ccard-verified svg { width: 16px; height: 16px; }                                                              /* size.icon.md — icons atom: check-circle */
 
 /* about */
@@ -944,7 +948,6 @@
 /* website — buttons atom Secondary · sm + trailing arrow-up-right (v1.1.0: a real button, was Link · flush); 20 under the facts */
 .ccard-site { margin-top: 20px; }                                                                              /* stack.xl */
 .ccard > :first-child { margin-top: 0; }
-
 </style>
 <!-- ▲ COMPONENT · company-card -->
 <!-- ▼ COMPONENT · field-base v3.2.0 · verbatim copy of App-login/app-components/atoms/input-fields/field-base/field-base.css — do not edit here -->
@@ -2910,8 +2913,8 @@ button { font-family: inherit; }
   </section>
 
   <!-- ═══ 3 · JOB DESCRIPTION · card container variant 2 — EXPANDABLE CARD (card-container.js folds it when the text is long) ═══ -->
-  <section class="card card--expandable jdp-sec" id="jdDescSec" aria-labelledby="jdDescH" data-fold-more="Read full description" data-fold-less="Show less" data-fold-full="Full description">
-    <div class="jdp-head"><h2 class="jdp-title" id="jdDescH">Job Description</h2><span class="jdp-count" id="jdDescMeter" data-fold-meter></span></div>
+  <section class="card card--expandable jdp-sec" id="jdDescSec" aria-labelledby="jdDescH" data-fold-more="Read full description" data-fold-less="Show less">
+    <div class="jdp-head"><h2 class="jdp-title" id="jdDescH">Job Description</h2></div>
     <div class="card-fold jdp-desc-wrap" id="jdDescWrap">
       <div class="jdp-desc">
         <p>As a <strong>Technical Business Analyst / Technical Product Manager</strong> at Postman, you will be responsible for supporting the development, enhancement, and maintenance of the platform's suite of applications. You will work at the intersection of business, technology, and user experience — thriving in a fast-paced environment, enjoying problem-solving, and eager to grow within product management.</p>
@@ -4308,10 +4311,10 @@ button { font-family: inherit; }
 
 </script>
 <!-- ▲ COMPONENT · job-card -->
-<!-- ▼ COMPONENT · company-card v1.2.2 · verbatim copy of App-login/app-components/cards/company-card/company-card.js — do not edit here -->
+<!-- ▼ COMPONENT · company-card v1.2.3 · verbatim copy of App-login/app-components/cards/company-card/company-card.js — do not edit here -->
 <script data-component="company-card">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · COMPANY CARD  (app component · App-login · cards/)    v1.2.2
+   SHINE · COMPANY CARD  (app component · App-login · cards/)    v1.2.3
    Pair with company-card.css (and, before it, atoms/buttons/buttons.css and cards/card-container/card-container.css).
 
    ShineCompanyCard.html(company) → markup for one card
@@ -4326,7 +4329,7 @@ button { font-family: inherit; }
                                                         // text: initials on a decorative colour (hash of the name, as the job card)
      brand?: '#FF6C37',                                 // the logo's primary colour (v1.2.0): a soft wash of it flows from the
                                                         // top-right corner into white (colour only — no logo, v1.2.1)
-     verified?: true,                                   // ✓ after the name (icons atom: check-circle)
+     verified?: true,                                   // ✓ right after the name's last word, on any line (icons atom: check-circle)
      about?: 'One or two lines',
      socials?: [{ kind: 'facebook'|'linkedin'|'x'|'youtube'|'instagram', href }],
      facts?: [[label, value], …],                       // Founded · Employees · Headquarters … (two columns)
@@ -4356,6 +4359,17 @@ button { font-family: inherit; }
   function color(name) { var h = 0; for (var i = 0; i < (name || '').length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0; return COLORS[h % COLORS.length]; }
   function initials(n) { var w = String(n || '').trim().split(/\s+/); return ((w[0] || '')[0] || '') + ((w[1] || '')[0] || ''); }
 
+  // name + ✓ (v1.2.3): the tick flows inline, right after the last word, and is glued to it (.ccard-name-end, no wrap)
+  // so a two-line name ends "… Pvt. Ltd. ✓" — never a tick floating at the card's edge or alone on a line.
+  // A last word too long to glue (> 16 letters) keeps the tick inline without the glue, so nothing can overflow.
+  function nameHTML(c) {
+    var n = String(c.name == null ? '' : c.name).trim();
+    if (!c.verified) return '<span class="ccard-name-text">' + esc(n) + '</span>';
+    var tick = '<span class="ccard-verified" role="img" aria-label="Verified employer">' + AT['ic_check-circle-solid'] + '</span>';
+    var m = n.match(/^([\s\S]*\s)?(\S+)$/) || [n, '', n], head = m[1] || '', last = m[2] || '';
+    return '<span class="ccard-name-text">' + esc(head) +
+      (last.length <= 16 ? '<span class="ccard-name-end">' + esc(last) + tick + '</span>' : esc(last) + '\u2060' + tick) + '</span>';
+  }
   function html(c) {
     var lg = c.logo || {}, lv = Math.min(6, Math.max(1, c.level || 2)), id = String(c.id || c.name || 'co'), nid = 'ccard-' + id.replace(/[^\w-]/g, '') + '-name';
     var logo = lg.src ? '<span class="ccard-logo ccard-logo--mark" aria-hidden="true"><img src="' + esc(lg.src) + '" alt=""></span>'
@@ -4368,8 +4382,7 @@ button { font-family: inherit; }
     var tint = /^#[0-9a-f]{3,8}$/i.test(c.brand || '') ? c.brand : '';
     return '<section class="card ccard' + (tint ? ' ccard--tint' : '') + '" data-id="' + esc(id) + '" aria-labelledby="' + nid + '"' + (tint ? ' style="--cc-tint:' + tint + '"' : '') + '>' +
       '<div class="ccard-head">' + logo +
-        '<h' + lv + ' class="ccard-name" id="' + nid + '"><span class="ccard-name-text">' + esc(c.name) + '</span>' +
-          (c.verified ? '<span class="ccard-verified" role="img" aria-label="Verified employer">' + AT['ic_check-circle-solid'] + '</span>' : '') + '</h' + lv + '></div>' +
+        '<h' + lv + ' class="ccard-name" id="' + nid + '">' + nameHTML(c) + '</h' + lv + '></div>' +
       (c.about ? '<p class="ccard-about">' + esc(c.about) + '</p>' : '') +
       (socials ? '<div class="ccard-socials">' + socials + '</div>' : '') +
       (facts ? '<dl class="ccard-facts">' + facts + '</dl>' : '') +
@@ -4383,9 +4396,8 @@ button { font-family: inherit; }
       detail: { action: a.getAttribute('data-cc-act'), kind: a.getAttribute('data-kind') || null, href: a.getAttribute('href'), id: card.getAttribute('data-id'), card: card, link: a } }));
     if (!ok) e.preventDefault();
   });
-  global.ShineCompanyCard = { version: '1.2.2', html: html, marks: MARK };
+  global.ShineCompanyCard = { version: '1.2.3', html: html, marks: MARK };
 })(window);
-
 </script>
 <!-- ▲ COMPONENT · company-card -->
 <!-- ▼ COMPONENT · card-container v1.5.1 · verbatim copy of App-login/app-components/cards/card-container/card-container.js — do not edit here -->
@@ -4559,6 +4571,59 @@ button { font-family: inherit; }
   } catch (e) {}
   var esc = function (t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); };
   var slug = function (t) { return String(t).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); };
+  /* Industry · Department at the end of the full description (v2.8, user: on every JD page) — the job's own values
+     when it has them (P.industry / P.department), otherwise sample values read off the role and the company, so a job
+     always shows the same pair. Same block as the sample job's (.jdp-facts: separator · Eyebrow label · value). */
+  function jobFacts(p) {
+    var role = String(p.role || ''), co = String(p.company || ''), txt = role + ' ' + (p.desc || '');
+    var DEPT = [
+      [/\bproduct\b/i, 'Product Management'],
+      [/\b(ux|ui|design)/i, 'UX, Design & Architecture'],
+      [/engineer|developer|\bsde\b|software|devops/i, 'Engineering · Software & QA'],
+      [/\bbpo\b|voice|customer support|customer success|support executive|call cent|night shift/i, 'Customer Success, Service & Operations'],
+      [/claims|underwrit/i, 'Insurance Operations'],
+      [/sales|counsell|business development/i, 'Sales & Business Development'],
+      [/warehouse|logistic|supply|last mile|delivery/i, 'Procurement & Supply Chain'],
+      [/store|retail/i, 'Retail & Store Operations'],
+      [/marketing|brand|growth market/i, 'Marketing & Communication'],
+      [/\b(hr|recruit|talent)/i, 'Human Resources'],
+      [/financ|account|audit/i, 'Finance & Accounting'],
+      [/\bdata\b|analyst|analytics/i, 'Data Science & Analytics'],
+      [/operations/i, 'Operations']];
+    var KNOWN = [
+      [/razorpay|phonepe|paytm|\bcred\b/i, 'Fintech · Payments'],
+      [/zerodha|groww/i, 'Financial Services · Investments'],
+      [/flipkart|meesho|nykaa/i, 'Internet · E-commerce'],
+      [/swiggy|zomato|dunzo/i, 'Internet · Food & Grocery Delivery'],
+      [/postman/i, 'Information Technology · Services'],                       /* = the sample job's */
+      [/microsoft|google/i, 'Information Technology · Software Products'],
+      [/airbnb|makemytrip/i, 'Travel & Hospitality · Internet'],
+      [/\buber\b|\bola\b/i, 'Internet · Mobility'],
+      [/bookmyshow/i, 'Media & Entertainment · Ticketing'],
+      [/sharechat/i, 'Internet · Social Media'],
+      [/unacademy|edtech|education|academy|learning/i, 'Education · EdTech'],
+      [/fintech|bank|finance|pay\b/i, 'Fintech · Financial Services'],
+      [/insurance/i, 'Insurance'],
+      [/logistic|cargo|freight/i, 'Logistics · Supply Chain'],
+      [/retail|store|mart|& co\b/i, 'Retail · Consumer Goods'],
+      [/labs|tech|software|systems/i, 'Information Technology · Software Products']];
+    var BY_ROLE = [
+      [/\bbpo\b|voice process|call cent|customer support|customer success|night shift|walk-in/i, 'BPO · Customer Service'],
+      [/edtech|counsell/i, 'Education · EdTech'],
+      [/claims/i, 'Insurance'],
+      [/warehouse|last mile/i, 'Logistics · Supply Chain']];
+    var find = function (list, t) { for (var i = 0; i < list.length; i++) if (list[i][0].test(t)) return list[i][1]; return ''; };
+    var h = 0, i; for (i = 0; i < (co + role).length; i++) h = (h * 31 + (co + role).charCodeAt(i)) >>> 0;
+    var dept = p.department || find(DEPT, txt) || ['Operations', 'Customer Success, Service & Operations', 'Sales & Business Development'][h % 3];
+    var ind = p.industry || find(KNOWN, co) || find(BY_ROLE, txt) || (/staffing|talent|\bhr\b|recruit|consult|placement/i.test(co) ? 'Recruitment · Staffing' : '') || ['Information Technology · Services', 'Internet · Consumer Tech', 'Financial Services', 'Retail · Consumer Goods'][h % 4];
+    return { industry: ind, department: dept };
+  }
+  function jobFactsHTML(p) {
+    var j = jobFacts(p);
+    return '<dl class="jdp-facts">' +
+      '<div><dt class="jdp-eyebrow">Industry</dt><dd>' + esc(j.industry) + '</dd></div>' +
+      '<div><dt class="jdp-eyebrow">Department</dt><dd>' + esc(j.department) + '</dd></div></dl>';
+  }
   var POSTER = { kind: 'consultancy', name: 'Frontline Consultancy' };                      /* the sample job's byline */
   if (P) {
     JOB = { title: P.role, company: P.company, url: 'https://www.shine.com/jobs/' + slug(P.role + ' ' + P.company) + '/' + P.id };
@@ -4609,7 +4674,8 @@ button { font-family: inherit; }
         (f.Salary ? '<li>Salary: ' + esc(f.Salary) + '.</li>' : '') +
         (f.Location ? '<li>Location: ' + esc(f.Location) + '.</li>' : '') +
         '<li>Training and support to help you grow in the role.</li></ul>' +
-      '<p>If this sounds like you, apply today — ' + co + ' reviews applications as they come in.</p>';
+      '<p>If this sounds like you, apply today — ' + co + ' reviews applications as they come in.</p>' +
+      jobFactsHTML(P);
   }
   /* the company — company card */
   /* a real company with its own logo — the App-logout homepage's Postman logo file (sample job data) */
