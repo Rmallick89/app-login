@@ -11,7 +11,7 @@
   })();
 </script>
 <meta name="theme-color" content="#161B22" />
-<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.20 (2026-10-25) — status-bar strip (modal v2.8.2) · short lists without search · lists never behind the keyboard (combo box v3.1.0)
+<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.21 (2026-10-25) — iPhone status bar on full-screens (modal v2.8.3: page pinned at scroll 0 while a full-screen is up · strip hit-testable) · status-bar strip (modal v2.8.2) · short lists without search · lists never behind the keyboard (combo box v3.1.0)
      Built from the mobile view (≤ 480 px) of <Shine Revamp>/profile-index.html, on the design system
      (design-system/DESIGN-SYSTEM.md + component-system.md): semantic tokens only, the buttons atom (atoms/buttons), DS atoms (A.04 Badge,
      A.05 Tag, A.08 Avatar, A.09 Toast). No menu / title on this tab (v1.1, user): the full-bleed hero starts at the top
@@ -1423,10 +1423,10 @@ legend.field-label--hidden { float: none; width: 1px; }
 @media (prefers-reduced-motion: reduce) { .alert-close-col, .alert-close-col svg { transition: none; } }
 </style>
 <!-- ▲ COMPONENT · alert -->
-<!-- ▼ COMPONENT · bottom-sheet v2.8.2 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
+<!-- ▼ COMPONENT · bottom-sheet v2.8.3 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
 <style data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BOTTOM SHEET  (app component · App-login)            v2.8.2
+   SHINE · BOTTOM SHEET  (app component · App-login)            v2.8.3
    The one container behind every slide-up panel in the logged-in app — in TWO VARIATIONS:
      1 · BOTTOM SHEET  .bs            slides up from the bottom edge, the page shows above it
                                       (pickers, confirmations, nudges, OTP, short asks)
@@ -1676,12 +1676,15 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
 }
 .bs-scrim[hidden] { display: none !important; }
 .bs-scrim.bs-scrim--covered { visibility: hidden; }        /* v2.8.1: under an open full-screen (status bar, see the JS) */
-/* v2.8.2 · status-bar strip (made by ShineSheet while a sheet is open; colour set by the script = what is under it).
-   The box is 10 px deeper than what is painted: Safari reads a fixed box's background-color only above 10 px tall. */
+/* v2.8.2 · v2.8.3 · status-bar strip (made by ShineSheet while a sheet is open; colour set by the script = what is
+   under it). Safari hit-tests the top edge's centre 4–8 px inside and, for a fixed, full-width box taller than 10 px,
+   reads its background-color live (full strength — its opacity is not applied, only < 0.1 is skipped). v2.8.3: the
+   box is no longer clipped (v2.8.2 painted only the top 6 px, so the 8 px probe missed it and hit the scrim, whose
+   gradient Safari snapshots once and freezes); it is 16 px + safe area deep at 12 % opacity — the colour of what is
+   under it anyway, so it never shows. */
 .bs-statusbar {
   display: none; position: fixed; top: 0; left: 0; right: 0; z-index: calc(var(--bs-z) + 80); pointer-events: none;
-  height: calc(var(--bs-safe-top) + 16px);
-  -webkit-clip-path: inset(0 0 10px 0); clip-path: inset(0 0 10px 0);          /* painted: status-bar area + 6 */
+  height: calc(var(--bs-safe-top) + 16px); opacity: .12;
 }
 .bs-statusbar.is-on { display: block; }
 @media (min-width: 768px) { .bs-statusbar.is-on { display: none; } }           /* phones only */
@@ -2013,7 +2016,7 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
 <!-- ▲ COMPONENT · bottom-sheet -->
 <style>
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE APP · PROFILE (Me tab) — page styles · v1.20 (2026-10-25)
+   SHINE APP · PROFILE (Me tab) — page styles · v1.21 (2026-10-25)
    Built from the mobile view of <Shine Revamp>/profile-index.html (≤ 480 px):
    hero (status strip · strength dial · next step) → Your Resume → Profile
    Overview → Key Skills → Employment History → Education History → Links.
@@ -4044,10 +4047,10 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 })(window);
 </script>
 <!-- ▲ COMPONENT · bottom-tab-bar -->
-<!-- ▼ COMPONENT · bottom-sheet v2.8.2 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.js — do not edit here -->
+<!-- ▼ COMPONENT · bottom-sheet v2.8.3 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.js — do not edit here -->
 <script data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BOTTOM SHEET  (app component · App-login)            v2.8.2
+   SHINE · BOTTOM SHEET  (app component · App-login)            v2.8.3
    Pair with bottom-sheet.css. Zero dependencies, no build step.
    Engine = App-logout's ShineSheet v1.2.1; v2.0 adds the three-section anatomy;
    v2.1 aligns every value with design-system/DESIGN-SYSTEM.md.
@@ -4419,6 +4422,30 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     var st = el.__bs; if (!st) return;
     st.up = !!on && fullScreen(el);
     if (st.scrim) st.scrim.classList.toggle('bs-scrim--covered', st.up);
+    pin(stack.some(function (x) { return x.__bs && x.__bs.up; }));
+  }
+  /* v2.8.3 · iPhone: once the page has been scrolled, Safari stops painting the status bar from the top edge's colour
+     and shows the page's own pixels from above the screen behind it instead (the user's screenshots: every full-screen
+     opened from a scrolled page kept the page's grey; the photo screen, opened at the top of the page, was white). So
+     while a full-screen is UP — the page is fully covered — the page is pinned in place with the document's scroll at
+     0 (body fixed at −scrollY; nothing moves on screen), and put back before the screen slides away. iOS phones only. */
+  var IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var pinned = null;
+  function pin(on) {
+    if (!IOS) return;
+    var b = doc.body, PROPS = ['position', 'top', 'left', 'right', 'width'];
+    if (on && !pinned) {
+      var y = global.scrollY || doc.documentElement.scrollTop || 0;
+      pinned = { y: y };
+      if (!y) return;
+      b.style.position = 'fixed'; b.style.top = -y + 'px'; b.style.left = '0'; b.style.right = '0'; b.style.width = '100%';
+      kb.y = 0; try { global.scrollTo(0, 0); } catch (e) {}
+    } else if (!on && pinned) {
+      var p = pinned; pinned = null;
+      if (!p.y) return;
+      PROPS.forEach(function (k) { b.style.removeProperty(k); });
+      kb.y = p.y; try { global.scrollTo(0, p.y); } catch (e) {}
+    }
   }
   function scrimMs(sc) { var d = getComputedStyle(sc).transitionDuration; return (parseFloat(d) || 0) * (/ms/.test(d) ? 1 : 1000); }
 
@@ -4549,7 +4576,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
   // re-measure an auto sheet after the page swaps its content (optional — a MutationObserver already does this)
   function refresh(target) { var el = $(target); if (el && el.__bs) { syncCta(el); syncScroll(el); } }
 
-  global.ShineSheet = { open: open, close: close, toggle: toggle, isOpen: isOpen, top: top, closeAll: closeAll, init: init, refresh: refresh, version: '2.8.2' };
+  global.ShineSheet = { open: open, close: close, toggle: toggle, isOpen: isOpen, top: top, closeAll: closeAll, init: init, refresh: refresh, version: '2.8.3' };
 })(window);
 </script>
 <!-- ▲ COMPONENT · bottom-sheet -->
@@ -5485,7 +5512,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 <!-- ▲ COMPONENT · alert -->
 
   <script>
-/* SHINE APP · PROFILE — page script (v1.20 · 2026-10-25) — v1.20: modal v2.8.2 (status-bar strip) + combo box v3.1.0 (no search on short lists, lists above the keyboard)
+/* SHINE APP · PROFILE — page script (v1.21 · 2026-10-25) — v1.21: modal v2.8.3 (iPhone status bar on every full-screen) · — v1.20: modal v2.8.2 (status-bar strip) + combo box v3.1.0 (no search on short lists, lists above the keyboard)
    v1.19: photo flow as profile-index (drop target + drag-and-drop, no subtitle while cropping, a red error line).
    v1.18: the editors open as the modal's FULL-SCREEN variation (bottom-sheet v2.8.0, .bs--full) — photo, professional,
    personal (✎ only), contact, key skills, employment, education, links, job preferences (new: add + edit). Everything
