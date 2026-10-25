@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <script data-ios-nozoom>(function () { var iOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); var m = document.querySelector('meta[name="viewport"]'); if (iOS && m && !/maximum-scale/.test(m.content)) m.content += ', maximum-scale=1'; })();</script>
 <meta name="theme-color" content="#FAF9F6" />
-<!-- SHINE APP · JOB DETAILS (JD) — App-login/JD Page/  · v2.2 (2026-10-25) — Similar Jobs: more room between the parts of the stacked cards (sections 14, meta rows 12, buttons 12) · v2.1: Similar Jobs: View all is a Secondary button; the front card is wider; the cards in the stack are compact (smaller text and buttons, role in two lines at most — this section only) · v2.0: Similar Jobs is a fanned card stack of 4 (swipe the front card; dots) — the Tools-promo stack of company-index2.html with the job card inside · v1.9: 20 between a card heading and its body (skills, description) · an 8 section band before Similar Jobs · v1.8: bottom sheets get the new look: floating ×, corners 32, darker scrim (bottom-sheet v3.0.0) · v1.7: the field you tap lands 20 below the lifted heading (bottom-sheet v2.12.0) · v1.6: Edit your details uses Small fields (40 tall · label 12), the app size · v1.5 (2026-10-23) — for review · opened from the job cards on My Jobs and Docket
+<!-- SHINE APP · JOB DETAILS (JD) — App-login/JD Page/  · v2.3 (2026-10-25) — Similar Jobs: the stacked job cards are back to the job card's own sizes and spacing (the v2.1 compact sizes undone); kept: Secondary View all, the wider front card, the role in two lines at most · v2.2: Similar Jobs: more room between the parts of the stacked cards (sections 14, meta rows 12, buttons 12) · v2.1: Similar Jobs: View all is a Secondary button; the front card is wider; the cards in the stack are compact (smaller text and buttons, role in two lines at most — this section only) · v2.0: Similar Jobs is a fanned card stack of 4 (swipe the front card; dots) — the Tools-promo stack of company-index2.html with the job card inside · v1.9: 20 between a card heading and its body (skills, description) · an 8 section band before Similar Jobs · v1.8: bottom sheets get the new look: floating ×, corners 32, darker scrim (bottom-sheet v3.0.0) · v1.7: the field you tap lands 20 below the lifted heading (bottom-sheet v2.12.0) · v1.6: Edit your details uses Small fields (40 tall · label 12), the app size · v1.5 (2026-10-23) — for review · opened from the job cards on My Jobs and Docket
      v1.1: the job and the company are components now — job card 2.5 JD job card (ShineJobCard.jd) and company card (ShineCompanyCard).
      Built from the mobile responsive view of <Shine Revamp>/jd-page3.html: the same sections, copy and flow —
      the job (badges · role · posted · meta · Apply Now · save · share · similar-jobs strip), Skills For This Role,
@@ -2451,7 +2451,7 @@ button { font-family: inherit; }
    Apply now stay on one row; up / down still scrolls the page; lighter shadow and dark dots on the light page; the
    back cards' 90 % / 82 % fade drawn as a page-colour veil (no text showing through); a 4th card waits hidden. */
 .jdp-fan { display: flex; flex-direction: column; align-items: center; gap: 18px; padding-top: 16px; }
-.jdp-fan-stage { position: relative; display: grid; width: min(100%, max(260px, min(calc(100% - 32px), 336px))); margin: 0 auto; perspective: 1000px; }   /* v2.1: screen − 32 (was − 56), 260–336 — 260 = the narrowest the compact card keeps its three buttons on one row */
+.jdp-fan-stage { position: relative; display: grid; width: min(100%, max(274px, min(calc(100% - 32px), 336px))); margin: 0 auto; perspective: 1000px; }   /* v2.1: screen − 32 (was − 56), up to 336 · v2.3: 274 = the narrowest a full-size job card keeps Share · Save · Apply now on one row */
 .jdp-fan-card {
   grid-area: 1 / 1; position: relative; display: flex; min-width: 0;
   border-radius: var(--card-radius, 16px);
@@ -2477,25 +2477,10 @@ button { font-family: inherit; }
 .jdp-fan-dot::after { content: ""; position: absolute; left: -6px; right: -6px; top: -17px; bottom: -17px; }   /* 40 tall touch target, nothing drawn */
 .jdp-fan-dot:focus-visible { outline: 2px solid var(--jdp-stroke-neutral-focus); outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { .jdp-fan-card, .jdp-fan-dot { transition-duration: 1ms !important; } }
-/* v2.1 · the compact job card — this section only (user: smaller text and buttons, role in two lines at most; the job
-   card component itself is not changed). Every value one DS step down from the card's own:
-     padding inset.xxl 22 → inset.xl 16 (v2.2: the gaps between the parts are back to the card's own — sections 14, meta rows 12, buttons 12)
-     company Label / lg 14 bold → Body / sm 12 semibold · logo 40 → 32 · role Heading / md 18/22 → Heading / sm 16/20,
-     two lines then … · meta Body / md 14/20 → Body / sm 12/18, icon frame 28 → 24, icon size.icon.sm 14 → size.icon.xs 12
-     skills Label / lg 14 → Label / md 12 · buttons A.02 xl 56 → md 44 (Label / md 12, icon-only glyph 20), 12 → 8 apart
-     (v2.2: 12 apart again). Already the smallest step and kept: time Body / sm 12, badges Label / md 12, "Required:" 12. */
-.jdp-fan-card > .jcard { --card-inset: 16px; --jc-stack: 14px; --jc-row-gap: 12px; --jc-btn-gap: 12px; }   /* v2.2 (user: more room between the parts): the card's own spacing again — stack.lg 14 · stack.md 12 · inline.lg 12 */
-.jdp-fan-card .jcard-name { font: 600 12px/18px var(--jc-font); }
-.jdp-fan-card .jcard-av .jcard-logo { width: 32px; height: 32px; }
-.jdp-fan-card .jcard-role {
-  font: 700 16px/20px var(--jc-font); letter-spacing: 0;
-  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden;   /* two lines at most, then … */
-}
-.jdp-fan-card .jcard-meta li { font: 500 12px/18px var(--jc-font); }
-.jdp-fan-card .jcard-ico { width: 24px; height: 24px; }
-.jdp-fan-card .jcard-ico svg { width: 12px; height: 12px; }
-.jdp-fan-card .jcard-skills-list { font: 700 12px/12px var(--jc-font); }
-.jdp-fan-card .jcard-actions .btn--xl { --_h: 44px; --_px: 16px; --_fs: 12px; --_lh: 12px; --_ic: 16px; --_ic-only: 20px; }   /* = .btn--md (size.control.md) */
+/* v2.3 · the job cards in the stack are the job card component at its own sizes and spacing again (user undid the v2.1
+   compact sizes) — padding 22, company 14, logo 40, role 18/22, meta 14/20 with 28 icon frames, skills 14, buttons 56,
+   gaps 14 / 12 / 12. Kept for this section only: the role stops at two lines, then … */
+.jdp-fan-card .jcard-role { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }   /* two lines at most, then … */
 
 /* ── bottom action bar (shows once the hero's Apply now leaves the screen) ── */
 .jdp-bar {
