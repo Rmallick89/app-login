@@ -11,7 +11,7 @@
   })();
 </script>
 <meta name="theme-color" content="#161B22" />
-<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.32 (2026-10-25) — bottom sheets get the new look: the × floats above the sheet, corners 32, darker scrim (bottom-sheet v3.0.0 · combo box v4.1.1) · v1.31: the field you tap lands one field gap (20) below the lifted heading, not flush against it (bottom-sheet v2.12.0) · v1.30: every input field is Small (40 tall · label 12), the app's size · v1.29: input fields v3.2.0 (a Small field's label is 12) · v1.28: tapping a field puts a thin caret after its text instead of selecting it (input fields v3.1.0) · v1.27: the field you tap glides up to the first field's place and stays there (bottom-sheet v2.11.0 focus anchor) · v1.26: Small dropdown shows 3½ rows (inline-dropdown v1.5.0) · v1.25: Small dropdown rows get room for a finger (38, inline-dropdown v1.4.1) · v1.24: every inline list is the inline dropdown component (Small · combo box v4.0.0); chips fields show “Added” · v1.23: full-screen headings: Display · Large (modal v2.10.0) · v1.22: full-screens fade through (modal v2.9.0, the user's option C) · v1.21: iPhone status bar on full-screens (modal v2.8.3: page pinned at scroll 0 while a full-screen is up · strip hit-testable) · status-bar strip (modal v2.8.2) · short lists without search · lists never behind the keyboard (combo box v3.1.0)
+<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.33 (2026-10-25) — top app bar v3.2.0 (byline type; Profile has no byline, nothing changes on screen) · v1.32: bottom sheets get the new look: the × floats above the sheet, corners 32, darker scrim (bottom-sheet v3.0.0 · combo box v4.1.1) · v1.31: the field you tap lands one field gap (20) below the lifted heading, not flush against it (bottom-sheet v2.12.0) · v1.30: every input field is Small (40 tall · label 12), the app's size · v1.29: input fields v3.2.0 (a Small field's label is 12) · v1.28: tapping a field puts a thin caret after its text instead of selecting it (input fields v3.1.0) · v1.27: the field you tap glides up to the first field's place and stays there (bottom-sheet v2.11.0 focus anchor) · v1.26: Small dropdown shows 3½ rows (inline-dropdown v1.5.0) · v1.25: Small dropdown rows get room for a finger (38, inline-dropdown v1.4.1) · v1.24: every inline list is the inline dropdown component (Small · combo box v4.0.0); chips fields show “Added” · v1.23: full-screen headings: Display · Large (modal v2.10.0) · v1.22: full-screens fade through (modal v2.9.0, the user's option C) · v1.21: iPhone status bar on full-screens (modal v2.8.3: page pinned at scroll 0 while a full-screen is up · strip hit-testable) · status-bar strip (modal v2.8.2) · short lists without search · lists never behind the keyboard (combo box v3.1.0)
      Built from the mobile view (≤ 480 px) of <Shine Revamp>/profile-index.html, on the design system
      (design-system/DESIGN-SYSTEM.md + component-system.md): semantic tokens only, the buttons atom (atoms/buttons), DS atoms (A.04 Badge,
      A.05 Tag, A.08 Avatar, A.09 Toast). No menu / title on this tab (v1.1, user): the full-bleed hero starts at the top
@@ -2800,7 +2800,7 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
 <!-- ▼ COMPONENT · top-app-bar v3.1.4 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
 <style data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v3.1.4
+   SHINE · TOP APP BAR  (app component · App-login)              v3.2.0
    One top bar for every logged-in screen: ONE floating bar (any items, light
    or dark) and the title bar, on one shared frame, so the leading item, the
    logo / title and the trailing action sit on exactly the same spot — and
@@ -2920,6 +2920,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
   /* COLOUR — §2.2 (light) */
   --stp-content-neutral-base: #0D1117;                     /* content.neutral.base — title, icons */
   --stp-content-neutral-faded: #667085;                    /* content.neutral.faded — the byline's eyebrow */
+  --stp-content-neutral-muted: #344054;                    /* content.neutral.muted — the byline's name (v3.2.0, = the JD job card's company) */
   --stp-content-on-fill-dark-muted: rgba(255, 255, 255, .72);   /* content.on-fill-dark.muted — the eyebrow on the dark pill */
   --stp-surface-neutral-state-pressed: #E4E7EC;            /* surface.neutral-state.pressed — the byline pressed */
   --stp-surface-neutral-state-hover: #EEF1F5;              /* surface.neutral-state.hover */
@@ -3087,8 +3088,9 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 .stp-byline:focus { outline: none; }
 .stp-byline:focus-visible { outline: 2px solid var(--stp-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--stp-elevation-focus-default); }
 .stp-byline-text { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; min-width: 0; }           /* 2 (v3.1.2, user: tighter) */
-.stp-byline-eyebrow { font: 700 10px/10px var(--stp-font); letter-spacing: 1px; text-transform: uppercase; color: var(--stp-content-neutral-faded); white-space: nowrap; }   /* Eyebrow / sm */
-.stp-byline-name { max-width: 100%; font: 700 14px/16px var(--stp-font); letter-spacing: -.1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }   /* Label / lg bold · 16 line (v3.1.2) */
+.stp-byline-eyebrow { font: 700 8px/8px var(--stp-font); letter-spacing: 1px; text-transform: uppercase; color: var(--stp-content-neutral-faded); white-space: nowrap; }   /* v3.2.0 (user: smaller): 8 / 8 caps bold, 1 spacing (unit/8 · unit/1) — below Eyebrow / sm 10, the smallest DS eyebrow: PROPOSED Eyebrow / xs */
+.stp-byline-name { max-width: 100%; font: 600 12px/18px var(--stp-font); letter-spacing: normal; color: var(--stp-content-neutral-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }   /* v3.2.0 (user: exactly the JD job card's company name): Body / sm semibold 12 / 18 · content.neutral.muted (was Label / lg bold 14 / 16) */
+.stp--float.stp--dark:not(.is-lifted) .stp-byline-name { color: var(--stp-content-on-fill-dark-base); }   /* on the dark pill: white, as the rest of the bar */
 .stp--float.stp--dark:not(.is-lifted) .stp-byline-eyebrow { color: var(--stp-content-on-fill-dark-muted); }
 
 /* Dark tone · the bar sits over a dark top section (the Me tab's hero). Same pill, same 64 bar.
@@ -3204,7 +3206,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
   <!-- ▼ COMPONENT · top-app-bar v3.1.4 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
 <script data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v3.1.4
+   SHINE · TOP APP BAR  (app component · App-login)              v3.2.0
    Pair with top-app-bar.css. The menu button is part of this component (v2.3.0). Its buttons (menu, back,
    Search Jobs, status) are the buttons atom (atoms/buttons, inlined before this component) — v3.0.0.
 

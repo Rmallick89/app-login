@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <script data-ios-nozoom>(function () { var iOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); var m = document.querySelector('meta[name="viewport"]'); if (iOS && m && !/maximum-scale/.test(m.content)) m.content += ', maximum-scale=1'; })();</script>
 <meta name="theme-color" content="#FAF9F6" />
-<!-- SHINE APP · JOB DETAILS (JD) — App-login/JD Page/  · v2.3 (2026-10-25) — Similar Jobs: the stacked job cards are back to the job card's own sizes and spacing (the v2.1 compact sizes undone); kept: Secondary View all, the wider front card, the role in two lines at most · v2.2: Similar Jobs: more room between the parts of the stacked cards (sections 14, meta rows 12, buttons 12) · v2.1: Similar Jobs: View all is a Secondary button; the front card is wider; the cards in the stack are compact (smaller text and buttons, role in two lines at most — this section only) · v2.0: Similar Jobs is a fanned card stack of 4 (swipe the front card; dots) — the Tools-promo stack of company-index2.html with the job card inside · v1.9: 20 between a card heading and its body (skills, description) · an 8 section band before Similar Jobs · v1.8: bottom sheets get the new look: floating ×, corners 32, darker scrim (bottom-sheet v3.0.0) · v1.7: the field you tap lands 20 below the lifted heading (bottom-sheet v2.12.0) · v1.6: Edit your details uses Small fields (40 tall · label 12), the app size · v1.5 (2026-10-23) — for review · opened from the job cards on My Jobs and Docket
+<!-- SHINE APP · JOB DETAILS (JD) — App-login/JD Page/  · v2.4 (2026-10-25) — the top bar's byline: the name is the job card's company style (12 semibold, muted), POSTED BY smaller (top app bar v3.2.0) · v2.3: Similar Jobs: the stacked job cards are back to the job card's own sizes and spacing (the v2.1 compact sizes undone); kept: Secondary View all, the wider front card, the role in two lines at most · v2.2: Similar Jobs: more room between the parts of the stacked cards (sections 14, meta rows 12, buttons 12) · v2.1: Similar Jobs: View all is a Secondary button; the front card is wider; the cards in the stack are compact (smaller text and buttons, role in two lines at most — this section only) · v2.0: Similar Jobs is a fanned card stack of 4 (swipe the front card; dots) — the Tools-promo stack of company-index2.html with the job card inside · v1.9: 20 between a card heading and its body (skills, description) · an 8 section band before Similar Jobs · v1.8: bottom sheets get the new look: floating ×, corners 32, darker scrim (bottom-sheet v3.0.0) · v1.7: the field you tap lands 20 below the lifted heading (bottom-sheet v2.12.0) · v1.6: Edit your details uses Small fields (40 tall · label 12), the app size · v1.5 (2026-10-23) — for review · opened from the job cards on My Jobs and Docket
      v1.1: the job and the company are components now — job card 2.5 JD job card (ShineJobCard.jd) and company card (ShineCompanyCard).
      Built from the mobile responsive view of <Shine Revamp>/jd-page3.html: the same sections, copy and flow —
      the job (badges · role · posted · meta · Apply Now · save · share · similar-jobs strip), Skills For This Role,
@@ -1174,10 +1174,10 @@ legend.field-label--hidden { float: none; width: 1px; }
 @media (prefers-reduced-motion: reduce) { .field-control, .field-trailing, .field-icon { transition: none; } }
 </style>
 <!-- ▲ COMPONENT · field-base -->
-<!-- ▼ COMPONENT · top-app-bar v3.1.4 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v3.2.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
 <style data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v3.1.4
+   SHINE · TOP APP BAR  (app component · App-login)              v3.2.0
    One top bar for every logged-in screen: ONE floating bar (any items, light
    or dark) and the title bar, on one shared frame, so the leading item, the
    logo / title and the trailing action sit on exactly the same spot — and
@@ -1297,6 +1297,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
   /* COLOUR — §2.2 (light) */
   --stp-content-neutral-base: #0D1117;                     /* content.neutral.base — title, icons */
   --stp-content-neutral-faded: #667085;                    /* content.neutral.faded — the byline's eyebrow */
+  --stp-content-neutral-muted: #344054;                    /* content.neutral.muted — the byline's name (v3.2.0, = the JD job card's company) */
   --stp-content-on-fill-dark-muted: rgba(255, 255, 255, .72);   /* content.on-fill-dark.muted — the eyebrow on the dark pill */
   --stp-surface-neutral-state-pressed: #E4E7EC;            /* surface.neutral-state.pressed — the byline pressed */
   --stp-surface-neutral-state-hover: #EEF1F5;              /* surface.neutral-state.hover */
@@ -1464,8 +1465,9 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 .stp-byline:focus { outline: none; }
 .stp-byline:focus-visible { outline: 2px solid var(--stp-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--stp-elevation-focus-default); }
 .stp-byline-text { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; min-width: 0; }           /* 2 (v3.1.2, user: tighter) */
-.stp-byline-eyebrow { font: 700 10px/10px var(--stp-font); letter-spacing: 1px; text-transform: uppercase; color: var(--stp-content-neutral-faded); white-space: nowrap; }   /* Eyebrow / sm */
-.stp-byline-name { max-width: 100%; font: 700 14px/16px var(--stp-font); letter-spacing: -.1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }   /* Label / lg bold · 16 line (v3.1.2) */
+.stp-byline-eyebrow { font: 700 8px/8px var(--stp-font); letter-spacing: 1px; text-transform: uppercase; color: var(--stp-content-neutral-faded); white-space: nowrap; }   /* v3.2.0 (user: smaller): 8 / 8 caps bold, 1 spacing (unit/8 · unit/1) — below Eyebrow / sm 10, the smallest DS eyebrow: PROPOSED Eyebrow / xs */
+.stp-byline-name { max-width: 100%; font: 600 12px/18px var(--stp-font); letter-spacing: normal; color: var(--stp-content-neutral-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }   /* v3.2.0 (user: exactly the JD job card's company name): Body / sm semibold 12 / 18 · content.neutral.muted (was Label / lg bold 14 / 16) */
+.stp--float.stp--dark:not(.is-lifted) .stp-byline-name { color: var(--stp-content-on-fill-dark-base); }   /* on the dark pill: white, as the rest of the bar */
 .stp--float.stp--dark:not(.is-lifted) .stp-byline-eyebrow { color: var(--stp-content-on-fill-dark-muted); }
 
 /* Dark tone · the bar sits over a dark top section (the Me tab's hero). Same pill, same 64 bar.
@@ -1564,7 +1566,6 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
   .stp--title, .stp--title::after, .stp--title.stp-anim, .stp--title.stp-anim .stp-row,
   .stp--float .stp-row, .stp-avatar, .stp-byline, .stp--float::before { transition: none; }
 }
-
 </style>
 <!-- ▲ COMPONENT · top-app-bar -->
 <!-- ▼ COMPONENT · bottom-sheet v3.0.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
@@ -2575,10 +2576,10 @@ button { font-family: inherit; }
     </div>
   </div>
 </header>
-<!-- ▼ COMPONENT · top-app-bar v3.1.4 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v3.2.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
 <script data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v3.1.4
+   SHINE · TOP APP BAR  (app component · App-login)              v3.2.0
    Pair with top-app-bar.css. The menu button is part of this component (v2.3.0). Its buttons (menu, back,
    Search Jobs, status) are the buttons atom (atoms/buttons, inlined before this component) — v3.0.0.
 
@@ -2892,7 +2893,6 @@ button { font-family: inherit; }
   init();
   if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', init);
 })(window);
-
 </script>
 <!-- ▲ COMPONENT · top-app-bar -->
 
