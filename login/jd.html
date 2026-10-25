@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <script data-ios-nozoom>(function () { var iOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); var m = document.querySelector('meta[name="viewport"]'); if (iOS && m && !/maximum-scale/.test(m.content)) m.content += ', maximum-scale=1'; })();</script>
 <meta name="theme-color" content="#FAF9F6" />
-<!-- SHINE APP · JOB DETAILS (JD) — App-login/JD Page/  · v2.1 (2026-10-25) — Similar Jobs: View all is a Secondary button; the front card is wider; the cards in the stack are compact (smaller text and buttons, role in two lines at most — this section only) · v2.0: Similar Jobs is a fanned card stack of 4 (swipe the front card; dots) — the Tools-promo stack of company-index2.html with the job card inside · v1.9: 20 between a card heading and its body (skills, description) · an 8 section band before Similar Jobs · v1.8: bottom sheets get the new look: floating ×, corners 32, darker scrim (bottom-sheet v3.0.0) · v1.7: the field you tap lands 20 below the lifted heading (bottom-sheet v2.12.0) · v1.6: Edit your details uses Small fields (40 tall · label 12), the app size · v1.5 (2026-10-23) — for review · opened from the job cards on My Jobs and Docket
+<!-- SHINE APP · JOB DETAILS (JD) — App-login/JD Page/  · v2.2 (2026-10-25) — Similar Jobs: more room between the parts of the stacked cards (sections 14, meta rows 12, buttons 12) · v2.1: Similar Jobs: View all is a Secondary button; the front card is wider; the cards in the stack are compact (smaller text and buttons, role in two lines at most — this section only) · v2.0: Similar Jobs is a fanned card stack of 4 (swipe the front card; dots) — the Tools-promo stack of company-index2.html with the job card inside · v1.9: 20 between a card heading and its body (skills, description) · an 8 section band before Similar Jobs · v1.8: bottom sheets get the new look: floating ×, corners 32, darker scrim (bottom-sheet v3.0.0) · v1.7: the field you tap lands 20 below the lifted heading (bottom-sheet v2.12.0) · v1.6: Edit your details uses Small fields (40 tall · label 12), the app size · v1.5 (2026-10-23) — for review · opened from the job cards on My Jobs and Docket
      v1.1: the job and the company are components now — job card 2.5 JD job card (ShineJobCard.jd) and company card (ShineCompanyCard).
      Built from the mobile responsive view of <Shine Revamp>/jd-page3.html: the same sections, copy and flow —
      the job (badges · role · posted · meta · Apply Now · save · share · similar-jobs strip), Skills For This Role,
@@ -2479,12 +2479,12 @@ button { font-family: inherit; }
 @media (prefers-reduced-motion: reduce) { .jdp-fan-card, .jdp-fan-dot { transition-duration: 1ms !important; } }
 /* v2.1 · the compact job card — this section only (user: smaller text and buttons, role in two lines at most; the job
    card component itself is not changed). Every value one DS step down from the card's own:
-     padding inset.xxl 22 → inset.xl 16 · section gaps stack.lg 14 → stack.md 12 · meta rows stack.md 12 → stack.xs 8
+     padding inset.xxl 22 → inset.xl 16 (v2.2: the gaps between the parts are back to the card's own — sections 14, meta rows 12, buttons 12)
      company Label / lg 14 bold → Body / sm 12 semibold · logo 40 → 32 · role Heading / md 18/22 → Heading / sm 16/20,
      two lines then … · meta Body / md 14/20 → Body / sm 12/18, icon frame 28 → 24, icon size.icon.sm 14 → size.icon.xs 12
      skills Label / lg 14 → Label / md 12 · buttons A.02 xl 56 → md 44 (Label / md 12, icon-only glyph 20), 12 → 8 apart
-     (inline.md). Already the smallest step and kept: time Body / sm 12, badges Label / md 12, "Required:" 12. */
-.jdp-fan-card > .jcard { --card-inset: 16px; --jc-stack: 12px; --jc-row-gap: 8px; --jc-btn-gap: 8px; }
+     (v2.2: 12 apart again). Already the smallest step and kept: time Body / sm 12, badges Label / md 12, "Required:" 12. */
+.jdp-fan-card > .jcard { --card-inset: 16px; --jc-stack: 14px; --jc-row-gap: 12px; --jc-btn-gap: 12px; }   /* v2.2 (user: more room between the parts): the card's own spacing again — stack.lg 14 · stack.md 12 · inline.lg 12 */
 .jdp-fan-card .jcard-name { font: 600 12px/18px var(--jc-font); }
 .jdp-fan-card .jcard-av .jcard-logo { width: 32px; height: 32px; }
 .jdp-fan-card .jcard-role {
