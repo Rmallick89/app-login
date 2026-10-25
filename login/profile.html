@@ -11,7 +11,7 @@
   })();
 </script>
 <meta name="theme-color" content="#161B22" />
-<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.31 (2026-10-25) — the field you tap lands one field gap (20) below the lifted heading, not flush against it (bottom-sheet v2.12.0) · v1.30: every input field is Small (40 tall · label 12), the app's size · v1.29: input fields v3.2.0 (a Small field's label is 12) · v1.28: tapping a field puts a thin caret after its text instead of selecting it (input fields v3.1.0) · v1.27: the field you tap glides up to the first field's place and stays there (bottom-sheet v2.11.0 focus anchor) · v1.26: Small dropdown shows 3½ rows (inline-dropdown v1.5.0) · v1.25: Small dropdown rows get room for a finger (38, inline-dropdown v1.4.1) · v1.24: every inline list is the inline dropdown component (Small · combo box v4.0.0); chips fields show “Added” · v1.23: full-screen headings: Display · Large (modal v2.10.0) · v1.22: full-screens fade through (modal v2.9.0, the user's option C) · v1.21: iPhone status bar on full-screens (modal v2.8.3: page pinned at scroll 0 while a full-screen is up · strip hit-testable) · status-bar strip (modal v2.8.2) · short lists without search · lists never behind the keyboard (combo box v3.1.0)
+<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.32 (2026-10-25) — bottom sheets get the new look: the × floats above the sheet, corners 32, darker scrim (bottom-sheet v3.0.0 · combo box v4.1.1) · v1.31: the field you tap lands one field gap (20) below the lifted heading, not flush against it (bottom-sheet v2.12.0) · v1.30: every input field is Small (40 tall · label 12), the app's size · v1.29: input fields v3.2.0 (a Small field's label is 12) · v1.28: tapping a field puts a thin caret after its text instead of selecting it (input fields v3.1.0) · v1.27: the field you tap glides up to the first field's place and stays there (bottom-sheet v2.11.0 focus anchor) · v1.26: Small dropdown shows 3½ rows (inline-dropdown v1.5.0) · v1.25: Small dropdown rows get room for a finger (38, inline-dropdown v1.4.1) · v1.24: every inline list is the inline dropdown component (Small · combo box v4.0.0); chips fields show “Added” · v1.23: full-screen headings: Display · Large (modal v2.10.0) · v1.22: full-screens fade through (modal v2.9.0, the user's option C) · v1.21: iPhone status bar on full-screens (modal v2.8.3: page pinned at scroll 0 while a full-screen is up · strip hit-testable) · status-bar strip (modal v2.8.2) · short lists without search · lists never behind the keyboard (combo box v3.1.0)
      Built from the mobile view (≤ 480 px) of <Shine Revamp>/profile-index.html, on the design system
      (design-system/DESIGN-SYSTEM.md + component-system.md): semantic tokens only, the buttons atom (atoms/buttons), DS atoms (A.04 Badge,
      A.05 Tag, A.08 Avatar, A.09 Toast). No menu / title on this tab (v1.1, user): the full-bleed hero starts at the top
@@ -1115,10 +1115,10 @@ legend.field-label--hidden { float: none; width: 1px; }
 @media (prefers-reduced-motion: reduce) { .field-control, .field-trailing, .field-icon { transition: none; } }
 </style>
 <!-- ▲ COMPONENT · field-base -->
-<!-- ▼ COMPONENT · combo-box v4.0.2 · verbatim copy of App-login/app-components/atoms/input-fields/combo-box/combo-box.css — do not edit here -->
+<!-- ▼ COMPONENT · combo-box v4.1.1 · verbatim copy of App-login/app-components/atoms/input-fields/combo-box/combo-box.css — do not edit here -->
 <style data-component="combo-box">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · INPUT FIELDS · COMBO BOX  (atoms/input-fields/combo-box/)      v4.0.2
+   SHINE · INPUT FIELDS · COMBO BOX  (atoms/input-fields/combo-box/)      v4.1.1
    v4.0.0 · with the inline dropdown component loaded (app-components/inline-dropdown), the inline list is that component
    (Small by default); the .field-pop list below is the fallback when it isn't loaded.
    Search, then pick one from a list — the list opens INLINE (a dropdown under the box) or in a BOTTOM SHEET.
@@ -1205,7 +1205,7 @@ legend.field-label--hidden { float: none; width: 1px; }
    keyboard up it fills the visible area above it (the bottom-sheet engine's --bs-vvh / --bs-kb), so the search box
    and as many options as fit stay in view — never behind the keyboard */
 .bs.field-sheet { height: var(--fld-sheet-h, auto); }
-.bs-kb .bs.field-sheet:not(.bs--nested):not(.field-sheet--plain) { height: calc(var(--bs-vvh, 100vh) - 16px + var(--bs-kb, 0px)); }
+.bs-kb .bs.field-sheet:not(.bs--nested):not(.field-sheet--plain) { height: calc(var(--bs-vvh, 100vh) - 16px - var(--bs-top-room, 0px) + var(--bs-kb, 0px)); }   /* v4.1.1: room for the bottom sheet's floating × (v3.0.0) */
 .field-sheet-search {
   position: sticky; top: 0; z-index: 1; padding: 4px 0 8px;                                /* room for the focus ring · spacing.stack.xs */
   background: var(--bs-surface-neutral-raised, var(--fld-bg));
@@ -1580,10 +1580,10 @@ legend.field-label--hidden { float: none; width: 1px; }
 @media (prefers-reduced-motion: reduce) { .alert-close-col, .alert-close-col svg { transition: none; } }
 </style>
 <!-- ▲ COMPONENT · alert -->
-<!-- ▼ COMPONENT · bottom-sheet v2.12.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
+<!-- ▼ COMPONENT · bottom-sheet v3.0.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
 <style data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BOTTOM SHEET  (app component · App-login)            v2.12.0
+   SHINE · BOTTOM SHEET  (app component · App-login)            v3.0.0
    The one container behind every slide-up panel in the logged-in app — in TWO VARIATIONS:
      1 · BOTTOM SHEET  .bs            slides up from the bottom edge, the page shows above it
                                       (pickers, confirmations, nudges, OTP, short asks)
@@ -1635,6 +1635,7 @@ legend.field-label--hidden { float: none; width: 1px; }
   --bs-p-cn-400: #98A2B3; --bs-p-cn-500: #667085; --bs-p-cn-600: #4A5260; --bs-p-cn-700: #344054;
   --bs-p-cn-800: #232A38; --bs-p-cn-900: #161B22; --bs-p-cn-black: #0D1117;
   --bs-p-cn-black-25: rgba(13,17,23,.08); --bs-p-cn-black-50: rgba(13,17,23,.24); --bs-p-cn-black-75: rgba(13,17,23,.36);
+  --bs-p-cn-black-90: rgba(13,17,23,.72);   /* PROPOSED primitive (v3.0.0) — the bottom sheet's scrim, from the user's reference */
   --bs-p-cn-white-25: rgba(255,255,255,.08); --bs-p-cn-white-75: rgba(255,255,255,.36);
   --bs-p-wn-100: #FAF9F6;
   --bs-p-brand-100: #EBF0FF; --bs-p-brand-900: #06184F;
@@ -1669,6 +1670,7 @@ legend.field-label--hidden { float: none; width: 1px; }
   --bs-surface-neutral-state-pressed: var(--bs-p-cn-200);
   --bs-surface-neutral-state-overlay: var(--bs-p-cn-black-50);
   --bs-surface-neutral-state-overlay-strong: var(--bs-p-cn-black-75);   /* PROPOSED */
+  --bs-surface-neutral-state-overlay-heavy: var(--bs-p-cn-black-90);    /* PROPOSED (v3.0.0) — scrim behind a bottom sheet */
   --bs-surface-inverse-base: var(--bs-p-cn-black);
   --bs-surface-inverse-raised: var(--bs-p-cn-800);
   --bs-surface-inverse-state-hover: var(--bs-p-cn-700);
@@ -1712,11 +1714,12 @@ legend.field-label--hidden { float: none; width: 1px; }
   --bs-spacing-layout-sm: 24px;
 
   /* SIZE — §2.4 */
-  --bs-radius-2xl: 24px;     /* size.radius.2xl — sheet top corners (v2.2: 16 → 24, design decision) */
+  --bs-radius-2xl: 24px;     /* size.radius.2xl — v2.2–2.12 sheet corners; the desktop full-screen dialog */
+  --bs-radius-3xl: 32px;     /* size.radius.3xl ("large overlays") — bottom-sheet top corners (v3.0.0: 24 → 32, user's reference) */
   --bs-radius-lg: 12px;      /* size.radius.lg — buttons               */
   --bs-radius-full: 1024px;
   --bs-stroke-thin: 1px; --bs-stroke-default: 1.5px; --bs-stroke-thick: 2px;
-  --bs-icon-xs: 12px; --bs-icon-sm: 14px; --bs-icon-md: 16px;
+  --bs-icon-xs: 12px; --bs-icon-sm: 14px; --bs-icon-md: 16px; --bs-icon-xl: 24px;   /* xl = size.icon.xl — the floating close (v3.0.0) */
   --bs-control-sm: 40px;     /* size.control.sm (proposed in A.02) — minimum hit area */
   --bs-control-lg: 48px;     /* size.control.lg (proposed in A.02) — button height    */
   --bs-sheet-handle-w: 40px; --bs-sheet-handle-h: 4px;     /* PROPOSED size.sheet.handle-* (unit/40 · unit/4)  */
@@ -1745,6 +1748,10 @@ legend.field-label--hidden { float: none; width: 1px; }
   --bs-sticky-pad: var(--bs-spacing-inset-xl);           /* sticky bottom padding          */
   --bs-anchor-gap: var(--bs-spacing-stack-xl);           /* lifted top bar → the field the focus anchor brings up (v2.12.0: was 0) = a form's field-to-field gap */
   --bs-max-h: 90vh;
+  /* v3.0.0 · floating close — a 40 disc centred 12 above a bottom sheet's top edge (user's reference) */
+  --bs-float-close: var(--bs-control-sm);                /* 40 · size.control.sm */
+  --bs-float-gap: var(--bs-spacing-stack-md);            /* 12 · close → sheet edge */
+  --bs-top-room: 16px;                                   /* the least room kept above a sheet (bottom sheets: the close + 12) */
 
   /* bottom inset: device safe area; ignored inside the Android app (see header) */
   --bs-safe: env(safe-area-inset-bottom, 0px);
@@ -1827,7 +1834,7 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
   position: fixed; inset: 0;
   /* colour as an image layer, never background-color: iOS 26 Safari tints the status bar from the
      background-color of a fixed element at the top edge (ignoring its opacity) */
-  --bs-scrim-c: var(--bs-surface-neutral-state-overlay);
+  --bs-scrim-c: var(--bs-surface-neutral-state-overlay-heavy);   /* v3.0.0: 24 % → 72 % (user's reference) */
   background: linear-gradient(var(--bs-scrim-c), var(--bs-scrim-c));
   opacity: 0; pointer-events: none;
   transition: opacity var(--bs-dur-scrim) ease;
@@ -1848,17 +1855,17 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
 .bs-statusbar.is-on { display: block; }
 @media (min-width: 768px) { .bs-statusbar.is-on { display: none; } }           /* phones only */
 .bs-scrim.is-open { opacity: 1; pointer-events: auto; }
-.bs-scrim--strong { --bs-scrim-c: var(--bs-surface-neutral-state-overlay-strong); -webkit-backdrop-filter: blur(var(--bs-blur-overlay)); backdrop-filter: blur(var(--bs-blur-overlay)); }
-.bs-scrim--nested { position: absolute; border-radius: var(--bs-radius-2xl) var(--bs-radius-2xl) 0 0; }
+.bs-scrim--strong { --bs-scrim-c: var(--bs-surface-neutral-state-overlay-heavy); -webkit-backdrop-filter: blur(var(--bs-blur-overlay)); backdrop-filter: blur(var(--bs-blur-overlay)); }
+.bs-scrim--nested { position: absolute; border-radius: var(--bs-radius-3xl) var(--bs-radius-3xl) 0 0; }
 
 /* ── Sheet ─────────────────────────────────────────────────────────── */
 .bs {
   position: fixed; left: 0; right: 0; bottom: 0;
   z-index: calc(var(--bs-z) + 1);
   display: flex; flex-direction: column;
-  max-height: var(--bs-max-h); max-height: min(var(--bs-max-h), 90dvh);
+  max-height: var(--bs-max-h); max-height: min(var(--bs-max-h), 90dvh, calc(100dvh - var(--bs-safe-top) - var(--bs-top-room) - 12px));
   background: var(--bs-surface-neutral-raised); color: var(--bs-content-neutral-base);
-  border-radius: var(--bs-radius-2xl) var(--bs-radius-2xl) 0 0;
+  border-radius: var(--bs-radius-3xl) var(--bs-radius-3xl) 0 0;   /* v3.0.0: 24 → 32 */
   box-shadow: var(--bs-elevation-neutral-modal);
   font-family: var(--bs-typeface-brand); -webkit-font-smoothing: antialiased;
   overflow: hidden; outline: none;
@@ -1986,6 +1993,27 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
 .bs-head--display .bs-close svg { width: var(--bs-icon-sm); height: var(--bs-icon-sm); }
 /* keep the heading clear of the close: close + its offset − gutter + inline gap */
 .bs-head--display:has(.bs-close) .bs-heading { padding-right: calc(var(--bs-sheet-close-md) + var(--bs-close-offset) - var(--bs-gutter) + var(--bs-spacing-inline-md)); }
+
+/* v3.0.0 · FLOATING CLOSE (bottom sheets — user's reference). The × leaves the heading and floats over the scrim:
+   a 40 disc (size.control.sm) centred 12 (spacing.stack.md) above the sheet's top edge, dark glass
+   (surface.neutral-state.overlay-strong + effect.blur.overlay) with a white 24 glyph (content.on-fill-dark.base,
+   size.icon.xl). It rides with the sheet (slide, drag). Same markup as before — the .bs-close in the heading; the
+   heading takes the full width. Full-screens keep their × in the heading. */
+.bs:not(.bs--full) { overflow: visible; --bs-top-room: calc(var(--bs-float-close) + var(--bs-float-gap)); }
+.bs:not(.bs--full) .bs-close, .bs:not(.bs--full) .bs-head--display .bs-close {
+  position: absolute; z-index: 3; top: calc(-1 * (var(--bs-float-close) + var(--bs-float-gap))); left: 50%; right: auto;
+  width: var(--bs-float-close); height: var(--bs-float-close); transform: translateX(-50%);
+  background: var(--bs-surface-neutral-state-overlay-strong); color: var(--bs-content-on-fill-dark-base);
+  -webkit-backdrop-filter: blur(var(--bs-blur-overlay)); backdrop-filter: blur(var(--bs-blur-overlay));
+}
+.bs:not(.bs--full) .bs-close::after { inset: 0; }                                  /* the disc is the 40 hit area */
+.bs:not(.bs--full) .bs-close svg { width: var(--bs-icon-xl); height: var(--bs-icon-xl); }
+.bs:not(.bs--full) .bs-close:active { background: var(--bs-surface-neutral-state-overlay-heavy); color: var(--bs-content-on-fill-dark-base); }
+@media (hover: hover) { .bs:not(.bs--full) .bs-close:hover { background: var(--bs-surface-neutral-state-overlay-heavy); color: var(--bs-content-on-fill-dark-base); } }
+.bs:not(.bs--full) .bs-head--display:has(.bs-close) .bs-heading { padding-right: 0; }   /* the title runs the full width */
+/* closed / dragged away: travel the close's room too, so it never peeks above the bottom edge */
+.bs:not(.bs--full):not(.bs--nested) { transform: translate3d(0, calc(100% + var(--bs-top-room) + 24px), 0); }
+.bs:not(.bs--full):not(.bs--nested).is-open { transform: translate3d(0, 0, 0); }
 
 /* focus — stroke.neutral.focus outline + elevation.focus.default ring */
 .bs :focus-visible:not(.btn) { outline: var(--bs-stroke-thick) solid var(--bs-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--bs-elevation-focus-default); }   /* atom buttons draw their own focus (v2.7.0) */
@@ -2154,7 +2182,7 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
    The sheet keeps its place at the bottom edge and its surface continues
    behind the keyboard (native iOS look); the content is padded up by the
    keyboard height. The home indicator sits under the keyboard → no safe area. */
-.bs-kb .bs:not(.bs--nested) { padding-bottom: var(--bs-kb, 0px); max-height: calc(var(--bs-vvh, 100vh) - 16px + var(--bs-kb, 0px)); }
+.bs-kb .bs:not(.bs--nested) { padding-bottom: var(--bs-kb, 0px); max-height: calc(var(--bs-vvh, 100vh) - 16px - var(--bs-top-room) + var(--bs-kb, 0px)); }   /* v3.0.0: room for the floating close */
 .bs-kb .bs-body > .bs-bottom { padding-bottom: var(--bs-gutter); }
 .bs-kb .bs > .bs-bottom { padding-bottom: var(--bs-sticky-pad); }
 .bs-kb .bs--pad-bottom:not(.bs--nested) { padding-bottom: calc(var(--bs-spacing-stack-xxl) + var(--bs-kb, 0px)); }
@@ -4221,10 +4249,10 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 })(window);
 </script>
 <!-- ▲ COMPONENT · bottom-tab-bar -->
-<!-- ▼ COMPONENT · bottom-sheet v2.12.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.js — do not edit here -->
+<!-- ▼ COMPONENT · bottom-sheet v3.0.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.js — do not edit here -->
 <script data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BOTTOM SHEET  (app component · App-login)            v2.12.0
+   SHINE · BOTTOM SHEET  (app component · App-login)            v3.0.0
    Pair with bottom-sheet.css. Zero dependencies, no build step.
    Engine = App-logout's ShineSheet v1.2.1; v2.0 adds the three-section anatomy;
    v2.1 aligns every value with design-system/DESIGN-SYSTEM.md.
@@ -4300,6 +4328,8 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
      on behind it) · focus anchor (v2.11.0: on a touch screen the text field you tap glides up to where the
      form's first field sits, and stays there while you type; v2.12.0: one field gap, 20, under the top bar) · status-bar tint (html/body dimmed while a scrim is up,
      so iOS 26 Safari's status bar dims with the page).
+   v3.0.0 (look only — CSS): a bottom sheet's × floats centred above its top edge (40 dark-glass disc), corners 32,
+   scrim 72 %. Same markup and API.
    ═══════════════════════════════════════════════════════════════════════ */
 (function (global) {
   'use strict';
@@ -5559,9 +5589,9 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 })(window.ShineField);
 </script>
 <!-- ▲ COMPONENT · normal-field -->
-<!-- ▼ COMPONENT · combo-box v4.1.0 · verbatim copy of App-login/app-components/atoms/input-fields/combo-box/combo-box.js — do not edit here -->
+<!-- ▼ COMPONENT · combo-box v4.1.1 · verbatim copy of App-login/app-components/atoms/input-fields/combo-box/combo-box.js — do not edit here -->
 <script data-component="combo-box">
-/* SHINE · INPUT FIELDS · COMBO BOX  (atoms/input-fields/combo-box/)      v4.1.0
+/* SHINE · INPUT FIELDS · COMBO BOX  (atoms/input-fields/combo-box/)      v4.1.1
    Needs field-base.css + field-base.js and combo-box.css. The sheet mode also needs the bottom-sheet component
    (app-components/bottom-sheet: bottom-sheet.css + bottom-sheet.js); without it the list opens inline.
    v4.1.0 · the sheet's search box takes the field's own size (Small in the app: 40 tall).
