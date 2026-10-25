@@ -2221,10 +2221,10 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 @media (prefers-reduced-motion: reduce) { .ncard { transition: none; } }
 </style>
 <!-- ▲ COMPONENT · nav-card -->
-<!-- ▼ COMPONENT · bottom-sheet v2.8.3 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
+<!-- ▼ COMPONENT · bottom-sheet v2.10.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
 <style data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BOTTOM SHEET  (app component · App-login)            v2.8.3
+   SHINE · BOTTOM SHEET  (app component · App-login)            v2.10.0
    The one container behind every slide-up panel in the logged-in app — in TWO VARIATIONS:
      1 · BOTTOM SHEET  .bs            slides up from the bottom edge, the page shows above it
                                       (pickers, confirmations, nudges, OTP, short asks)
@@ -2391,12 +2391,14 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
   /* top inset (full-screen, v2.8.0): the status bar / notch; ignored inside the Android app (the WebView sits below it) */
   --bs-safe-top: env(safe-area-inset-top, 0px);
 
-  /* FULL-SCREEN (v2.8.0) — the screen title is Heading / lg (22/26 mobile · 24/28 desktop), profile-index's form-modal title */
-  --bs-title-full-size: var(--bs-heading-lg-size); --bs-title-full-lh: var(--bs-heading-lg-lh); --bs-title-full-ls: var(--bs-heading-lg-ls);
+  /* FULL-SCREEN (v2.8.0) — v2.10.0: its heading takes the bottom sheet's tokens (title bar / display, Large / Medium) */
   --bs-full-w: 560px;                                    /* desktop dialog width — profile-index .li-pf-modal--md */
 
   /* motion — PROPOSED motion.sheet-* (DS has no motion section yet) */
   --bs-ease: cubic-bezier(.32,.72,0,1);
+  --bs-ease-std: cubic-bezier(.2,0,0,1);                 /* v2.9.0 · full-screen fade (Material standard) */
+  --bs-ease-in: cubic-bezier(.4,0,1,1);                  /* v2.9.0 · full-screen content leaving */
+  --bs-full-fade: 150ms; --bs-full-rise: 240ms; --bs-full-rise-delay: 90ms;   /* v2.9.0 · fade through (user's pick, option C) */
   --bs-dur-in: 320ms; --bs-dur-out: 260ms; --bs-dur-scrim: 240ms; --bs-dur-kb: 240ms;
   --bs-lift-up: -1px;                                    /* motion.lift.up (proposed in A.02) */
   --bs-blur-overlay: 4px;                                /* PROPOSED effect.blur.overlay      */
@@ -2412,7 +2414,6 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
     --bs-display-sm-size: 32px; --bs-display-sm-lh: 36px; --bs-display-sm-ls: -0.4px;
     --bs-heading-lg-size: 24px; --bs-heading-lg-lh: 28px; --bs-heading-lg-ls: -0.3px;
     --bs-title-lg-size: var(--bs-heading-lg-size); --bs-title-lg-lh: var(--bs-heading-lg-lh); --bs-title-lg-ls: var(--bs-heading-lg-ls);
-    --bs-title-full-size: var(--bs-heading-lg-size); --bs-title-full-lh: var(--bs-heading-lg-lh); --bs-title-full-ls: var(--bs-heading-lg-ls);
     --bs-eyebrow-sm-size: 12px; --bs-eyebrow-sm-lh: 12px; --bs-eyebrow-sm-ls: 1.5px;
     --bs-eyebrow-md-size: 14px; --bs-eyebrow-md-lh: 14px; --bs-eyebrow-md-ls: 2px;
     --bs-spacing-inset-md: 10px; --bs-spacing-inset-xl: 20px; --bs-spacing-inset-xxl: 32px; --bs-spacing-inset-lg: 14px;
@@ -2743,22 +2744,11 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
 }
 .bs--full .bs-handle { display: none; }
 .bs--full > .bs-top { padding-top: var(--bs-safe-top); background: inherit; }
-/* the screen title: Heading / lg, the close (32, icon 14) on its first line, inset.xl above, stack.xxl to the content */
-.bs--full .bs-head, .bs--full .bs-head.bs-head--lg, .bs--full .bs-head.bs-head--md {
-  --bs-h-size: var(--bs-title-full-size); --bs-h-lh: var(--bs-title-full-lh); --bs-h-ls: var(--bs-title-full-ls);
-  --bs-h-sub-size: var(--bs-body-md-size); --bs-h-sub-lh: var(--bs-body-md-lh);
-  --bs-h-sub-color: var(--bs-content-neutral-muted); --bs-h-sub-gap: var(--bs-spacing-stack-xs);
-  display: flex; align-items: flex-start; gap: var(--bs-spacing-inline-lg);
-  padding: var(--bs-spacing-inset-xl) var(--bs-gutter) var(--bs-spacing-stack-xxl);
-}
-.bs--full .bs-head .bs-close {
-  position: relative; top: auto; right: auto;
-  width: var(--bs-sheet-close-md); height: var(--bs-sheet-close-md);
-  margin-top: calc((var(--bs-h-lh) - var(--bs-sheet-close-md)) / 2);    /* centred on the title's first line */
-}
-.bs--full .bs-head .bs-close::after { inset: -4px; }                     /* 32 + 2·4 = 40 hit area */
-.bs--full .bs-head .bs-close svg { width: var(--bs-icon-sm); height: var(--bs-icon-sm); }
-.bs--full .bs-head .bs-heading { padding-right: 0; }
+/* v2.10.0 · the heading is the bottom sheet's, with the same three choices (user: "full height bottom sheet will have
+   heading option similar to normal bottom sheet") — .bs-head (title bar) · .bs-head--display + --lg / --md — and the same
+   tokens. Only differences: no handle, and the display close sits in the heading (not on the sheet's top edge), so the
+   status-bar padding above it never moves it under the status bar. Profile's editors use Display · Large. */
+.bs--full .bs-head--display { position: relative; }
 .bs--full > .bs-body { padding-bottom: var(--bs-spacing-stack-xxl); }   /* the last field clears the pinned bottom */
 .bs--full.bs--pad-bottom > .bs-body { padding-bottom: 0; }
 
@@ -2774,10 +2764,30 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
   .bs--full > .bs-top { padding-top: 0; }
   .bs--full > .bs-bottom { padding-bottom: var(--bs-sticky-pad); }
 }
-/* v2.8.1 · phone: once up, the screen has no transform (iOS reads the status-bar colour only from an untransformed
-   fixed element at the top edge — a transformed one is skipped and the page under it is sampled instead) */
+/* v2.9.0 · phone: FADE THROUGH (the user's pick of four, 2026-10-25 — "option C"). The full-screen no longer slides:
+   its white surface fades in over the page in 150 ms (no scrim), the status bar turns white halfway through (75 ms,
+   set by the script), then the content (top, body, bottom) rises 20 px into place over 240 ms, starting at 90 ms.
+   Closing: the content fades out in 90 ms, the surface fades 150 ms from 60 ms, the bar turns back at 135 ms.
+   One move: the bar changes inside the whole-screen change, so a frame of iOS lag can't be seen.
+   It never has a transform (iOS reads the status-bar colour only from an untransformed fixed box), and its surface
+   runs on 100vh above its top edge (a box-shadow — overflow doesn't clip it), so the page never peeks above it
+   while the keyboard goes away. */
 @media (max-width: 767px) {
-  .bs.bs--full:not(.bs--nested).is-open { transform: none; will-change: auto; }
+  .bs.bs--full:not(.bs--nested) {
+    transform: none; opacity: 0; will-change: opacity;
+    transition: opacity var(--bs-full-fade) var(--bs-ease-std), padding-bottom var(--bs-dur-kb) var(--bs-ease), max-height var(--bs-dur-kb) var(--bs-ease);
+    box-shadow: 0 -100vh 0 0 var(--bs-surface-neutral-raised);
+  }
+  .bs.bs--full:not(.bs--nested).is-open { transform: none; opacity: 1; will-change: auto; transition-duration: var(--bs-full-fade), var(--bs-dur-kb), var(--bs-dur-kb); }
+  .bs.bs--full:not(.bs--nested) > .bs-top, .bs.bs--full:not(.bs--nested) > .bs-body, .bs.bs--full:not(.bs--nested) > .bs-bottom {
+    opacity: 0; transform: translate3d(0, 20px, 0);
+    transition: opacity var(--bs-full-rise) var(--bs-ease) var(--bs-full-rise-delay), transform var(--bs-full-rise) var(--bs-ease) var(--bs-full-rise-delay);
+  }
+  .bs.bs--full:not(.bs--nested).is-open > .bs-top, .bs.bs--full:not(.bs--nested).is-open > .bs-body, .bs.bs--full:not(.bs--nested).is-open > .bs-bottom { opacity: 1; transform: none; }
+  .bs.bs--full:not(.bs--nested).is-closing { transition-delay: 60ms, 0s, 0s; }
+  .bs.bs--full:not(.bs--nested).is-closing > .bs-top, .bs.bs--full:not(.bs--nested).is-closing > .bs-body, .bs.bs--full:not(.bs--nested).is-closing > .bs-bottom {
+    transform: translate3d(0, 8px, 0); transition: opacity 90ms var(--bs-ease-in), transform 90ms var(--bs-ease-in);
+  }
 }
 
 /* ── On-screen keyboard — ShineSheet sets html.bs-kb + --bs-kb / --bs-vvh / --bs-vvt / --bs-kbh (iOS + Android, v2.8.1) ──
@@ -2806,7 +2816,10 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
 .bs-lock, .bs-lock body { overflow: hidden !important; }
 
 @media (prefers-reduced-motion: reduce) {
-  .bs, .bs--nested, .bs-scrim { transition-duration: 1ms !important; }
+  .bs, .bs--nested, .bs-scrim, .bs--full > .bs-top, .bs--full > .bs-body, .bs--full > .bs-bottom { transition-duration: 1ms !important; transition-delay: 0s !important; }
+  /* full-screen on a phone: a plain 120 ms cross-fade, the bar switching halfway (script) */
+  .bs.bs--full:not(.bs--nested) { transition-duration: 120ms !important; }
+  .bs--full > .bs-top, .bs--full > .bs-body, .bs--full > .bs-bottom { transform: none !important; }
   .bs-btn { transition: none; }
   .bs-btn:hover { transform: none !important; }
 }
@@ -3737,10 +3750,10 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
     <span id="toastMsg">Done</span>
   </div>
 
-<!-- ▼ COMPONENT · bottom-sheet v2.8.3 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.js — do not edit here -->
+<!-- ▼ COMPONENT · bottom-sheet v2.10.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.js — do not edit here -->
 <script data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BOTTOM SHEET  (app component · App-login)            v2.8.3
+   SHINE · BOTTOM SHEET  (app component · App-login)            v2.10.0
    Pair with bottom-sheet.css. Zero dependencies, no build step.
    Engine = App-logout's ShineSheet v1.2.1; v2.0 adds the three-section anatomy;
    v2.1 aligns every value with design-system/DESIGN-SYSTEM.md.
@@ -3794,7 +3807,8 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
      .bs--inverse              dark sheet
      .bs--full                 VARIATION 2 · FULL-SCREEN (v2.8.0): the whole screen on a phone, a centred
                                dialog on desktop — no handle, no drag, bottom always sticky, status bar
-                               takes its surface (see bottom-sheet.css)
+                               takes its surface (see bottom-sheet.css); fades through (v2.9.0); takes the
+                               same heading choices as a bottom sheet (v2.10.0)
 
    Events (dispatched on the sheet, bubbling):
      shine:sheet-open    cancelable   detail { trigger }
@@ -4077,12 +4091,17 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
     var r = doc.documentElement, b = doc.body; if (!b) return;
     // a full-screen that is UP sets the colour to its surface; while it slides it is just its scrim.
     // A sheet stacked over it dims that colour with its own scrim.
-    var layers = stack.filter(function (el) { return !isNested(el) && (el.__bs.scrim || fullScreen(el)); });
-    var full = stack.some(function (el) { return fullScreen(el) && el.__bs.up; });
+    var all = stack.concat(closing);
+    var layers = all.filter(function (el) { return !isNested(el) && (fullScreen(el) ? el.__bs.up : !!el.__bs.scrim); });
+    var full = all.some(function (el) { return fullScreen(el) && el.__bs.up; });
     r.classList.toggle('bs-full', full);                 // v2.8.1: a full-screen is up → pages hide their own fixed top bars
     if (!layers.length) {
       if (tintSaved) { r.style.backgroundColor = tintSaved[0]; b.style.backgroundColor = tintSaved[1]; tintSaved = null; }
-      theme(null); strip(null);
+      theme(null);
+      if (all.length) {                              // a full-screen is still fading in / out: keep the strip, in the page colour
+        var bc = rgba(getComputedStyle(b).backgroundColor); if (!bc || bc[3] < 0.5) bc = rgba(getComputedStyle(r).backgroundColor);
+        strip(bc && bc[3] >= 0.5 ? 'rgb(' + bc.slice(0, 3).map(Math.round).join(',') + ')' : null);
+      } else strip(null);
       return;
     }
     if (!tintSaved) {
@@ -4093,7 +4112,7 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
     }
     var col = tintSaved[2].slice(0, 3), fullCol = null;
     layers.forEach(function (el) {                       // stacked scrims compound; a full-screen (once up) resets to its surface
-      if (fullScreen(el) && el.__bs.up) { var f = rgba(getComputedStyle(el).backgroundColor); if (f && f[3] > 0.5) { col = f.slice(0, 3); fullCol = col; return; } }
+      if (fullScreen(el)) { var f = rgba(getComputedStyle(el).backgroundColor); if (f && f[3] > 0.5) { col = f.slice(0, 3); fullCol = col; } return; }
       var sc = el.__bs.scrim; if (!sc) return;
       var c = rgba(getComputedStyle(sc).getPropertyValue('--bs-scrim-c')) || [13, 17, 23, 0.24];
       col = [0, 1, 2].map(function (k) { return c[k] * c[3] + col[k] * (1 - c[3]); });
@@ -4111,9 +4130,14 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
   function cover(el, on) {
     var st = el.__bs; if (!st) return;
     st.up = !!on && fullScreen(el);
-    if (st.scrim) st.scrim.classList.toggle('bs-scrim--covered', st.up);
+    if (st.scrim && !fullScreen(el)) st.scrim.classList.remove('bs-scrim--covered');
     pin(stack.some(function (x) { return x.__bs && x.__bs.up; }));
   }
+  /* v2.9.0 · full-screen timing (fade through) — kept in step with bottom-sheet.css (--bs-full-*) */
+  var FS = { barIn: 75, inMs: 330, barOut: 135, outMs: 210 };
+  var closing = [];                                  // full-screens fading out whose bar has not switched back yet
+  function untrack(el) { var i = closing.indexOf(el); if (i > -1) closing.splice(i, 1); }
+  function motion(ms) { return reduced && reduced.matches ? Math.round(ms * 120 / FS.inMs) : ms; }
   /* v2.8.3 · iPhone: once the page has been scrolled, Safari stops painting the status bar from the top edge's colour
      and shows the page's own pixels from above the screen behind it instead (the user's screenshots: every full-screen
      opened from a scrolled page kept the page's grey; the photo screen, opened at the top of the page, was white). So
@@ -4165,20 +4189,24 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
 
     stack.push(el);
     if (stack.length === 1) lock(true);
+    var fs = fullScreen(el);                       // v2.9.0: a phone full-screen fades through — no scrim, no slide
+    clearTimeout(st.upT); clearTimeout(st.downT); untrack(el); el.classList.remove('is-closing');
     var scrim = scrimFor(el);
-    if (scrim) { clearTimeout(scrim.__t); scrim.hidden = false; }
+    if (scrim) { clearTimeout(scrim.__t); scrim.hidden = false; scrim.classList.toggle('bs-scrim--covered', fs); }
     el.hidden = false; el.style.transform = '';
     layer();
     watchCta(el, true);
-    void el.offsetHeight;                          // commit the closed position so the slide runs
+    void el.offsetHeight;                          // commit the closed state so the motion runs
     el.classList.add('is-open');
     if (scrim) scrim.classList.add('is-open');
     syncScroll(el);
     tint(); keyboard(true);
+    // the status bar turns white halfway through the surface's fade (75 ms) — the one moment it changes
+    if (fs) st.upT = setTimeout(function () { if (stack.indexOf(el) > -1) { cover(el, true); tint(); } }, motion(FS.barIn));
 
     var af = el.querySelector('[data-bs-autofocus]');
     try { (af || el).focus({ preventScroll: true }); } catch (e) { (af || el).focus(); }
-    st.timer = setTimeout(function () { syncScroll(el); cover(el, true); tint(); emit(el, 'shine:sheet-opened', {}); }, durationOf(el));
+    st.timer = setTimeout(function () { syncScroll(el); if (!fs) { cover(el, true); tint(); } emit(el, 'shine:sheet-opened', {}); }, fs ? motion(FS.inMs) : durationOf(el));
     return true;
   }
 
@@ -4192,7 +4220,13 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
     for (var k = stack.length - 1; k > i; k--) close(stack[k], 'parent');
 
     stack.splice(stack.indexOf(el), 1);
-    cover(el, false);
+    var fs = fullScreen(el) && el.__bs.up;         // v2.9.0: fade back — the bar stays white until halfway (135 ms)
+    clearTimeout(st.upT);
+    if (fs) {
+      closing.push(el); el.classList.add('is-closing');
+      pin(stack.some(function (x) { return x.__bs && x.__bs.up; }));   // the page is back in place before it shows
+      st.downT = setTimeout(function () { untrack(el); cover(el, false); tint(); }, motion(FS.barOut));
+    } else { untrack(el); cover(el, false); }
     el.classList.remove('is-open', 'is-dragging');
     el.style.transform = '';
     if (st.scrim) {
@@ -4212,10 +4246,11 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
     clearTimeout(st.timer);
     st.timer = setTimeout(function () {
       if (stack.indexOf(el) > -1) return;            // reopened meanwhile
-      el.hidden = true;
+      el.hidden = true; el.classList.remove('is-closing');
+      if (st.scrim) st.scrim.classList.remove('bs-scrim--covered');
       watchCta(el, false);
       emit(el, 'shine:sheet-closed', { reason: reason });
-    }, durationOf(el) + 20);
+    }, (fs ? motion(FS.outMs) : durationOf(el)) + 20);
     return true;
   }
 
@@ -4266,7 +4301,7 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
   // re-measure an auto sheet after the page swaps its content (optional — a MutationObserver already does this)
   function refresh(target) { var el = $(target); if (el && el.__bs) { syncCta(el); syncScroll(el); } }
 
-  global.ShineSheet = { open: open, close: close, toggle: toggle, isOpen: isOpen, top: top, closeAll: closeAll, init: init, refresh: refresh, version: '2.8.3' };
+  global.ShineSheet = { open: open, close: close, toggle: toggle, isOpen: isOpen, top: top, closeAll: closeAll, init: init, refresh: refresh, version: '2.10.0' };
 })(window);
 </script>
 <!-- ▲ COMPONENT · bottom-sheet -->
