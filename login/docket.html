@@ -2221,10 +2221,10 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 @media (prefers-reduced-motion: reduce) { .ncard { transition: none; } }
 </style>
 <!-- ▲ COMPONENT · nav-card -->
-<!-- ▼ COMPONENT · bottom-sheet v2.10.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
+<!-- ▼ COMPONENT · bottom-sheet v2.11.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
 <style data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BOTTOM SHEET  (app component · App-login)            v2.10.0
+   SHINE · BOTTOM SHEET  (app component · App-login)            v2.11.0
    The one container behind every slide-up panel in the logged-in app — in TWO VARIATIONS:
      1 · BOTTOM SHEET  .bs            slides up from the bottom edge, the page shows above it
                                       (pickers, confirmations, nudges, OTP, short asks)
@@ -2811,6 +2811,9 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
   .bs-kb .bs.bs--full:not(.bs--nested) > .bs-bottom { display: none; }
   .bs-kb .bs.bs--full:not(.bs--nested) > .bs-body { padding-bottom: var(--bs-spacing-stack-xxl); }
 }
+
+/* v2.11.0 · focus anchor — the room at the end of a body that lets its last fields glide up to the first field's place */
+.bs-anchor-space { display: block; flex: none; width: 100%; margin: 0; padding: 0; pointer-events: none; }
 
 /* page scroll lock (set on <html> by ShineSheet) */
 .bs-lock, .bs-lock body { overflow: hidden !important; }
@@ -3750,10 +3753,10 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
     <span id="toastMsg">Done</span>
   </div>
 
-<!-- ▼ COMPONENT · bottom-sheet v2.10.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.js — do not edit here -->
+<!-- ▼ COMPONENT · bottom-sheet v2.11.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.js — do not edit here -->
 <script data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BOTTOM SHEET  (app component · App-login)            v2.10.0
+   SHINE · BOTTOM SHEET  (app component · App-login)            v2.11.0
    Pair with bottom-sheet.css. Zero dependencies, no build step.
    Engine = App-logout's ShineSheet v1.2.1; v2.0 adds the three-section anatomy;
    v2.1 aligns every value with design-system/DESIGN-SYSTEM.md.
@@ -3826,7 +3829,8 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
      down to dismiss (velocity- or distance-based) · trigger gets
      aria-expanded · reduced motion respected · closed = [hidden] ·
      keyboard-aware (content padded above the on-screen keyboard, surface runs
-     on behind it) · status-bar tint (html/body dimmed while a scrim is up,
+     on behind it) · focus anchor (v2.11.0: on a touch screen the text field you tap glides up to where the
+     form's first field sits, and stays there while you type) · status-bar tint (html/body dimmed while a scrim is up,
      so iOS 26 Safari's status bar dims with the page).
    ═══════════════════════════════════════════════════════════════════════ */
 (function (global) {
@@ -4026,7 +4030,8 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
     if (on) { r.style.setProperty('--bs-kb', px + 'px'); r.style.setProperty('--bs-vvh', h + 'px'); r.style.setProperty('--bs-vvt', t + 'px'); r.style.setProperty('--bs-kbh', k + 'px'); r.classList.add('bs-kb'); }
     else { ['--bs-kb', '--bs-vvh', '--bs-vvt', '--bs-kbh'].forEach(function (n) { r.style.removeProperty(n); }); r.classList.remove('bs-kb'); }
     stack.forEach(function (el) { if (el.__bs && el.__bs.bottom) { syncCta(el); syncScroll(el); } });
-    if (on && !was) {                                    // keep the focused field in view inside its sheet
+    if (anc.el) reAnchor();                              // v2.11.0: the body changed size — the field keeps its place
+    else if (on && !was) {                               // keep the focused field in view inside its sheet
       var a = doc.activeElement;
       if (a && a.closest && a.closest('.bs') && a.scrollIntoView) setTimeout(function () { try { a.scrollIntoView({ block: 'nearest' }); } catch (e) {} }, 260);
     }
@@ -4042,7 +4047,16 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
     var vh = vv ? vv.height : ih, vt = vv ? Math.max(0, vv.offsetTop) : 0;
     var overlay = ih - vh > 80;                          // iOS: keyboard over the page (< 80 = browser chrome moving)
     var resized = focused && kb.base - ih > 150;          // Android: the page itself shrank for it
-    if (!overlay && !resized) return kbSet(false);
+    if (!overlay && !resized) {
+      // v2.11.0 · the keyboard is going but iOS hasn't panned back yet: keep a full-screen on the visible area until it
+      // has (it used to jump to the top edge a frame early and show the page above it — the user's video)
+      var now = Date.now();
+      if (kb.key && !kb.settle) kb.settle = now + 500;   // at most half a second — never holds the keyboard state on its own
+      if (kb.key && vt > 1 && now < kb.settle) { kbSchedule(); return kbSet(true, 0, Math.round(vh), Math.round(vt), Math.max(0, Math.round(ih - vh))); }
+      kb.settle = 0;
+      return kbSet(false);
+    }
+    kb.settle = 0;
     kbSet(true, Math.max(0, Math.round(ih - vh - vt)), Math.round(vh), Math.round(vt), Math.max(0, Math.round(ih - vh)));
   }
   function kbSchedule() { if (!kb.raf) kb.raf = requestAnimationFrame(kbMeasure); }
@@ -4054,14 +4068,120 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
       if (vv) { vv.addEventListener('resize', kbSchedule); vv.addEventListener('scroll', kbSchedule); }
       global.addEventListener('resize', kbSchedule);
       doc.addEventListener('focusin', kbLater); doc.addEventListener('focusout', kbLater);
+      doc.addEventListener('focusin', ancIn); doc.addEventListener('focusout', ancOut); doc.addEventListener('pointerdown', ancPre, true);
     }
     if (!on && kb.on) {
+      doc.removeEventListener('focusin', ancIn); doc.removeEventListener('focusout', ancOut); doc.removeEventListener('pointerdown', ancPre, true);
+      ancDrop();
       if (vv) { vv.removeEventListener('resize', kbSchedule); vv.removeEventListener('scroll', kbSchedule); }
       global.removeEventListener('resize', kbSchedule);
       doc.removeEventListener('focusin', kbLater); doc.removeEventListener('focusout', kbLater);
       kbSet(false);
     }
     kb.on = on; if (on) kbSchedule();
+  }
+
+  /* ── focus anchor (v2.11.0 — from the user's iPhone video) ───────────
+     On a touch screen, tapping a text field in a sheet's body glides the body (280 ms, eased) so that field's block —
+     its .field: label + box — lands exactly where the form's FIRST field sits. It stays there while you type, while
+     its inline list grows or shrinks, and when you pick from it; tapping the next field glides again; when the
+     keyboard goes, the body glides back inside its normal range (no jump). The last fields get the room to move up
+     from a spacer at the end of the body (.bs-anchor-space), there before the keyboard opens — so iOS scrolls the
+     body instead of panning the whole screen — and gone once the body is back in range.
+     Where: every full-screen form; a bottom sheet only when its body scrolls (a 1–2 field ask stays put above the
+     keyboard). Opt out: data-bs-anchor="off" on a sheet or a field. A field's block can be named with
+     [data-bs-anchor-box]; the line it lands on with [data-bs-anchor-top] (default: the body's first .field). */
+  var touch = global.matchMedia ? global.matchMedia('(hover: none) and (pointer: coarse)') : { matches: false };
+  var anc = { el: null, body: null, raf: 0, outT: 0 }, ANC_MS = 280;
+  function relTop(x, body) { return x.getBoundingClientRect().top - body.getBoundingClientRect().top + body.scrollTop; }
+  function ancBody(a) {                                // the sheet body this text field anchors in (or null)
+    if (!touch.matches || !editable(a) || a.readOnly || a.disabled) return null;
+    var body = a.closest && a.closest('.bs-body'), sh = body && body.closest('.bs');
+    if (!sh || stack.indexOf(sh) < 0 || sh.getAttribute('data-bs-anchor') === 'off' || a.closest('[data-bs-anchor="off"]')) return null;
+    return body;
+  }
+  function flowH(body) {                              // the body's own content height — an open dropdown's overflow doesn't count
+    var h = 0, bt = body.getBoundingClientRect().top - body.scrollTop;
+    for (var c = body.firstElementChild; c; c = c.nextElementSibling) {
+      if (c === body.__bsSpace) continue;
+      var pos = getComputedStyle(c).position; if (pos === 'absolute' || pos === 'fixed') continue;
+      h = Math.max(h, c.getBoundingClientRect().bottom - bt);
+    }
+    return h + (parseFloat(getComputedStyle(body).paddingBottom) || 0);
+  }
+  function ancWanted(body) { return fullScreen(body.closest('.bs')) || flowH(body) > body.clientHeight + 1 || anc.body === body; }
+  function spaceH(body) { var x = body.__bsSpace; return x && x.parentNode === body ? x.offsetHeight : 0; }
+  function space(body, h) {
+    var x = body.__bsSpace;
+    if (!x) { x = body.__bsSpace = doc.createElement('div'); x.className = 'bs-anchor-space'; x.setAttribute('aria-hidden', 'true'); }
+    if (x.parentNode !== body || x !== body.lastElementChild) body.appendChild(x);
+    x.style.height = Math.max(0, Math.ceil(h)) + 'px';
+  }
+  function unspace(body) { var x = body && body.__bsSpace; if (x && x.parentNode) x.parentNode.removeChild(x); }
+  // the spacer that lets the body reach `top` — measured against the TALLEST the body has been while anchored (before the
+  // keyboard), so the keyboard going never shrinks the room under the scroll (that was a jump: the browser clamps)
+  function room(body, top) { var ch = Math.max(body.clientHeight, body.__bsCH || 0); return Math.max(0, top + ch - flowH(body)); }   // in-flow content only: a dropdown closing never takes room away
+  function glide(body, to, done) {
+    cancelAnimationFrame(anc.raf); anc.raf = 0;
+    var from = body.scrollTop, d = to - from, t0 = 0, ms = reduced && reduced.matches ? 0 : ANC_MS;
+    if (Math.abs(d) < 1 || !ms) { body.scrollTop = to; if (done) done(); return; }
+    (function step(ts) {
+      if (ts === undefined) { anc.raf = requestAnimationFrame(step); return; }
+      if (!t0) t0 = ts;
+      var p = Math.min(1, (ts - t0) / ms), e = 1 - Math.pow(1 - p, 4);   // ≈ the sheet curve: fast out, soft landing
+      body.scrollTop = from + d * e;
+      if (p < 1) anc.raf = requestAnimationFrame(step); else { anc.raf = 0; if (done) done(); }
+    })();
+  }
+  function anchor(a) {
+    var body = ancBody(a); if (!body) return;
+    if (anc.body && anc.body !== body) ancDrop();
+    if (!ancWanted(body)) return;
+    clearTimeout(anc.outT);
+    if (anc.body !== body) body.__bsCH = 0;
+    body.__bsCH = Math.max(body.__bsCH || 0, body.clientHeight);
+    anc.el = a; anc.body = body; body.classList.add('bs-body--anchored');
+    var first = body.querySelector('[data-bs-anchor-top]') || body.querySelector('.field'), box = a.closest('[data-bs-anchor-box]') || a.closest('.field') || a;
+    var to = Math.max(0, Math.round(relTop(box, body) - (first ? relTop(first, body) : 0)));
+    space(body, Math.max(room(body, to), room(body, body.scrollTop)));   // grow first — never shrink under the scroll mid-glide
+    glide(body, to, function () { if (anc.body === body && anc.el === a) space(body, room(body, to)); });
+  }
+  function reAnchor() { if (anc.el && doc.activeElement === anc.el) anchor(anc.el); }
+  function ancIn(e) { if (ancBody(e.target)) anchor(e.target); }
+  function ancOut() {
+    clearTimeout(anc.outT);
+    anc.outT = setTimeout(function () {
+      var a = doc.activeElement;
+      if (anc.body && ancBody(a) === anc.body) return;     // on to the next field in the same form (focusin anchors it)
+      ancRelease();
+    }, 0);
+  }
+  function ancPre(e) {                                  // finger down on a field: make the room before iOS decides to pan
+    var a = e.target && e.target.closest && e.target.closest('input, textarea, [contenteditable="true"]');
+    var body = a && ancBody(a); if (!body || !ancWanted(body)) return;
+    if (spaceH(body) < body.clientHeight) space(body, body.clientHeight);
+    setTimeout(function () { if (anc.body !== body) settle(body); }, 700);   // no focus followed (a scroll): put it back
+  }
+  function settle(body, then) {                         // glide back inside the normal range, then drop the spacer
+    var max = Math.max(0, Math.max(flowH(body), body.scrollHeight - spaceH(body)) - body.clientHeight);
+    glide(body, Math.min(body.scrollTop, max), function () { if (anc.body !== body) { unspace(body); body.__bsCH = 0; } if (then) then(); });
+  }
+  function ancRelease() {
+    var body = anc.body; if (!body) return;
+    anc.el = null;
+    var tries = 0, last = -1, calm = 0;
+    (function wait() {                                   // the keyboard goes first and the body takes its new size — then glide back
+      if (anc.body !== body || anc.el) return;
+      var ch = body.clientHeight; calm = ch === last ? calm + 1 : 0; last = ch;
+      if ((kb.key || calm < 3) && tries++ < 20) { setTimeout(wait, 60); return; }   // keyboard gone + the same size for ~180 ms (max 1.2 s)
+      anc.body = null; body.classList.remove('bs-body--anchored');
+      settle(body);
+    })();
+  }
+  function ancDrop() {                                  // at once: a sheet closing, the keyboard watcher stopping
+    cancelAnimationFrame(anc.raf); anc.raf = 0; clearTimeout(anc.outT);
+    if (anc.body) { anc.body.classList.remove('bs-body--anchored'); unspace(anc.body); }
+    anc.el = anc.body = null;
   }
 
   /* ── status-bar tint (v1.2) ─────────────────────────────────────────
@@ -4220,6 +4340,7 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
     for (var k = stack.length - 1; k > i; k--) close(stack[k], 'parent');
 
     stack.splice(stack.indexOf(el), 1);
+    if (anc.body && el.contains(anc.body)) ancDrop();   // v2.11.0
     var fs = fullScreen(el) && el.__bs.up;         // v2.9.0: fade back — the bar stays white until halfway (135 ms)
     clearTimeout(st.upT);
     if (fs) {
@@ -4301,7 +4422,7 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
   // re-measure an auto sheet after the page swaps its content (optional — a MutationObserver already does this)
   function refresh(target) { var el = $(target); if (el && el.__bs) { syncCta(el); syncScroll(el); } }
 
-  global.ShineSheet = { open: open, close: close, toggle: toggle, isOpen: isOpen, top: top, closeAll: closeAll, init: init, refresh: refresh, version: '2.10.0' };
+  global.ShineSheet = { open: open, close: close, toggle: toggle, isOpen: isOpen, top: top, closeAll: closeAll, init: init, refresh: refresh, version: '2.11.0' };
 })(window);
 </script>
 <!-- ▲ COMPONENT · bottom-sheet -->
