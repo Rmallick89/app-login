@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <script data-ios-nozoom>(function () { var iOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); var m = document.querySelector('meta[name="viewport"]'); if (iOS && m && !/maximum-scale/.test(m.content)) m.content += ', maximum-scale=1'; })();</script>
 <meta name="theme-color" content="#FAF9F6" />
-<!-- SHINE APP · JOB DETAILS (JD) — App-login/JD Page/  · v1.5 (2026-10-23) — for review · opened from the job cards on My Jobs and Docket
+<!-- SHINE APP · JOB DETAILS (JD) — App-login/JD Page/  · v1.6 (2026-10-25) — Edit your details uses Small fields (40 tall · label 12), the app size · v1.5 (2026-10-23) — for review · opened from the job cards on My Jobs and Docket
      v1.1: the job and the company are components now — job card 2.5 JD job card (ShineJobCard.jd) and company card (ShineCompanyCard).
      Built from the mobile responsive view of <Shine Revamp>/jd-page3.html: the same sections, copy and flow —
      the job (badges · role · posted · meta · Apply Now · save · share · similar-jobs strip), Skills For This Role,
@@ -2440,7 +2440,7 @@ button { font-family: inherit; }
 
 .jdp-form { display: flex; flex-direction: column; gap: 20px; }                             /* stack.xl between fields */
 /* Notice period — A.06 Chip · md, single choice (a radio group) */
-.jdp-chips-label { display: block; margin: 0 0 8px; font: 500 14px/20px var(--jdp-font); color: var(--jdp-content-neutral-muted); }   /* = field label */
+.jdp-chips-label { display: block; margin: 0 0 8px; font: 500 12px/18px var(--jdp-font); color: var(--jdp-content-neutral-muted); }   /* = a Small field's label (Body / sm 12 / 18) */
 .jdp-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .jdp-chip {
   display: inline-flex; align-items: center; height: 40px; padding: 0 16px;                  /* size.control.sm · inset.xl */
@@ -2938,12 +2938,12 @@ button { font-family: inherit; }
     </div>
     <div class="bs-body bs-body--gutter">
       <div class="jdp-form">
-        <div class="field field--lg" data-field="text">
+        <div class="field field--sm" data-field="text">
           <label class="field-label" for="jdEdResume">Resume</label>
           <div class="field-control"><input class="field-input" id="jdEdResume" type="text" readonly value="Priya_sharma_Resume_2026.pdf"></div>
           <div class="field-aside"><button class="btn btn--link btn--sm btn--flush" type="button" data-jd="replace">Replace</button></div>
         </div>
-        <div class="field field--lg" data-field="text">
+        <div class="field field--sm" data-field="text">
           <label class="field-label" for="jdEdSalary">Annual salary</label>
           <div class="field-control"><span class="field-prefix" aria-hidden="true">₹</span><input class="field-input" id="jdEdSalary" type="text" inputmode="numeric" autocomplete="off" value="15,00,000" aria-describedby="jdEdSalaryHelp"></div>
           <p class="field-helper" id="jdEdSalaryHelp">15 LPA</p>
@@ -2952,7 +2952,7 @@ button { font-family: inherit; }
           <span class="jdp-chips-label" id="jdEdNoticeL">Notice period</span>
           <div class="jdp-chips" id="jdEdNotice"><button class="jdp-chip" type="button" role="radio" aria-checked="false" tabindex="-1" data-value="Immediate">Immediate</button><button class="jdp-chip" type="button" role="radio" aria-checked="false" tabindex="-1" data-value="15 Days">15 Days</button><button class="jdp-chip" type="button" role="radio" aria-checked="true" tabindex="0" data-value="30 Days">30 Days</button><button class="jdp-chip" type="button" role="radio" aria-checked="false" tabindex="-1" data-value="45 Days">45 Days</button><button class="jdp-chip" type="button" role="radio" aria-checked="false" tabindex="-1" data-value="60 Days">60 Days</button><button class="jdp-chip" type="button" role="radio" aria-checked="false" tabindex="-1" data-value="90 Days">90 Days</button></div>
         </div>
-        <div class="field field--lg" data-field="text">
+        <div class="field field--sm" data-field="text">
           <label class="field-label" for="jdEdLocation">Location</label>
           <div class="field-control"><input class="field-input" id="jdEdLocation" type="text" autocomplete="address-level2" value="Bengaluru, Karnataka"></div>
         </div>

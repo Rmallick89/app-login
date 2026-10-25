@@ -11,7 +11,7 @@
   })();
 </script>
 <meta name="theme-color" content="#161B22" />
-<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.29 (2026-10-25) — input fields v3.2.0 (a Small field's label is 12) · v1.28: tapping a field puts a thin caret after its text instead of selecting it (input fields v3.1.0) · v1.27: the field you tap glides up to the first field's place and stays there (bottom-sheet v2.11.0 focus anchor) · v1.26: Small dropdown shows 3½ rows (inline-dropdown v1.5.0) · v1.25: Small dropdown rows get room for a finger (38, inline-dropdown v1.4.1) · v1.24: every inline list is the inline dropdown component (Small · combo box v4.0.0); chips fields show “Added” · v1.23: full-screen headings: Display · Large (modal v2.10.0) · v1.22: full-screens fade through (modal v2.9.0, the user's option C) · v1.21: iPhone status bar on full-screens (modal v2.8.3: page pinned at scroll 0 while a full-screen is up · strip hit-testable) · status-bar strip (modal v2.8.2) · short lists without search · lists never behind the keyboard (combo box v3.1.0)
+<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.30 (2026-10-25) — every input field is Small (40 tall · label 12), the app's size · v1.29: input fields v3.2.0 (a Small field's label is 12) · v1.28: tapping a field puts a thin caret after its text instead of selecting it (input fields v3.1.0) · v1.27: the field you tap glides up to the first field's place and stays there (bottom-sheet v2.11.0 focus anchor) · v1.26: Small dropdown shows 3½ rows (inline-dropdown v1.5.0) · v1.25: Small dropdown rows get room for a finger (38, inline-dropdown v1.4.1) · v1.24: every inline list is the inline dropdown component (Small · combo box v4.0.0); chips fields show “Added” · v1.23: full-screen headings: Display · Large (modal v2.10.0) · v1.22: full-screens fade through (modal v2.9.0, the user's option C) · v1.21: iPhone status bar on full-screens (modal v2.8.3: page pinned at scroll 0 while a full-screen is up · strip hit-testable) · status-bar strip (modal v2.8.2) · short lists without search · lists never behind the keyboard (combo box v3.1.0)
      Built from the mobile view (≤ 480 px) of <Shine Revamp>/profile-index.html, on the design system
      (design-system/DESIGN-SYSTEM.md + component-system.md): semantic tokens only, the buttons atom (atoms/buttons), DS atoms (A.04 Badge,
      A.05 Tag, A.08 Avatar, A.09 Toast). No menu / title on this tab (v1.1, user): the full-bleed hero starts at the top
@@ -3616,8 +3616,8 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
         </fieldset>
       </div>
       <div class="pf-form" data-pane="notice" hidden>
-        <fieldset class="field field--md pf-choice" data-choice="notice" data-error-empty="Choose your notice period"><legend class="field-label field-label--hidden">Notice period</legend><div class="pf-chips" role="radiogroup" aria-label="Notice period"></div></fieldset>
-        <fieldset class="field field--md field-multi" data-field="date" data-parts="dmy" data-min="today" data-max="today+1y" data-required data-error-empty="Please select your last working day" data-lwd hidden><legend class="field-label">Please provide your last working day</legend></fieldset>
+        <fieldset class="field field--sm pf-choice" data-choice="notice" data-error-empty="Choose your notice period"><legend class="field-label field-label--hidden">Notice period</legend><div class="pf-chips" role="radiogroup" aria-label="Notice period"></div></fieldset>
+        <fieldset class="field field--sm field-multi" data-field="date" data-parts="dmy" data-min="today" data-max="today+1y" data-required data-error-empty="Please select your last working day" data-lwd hidden><legend class="field-label">Please provide your last working day</legend></fieldset>
       </div>
     </div>
     <div class="bs-bottom"><div class="bs-actions"><button class="btn btn--primary btn--lg btn--block" type="button" data-act="status-next">Continue</button></div></div>
@@ -3663,22 +3663,22 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     </div>
     <div class="bs-body bs-body--gutter">
       <div class="pf-form">
-        <div class="field field--md" data-field="combo" data-combo="inline" data-combo-free data-error-empty="Enter your current job role" data-k="role">
+        <div class="field field--sm" data-field="combo" data-combo="inline" data-combo-free data-error-empty="Enter your current job role" data-k="role">
           <label class="field-label" for="pfPrRole">Current job role</label>
           <div class="field-control"><input class="field-input" id="pfPrRole" placeholder="e.g. Product Designer" autocomplete="organization-title" required></div>
         </div>
-        <div class="field field--md" data-field="text" data-error-empty="Enter your annual salary" data-salary data-k="salary">
+        <div class="field field--sm" data-field="text" data-error-empty="Enter your annual salary" data-salary data-k="salary">
           <label class="field-label" for="pfPrSalary">Annual salary</label>
           <div class="field-control"><span class="field-prefix" aria-hidden="true">₹</span><input class="field-input" id="pfPrSalary" inputmode="numeric" autocomplete="off" placeholder="15,00,000" required></div>
         </div>
-        <fieldset class="field field--md pf-choice" data-choice="exp"><legend class="field-label">Do you have any work experience?</legend><div class="pf-chips" role="radiogroup" aria-label="Do you have any work experience?"></div></fieldset>
-        <fieldset class="field field--md field-multi" data-field="experience" data-k="exp"><legend class="field-label">Total work experience</legend></fieldset>
-        <div class="field field--md" data-field="combo" data-combo="sheet" data-combo-title="Select notice period" data-error-empty="Choose your notice period" data-k="notice">
+        <fieldset class="field field--sm pf-choice" data-choice="exp"><legend class="field-label">Do you have any work experience?</legend><div class="pf-chips" role="radiogroup" aria-label="Do you have any work experience?"></div></fieldset>
+        <fieldset class="field field--sm field-multi" data-field="experience" data-k="exp"><legend class="field-label">Total work experience</legend></fieldset>
+        <div class="field field--sm" data-field="combo" data-combo="sheet" data-combo-title="Select notice period" data-error-empty="Choose your notice period" data-k="notice">
           <label class="field-label" for="pfPrNotice">Notice period</label>
           <div class="field-control"><input class="field-input" id="pfPrNotice" placeholder="Select notice period" required></div>
         </div>
-        <fieldset class="field field--md field-multi" data-field="date" data-parts="dmy" data-min="today" data-max="today+1y" data-required data-error-empty="Please select your last working day" data-lwd hidden><legend class="field-label">Last working day</legend></fieldset>
-        <div class="field field--md" data-field="combo" data-combo="inline" data-combo-free data-error-empty="Enter your current location" data-k="location">
+        <fieldset class="field field--sm field-multi" data-field="date" data-parts="dmy" data-min="today" data-max="today+1y" data-required data-error-empty="Please select your last working day" data-lwd hidden><legend class="field-label">Last working day</legend></fieldset>
+        <div class="field field--sm" data-field="combo" data-combo="inline" data-combo-free data-error-empty="Enter your current location" data-k="location">
           <label class="field-label" for="pfPrLoc">Current location</label>
           <div class="field-control"><input class="field-input" id="pfPrLoc" placeholder="City, State" autocomplete="off" required></div>
         </div>
@@ -3697,19 +3697,19 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     </div>
     <div class="bs-body bs-body--gutter">
       <div class="pf-form">
-        <div class="field field--md" data-field="text" data-error-empty="Please enter your full name" data-full data-k="name">
+        <div class="field field--sm" data-field="text" data-error-empty="Please enter your full name" data-full data-k="name">
           <label class="field-label" for="pfPeName">Full name</label>
           <div class="field-control"><input class="field-input" id="pfPeName" placeholder="Enter your full name" autocomplete="name" required minlength="2"></div>
         </div>
-        <fieldset class="field field--md field-multi" data-field="date" data-parts="dmy" data-min="1950-01-01" data-max="today-15y" data-autocomplete="bday" data-required data-k="dob"><legend class="field-label">Date of birth</legend></fieldset>
+        <fieldset class="field field--sm field-multi" data-field="date" data-parts="dmy" data-min="1950-01-01" data-max="today-15y" data-autocomplete="bday" data-required data-k="dob"><legend class="field-label">Date of birth</legend></fieldset>
         <div class="pf-tagfield" data-k="langs">
-          <div class="field field--md" data-field="combo" data-combo="inline" data-combo-free>
+          <div class="field field--sm" data-field="combo" data-combo="inline" data-combo-free>
             <label class="field-label" for="pfPeLang">Language proficiency (speak, write &amp; read)</label>
             <div class="field-control"><input class="field-input" id="pfPeLang" placeholder="Search &amp; add language" autocomplete="off"></div>
           </div>
           <div class="pf-tags" aria-label="Languages added"></div>
         </div>
-        <fieldset class="field field--md pf-choice" data-choice="gender" data-full><legend class="field-label">Gender</legend><div class="pf-chips" role="radiogroup" aria-label="Gender"></div></fieldset>
+        <fieldset class="field field--sm pf-choice" data-choice="gender" data-full><legend class="field-label">Gender</legend><div class="pf-chips" role="radiogroup" aria-label="Gender"></div></fieldset>
       </div>
     </div>
     <div class="bs-bottom">
@@ -3725,11 +3725,11 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     </div>
     <div class="bs-body bs-body--gutter">
       <div class="pf-form">
-        <div class="field field--md" data-field="phone">
+        <div class="field field--sm" data-field="phone">
           <label class="field-label" for="pfCoPhone">Phone number</label>
           <div class="field-control"><input class="field-input" id="pfCoPhone" placeholder="75855 59696" required></div>
         </div>
-        <div class="field field--md" data-field="email">
+        <div class="field field--sm" data-field="email">
           <label class="field-label" for="pfCoEmail">Email address</label>
           <div class="field-control"><input class="field-input" id="pfCoEmail" placeholder="you@example.com" required></div>
         </div>
@@ -3749,7 +3749,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     <div class="bs-body bs-body--gutter">
       <div class="pf-form">
         <div class="pf-channel" data-channel="email">
-          <div class="field field-otp" data-field="otp">
+          <div class="field field-otp field--sm" data-field="otp">
             <label class="field-label" for="pfOtpEmail">Enter the code sent to <b data-mask></b></label>
             <div class="field-otp-wrap"><input class="field-otp-input" id="pfOtpEmail" maxlength="6"><div class="field-otp-boxes"></div></div>
           </div>
@@ -3757,7 +3757,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
           <div data-done></div>
         </div>
         <div class="pf-channel" data-channel="phone">
-          <div class="field field-otp" data-field="otp">
+          <div class="field field-otp field--sm" data-field="otp">
             <label class="field-label" for="pfOtpPhone">Enter the code sent to <b data-mask></b></label>
             <div class="field-otp-wrap"><input class="field-otp-input" id="pfOtpPhone" maxlength="6"><div class="field-otp-boxes"></div></div>
           </div>
@@ -3776,7 +3776,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     <div class="bs-body bs-body--gutter">
       <div class="pf-form">
         <div class="pf-tagfield">
-          <div class="field field--md" data-field="combo" data-combo="inline" data-combo-free>
+          <div class="field field--sm" data-field="combo" data-combo="inline" data-combo-free>
             <label class="field-label field-label--hidden" for="pfSkSearch">Search skills</label>
             <div class="field-control"><input class="field-input" id="pfSkSearch" placeholder="Search &amp; add new skills" autocomplete="off" data-bs-autofocus></div>
           </div>
@@ -3800,25 +3800,25 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     </div>
     <div class="bs-body bs-body--gutter">
       <div class="pf-form">
-        <div class="field field--md" data-field="combo" data-combo="inline" data-combo-free data-error-empty="Enter your job title" data-k="title">
+        <div class="field field--sm" data-field="combo" data-combo="inline" data-combo-free data-error-empty="Enter your job title" data-k="title">
           <label class="field-label" for="pfEmTitle">Job title</label>
           <div class="field-control"><input class="field-input" id="pfEmTitle" placeholder="e.g. Product Designer" autocomplete="off" required></div>
         </div>
-        <div class="field field--md" data-field="text" data-error-empty="Enter the company name" data-k="company">
+        <div class="field field--sm" data-field="text" data-error-empty="Enter the company name" data-k="company">
           <label class="field-label" for="pfEmCompany">Company name</label>
           <div class="field-control"><input class="field-input" id="pfEmCompany" placeholder="e.g. BharatPe" autocomplete="organization" required></div>
         </div>
-        <div class="field field--md" data-field="combo" data-combo="sheet" data-combo-title="Department" data-error-empty="Select a department" data-k="department">
+        <div class="field field--sm" data-field="combo" data-combo="sheet" data-combo-title="Department" data-error-empty="Select a department" data-k="department">
           <label class="field-label" for="pfEmDept">Department</label>
           <div class="field-control"><input class="field-input" id="pfEmDept" placeholder="Select a department/branch" required></div>
         </div>
-        <div class="field field--md" data-field="combo" data-combo="sheet" data-combo-title="Industry" data-error-empty="Select an industry" data-k="industry">
+        <div class="field field--sm" data-field="combo" data-combo="sheet" data-combo-title="Industry" data-error-empty="Select an industry" data-k="industry">
           <label class="field-label" for="pfEmInd">Industry</label>
           <div class="field-control"><input class="field-input" id="pfEmInd" placeholder="Select an industry" required></div>
         </div>
-        <fieldset class="field field--md pf-choice" data-choice="current" data-error-empty="Tell us whether you are currently working in this role"><legend class="field-label">Are you currently working in this role?</legend><div class="pf-chips" role="radiogroup" aria-label="Are you currently working in this role?"></div></fieldset>
-        <fieldset class="field field--md field-multi" data-field="date" data-parts="my" data-min="1970-01-01" data-max="today" data-required data-error-empty="Select a start date" data-k="start"><legend class="field-label">Start date</legend></fieldset>
-        <fieldset class="field field--md field-multi" data-field="date" data-parts="my" data-min="1970-01-01" data-max="today" data-required data-error-empty="Select an end date" data-k="end"><legend class="field-label">End date</legend></fieldset>
+        <fieldset class="field field--sm pf-choice" data-choice="current" data-error-empty="Tell us whether you are currently working in this role"><legend class="field-label">Are you currently working in this role?</legend><div class="pf-chips" role="radiogroup" aria-label="Are you currently working in this role?"></div></fieldset>
+        <fieldset class="field field--sm field-multi" data-field="date" data-parts="my" data-min="1970-01-01" data-max="today" data-required data-error-empty="Select a start date" data-k="start"><legend class="field-label">Start date</legend></fieldset>
+        <fieldset class="field field--sm field-multi" data-field="date" data-parts="my" data-min="1970-01-01" data-max="today" data-required data-error-empty="Select an end date" data-k="end"><legend class="field-label">End date</legend></fieldset>
       </div>
     </div>
     <div class="bs-bottom">
@@ -3834,23 +3834,23 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     </div>
     <div class="bs-body bs-body--gutter">
       <div class="pf-form">
-        <div class="field field--md" data-field="combo" data-combo="sheet" data-combo-title="Education" data-error-empty="Select your education" data-k="level">
+        <div class="field field--sm" data-field="combo" data-combo="sheet" data-combo-title="Education" data-error-empty="Select your education" data-k="level">
           <label class="field-label" for="pfEdLevel">Education</label>
           <div class="field-control"><input class="field-input" id="pfEdLevel" placeholder="Select your education" required></div>
         </div>
-        <fieldset class="field field--md pf-choice" data-choice="ctype" data-error-empty="Choose a course type"><legend class="field-label">Course type</legend><div class="pf-chips" role="radiogroup" aria-label="Course type"></div></fieldset>
-        <div class="field field--md" data-field="combo" data-combo="sheet" data-combo-free data-combo-title="University / Institute / Board" data-error-empty="Select your university or institute" data-k="institute">
+        <fieldset class="field field--sm pf-choice" data-choice="ctype" data-error-empty="Choose a course type"><legend class="field-label">Course type</legend><div class="pf-chips" role="radiogroup" aria-label="Course type"></div></fieldset>
+        <div class="field field--sm" data-field="combo" data-combo="sheet" data-combo-free data-combo-title="University / Institute / Board" data-error-empty="Select your university or institute" data-k="institute">
           <label class="field-label" for="pfEdInst">University/Institute/Board</label>
           <div class="field-control"><input class="field-input" id="pfEdInst" placeholder="Select your university or institute" required></div>
         </div>
-        <fieldset class="field field--md pf-choice" data-choice="pursuing" data-error-empty="Tell us whether you are currently pursuing this course"><legend class="field-label">Are you currently pursuing this course?</legend><div class="pf-chips" role="radiogroup" aria-label="Are you currently pursuing this course?"></div></fieldset>
-        <fieldset class="field field--md field-multi" data-field="date" data-parts="my" data-min="1970-01-01" data-max="today" data-required data-error-empty="Select a start date" data-k="start"><legend class="field-label">Start date</legend></fieldset>
-        <fieldset class="field field--md field-multi" data-field="date" data-parts="my" data-min="1970-01-01" data-max="today+6y" data-required data-error-empty="Select an end date" data-k="end"><legend class="field-label">End date</legend></fieldset>
-        <div class="field field--md" data-field="combo" data-combo="sheet" data-combo-title="Grading system" data-k="grade">
+        <fieldset class="field field--sm pf-choice" data-choice="pursuing" data-error-empty="Tell us whether you are currently pursuing this course"><legend class="field-label">Are you currently pursuing this course?</legend><div class="pf-chips" role="radiogroup" aria-label="Are you currently pursuing this course?"></div></fieldset>
+        <fieldset class="field field--sm field-multi" data-field="date" data-parts="my" data-min="1970-01-01" data-max="today" data-required data-error-empty="Select a start date" data-k="start"><legend class="field-label">Start date</legend></fieldset>
+        <fieldset class="field field--sm field-multi" data-field="date" data-parts="my" data-min="1970-01-01" data-max="today+6y" data-required data-error-empty="Select an end date" data-k="end"><legend class="field-label">End date</legend></fieldset>
+        <div class="field field--sm" data-field="combo" data-combo="sheet" data-combo-title="Grading system" data-k="grade">
           <label class="field-label" for="pfEdGrade">Grading system <span class="optional">(optional)</span></label>
           <div class="field-control"><input class="field-input" id="pfEdGrade" placeholder="Select grading system"></div>
         </div>
-        <div class="field field--md" data-field="text" data-error-empty="Enter your obtained marks" data-k="marks" hidden>
+        <div class="field field--sm" data-field="text" data-error-empty="Enter your obtained marks" data-k="marks" hidden>
           <label class="field-label" for="pfEdMarks">Obtained marks</label>
           <div class="field-control"><input class="field-input" id="pfEdMarks" placeholder="e.g. 80" autocomplete="off" required></div>
         </div>
@@ -3869,48 +3869,48 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     </div>
     <div class="bs-body bs-body--gutter">
       <div class="pf-form">
-        <fieldset class="field field--md pf-choice" data-choice="ltype"><legend class="field-label">Link type</legend><div class="pf-chips" role="radiogroup" aria-label="Link type"></div></fieldset>
+        <fieldset class="field field--sm pf-choice" data-choice="ltype"><legend class="field-label">Link type</legend><div class="pf-chips" role="radiogroup" aria-label="Link type"></div></fieldset>
         <div class="pf-form" data-ltype="social">
-          <div class="field field--md" data-field="combo" data-combo="inline" data-error-empty="Select a social platform" data-k="platform">
+          <div class="field field--sm" data-field="combo" data-combo="inline" data-error-empty="Select a social platform" data-k="platform">
             <label class="field-label" for="pfLiSocial">Social platform</label>
             <div class="field-control"><input class="field-input" id="pfLiSocial" placeholder="Select platform" required></div>
           </div>
-          <div class="field field--md" data-field="text" data-error-empty="Enter a URL" data-k="url">
+          <div class="field field--sm" data-field="text" data-error-empty="Enter a URL" data-k="url">
             <label class="field-label" for="pfLiSocialUrl">URL</label>
             <div class="field-control"><input class="field-input" id="pfLiSocialUrl" type="url" inputmode="url" placeholder="e.g. https://linkedin.com/in/your-handle" autocomplete="off" pattern="https?://.+" data-error="Enter a valid URL starting with http(s)://" required></div>
           </div>
         </div>
         <div class="pf-form" data-ltype="portfolio" hidden>
-          <div class="field field--md" data-field="combo" data-combo="inline" data-error-empty="Select a portfolio platform" data-k="platform">
+          <div class="field field--sm" data-field="combo" data-combo="inline" data-error-empty="Select a portfolio platform" data-k="platform">
             <label class="field-label" for="pfLiPortf">Portfolio platform</label>
             <div class="field-control"><input class="field-input" id="pfLiPortf" placeholder="Select platform" required></div>
           </div>
-          <div class="field field--md" data-field="text" data-error-empty="Enter a URL" data-k="url">
+          <div class="field field--sm" data-field="text" data-error-empty="Enter a URL" data-k="url">
             <label class="field-label" for="pfLiPortfUrl">URL</label>
             <div class="field-control"><input class="field-input" id="pfLiPortfUrl" type="url" inputmode="url" placeholder="e.g. https://dribbble.com/your-handle" autocomplete="off" pattern="https?://.+" data-error="Enter a valid URL starting with http(s)://" required></div>
           </div>
         </div>
         <div class="pf-form" data-ltype="cert" hidden>
-          <div class="field field--md" data-field="text" data-error-empty="Enter the certificate name" data-k="name">
+          <div class="field field--sm" data-field="text" data-error-empty="Enter the certificate name" data-k="name">
             <label class="field-label" for="pfLiCertName">Certification name</label>
             <div class="field-control"><input class="field-input" id="pfLiCertName" placeholder="Enter certificate name" autocomplete="off" required></div>
           </div>
-          <div class="field field--md" data-field="text" data-k="url">
+          <div class="field field--sm" data-field="text" data-k="url">
             <label class="field-label" for="pfLiCertUrl">URL <span class="optional">(optional)</span></label>
             <div class="field-control"><input class="field-input" id="pfLiCertUrl" type="url" inputmode="url" placeholder="e.g. https://app.com/cert/12345" autocomplete="off" pattern="https?://.+" data-error="Enter a valid URL starting with http(s)://"></div>
           </div>
-          <fieldset class="field field--md field-multi" data-field="date" data-parts="my" data-min="1970-01-01" data-max="today" data-required data-error-empty="Select the issue date" data-k="issue"><legend class="field-label">Issue date</legend></fieldset>
+          <fieldset class="field field--sm field-multi" data-field="date" data-parts="my" data-min="1970-01-01" data-max="today" data-required data-error-empty="Select the issue date" data-k="issue"><legend class="field-label">Issue date</legend></fieldset>
         </div>
         <div class="pf-form" data-ltype="project" hidden>
-          <div class="field field--md" data-field="text" data-error-empty="Enter the project title" data-k="name">
+          <div class="field field--sm" data-field="text" data-error-empty="Enter the project title" data-k="name">
             <label class="field-label" for="pfLiProjTitle">Project title</label>
             <div class="field-control"><input class="field-input" id="pfLiProjTitle" placeholder="e.g. Personal portfolio redesign" autocomplete="off" required></div>
           </div>
-          <div class="field field--md" data-field="text" data-error-empty="Enter the project URL" data-k="url">
+          <div class="field field--sm" data-field="text" data-error-empty="Enter the project URL" data-k="url">
             <label class="field-label" for="pfLiProjUrl">Project URL</label>
             <div class="field-control"><input class="field-input" id="pfLiProjUrl" type="url" inputmode="url" placeholder="e.g. https://github.com/you/project" autocomplete="off" pattern="https?://.+" data-error="Enter a valid URL starting with http(s)://" required></div>
           </div>
-          <div class="field field--md pf-textfield" data-k="desc">
+          <div class="field field--sm pf-textfield" data-k="desc">
             <label class="field-label" for="pfLiProjDesc">Description</label>
             <div class="field-control"><textarea class="field-input pf-textarea" id="pfLiProjDesc" rows="3" maxlength="300" placeholder="One or two lines on what this project does and your role in it."></textarea></div>
           </div>
@@ -3930,23 +3930,23 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     </div>
     <div class="bs-body bs-body--gutter">
       <div class="pf-form">
-        <div class="field field--md" data-field="combo" data-combo="inline" data-combo-free data-k="role">
+        <div class="field field--sm" data-field="combo" data-combo="inline" data-combo-free data-k="role">
           <label class="field-label" for="pfJpRole">Preferred job role</label>
           <div class="field-control"><input class="field-input" id="pfJpRole" placeholder="e.g. Product Designer" autocomplete="off"></div>
         </div>
-        <div class="field field--md" data-field="text" data-salary data-k="salary">
+        <div class="field field--sm" data-field="text" data-salary data-k="salary">
           <label class="field-label" for="pfJpSalary">Expected annual salary</label>
           <div class="field-control"><span class="field-prefix" aria-hidden="true">₹</span><input class="field-input" id="pfJpSalary" inputmode="numeric" autocomplete="off" placeholder="35,00,000"></div>
         </div>
-        <fieldset class="field field--md pf-choice" data-choice="jobtype" data-multi><legend class="field-label">Job type</legend><div class="pf-chips" role="group" aria-label="Job type"></div></fieldset>
+        <fieldset class="field field--sm pf-choice" data-choice="jobtype" data-multi><legend class="field-label">Job type</legend><div class="pf-chips" role="group" aria-label="Job type"></div></fieldset>
         <div class="pf-tagfield" data-k="locs">
-          <div class="field field--md" data-field="combo" data-combo="inline" data-combo-free>
+          <div class="field field--sm" data-field="combo" data-combo="inline" data-combo-free>
             <label class="field-label" for="pfJpLoc">Preferred locations <span class="optional">(up to 5)</span></label>
             <div class="field-control"><input class="field-input" id="pfJpLoc" placeholder="Search &amp; add a city" autocomplete="off"></div>
           </div>
           <div class="pf-tags" aria-label="Locations added"></div>
         </div>
-        <fieldset class="field field--md pf-choice" data-choice="workmode" data-multi><legend class="field-label">Work mode</legend><div class="pf-chips" role="group" aria-label="Work mode"></div></fieldset>
+        <fieldset class="field field--sm pf-choice" data-choice="workmode" data-multi><legend class="field-label">Work mode</legend><div class="pf-chips" role="group" aria-label="Work mode"></div></fieldset>
       </div>
     </div>
     <div class="bs-bottom">
@@ -3991,7 +3991,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
       <div class="bs-head bs-head--display bs-head--lg"><div class="bs-heading"><h2 class="bs-title">Add your new <span class="accent">salary</span></h2><p class="bs-sub">Recruiters filter on salary first. Yours stays private till you respond.</p></div><button class="bs-close" type="button" data-bs-close aria-label="Close"><svg aria-hidden="true" focusable="false" data-icon="ic_close-outline" viewBox="0 0 20 20" fill="none"><path d="M16.2528 3.00257L16.3599 3.01371L16.3814 3.01543L16.4028 3.02228L16.5056 3.05313L16.5253 3.05999L16.5433 3.06942L16.6582 3.12941L16.6753 3.14398L16.7584 3.21254L16.7747 3.22625L16.7884 3.24253L16.857 3.32566L16.8716 3.3428L16.9316 3.45764L16.941 3.47564L16.947 3.49535L16.9787 3.59819L16.9855 3.61876L16.9873 3.64104L16.9984 3.74816L17.0001 3.76959L16.9984 3.79101L16.9873 3.89814L16.9855 3.92042L16.9787 3.94099L16.947 4.04383L16.941 4.06354L16.9316 4.08154L16.8716 4.19638L16.857 4.21352L16.7884 4.29665L16.7816 4.30522L11.0859 10L16.7816 15.6956L16.7884 15.7042L16.857 15.7873L16.8716 15.8045L16.9316 15.9193L16.941 15.9373L16.947 15.957L16.9787 16.0599L16.9855 16.0804L16.9873 16.1027L16.9984 16.2098L17.0001 16.2313L16.9984 16.2527L16.9873 16.3598L16.9855 16.3812L16.9787 16.4027L16.947 16.5055L16.941 16.5252L16.9316 16.5432L16.8716 16.6581L16.857 16.6752L16.7884 16.7583L16.7747 16.7746L16.7584 16.7883L16.6753 16.8569L16.6582 16.8714L16.5433 16.9314L16.5253 16.9409L16.5056 16.9469L16.4028 16.9786L16.3814 16.9854L16.3599 16.9871L16.2528 16.9983L16.2314 17L16.21 16.9983L16.1028 16.9871L16.0806 16.9854L16.06 16.9786L15.9571 16.9469L15.9374 16.9409L15.9194 16.9314L15.8046 16.8714L15.7875 16.8569L15.7043 16.7883L15.6958 16.7815L10.0001 11.0858L4.30534 16.7815L4.29676 16.7883L4.21364 16.8569L4.1965 16.8714L4.08166 16.9314L4.06366 16.9409L4.04395 16.9469L3.94111 16.9786L3.92054 16.9854L3.89826 16.9871L3.79113 16.9983L3.76971 17L3.74828 16.9983L3.64116 16.9871L3.61888 16.9854L3.59831 16.9786L3.49547 16.9469L3.47576 16.9409L3.45776 16.9314L3.34292 16.8714L3.32578 16.8569L3.24265 16.7883L3.22637 16.7746L3.21266 16.7583L3.1441 16.6752L3.12953 16.6581L3.06954 16.5432L3.06011 16.5252L3.05325 16.5055L3.0224 16.4027L3.01555 16.3812L3.01383 16.3598L3.00269 16.2527L3.00098 16.2313L3.00269 16.2098L3.01383 16.1027L3.01555 16.0804L3.0224 16.0599L3.05325 15.957L3.06011 15.9373L3.06954 15.9193L3.12953 15.8045L3.1441 15.7873L3.21266 15.7042L3.21951 15.6956L3.22637 15.6879L8.91344 10L3.21866 4.30522L3.21266 4.29665L3.1441 4.21352L3.12953 4.19638L3.06954 4.08154L3.06011 4.06354L3.05325 4.04383L3.0224 3.94099L3.01555 3.92042L3.01383 3.89814L3.00269 3.79101L3.00098 3.76959L3.00269 3.74816L3.01383 3.64104L3.01555 3.61876L3.0224 3.59819L3.05325 3.49535L3.06011 3.47564L3.06954 3.45764L3.12953 3.3428L3.1441 3.32566L3.21266 3.24253L3.22637 3.22625L3.24265 3.21254L3.32578 3.14398L3.34292 3.12941L3.45776 3.06942L3.47576 3.05999L3.49547 3.05313L3.59831 3.02228L3.61888 3.01543L3.64116 3.01371L3.74828 3.00257L3.76971 3L3.79113 3.00257L3.89826 3.01371L3.92054 3.01543L3.94111 3.02228L4.04395 3.05313L4.06366 3.05999L4.08166 3.06942L4.1965 3.12941L4.21364 3.14398L4.29676 3.21254L4.30534 3.21854L10.0001 8.91332L15.688 3.22625L15.6958 3.21939L15.7043 3.21254L15.7875 3.14398L15.8046 3.12941L15.9194 3.06942L15.9374 3.05999L15.9571 3.05313L16.06 3.02228L16.0806 3.01543L16.1028 3.01371L16.21 3.00257L16.2314 3L16.2528 3.00257Z" fill="currentColor"/></svg></button></div>
     </div>
     <div class="bs-body bs-body--gutter">
-      <div class="field field--md" data-field="text" data-error-empty="Enter your annual salary" data-salary>
+      <div class="field field--sm" data-field="text" data-error-empty="Enter your annual salary" data-salary>
         <label class="field-label" for="pfRrSalary">Annual salary</label>
         <div class="field-control"><span class="field-prefix" aria-hidden="true">₹</span><input class="field-input" id="pfRrSalary" inputmode="numeric" autocomplete="off" placeholder="15,00,000" required data-bs-autofocus></div>
       </div>
@@ -4005,8 +4005,8 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     </div>
     <div class="bs-body bs-body--gutter">
       <div class="pf-form">
-        <fieldset class="field field--md pf-choice" data-choice="notice" data-error-empty="Choose your notice period"><legend class="field-label">Notice period</legend><div class="pf-chips" role="radiogroup" aria-label="Notice period"></div></fieldset>
-        <fieldset class="field field--md field-multi" data-field="date" data-parts="dmy" data-min="today" data-max="today+1y" data-required data-error-empty="Please select your last working day" data-lwd hidden><legend class="field-label">Please provide your last working day</legend></fieldset>
+        <fieldset class="field field--sm pf-choice" data-choice="notice" data-error-empty="Choose your notice period"><legend class="field-label">Notice period</legend><div class="pf-chips" role="radiogroup" aria-label="Notice period"></div></fieldset>
+        <fieldset class="field field--sm field-multi" data-field="date" data-parts="dmy" data-min="today" data-max="today+1y" data-required data-error-empty="Please select your last working day" data-lwd hidden><legend class="field-label">Please provide your last working day</legend></fieldset>
       </div>
     </div>
     <div class="bs-bottom"><div class="bs-actions"><button class="btn btn--primary btn--lg btn--block" type="button" data-act="rr-notice">Save</button></div></div>
@@ -4017,7 +4017,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
       <div class="bs-head bs-head--display bs-head--lg"><div class="bs-heading"><h2 class="bs-title">Add your <span class="accent">current location</span></h2><p class="bs-sub">Surfaces local and hybrid roles in your area.</p></div><button class="bs-close" type="button" data-bs-close aria-label="Close"><svg aria-hidden="true" focusable="false" data-icon="ic_close-outline" viewBox="0 0 20 20" fill="none"><path d="M16.2528 3.00257L16.3599 3.01371L16.3814 3.01543L16.4028 3.02228L16.5056 3.05313L16.5253 3.05999L16.5433 3.06942L16.6582 3.12941L16.6753 3.14398L16.7584 3.21254L16.7747 3.22625L16.7884 3.24253L16.857 3.32566L16.8716 3.3428L16.9316 3.45764L16.941 3.47564L16.947 3.49535L16.9787 3.59819L16.9855 3.61876L16.9873 3.64104L16.9984 3.74816L17.0001 3.76959L16.9984 3.79101L16.9873 3.89814L16.9855 3.92042L16.9787 3.94099L16.947 4.04383L16.941 4.06354L16.9316 4.08154L16.8716 4.19638L16.857 4.21352L16.7884 4.29665L16.7816 4.30522L11.0859 10L16.7816 15.6956L16.7884 15.7042L16.857 15.7873L16.8716 15.8045L16.9316 15.9193L16.941 15.9373L16.947 15.957L16.9787 16.0599L16.9855 16.0804L16.9873 16.1027L16.9984 16.2098L17.0001 16.2313L16.9984 16.2527L16.9873 16.3598L16.9855 16.3812L16.9787 16.4027L16.947 16.5055L16.941 16.5252L16.9316 16.5432L16.8716 16.6581L16.857 16.6752L16.7884 16.7583L16.7747 16.7746L16.7584 16.7883L16.6753 16.8569L16.6582 16.8714L16.5433 16.9314L16.5253 16.9409L16.5056 16.9469L16.4028 16.9786L16.3814 16.9854L16.3599 16.9871L16.2528 16.9983L16.2314 17L16.21 16.9983L16.1028 16.9871L16.0806 16.9854L16.06 16.9786L15.9571 16.9469L15.9374 16.9409L15.9194 16.9314L15.8046 16.8714L15.7875 16.8569L15.7043 16.7883L15.6958 16.7815L10.0001 11.0858L4.30534 16.7815L4.29676 16.7883L4.21364 16.8569L4.1965 16.8714L4.08166 16.9314L4.06366 16.9409L4.04395 16.9469L3.94111 16.9786L3.92054 16.9854L3.89826 16.9871L3.79113 16.9983L3.76971 17L3.74828 16.9983L3.64116 16.9871L3.61888 16.9854L3.59831 16.9786L3.49547 16.9469L3.47576 16.9409L3.45776 16.9314L3.34292 16.8714L3.32578 16.8569L3.24265 16.7883L3.22637 16.7746L3.21266 16.7583L3.1441 16.6752L3.12953 16.6581L3.06954 16.5432L3.06011 16.5252L3.05325 16.5055L3.0224 16.4027L3.01555 16.3812L3.01383 16.3598L3.00269 16.2527L3.00098 16.2313L3.00269 16.2098L3.01383 16.1027L3.01555 16.0804L3.0224 16.0599L3.05325 15.957L3.06011 15.9373L3.06954 15.9193L3.12953 15.8045L3.1441 15.7873L3.21266 15.7042L3.21951 15.6956L3.22637 15.6879L8.91344 10L3.21866 4.30522L3.21266 4.29665L3.1441 4.21352L3.12953 4.19638L3.06954 4.08154L3.06011 4.06354L3.05325 4.04383L3.0224 3.94099L3.01555 3.92042L3.01383 3.89814L3.00269 3.79101L3.00098 3.76959L3.00269 3.74816L3.01383 3.64104L3.01555 3.61876L3.0224 3.59819L3.05325 3.49535L3.06011 3.47564L3.06954 3.45764L3.12953 3.3428L3.1441 3.32566L3.21266 3.24253L3.22637 3.22625L3.24265 3.21254L3.32578 3.14398L3.34292 3.12941L3.45776 3.06942L3.47576 3.05999L3.49547 3.05313L3.59831 3.02228L3.61888 3.01543L3.64116 3.01371L3.74828 3.00257L3.76971 3L3.79113 3.00257L3.89826 3.01371L3.92054 3.01543L3.94111 3.02228L4.04395 3.05313L4.06366 3.05999L4.08166 3.06942L4.1965 3.12941L4.21364 3.14398L4.29676 3.21254L4.30534 3.21854L10.0001 8.91332L15.688 3.22625L15.6958 3.21939L15.7043 3.21254L15.7875 3.14398L15.8046 3.12941L15.9194 3.06942L15.9374 3.05999L15.9571 3.05313L16.06 3.02228L16.0806 3.01543L16.1028 3.01371L16.21 3.00257L16.2314 3L16.2528 3.00257Z" fill="currentColor"/></svg></button></div>
     </div>
     <div class="bs-body bs-body--gutter">
-      <div class="field field--md" data-field="combo" data-combo="inline" data-combo-free data-error-empty="Enter your current location">
+      <div class="field field--sm" data-field="combo" data-combo="inline" data-combo-free data-error-empty="Enter your current location">
         <label class="field-label" for="pfRrLoc">Current location</label>
         <div class="field-control"><input class="field-input" id="pfRrLoc" placeholder="City, State" autocomplete="off" required></div>
       </div>
@@ -5551,16 +5551,17 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 })(window.ShineField);
 </script>
 <!-- ▲ COMPONENT · normal-field -->
-<!-- ▼ COMPONENT · combo-box v4.0.2 · verbatim copy of App-login/app-components/atoms/input-fields/combo-box/combo-box.js — do not edit here -->
+<!-- ▼ COMPONENT · combo-box v4.1.0 · verbatim copy of App-login/app-components/atoms/input-fields/combo-box/combo-box.js — do not edit here -->
 <script data-component="combo-box">
-/* SHINE · INPUT FIELDS · COMBO BOX  (atoms/input-fields/combo-box/)      v4.0.2
+/* SHINE · INPUT FIELDS · COMBO BOX  (atoms/input-fields/combo-box/)      v4.1.0
    Needs field-base.css + field-base.js and combo-box.css. The sheet mode also needs the bottom-sheet component
    (app-components/bottom-sheet: bottom-sheet.css + bottom-sheet.js); without it the list opens inline.
+   v4.1.0 · the sheet's search box takes the field's own size (Small in the app: 40 tall).
    v4.0.0 · the inline list IS the inline dropdown component (app-components/inline-dropdown: inline-dropdown.css +
    inline-dropdown.js, ShineDropdown — Small by default) when it is loaded; without it, the combo box's own list (v3).
    Search, then pick one:
 
-     <div class="field field--md" data-field="combo" data-combo="auto">
+     <div class="field field--sm" data-field="combo" data-combo="auto">     (Small = the phone & app size)
        <label class="field-label" for="city">Current city</label>
        <div class="field-control"><input class="field-input" id="city" placeholder="Search your city"></div>
        <ul class="field-options" hidden>                       the options — page data, never shown as is
@@ -5797,7 +5798,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
       sheet = doc.createElement('div'); sheet.className = 'bs bs--pad-bottom field-sheet'; sheet.hidden = true;
       sheet.innerHTML = '<div class="bs-top"><div class="bs-handle" aria-hidden="true"></div><div class="bs-head bs-head--md"><div class="bs-heading"><h2 class="bs-title">' + esc(title) + '</h2></div>' +
         '<button class="bs-close" type="button" data-bs-close aria-label="Close">' + IC['ic_close-outline'] + '</button></div></div>' +
-        '<div class="bs-body bs-body--gutter"><div class="field field--md field-combo-sheet"><div class="field-sheet-search"><label class="field-label field-label--hidden" for="' + sid + '">Search ' + esc(name) + '</label>' +
+        '<div class="bs-body bs-body--gutter"><div class="field field--' + ((el.className.match(/\bfield--(sm|md|lg|xl)\b/) || [])[1] || 'md') + ' field-combo-sheet"><div class="field-sheet-search"><label class="field-label field-label--hidden" for="' + sid + '">Search ' + esc(name) + '</label>' +
         '<div class="field-control"><span class="field-icon" aria-hidden="true">' + IC['ic_search-outline'] + '</span><input class="field-input" id="' + sid + '" type="text" role="combobox" aria-autocomplete="list" aria-expanded="true" aria-controls="' + lid + '" autocomplete="off" spellcheck="false" enterkeyhint="search" data-bs-autofocus placeholder="' + esc(el.getAttribute('data-combo-placeholder') || 'Search') + '">' +
         '<button class="field-trailing" type="button" data-combo-btn="clear" aria-label="Clear search" hidden>' + IC['ic_close-outline'] + '</button></div></div>' +
         '<ul class="field-listbox field-listbox--sheet" role="listbox" id="' + lid + '" aria-label="' + esc(title) + '"></ul><span class="sr-only" aria-live="polite"></span></div></div>';
