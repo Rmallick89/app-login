@@ -11,7 +11,7 @@
   })();
 </script>
 <meta name="theme-color" content="#161B22" />
-<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.27 (2026-10-25) — the field you tap glides up to the first field's place and stays there (bottom-sheet v2.11.0 focus anchor) · v1.26: Small dropdown shows 3½ rows (inline-dropdown v1.5.0) · v1.25: Small dropdown rows get room for a finger (38, inline-dropdown v1.4.1) · v1.24: every inline list is the inline dropdown component (Small · combo box v4.0.0); chips fields show “Added” · v1.23: full-screen headings: Display · Large (modal v2.10.0) · v1.22: full-screens fade through (modal v2.9.0, the user's option C) · v1.21: iPhone status bar on full-screens (modal v2.8.3: page pinned at scroll 0 while a full-screen is up · strip hit-testable) · status-bar strip (modal v2.8.2) · short lists without search · lists never behind the keyboard (combo box v3.1.0)
+<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.28 (2026-10-25) — tapping a field puts a thin caret after its text instead of selecting it (input fields v3.1.0) · v1.27: the field you tap glides up to the first field's place and stays there (bottom-sheet v2.11.0 focus anchor) · v1.26: Small dropdown shows 3½ rows (inline-dropdown v1.5.0) · v1.25: Small dropdown rows get room for a finger (38, inline-dropdown v1.4.1) · v1.24: every inline list is the inline dropdown component (Small · combo box v4.0.0); chips fields show “Added” · v1.23: full-screen headings: Display · Large (modal v2.10.0) · v1.22: full-screens fade through (modal v2.9.0, the user's option C) · v1.21: iPhone status bar on full-screens (modal v2.8.3: page pinned at scroll 0 while a full-screen is up · strip hit-testable) · status-bar strip (modal v2.8.2) · short lists without search · lists never behind the keyboard (combo box v3.1.0)
      Built from the mobile view (≤ 480 px) of <Shine Revamp>/profile-index.html, on the design system
      (design-system/DESIGN-SYSTEM.md + component-system.md): semantic tokens only, the buttons atom (atoms/buttons), DS atoms (A.04 Badge,
      A.05 Tag, A.08 Avatar, A.09 Toast). No menu / title on this tab (v1.1, user): the full-bleed hero starts at the top
@@ -888,10 +888,10 @@
 .lcard--empty .lcard-text { margin-bottom: var(--lc-stack-lg); font: var(--card-sub1-font); color: var(--card-sub1-color); }   /* 3 Subtext 1 */
 </style>
 <!-- ▲ COMPONENT · links-card -->
-<!-- ▼ COMPONENT · field-base v3.0.5 · verbatim copy of App-login/app-components/atoms/input-fields/field-base/field-base.css — do not edit here -->
+<!-- ▼ COMPONENT · field-base v3.1.0 · verbatim copy of App-login/app-components/atoms/input-fields/field-base/field-base.css — do not edit here -->
 <style data-component="field-base">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · INPUT FIELDS · FIELD BASE  (app component · App-login · atoms/input-fields/)      v3.0.5
+   SHINE · INPUT FIELDS · FIELD BASE  (app component · App-login · atoms/input-fields/)      v3.1.0
    The shared layer under the five input field components — not a field on its own. Load it FIRST, then the
    component(s) the page uses:  normal-field · password-field · otp-field · combo-box · multi-input.
    Built on design-system A.01 Input (component-system.md), semantic tokens only, light and dark.
@@ -930,6 +930,7 @@
   --fld-edge: #E4E7EC;                      /* stroke.neutral.base */
   --fld-edge-hover: #344054;                /* content.neutral.muted — A.01 hover edge (mouse / trackpad only) */
   --fld-focus: #1A56FF;                     /* stroke.neutral.focus */
+  --fld-caret: #1A56FF;                     /* stroke.neutral.focus — the caret (v3.1.0): a thin brand line at the end of the text, never the text's black */
   --fld-ring: rgba(26, 86, 255, .10);       /* elevation.focus.default — 0 0 0 4px brand-500 10 % */
   --fld-text: #0D1117;                      /* content.neutral.base — typed text */
   --fld-label: #344054;                     /* content.neutral.muted — label, helper, prefix */
@@ -998,7 +999,7 @@ legend.field-label--hidden { float: none; width: 1px; }
 }
 .field-input {
   flex: 1; min-width: 0; height: 100%; margin: 0; padding: 0; border: 0; outline: 0; border-radius: 0;
-  background: transparent; color: var(--fld-text); caret-color: var(--fld-text);
+  background: transparent; color: var(--fld-text); caret-color: var(--fld-caret);   /* v3.1.0: subtle — the focus colour, not the text's */
   font: 500 var(--fld-fs)/var(--fld-lh) var(--fld-font); letter-spacing: 0;      /* typography.body.* · medium */
   -webkit-appearance: none; appearance: none;
 }
@@ -1006,7 +1007,7 @@ legend.field-label--hidden { float: none; width: 1px; }
 .field-input::-ms-reveal, .field-input::-ms-clear { display: none; }               /* Edge's own eye — we have one */
 /* browser autofill keeps the box's own fill and ink (Chrome paints its own blue / yellow) */
 .field-input:-webkit-autofill, .field-input:-webkit-autofill:hover, .field-input:-webkit-autofill:focus {
-  -webkit-text-fill-color: var(--fld-text); caret-color: var(--fld-text);
+  -webkit-text-fill-color: var(--fld-text); caret-color: var(--fld-caret);
   -webkit-box-shadow: 0 0 0 1000px var(--_bg) inset; box-shadow: 0 0 0 1000px var(--_bg) inset;
   transition: background-color 9999s 0s;
 }
@@ -1093,6 +1094,7 @@ legend.field-label--hidden { float: none; width: 1px; }
   --fld-edge: #4A5260;                      /* stroke.neutral.base · cool-600 */
   --fld-edge-hover: #C8CED7;                /* content.neutral.muted · cool-300 */
   --fld-focus: #7EA3FF;                     /* stroke.neutral.focus · brand-300 */
+  --fld-caret: #7EA3FF;                     /* stroke.neutral.focus · brand-300 */
   --fld-ring: rgba(26, 86, 255, .20);       /* elevation.focus.default (dark α) */
   --fld-text: #F7F9FB;                      /* content.neutral.base · cool-50 */
   --fld-label: #C8CED7;                     /* content.neutral.muted · cool-300 */
@@ -1112,10 +1114,10 @@ legend.field-label--hidden { float: none; width: 1px; }
 @media (prefers-reduced-motion: reduce) { .field-control, .field-trailing, .field-icon { transition: none; } }
 </style>
 <!-- ▲ COMPONENT · field-base -->
-<!-- ▼ COMPONENT · combo-box v4.0.1 · verbatim copy of App-login/app-components/atoms/input-fields/combo-box/combo-box.css — do not edit here -->
+<!-- ▼ COMPONENT · combo-box v4.0.2 · verbatim copy of App-login/app-components/atoms/input-fields/combo-box/combo-box.css — do not edit here -->
 <style data-component="combo-box">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · INPUT FIELDS · COMBO BOX  (atoms/input-fields/combo-box/)      v4.0.1
+   SHINE · INPUT FIELDS · COMBO BOX  (atoms/input-fields/combo-box/)      v4.0.2
    v4.0.0 · with the inline dropdown component loaded (app-components/inline-dropdown), the inline list is that component
    (Small by default); the .field-pop list below is the fallback when it isn't loaded.
    Search, then pick one from a list — the list opens INLINE (a dropdown under the box) or in a BOTTOM SHEET.
@@ -1381,10 +1383,10 @@ legend.field-label--hidden { float: none; width: 1px; }
 @media (prefers-reduced-motion: reduce) { .dropdown { transition: none; } .dropdown.is-entering { transform: none; } .dropdown-spin { animation-duration: 2s; } }
 </style>
 <!-- ▲ COMPONENT · inline-dropdown -->
-<!-- ▼ COMPONENT · multi-input v3.0.5 · verbatim copy of App-login/app-components/atoms/input-fields/multi-input/multi-input.css — do not edit here -->
+<!-- ▼ COMPONENT · multi-input v3.1.0 · verbatim copy of App-login/app-components/atoms/input-fields/multi-input/multi-input.css — do not edit here -->
 <style data-component="multi-input">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · INPUT FIELDS · MULTI INPUT  (atoms/input-fields/multi-input/)      v3.0.5
+   SHINE · INPUT FIELDS · MULTI INPUT  (atoms/input-fields/multi-input/)      v3.1.0
    One answer typed into 2 or 3 boxes in a row: a DATE (day · month · year, or month · year) or WORK EXPERIENCE
    (years · months). Needs field-base.css first — every box is a field-base box. Behaviour: multi-input.js.
 
@@ -5283,10 +5285,10 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 })(window);
 </script>
 <!-- ▲ COMPONENT · inline-dropdown -->
-<!-- ▼ COMPONENT · field-base v3.0.5 · verbatim copy of App-login/app-components/atoms/input-fields/field-base/field-base.js — do not edit here -->
+<!-- ▼ COMPONENT · field-base v3.1.0 · verbatim copy of App-login/app-components/atoms/input-fields/field-base/field-base.js — do not edit here -->
 <script data-component="field-base">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · INPUT FIELDS · FIELD BASE  (app component · App-login · atoms/input-fields/)      v3.0.5
+   SHINE · INPUT FIELDS · FIELD BASE  (app component · App-login · atoms/input-fields/)      v3.1.0
    Pair with field-base.css. The shared engine under the five components — load it FIRST, then the script of each
    component the page uses: normal-field.js · password-field.js · otp-field.js · combo-box.js · multi-input.js.
    No dependencies (combo-box.js also uses the bottom sheet for its sheet mode).
@@ -5307,6 +5309,8 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
                   error, puts the caret in the first one. Empty fields are an error only when the input is
                   `required` ("Enter your <label>", or data-error-empty).
      Tap focus    a tap anywhere on a box (padding, +91, a unit) puts the caret in its field
+     Caret        (v3.1.0) focusing a field never selects its text: the caret goes after the last character, thin and
+                  in the focus colour (--fld-caret). A tap in a field that already has the caret moves it as usual.
      Wiring       fields are wired on load; ShineField.init(root) wires fields a page adds later
    Events (bubble from the field): `shine:field` { type, value, valid } — every component sends it when its value
    changes; some send their own as well (shine:otp-complete, shine:combo).
@@ -5365,6 +5369,31 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
   doc.addEventListener('click', function (e) {
     var c = e.target.closest && e.target.closest('.field-control'); if (!c || e.target.closest('button, a, input')) return;
     var i = c.querySelector('.field-input'); if (i && !i.disabled) i.focus();
+  });
+
+  /* v3.1.0 · caret at the end (user: "the whole value got selected … too bold on the user's face"). Focusing a field — a
+     tap, Tab, a script — never selects its text: the caret lands after the last character. Whoever selected it on focus
+     (a browser, a component, iOS placing the caret at the tap) is overruled once, right after the focus settles; a tap
+     inside a field that ALREADY has the caret is left alone, so people can still place it mid-word to fix a letter. */
+  function caretEnd(i) {
+    if (doc.activeElement !== i || i.readOnly) return;
+    var n = i.value.length; if (!n) return;
+    try { if (i.selectionStart !== n || i.selectionEnd !== n) i.setSelectionRange(n, n); } catch (e) { return; }   // email / number inputs have no selection API
+    i.scrollLeft = i.scrollWidth;                          // a long value shows its end
+  }
+  function isFieldInput(t) { return t && t.classList && t.classList.contains('field-input') && t.tagName !== 'SELECT'; }
+  var justFocused = null;
+  doc.addEventListener('focusin', function (e) {
+    var i = e.target; if (!isFieldInput(i)) return;
+    justFocused = i; setTimeout(function () { caretEnd(i); }, 0);
+    setTimeout(function () { if (justFocused === i) justFocused = null; }, 700);
+  });
+  // iOS / Android place the caret at the finger AFTER focus (on touchend / mouseup) — put it back at the end, once
+  ['mouseup', 'touchend'].forEach(function (n) {
+    doc.addEventListener(n, function (e) {
+      var i = e.target && e.target.closest && e.target.closest('.field-input');
+      if (i && i === justFocused) setTimeout(function () { caretEnd(i); justFocused = null; }, 0);
+    }, true);
   });
 
   /* ── components register here; every .field[data-field] is wired once ── */
@@ -5521,9 +5550,9 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 })(window.ShineField);
 </script>
 <!-- ▲ COMPONENT · normal-field -->
-<!-- ▼ COMPONENT · combo-box v4.0.1 · verbatim copy of App-login/app-components/atoms/input-fields/combo-box/combo-box.js — do not edit here -->
+<!-- ▼ COMPONENT · combo-box v4.0.2 · verbatim copy of App-login/app-components/atoms/input-fields/combo-box/combo-box.js — do not edit here -->
 <script data-component="combo-box">
-/* SHINE · INPUT FIELDS · COMBO BOX  (atoms/input-fields/combo-box/)      v4.0.1
+/* SHINE · INPUT FIELDS · COMBO BOX  (atoms/input-fields/combo-box/)      v4.0.2
    Needs field-base.css + field-base.js and combo-box.css. The sheet mode also needs the bottom-sheet component
    (app-components/bottom-sheet: bottom-sheet.css + bottom-sheet.js); without it the list opens inline.
    v4.0.0 · the inline list IS the inline dropdown component (app-components/inline-dropdown: inline-dropdown.css +
@@ -5829,7 +5858,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     });
     input.addEventListener('focus', function () {
       if (mode !== 'inline') return;
-      if (sel && input.value === sel.label) setTimeout(function () { if (doc.activeElement === input) try { input.select(); } catch (e) {} }, 0);
+      // v4.0.2: no select-all on focus — field-base puts the caret after the chosen label (the list still shows every option)
       if (!useDD()) openInline();
     });
     ctl.addEventListener('click', function (e) { if (e.target.closest('.field-trailing') || useDD()) return; if (mode === 'sheet') openSheet(); else openInline(); });
@@ -5901,9 +5930,9 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 })(window.ShineField);
 </script>
 <!-- ▲ COMPONENT · combo-box -->
-<!-- ▼ COMPONENT · multi-input v3.0.5 · verbatim copy of App-login/app-components/atoms/input-fields/multi-input/multi-input.js — do not edit here -->
+<!-- ▼ COMPONENT · multi-input v3.1.0 · verbatim copy of App-login/app-components/atoms/input-fields/multi-input/multi-input.js — do not edit here -->
 <script data-component="multi-input">
-/* SHINE · INPUT FIELDS · MULTI INPUT  (atoms/input-fields/multi-input/)      v3.0.5
+/* SHINE · INPUT FIELDS · MULTI INPUT  (atoms/input-fields/multi-input/)      v3.1.0
    Needs field-base.css + field-base.js and multi-input.css. One answer in 2 or 3 boxes — the page writes only the
    group and its label; the boxes are drawn here:
 
@@ -6042,7 +6071,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
         if (d.length === 1 && ((k === 'd' && +d > 3) || (k === 'm' && +d > 1))) { d = '0' + d; full = true; }   // 4 → 04: no day / month starts with 4
         if (inp.value !== d) inp.value = d;
         recheck(); changed();
-        if (full && i < ins.length - 1 && doc.activeElement === inp) go(i + 1, 'all');
+        if (full && i < ins.length - 1 && doc.activeElement === inp) go(i + 1, 'end');   // v3.1.0: caret at the end, never a selection
       });
       inp.addEventListener('keydown', function (e) {
         var s = inp.selectionStart, eSel = inp.selectionEnd, noSel = s === eSel;
@@ -6051,10 +6080,17 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
         else if (e.key === 'ArrowRight' && noSel && s === inp.value.length && i < ins.length - 1) { e.preventDefault(); go(i + 1, 0); }
         else if (/^[\/\-. ]$/.test(e.key)) {
           e.preventDefault();
-          if (inp.value && i < ins.length - 1) { if ((k === 'd' || k === 'm') && inp.value.length === 1) { inp.value = pad(inp.value); changed(); } go(i + 1, 'all'); }
+          if (inp.value && i < ins.length - 1) { if ((k === 'd' || k === 'm') && inp.value.length === 1) { inp.value = pad(inp.value); changed(); } go(i + 1, 'end'); }
         }
       });
-      inp.addEventListener('focus', function () { if (inp.value) setTimeout(function () { if (doc.activeElement === inp) try { inp.select(); } catch (e) {} }, 0); });
+      // v3.1.0 · no select-all on focus (field-base puts the caret at the end). Typing into a FULL box replaces it — what the
+      // old selection did, without the bold highlight: "06" + 1 → "1"
+      inp.addEventListener('beforeinput', function (e) {
+        if (e.inputType !== 'insertText' || !e.data || inp.selectionStart !== inp.selectionEnd || inp.value.length < p.len) return;
+        var d = e.data.replace(/\D/g, ''); if (!d) return;
+        e.preventDefault(); inp.value = d; try { inp.setSelectionRange(d.length, d.length); } catch (x) {}
+        inp.dispatchEvent(new Event('input', { bubbles: true }));
+      });
       inp.addEventListener('paste', function (e) {
         var t = ((e.clipboardData || window.clipboardData) || { getData: function () { return ''; } }).getData('text') || '';
         var g = t.match(/\d+/g); if (!g) { e.preventDefault(); return; }
