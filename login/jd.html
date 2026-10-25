@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <script data-ios-nozoom>(function () { var iOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); var m = document.querySelector('meta[name="viewport"]'); if (iOS && m && !/maximum-scale/.test(m.content)) m.content += ', maximum-scale=1'; })();</script>
 <meta name="theme-color" content="#FAF9F6" />
-<!-- SHINE APP · JOB DETAILS (JD) — App-login/JD Page/  · v1.8 (2026-10-25) — bottom sheets get the new look: floating ×, corners 32, darker scrim (bottom-sheet v3.0.0) · v1.7: the field you tap lands 20 below the lifted heading (bottom-sheet v2.12.0) · v1.6: Edit your details uses Small fields (40 tall · label 12), the app size · v1.5 (2026-10-23) — for review · opened from the job cards on My Jobs and Docket
+<!-- SHINE APP · JOB DETAILS (JD) — App-login/JD Page/  · v2.0 (2026-10-25) — Similar Jobs is a fanned card stack of 4 (swipe the front card; dots) — the Tools-promo stack of company-index2.html with the job card inside · v1.9: 20 between a card heading and its body (skills, description) · an 8 section band before Similar Jobs · v1.8: bottom sheets get the new look: floating ×, corners 32, darker scrim (bottom-sheet v3.0.0) · v1.7: the field you tap lands 20 below the lifted heading (bottom-sheet v2.12.0) · v1.6: Edit your details uses Small fields (40 tall · label 12), the app size · v1.5 (2026-10-23) — for review · opened from the job cards on My Jobs and Docket
      v1.1: the job and the company are components now — job card 2.5 JD job card (ShineJobCard.jd) and company card (ShineCompanyCard).
      Built from the mobile responsive view of <Shine Revamp>/jd-page3.html: the same sections, copy and flow —
      the job (badges · role · posted · meta · Apply Now · save · share · similar-jobs strip), Skills For This Role,
@@ -2415,9 +2415,9 @@ button { font-family: inherit; }
 }
 .jdp-title::before { content: ""; position: absolute; left: 0; top: 2px; bottom: 2px; width: 4px; border-radius: var(--jdp-radius-full); background: var(--jdp-surface-brand-intense); }
 .jdp-count { flex: none; font: 500 12px/18px var(--jdp-font); color: var(--jdp-content-neutral-faded); }   /* Body / sm medium */
-.jdp-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }                   /* inline.md · inset.xl */
+.jdp-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }                   /* inline.md · stack.xl (heading → body, v1.9: 16 → 20) */
 
-.jdp-desc-wrap { margin-top: 16px; }                    /* the fold of the expandable card (card container v1.5.0) */
+.jdp-desc-wrap { margin-top: 20px; }                    /* the fold of the expandable card (card container v1.5.0) · stack.xl (v1.9: 16 → 20) */
 .jdp-sec.card--expandable { scroll-margin-top: 80px; }    /* folding brings the card back clear of the floating bar */
 #jdSkillsSec { --card-fold-max: 136px; }                 /* skills fold at four rows of tags: 4 × 28 + 3 × 8 gap */
 .jdp-desc { font: 500 14px/20px var(--jdp-font); color: var(--jdp-content-neutral-muted); }    /* Body / md medium */
@@ -2433,11 +2433,50 @@ button { font-family: inherit; }
 /* ── 3 · company — company card component (nothing drawn here) ── */
 
 /* ── 4 · similar jobs ────────────────────────────────────────────────── */
+/* section band (v1.9, user: "a thick subtle separator between company section and similar section") — a full-bleed
+   8 strip of surface.neutral.muted, 32 (section.lg) either side. Page-local: the DS Separator (A.11) is always 1 px,
+   so this is drawn as a surface, not a separator. */
+.jdp-band { display: block; height: 8px; margin: calc(var(--jdp-section) - var(--jdp-between)) calc(-1 * var(--jdp-gutter)) 0; border: 0; background: var(--jdp-surface-neutral-muted); }
 .jdp-similar { margin-top: calc(var(--jdp-section) - var(--jdp-between)); scroll-margin-top: 80px; }
 .jdp-similar-hd { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 16px; }   /* title · View all (Link · lg: label 14 bold, 48 tall) */
 .jdp-similar-h { margin: 0; min-width: 0; font: 700 20px/24px var(--jdp-font); letter-spacing: -.2px; }   /* the app's screen-title size (top app bar title) */
 .jdp-similar-hd .btn { flex: none; }
 .jdp-list { display: flex; flex-direction: column; gap: var(--jdp-between); }
+
+/* v2.0 · Similar Jobs as a fanned card stack (the user's pick: the mobile Tools-promo stack of company-index2.html —
+   .jd-tools-promo-stage / -card[data-pos], wireMobileToolsPromo — with the job card component inside, unchanged).
+   Kept from the promo: the fan (front 0° · −5° 8 up 96 % · +5° 12 up 93 %, turning from the bottom centre), 420 ms
+   settle on cubic-bezier(.22,1,.36,1), tilt 0.05°/px, 80 px to commit, fling 480 px at 14° in 320 ms, dots 6 / 18 bar /
+   6 apart / 18 under. Changed for a job card (user-approved sample): width = screen − 56 (274–320) so Share · Save ·
+   Apply now stay on one row; up / down still scrolls the page; lighter shadow and dark dots on the light page; the
+   back cards' 90 % / 82 % fade drawn as a page-colour veil (no text showing through); a 4th card waits hidden. */
+.jdp-fan { display: flex; flex-direction: column; align-items: center; gap: 18px; padding-top: 16px; }
+.jdp-fan-stage { position: relative; display: grid; width: min(100%, max(274px, min(calc(100% - 56px), 320px))); margin: 0 auto; perspective: 1000px; }   /* 274 = the narrowest a job card keeps its three buttons on one row */
+.jdp-fan-card {
+  grid-area: 1 / 1; position: relative; display: flex; min-width: 0;
+  border-radius: var(--card-radius, 16px);
+  cursor: grab; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+  transform-origin: center bottom; will-change: transform;
+  transition: transform 420ms cubic-bezier(.22,1,.36,1), opacity 320ms ease, box-shadow 400ms ease;
+  box-shadow: 0 24px 60px -12px rgba(var(--jdp-p-shadow), .16), 0 8px 20px -6px rgba(var(--jdp-p-shadow), .08);
+  touch-action: pan-y;                                   /* sideways = swipe the deck · up / down = scroll the page */
+}
+.jdp-fan-card::after { content: ""; position: absolute; inset: 0; z-index: 2; border-radius: inherit; background: var(--jdp-surface-neutral-base); opacity: 0; pointer-events: none; transition: opacity 320ms ease; }
+.jdp-fan-card > .jcard { flex: 1; display: flex; flex-direction: column; }
+.jdp-fan-card > .jcard > .jcard-actions { margin-top: auto; }    /* one height for the deck: the buttons stay on the bottom edge */
+.jdp-fan-card.dragging { transition: none; cursor: grabbing; }
+.jdp-fan-card[data-pos="0"] { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); z-index: 4; }
+.jdp-fan-card[data-pos="1"] { transform: translate3d(0, -8px, 0) rotate(-5deg) scale(.96); z-index: 3; }
+.jdp-fan-card[data-pos="1"]::after { opacity: .1; }    /* = the promo's 90 % */
+.jdp-fan-card[data-pos="2"] { transform: translate3d(0, -12px, 0) rotate(5deg) scale(.93); z-index: 2; }
+.jdp-fan-card[data-pos="2"]::after { opacity: .18; }   /* = the promo's 82 % */
+.jdp-fan-card[data-pos="3"] { transform: translate3d(0, -12px, 0) rotate(5deg) scale(.93); z-index: 1; opacity: 0; }   /* a 4th card waits behind the third */
+.jdp-fan-dots { display: flex; gap: 6px; }
+.jdp-fan-dot { position: relative; width: 6px; height: 6px; padding: 0; border: 0; border-radius: var(--jdp-radius-full); background: var(--jdp-content-neutral-faded); opacity: .35; cursor: pointer; transition: background 200ms ease, width 200ms ease, border-radius 200ms ease, opacity 200ms ease; }
+.jdp-fan-dot.is-on { width: 18px; border-radius: 4px; background: var(--jdp-content-neutral-base); opacity: 1; }
+.jdp-fan-dot::after { content: ""; position: absolute; left: -6px; right: -6px; top: -17px; bottom: -17px; }   /* 40 tall touch target, nothing drawn */
+.jdp-fan-dot:focus-visible { outline: 2px solid var(--jdp-stroke-neutral-focus); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .jdp-fan-card, .jdp-fan-dot { transition-duration: 1ms !important; } }
 
 /* ── bottom action bar (shows once the hero's Apply now leaves the screen) ── */
 .jdp-bar {
@@ -2912,7 +2951,10 @@ button { font-family: inherit; }
   <!-- ═══ 4 · COMPANY · company card component — ShineCompanyCard.html() (page script) ═══ -->
   <div id="jdCompanyCard"></div>
 
-  <!-- ═══ 5 · SIMILAR JOBS · job-card component (2.1 Job card, as My Jobs › Recommended), rendered by ShineJobCard.list();
+  <!-- section band (page part, v1.9) — marks where Similar Jobs begins -->
+  <hr class="jdp-band" aria-hidden="true">
+
+  <!-- ═══ 5 · SIMILAR JOBS · job-card component (2.1 Job card, as My Jobs › Recommended) in a fanned card stack (v2.0, page part: .jdp-fan — fanHTML / wireFan);
        View all = buttons atom Link · lg · flush (label 14, to sit with the 20 title) ═══ -->
   <section class="jdp-similar" id="jdSimilar" aria-labelledby="jdSimilarH">
     <div class="jdp-similar-hd"><h2 class="jdp-similar-h" id="jdSimilarH">Similar Jobs</h2><button class="btn btn--link btn--lg btn--flush" type="button" data-jd="view-all" aria-label="View all 12 similar jobs">View all</button></div>
@@ -4629,10 +4671,89 @@ button { font-family: inherit; }
       meta: { exp: '2 to 6 Yrs', pay: 'Not Disclosed', loc: 'Pune' }, skills: ['ML', 'Python', 'SQL', 'A/B Testing'] },
     { id: 's3', name: 'MONEYBASE', sub: '27 days ago', logo: { text: 'M' },
       role: 'Technical Product Manager — FinCrime · Relocation to Malta', badges: ['actively'],
-      meta: { exp: '5 to 9 Yrs', pay: 'Not Disclosed', loc: 'All India' }, skills: ['FinCrime', 'AML', 'Risk', 'Payments'] }
+      meta: { exp: '5 to 9 Yrs', pay: 'Not Disclosed', loc: 'All India' }, skills: ['FinCrime', 'AML', 'Risk', 'Payments'] },
+    { id: 's4', name: 'Razorpay', sub: '5 days ago', logo: { text: 'R' },
+      role: 'Product Manager — Payments Platform', badges: ['early'],
+      meta: { exp: '4 to 8 Yrs', pay: '₹30–45 LPA', loc: 'Bengaluru' }, skills: ['Payments', 'APIs', 'B2B SaaS', 'Analytics'] }
   ];
   var list = $('#jdSimilarList');
-  list.innerHTML = ShineJobCard.list(SIMILAR);
+  list.innerHTML = fanHTML(SIMILAR);
+  wireFan(list);
+  /* the fanned card stack (v2.0) — the markup: one .jdp-fan-card per job (the job card inside), dots under it */
+  function fanHTML(jobs) {
+    var n = jobs.length;
+    return '<div class="jdp-fan" role="region" aria-roledescription="carousel" aria-label="Similar jobs, ' + n + '">' +
+      '<div class="jdp-fan-stage" data-fan-stage>' + jobs.map(function (j, i) {
+        return '<div class="jdp-fan-card" data-idx="' + i + '" data-pos="' + i + '" role="group" aria-roledescription="slide" aria-label="' + (i + 1) + ' of ' + n + '">' + ShineJobCard.html(j) + '</div>'; }).join('') + '</div>' +
+      '<div class="jdp-fan-dots">' + jobs.map(function (j, i) {
+        return '<button type="button" class="jdp-fan-dot' + (i === 0 ? ' is-on' : '') + '" data-dot="' + i + '" aria-label="Go to job ' + (i + 1) + ' of ' + n + '"></button>'; }).join('') + '</div>' +
+      '<p class="jdp-sr" aria-live="polite" data-fan-live></p></div>';
+  }
+  /* the deck — company-index2.html wireMobileToolsPromo(), ported as it is: drag the front card sideways; past 80 px it
+     flings off (±480 px, ±14°) and the deck cycles (front → back); below 80 px it snaps back; tap the front card = open
+     the job (the job card's own tap); dots jump; only the front card is live. Added for a job card: an up / down drag
+     scrolls the page (axis lock); a drag never also counts as a tap; a drag never starts on the card's buttons; arrow
+     keys on the front card; the back cards are inert. */
+  function wireFan(root) {
+    var stage = $('[data-fan-stage]', root), live = $('[data-fan-live]', root);
+    var cards = $$('.jdp-fan-card', stage), dots = $$('.jdp-fan-dot', root), n = cards.length;
+    var THRESHOLD = 80, dragging = false, locked = null, startX = 0, startY = 0, dx = 0, front = null, pid = null, moved = false, busy = false;
+    function getFront() { for (var i = 0; i < n; i++) if (cards[i].getAttribute('data-pos') === '0') return cards[i]; return null; }
+    function sync(tell) {
+      var f = getFront(), idx = cards.indexOf(f);
+      dots.forEach(function (d, i) { d.classList.toggle('is-on', i === idx); d.setAttribute('aria-current', i === idx ? 'true' : 'false'); });
+      cards.forEach(function (c) { var on = c === f; c.setAttribute('aria-hidden', on ? 'false' : 'true'); if (on) c.removeAttribute('inert'); else c.setAttribute('inert', ''); });
+      if (tell) { var j = SIMILAR[idx]; live.textContent = 'Job ' + (idx + 1) + ' of ' + n + ': ' + j.role + ' at ' + j.name; }
+    }
+    function cycle() { cards.forEach(function (c) { var p = parseInt(c.getAttribute('data-pos'), 10) || 0; c.setAttribute('data-pos', String(p === 0 ? n - 1 : p - 1)); }); sync(true); }
+    function setActive(t) { cards.forEach(function (c, i) { c.setAttribute('data-pos', String((i - t + n) % n)); }); sync(true); }
+    function fling(card, dir) {
+      busy = true;
+      card.style.transform = 'translate3d(' + (dir * 480) + 'px, 0, 0) rotate(' + (dir * 14) + 'deg)';
+      card.style.opacity = '0';
+      setTimeout(function () { cycle(); card.style.transform = ''; card.style.opacity = ''; busy = false; }, 320);
+    }
+    stage.addEventListener('pointerdown', function (e) {
+      if (busy || e.button > 0) return;
+      front = getFront(); if (!front || !front.contains(e.target)) { front = null; return; }
+      if (e.target.closest('a, button')) { front = null; return; }
+      dragging = true; locked = null; moved = false; dx = 0; startX = e.clientX; startY = e.clientY; pid = e.pointerId;
+    });
+    stage.addEventListener('pointermove', function (e) {
+      if (!dragging || !front || e.pointerId !== pid) return;
+      var x = e.clientX - startX, y = e.clientY - startY;
+      if (locked === null) {
+        if (Math.abs(x) < 6 && Math.abs(y) < 6) return;
+        locked = Math.abs(x) > Math.abs(y) ? 'x' : 'y';
+        if (locked === 'y') { dragging = false; front = null; return; }
+        front.classList.add('dragging');
+        try { front.setPointerCapture(pid); } catch (er) {}
+      }
+      dx = x; if (Math.abs(dx) > 4) moved = true;
+      front.style.transform = 'translate3d(' + dx + 'px, 0, 0) rotate(' + (dx * 0.05) + 'deg)';
+      if (e.cancelable) e.preventDefault();
+    });
+    function up(e) {
+      if (!dragging || !front) { dragging = false; return; }
+      dragging = false;
+      var card = front; card.classList.remove('dragging');
+      try { if (pid !== null) card.releasePointerCapture(pid); } catch (er) {}
+      pid = null;
+      if (e.type !== 'pointercancel' && Math.abs(dx) >= THRESHOLD) fling(card, dx < 0 ? -1 : 1); else card.style.transform = '';
+      dx = 0; front = null;
+    }
+    stage.addEventListener('pointerup', up);
+    stage.addEventListener('pointercancel', up);
+    stage.addEventListener('click', function (e) { if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; } }, true);   // a swipe is not a tap
+    stage.addEventListener('dragstart', function (e) { e.preventDefault(); });
+    stage.addEventListener('keydown', function (e) {
+      if (busy || !e.target.classList || !e.target.classList.contains('jcard')) return;
+      if (e.key === 'ArrowRight') { e.preventDefault(); fling(getFront(), -1); setTimeout(function () { var f = getFront(); if (f) $('.jcard', f).focus(); }, 340); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); setActive((cards.indexOf(getFront()) - 1 + n) % n); $('.jcard', getFront()).focus(); }
+    });
+    dots.forEach(function (d) { d.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); if (!busy) setActive(parseInt(d.getAttribute('data-dot'), 10)); }); });
+    sync(false);
+  }
   function byId(id) { for (var i = 0; i < SIMILAR.length; i++) if (SIMILAR[i].id === id) return SIMILAR[i]; }
   list.addEventListener('shine:jobcard', function (e) {
     var d = e.detail, j = byId(d.id); if (!j) return;
