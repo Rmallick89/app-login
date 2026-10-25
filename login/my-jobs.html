@@ -2365,10 +2365,10 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 @media (prefers-reduced-motion: reduce) { .ncard { transition: none; } }
 </style>
 <!-- ▲ COMPONENT · nav-card -->
-<!-- ▼ COMPONENT · bottom-sheet v2.8.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
+<!-- ▼ COMPONENT · bottom-sheet v2.8.1 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
 <style data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BOTTOM SHEET  (app component · App-login)            v2.8.0
+   SHINE · BOTTOM SHEET  (app component · App-login)            v2.8.1
    The one container behind every slide-up panel in the logged-in app — in TWO VARIATIONS:
      1 · BOTTOM SHEET  .bs            slides up from the bottom edge, the page shows above it
                                       (pickers, confirmations, nudges, OTP, short asks)
@@ -2617,6 +2617,7 @@ html.in-app .bs { --bs-safe: 0px; --bs-safe-top: 0px; }
   -webkit-tap-highlight-color: transparent;
 }
 .bs-scrim[hidden] { display: none !important; }
+.bs-scrim.bs-scrim--covered { visibility: hidden; }        /* v2.8.1: under an open full-screen (status bar, see the JS) */
 .bs-scrim.is-open { opacity: 1; pointer-events: auto; }
 .bs-scrim--strong { --bs-scrim-c: var(--bs-surface-neutral-state-overlay-strong); -webkit-backdrop-filter: blur(var(--bs-blur-overlay)); backdrop-filter: blur(var(--bs-blur-overlay)); }
 .bs-scrim--nested { position: absolute; border-radius: var(--bs-radius-2xl) var(--bs-radius-2xl) 0 0; }
@@ -2905,8 +2906,13 @@ html.in-app .bs { --bs-safe: 0px; --bs-safe-top: 0px; }
   .bs--full > .bs-top { padding-top: 0; }
   .bs--full > .bs-bottom { padding-bottom: var(--bs-sticky-pad); }
 }
+/* v2.8.1 · phone: once up, the screen has no transform (iOS reads the status-bar colour only from an untransformed
+   fixed element at the top edge — a transformed one is skipped and the page under it is sampled instead) */
+@media (max-width: 767px) {
+  .bs.bs--full:not(.bs--nested).is-open { transform: none; will-change: auto; }
+}
 
-/* ── On-screen keyboard — ShineSheet sets html.bs-kb + --bs-kb / --bs-vvh ──
+/* ── On-screen keyboard — ShineSheet sets html.bs-kb + --bs-kb / --bs-vvh / --bs-vvt / --bs-kbh (iOS + Android, v2.8.1) ──
    The sheet keeps its place at the bottom edge and its surface continues
    behind the keyboard (native iOS look); the content is padded up by the
    keyboard height. The home indicator sits under the keyboard → no safe area. */
@@ -2914,10 +2920,18 @@ html.in-app .bs { --bs-safe: 0px; --bs-safe-top: 0px; }
 .bs-kb .bs-body > .bs-bottom { padding-bottom: var(--bs-gutter); }
 .bs-kb .bs > .bs-bottom { padding-bottom: var(--bs-sticky-pad); }
 .bs-kb .bs--pad-bottom:not(.bs--nested) { padding-bottom: calc(var(--bs-spacing-stack-xxl) + var(--bs-kb, 0px)); }
-/* full-screen on a phone (v2.8.0): fills exactly the visible area above the keyboard (--bs-vvt = how far iOS
-   scrolled the page up) — the title stays on screen and the bottom section rides on the keyboard */
+/* full-screen on a phone (v2.8.0 · v2.8.1): fills exactly the visible area above the keyboard (--bs-vvt = how far
+   iOS panned the page) — the title stays on screen and the body scrolls. Its bottom section (Save changes + note)
+   stays on the bottom edge, i.e. behind the keyboard: it never rides up on it (v2.8.1, user) and comes back the
+   moment the keyboard goes. A bottom sheet stacked on it (a combo-box list) keeps the bottom-sheet behaviour above. */
 @media (max-width: 767px) {
-  .bs-kb .bs.bs--full:not(.bs--nested) { top: var(--bs-vvt, 0px); bottom: auto; height: var(--bs-vvh, 100%); max-height: none; padding-bottom: 0; }
+  /* the surface runs on under the keyboard (--bs-kbh, iOS) — its translucent accessory bar never shows the page */
+  .bs-kb .bs.bs--full:not(.bs--nested) {
+    top: var(--bs-vvt, 0px); bottom: auto; box-sizing: border-box; max-height: none;
+    height: calc(var(--bs-vvh, 100%) + var(--bs-kbh, 0px)); padding-bottom: var(--bs-kbh, 0px);
+  }
+  .bs-kb .bs.bs--full:not(.bs--nested) > .bs-bottom { display: none; }
+  .bs-kb .bs.bs--full:not(.bs--nested) > .bs-body { padding-bottom: var(--bs-spacing-stack-xxl); }
 }
 
 /* page scroll lock (set on <html> by ShineSheet) */
@@ -4036,10 +4050,10 @@ html.in-app .bs { --bs-safe: 0px; --bs-safe-top: 0px; }
     </div>
   </div>
 
-<!-- ▼ COMPONENT · bottom-sheet v2.8.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.js — do not edit here -->
+<!-- ▼ COMPONENT · bottom-sheet v2.8.1 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.js — do not edit here -->
 <script data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BOTTOM SHEET  (app component · App-login)            v2.8.0
+   SHINE · BOTTOM SHEET  (app component · App-login)            v2.8.1
    Pair with bottom-sheet.css. Zero dependencies, no build step.
    Engine = App-logout's ShineSheet v1.2.1; v2.0 adds the three-section anatomy;
    v2.1 aligns every value with design-system/DESIGN-SYSTEM.md.
@@ -4283,38 +4297,69 @@ html.in-app .bs { --bs-safe: 0px; --bs-safe-top: 0px; }
     else if (!top.contains(a)) { e.preventDefault(); first.focus(); }
   });
 
-  /* ── on-screen keyboard (v1.2) ────────────────────────────────────
+  /* ── on-screen keyboard (v1.2 · v2.8.1) ──────────────────────────────
      iOS Safari never resizes the page for the keyboard — it slides over fixed
-     content, so a bottom sheet ends up underneath it. While any sheet is open we
-     follow visualViewport; the CSS pads the sheet's content up by the keyboard
-     height (the surface itself stays on the bottom edge, behind the keyboard):
-       --bs-kb   = layout-viewport bottom − visible-area bottom   (keyboard height)
-       --bs-vvh  = visible height (caps the sheet so its head never hides)
-     Android WebView/Chrome resize the page instead → --bs-kb stays 0 there. */
-  var kb = { on: false, raf: 0, px: 0 };
-  function kbSet(px, h) {
-    var r = doc.documentElement;
-    var vv = global.visualViewport, vt = vv ? Math.max(0, Math.round(vv.offsetTop)) : 0;
-    if (px > 0) { r.style.setProperty('--bs-kb', px + 'px'); r.style.setProperty('--bs-vvh', Math.round(h) + 'px'); r.style.setProperty('--bs-vvt', vt + 'px'); r.classList.add('bs-kb'); }
-    else { r.style.removeProperty('--bs-kb'); r.style.removeProperty('--bs-vvh'); r.style.removeProperty('--bs-vvt'); r.classList.remove('bs-kb'); }
-    if (px !== kb.px) {
-      kb.px = px;
-      stack.forEach(function (el) { if (el.__bs && el.__bs.bottom) { syncCta(el); syncScroll(el); } });
-      var a = doc.activeElement;                         // keep the focused field in view inside the sheet
-      if (px > 0 && a && a.closest && a.closest('.bs') && a.scrollIntoView) setTimeout(function () { try { a.scrollIntoView({ block: 'nearest' }); } catch (e) {} }, 260);
+     content and pans the visible area (visualViewport) to keep the field in view.
+     Android (Chrome, the app's adjustResize WebView) resizes the page instead.
+     While any sheet is open we follow both and set, on <html>:
+       .bs-kb    the keyboard is up (either platform)
+       --bs-kb   = layout-viewport bottom − visible-area bottom (what the keyboard still covers of a
+                   bottom-anchored sheet; 0 on Android and once iOS has panned all the way)
+       --bs-vvh  = visible height  ·  --bs-vvt = how far iOS panned the visible area down
+       --bs-kbh  = the keyboard's own height on iOS (innerHeight − visible height; 0 on Android)
+     v2.8.1: "keyboard up" is decided by the visible height alone (innerHeight − visualViewport.height
+     > 80 on iOS; the page shrinking by > 150 under a focused field on Android) — the old test
+     (minus the pan) read "no keyboard" as soon as iOS panned, which dropped a full-screen's title
+     off the top and let its bottom ride on the keyboard. */
+  var kb = { on: false, raf: 0, key: '', base: 0, w: 0, y: 0 };
+  function editable(a) {
+    if (!a || a === doc.body) return false;
+    if (a.isContentEditable || a.tagName === 'TEXTAREA') return true;
+    return a.tagName === 'INPUT' && !/^(button|checkbox|radio|range|file|submit|reset|color|image|hidden)$/i.test(a.type || '');
+  }
+  function kbSet(on, px, h, t, k) {
+    var r = doc.documentElement, key = on ? [px, h, t, k].join() : '';
+    if (key === kb.key) return;
+    var was = r.classList.contains('bs-kb');
+    kb.key = key;
+    if (on) { r.style.setProperty('--bs-kb', px + 'px'); r.style.setProperty('--bs-vvh', h + 'px'); r.style.setProperty('--bs-vvt', t + 'px'); r.style.setProperty('--bs-kbh', k + 'px'); r.classList.add('bs-kb'); }
+    else { ['--bs-kb', '--bs-vvh', '--bs-vvt', '--bs-kbh'].forEach(function (n) { r.style.removeProperty(n); }); r.classList.remove('bs-kb'); }
+    stack.forEach(function (el) { if (el.__bs && el.__bs.bottom) { syncCta(el); syncScroll(el); } });
+    if (on && !was) {                                    // keep the focused field in view inside its sheet
+      var a = doc.activeElement;
+      if (a && a.closest && a.closest('.bs') && a.scrollIntoView) setTimeout(function () { try { a.scrollIntoView({ block: 'nearest' }); } catch (e) {} }, 260);
     }
+    // iOS can leave the (locked) page scrolled after the keyboard goes — fixed sheets then sit too high
+    if (!on && was && stack.length && Math.abs((global.scrollY || 0) - kb.y) > 1) { try { global.scrollTo(0, kb.y); } catch (e) {} }
   }
   function kbMeasure() {
     kb.raf = 0;
-    var vv = global.visualViewport; if (!vv || !stack.length) return kbSet(0);
-    var px = Math.round(global.innerHeight - vv.height - vv.offsetTop);
-    kbSet(px > 80 ? px : 0, vv.height);                  // < 80 px = browser chrome moving, not a keyboard
+    var vv = global.visualViewport; if (!stack.length) return kbSet(false);
+    var ih = global.innerHeight, iw = global.innerWidth, focused = editable(doc.activeElement);
+    if (iw !== kb.w) { kb.w = iw; kb.base = ih; }        // rotation → new baseline
+    if (!focused || ih > kb.base) kb.base = Math.max(focused ? kb.base : 0, ih);
+    var vh = vv ? vv.height : ih, vt = vv ? Math.max(0, vv.offsetTop) : 0;
+    var overlay = ih - vh > 80;                          // iOS: keyboard over the page (< 80 = browser chrome moving)
+    var resized = focused && kb.base - ih > 150;          // Android: the page itself shrank for it
+    if (!overlay && !resized) return kbSet(false);
+    kbSet(true, Math.max(0, Math.round(ih - vh - vt)), Math.round(vh), Math.round(vt), Math.max(0, Math.round(ih - vh)));
   }
   function kbSchedule() { if (!kb.raf) kb.raf = requestAnimationFrame(kbMeasure); }
+  function kbLater() { kbSchedule(); [120, 360].forEach(function (t) { setTimeout(kbSchedule, t); }); }   // focus moves before the keyboard does
   function keyboard(on) {
-    var vv = global.visualViewport; if (!vv) return;
-    if (on && !kb.on) { vv.addEventListener('resize', kbSchedule); vv.addEventListener('scroll', kbSchedule); }
-    if (!on && kb.on) { vv.removeEventListener('resize', kbSchedule); vv.removeEventListener('scroll', kbSchedule); kbSet(0); }
+    var vv = global.visualViewport;
+    if (on && !kb.on) {
+      kb.y = global.scrollY || 0; kb.w = global.innerWidth; kb.base = global.innerHeight;
+      if (vv) { vv.addEventListener('resize', kbSchedule); vv.addEventListener('scroll', kbSchedule); }
+      global.addEventListener('resize', kbSchedule);
+      doc.addEventListener('focusin', kbLater); doc.addEventListener('focusout', kbLater);
+    }
+    if (!on && kb.on) {
+      if (vv) { vv.removeEventListener('resize', kbSchedule); vv.removeEventListener('scroll', kbSchedule); }
+      global.removeEventListener('resize', kbSchedule);
+      doc.removeEventListener('focusin', kbLater); doc.removeEventListener('focusout', kbLater);
+      kbSet(false);
+    }
     kb.on = on; if (on) kbSchedule();
   }
 
@@ -4323,15 +4368,23 @@ html.in-app .bs { --bs-safe: 0px; --bs-safe-top: 0px; }
      fixed element's background-color at the top edge). Scrims paint with an image
      layer, so while one is up we give html/body the page colour dimmed by it —
      the status bar dims together with the page, and is restored on close. */
-  var tintSaved = null;
+  var tintSaved = null, themeSaved = null;
   function rgba(s) { var m = /rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:[,\s/]+([\d.]+))?/.exec(s || ''); return m ? [+m[1], +m[2], +m[3], m[4] === undefined ? 1 : +m[4]] : null; }
+  function theme(col) {                                  // v2.8.1: theme-color follows a full-screen too (iOS / Android chrome)
+    var m = doc.querySelector('meta[name="theme-color"]'); if (!m) return;
+    if (col) { if (themeSaved === null) themeSaved = m.getAttribute('content') || ''; m.setAttribute('content', col); }
+    else if (themeSaved !== null) { m.setAttribute('content', themeSaved); themeSaved = null; }
+  }
   function tint() {
     var r = doc.documentElement, b = doc.body; if (!b) return;
     // v2.8.0: a full-screen on a phone covers the status bar area with its surface → the bar takes that colour;
     // a sheet stacked over it dims that colour with its own scrim
     var layers = stack.filter(function (el) { return !isNested(el) && (el.__bs.scrim || fullScreen(el)); });
+    var full = stack.some(function (el) { return fullScreen(el) && el.__bs.up; });
+    r.classList.toggle('bs-full', full);                 // v2.8.1: a full-screen is up → pages hide their own fixed top bars
     if (!layers.length) {
       if (tintSaved) { r.style.backgroundColor = tintSaved[0]; b.style.backgroundColor = tintSaved[1]; tintSaved = null; }
+      theme(null);
       return;
     }
     if (!tintSaved) {
@@ -4340,15 +4393,25 @@ html.in-app .bs { --bs-safe: 0px; --bs-safe-top: 0px; }
       if (!base || base[3] < 0.5) base = [255, 255, 255, 1];
       tintSaved = [r.style.backgroundColor, b.style.backgroundColor, base];
     }
-    var col = tintSaved[2].slice(0, 3);
+    var col = tintSaved[2].slice(0, 3), fullCol = null;
     layers.forEach(function (el) {                       // stacked scrims compound; a full-screen resets to its surface
-      if (fullScreen(el)) { var f = rgba(getComputedStyle(el).backgroundColor); if (f && f[3] > 0.5) { col = f.slice(0, 3); return; } }
+      if (fullScreen(el)) { var f = rgba(getComputedStyle(el).backgroundColor); if (f && f[3] > 0.5) { col = f.slice(0, 3); fullCol = col; return; } }
       var sc = el.__bs.scrim; if (!sc) return;
       var c = rgba(getComputedStyle(sc).getPropertyValue('--bs-scrim-c')) || [13, 17, 23, 0.24];
       col = [0, 1, 2].map(function (k) { return c[k] * c[3] + col[k] * (1 - c[3]); });
     });
     var css = 'rgb(' + col.map(Math.round).join(',') + ')';
     r.style.backgroundColor = css; b.style.backgroundColor = css;
+    theme(fullCol ? '#' + fullCol.map(function (v) { return ('0' + Math.round(v).toString(16)).slice(-2); }).join('').toUpperCase() : null);
+  }
+  /* v2.8.1 · iOS takes the status-bar colour from the fixed element at the top edge. While a full-screen
+     slides up its scrim is that element (a gradient → sampled from pixels → the dimmed page stuck in the bar).
+     Once the screen is up, its scrim is covered anyway: hide it so the screen itself (no transform once open,
+     solid background-color) is what Safari reads; it comes back for the slide down. */
+  function cover(el, on) {
+    var st = el.__bs; if (!st) return;
+    st.up = !!on && fullScreen(el);
+    if (st.scrim) st.scrim.classList.toggle('bs-scrim--covered', st.up);
   }
   function scrimMs(sc) { var d = getComputedStyle(sc).transitionDuration; return (parseFloat(d) || 0) * (/ms/.test(d) ? 1 : 1000); }
 
@@ -4391,7 +4454,7 @@ html.in-app .bs { --bs-safe: 0px; --bs-safe-top: 0px; }
 
     var af = el.querySelector('[data-bs-autofocus]');
     try { (af || el).focus({ preventScroll: true }); } catch (e) { (af || el).focus(); }
-    st.timer = setTimeout(function () { syncScroll(el); emit(el, 'shine:sheet-opened', {}); }, durationOf(el));
+    st.timer = setTimeout(function () { syncScroll(el); cover(el, true); tint(); emit(el, 'shine:sheet-opened', {}); }, durationOf(el));
     return true;
   }
 
@@ -4405,6 +4468,7 @@ html.in-app .bs { --bs-safe: 0px; --bs-safe-top: 0px; }
     for (var k = stack.length - 1; k > i; k--) close(stack[k], 'parent');
 
     stack.splice(stack.indexOf(el), 1);
+    cover(el, false);
     el.classList.remove('is-open', 'is-dragging');
     el.style.transform = '';
     if (st.scrim) {
@@ -4478,7 +4542,7 @@ html.in-app .bs { --bs-safe: 0px; --bs-safe-top: 0px; }
   // re-measure an auto sheet after the page swaps its content (optional — a MutationObserver already does this)
   function refresh(target) { var el = $(target); if (el && el.__bs) { syncCta(el); syncScroll(el); } }
 
-  global.ShineSheet = { open: open, close: close, toggle: toggle, isOpen: isOpen, top: top, closeAll: closeAll, init: init, refresh: refresh, version: '2.8.0' };
+  global.ShineSheet = { open: open, close: close, toggle: toggle, isOpen: isOpen, top: top, closeAll: closeAll, init: init, refresh: refresh, version: '2.8.1' };
 })(window);
 </script>
 <!-- ▲ COMPONENT · bottom-sheet -->

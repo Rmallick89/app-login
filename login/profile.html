@@ -11,7 +11,7 @@
   })();
 </script>
 <meta name="theme-color" content="#161B22" />
-<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.18 (2026-10-25) — the editors open full-screen (modal v2.8.0 .bs--full) · Job preferences add + edit
+<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.19 (2026-10-25) — photo flow rebuilt to profile-index · full-screen keyboard + status bar fixes (modal v2.8.1)
      Built from the mobile view (≤ 480 px) of <Shine Revamp>/profile-index.html, on the design system
      (design-system/DESIGN-SYSTEM.md + component-system.md): semantic tokens only, the buttons atom (atoms/buttons), DS atoms (A.04 Badge,
      A.05 Tag, A.08 Avatar, A.09 Toast). No menu / title on this tab (v1.1, user): the full-bleed hero starts at the top
@@ -31,6 +31,10 @@
      normal, combo box, multi input, OTP), alert, buttons, tags, top-app-bar (photo, status). PAGE-LOCAL — no component yet, not
      made into one without the design team's consent: choice chips (A.06), status radio cards, photo preview / crop / zoom, the
      description box (multi-line field), the hero's on-dark text button, the toast (A.09).
+     v1.19 (user's iPhone recording): the photo screen rebuilt to profile-index's mobile photo modal (preview disc, dashed
+     drop target, dark circular crop + slider, outlined Remove photo; no bottom section in upload / committed); modal
+     v2.8.1 — Save changes stays behind the keyboard, the title stays on screen, the status bar takes the screen's white
+     (html.bs-full hides the top bar's pill).
      v1.18: FULL-SCREEN (modal v2.8.0 · .bs--full) for the editors — photo, professional, personal (✎), contact, key skills,
      employment, education, links, job preferences; BOTTOM SHEET for one answer — status, OTP, hero asks, personal from the
      hero, item options, delete, and every list a field opens (the combo box's own sheet stacks over the full-screen).
@@ -1414,10 +1418,10 @@ legend.field-label--hidden { float: none; width: 1px; }
 @media (prefers-reduced-motion: reduce) { .alert-close-col, .alert-close-col svg { transition: none; } }
 </style>
 <!-- ▲ COMPONENT · alert -->
-<!-- ▼ COMPONENT · bottom-sheet v2.8.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
+<!-- ▼ COMPONENT · bottom-sheet v2.8.1 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
 <style data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BOTTOM SHEET  (app component · App-login)            v2.8.0
+   SHINE · BOTTOM SHEET  (app component · App-login)            v2.8.1
    The one container behind every slide-up panel in the logged-in app — in TWO VARIATIONS:
      1 · BOTTOM SHEET  .bs            slides up from the bottom edge, the page shows above it
                                       (pickers, confirmations, nudges, OTP, short asks)
@@ -1666,6 +1670,7 @@ html.in-app .bs { --bs-safe: 0px; --bs-safe-top: 0px; }
   -webkit-tap-highlight-color: transparent;
 }
 .bs-scrim[hidden] { display: none !important; }
+.bs-scrim.bs-scrim--covered { visibility: hidden; }        /* v2.8.1: under an open full-screen (status bar, see the JS) */
 .bs-scrim.is-open { opacity: 1; pointer-events: auto; }
 .bs-scrim--strong { --bs-scrim-c: var(--bs-surface-neutral-state-overlay-strong); -webkit-backdrop-filter: blur(var(--bs-blur-overlay)); backdrop-filter: blur(var(--bs-blur-overlay)); }
 .bs-scrim--nested { position: absolute; border-radius: var(--bs-radius-2xl) var(--bs-radius-2xl) 0 0; }
@@ -1954,8 +1959,13 @@ html.in-app .bs { --bs-safe: 0px; --bs-safe-top: 0px; }
   .bs--full > .bs-top { padding-top: 0; }
   .bs--full > .bs-bottom { padding-bottom: var(--bs-sticky-pad); }
 }
+/* v2.8.1 · phone: once up, the screen has no transform (iOS reads the status-bar colour only from an untransformed
+   fixed element at the top edge — a transformed one is skipped and the page under it is sampled instead) */
+@media (max-width: 767px) {
+  .bs.bs--full:not(.bs--nested).is-open { transform: none; will-change: auto; }
+}
 
-/* ── On-screen keyboard — ShineSheet sets html.bs-kb + --bs-kb / --bs-vvh ──
+/* ── On-screen keyboard — ShineSheet sets html.bs-kb + --bs-kb / --bs-vvh / --bs-vvt / --bs-kbh (iOS + Android, v2.8.1) ──
    The sheet keeps its place at the bottom edge and its surface continues
    behind the keyboard (native iOS look); the content is padded up by the
    keyboard height. The home indicator sits under the keyboard → no safe area. */
@@ -1963,10 +1973,18 @@ html.in-app .bs { --bs-safe: 0px; --bs-safe-top: 0px; }
 .bs-kb .bs-body > .bs-bottom { padding-bottom: var(--bs-gutter); }
 .bs-kb .bs > .bs-bottom { padding-bottom: var(--bs-sticky-pad); }
 .bs-kb .bs--pad-bottom:not(.bs--nested) { padding-bottom: calc(var(--bs-spacing-stack-xxl) + var(--bs-kb, 0px)); }
-/* full-screen on a phone (v2.8.0): fills exactly the visible area above the keyboard (--bs-vvt = how far iOS
-   scrolled the page up) — the title stays on screen and the bottom section rides on the keyboard */
+/* full-screen on a phone (v2.8.0 · v2.8.1): fills exactly the visible area above the keyboard (--bs-vvt = how far
+   iOS panned the page) — the title stays on screen and the body scrolls. Its bottom section (Save changes + note)
+   stays on the bottom edge, i.e. behind the keyboard: it never rides up on it (v2.8.1, user) and comes back the
+   moment the keyboard goes. A bottom sheet stacked on it (a combo-box list) keeps the bottom-sheet behaviour above. */
 @media (max-width: 767px) {
-  .bs-kb .bs.bs--full:not(.bs--nested) { top: var(--bs-vvt, 0px); bottom: auto; height: var(--bs-vvh, 100%); max-height: none; padding-bottom: 0; }
+  /* the surface runs on under the keyboard (--bs-kbh, iOS) — its translucent accessory bar never shows the page */
+  .bs-kb .bs.bs--full:not(.bs--nested) {
+    top: var(--bs-vvt, 0px); bottom: auto; box-sizing: border-box; max-height: none;
+    height: calc(var(--bs-vvh, 100%) + var(--bs-kbh, 0px)); padding-bottom: var(--bs-kbh, 0px);
+  }
+  .bs-kb .bs.bs--full:not(.bs--nested) > .bs-bottom { display: none; }
+  .bs-kb .bs.bs--full:not(.bs--nested) > .bs-body { padding-bottom: var(--bs-spacing-stack-xxl); }
 }
 
 /* page scroll lock (set on <html> by ShineSheet) */
@@ -1981,7 +1999,7 @@ html.in-app .bs { --bs-safe: 0px; --bs-safe-top: 0px; }
 <!-- ▲ COMPONENT · bottom-sheet -->
 <style>
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE APP · PROFILE (Me tab) — page styles · v1.18 (2026-10-25)
+   SHINE APP · PROFILE (Me tab) — page styles · v1.19 (2026-10-25)
    Built from the mobile view of <Shine Revamp>/profile-index.html (≤ 480 px):
    hero (status strip · strength dial · next step) → Your Resume → Profile
    Overview → Key Skills → Employment History → Education History → Links.
@@ -2055,6 +2073,8 @@ html.in-app .bs { --bs-safe: 0px; --bs-safe-top: 0px; }
   --surface-inverse-base:    var(--color-system-cool-neutral-black);
   --surface-inverse-muted:   var(--color-system-cool-neutral-900);
   --surface-brand-brand-intense:   var(--color-brand-primary-500);
+  --surface-brand-brand-subtle:    var(--color-brand-primary-100);   /* v1.19 · photo drop target, drag-over */
+  --surface-neutral-state-hover:   var(--color-system-cool-neutral-100);   /* v1.19 · photo drop target, hover */
   --surface-status-notice-subtle:  var(--color-system-amber-100);
   /* PROPOSED surface.on-fill-dark.subtle — a faint lift on a permanently dark surface (hero status strip) */
   --surface-on-fill-dark-subtle: color-mix(in srgb, var(--color-system-cool-neutral-white) 6%, transparent);
@@ -2067,12 +2087,13 @@ html.in-app .bs { --bs-safe: 0px; --bs-safe-top: 0px; }
   --type-display-sm-size: 24px; --type-display-sm-line: 28px; --type-display-sm-track: -0.3px;
   --type-heading-lg-size: 22px; --type-heading-lg-line: 26px; --type-heading-lg-track: -0.3px; --type-heading-lg-para: 16px;
   --type-body-md-size: 14px;    --type-body-md-line: 20px;
+  --type-body-sm-size: 12px;    --type-body-sm-line: 18px;
   --type-label-md-size: 12px;   --type-label-md-line: 12px;
   --type-eyebrow-sm-size: 10px; --type-eyebrow-sm-line: 10px; --type-eyebrow-sm-track: 1px;
   --weight-medium: 500; --weight-semibold: 600; --weight-bold: 700; --weight-extrabold: 800;
 
   /* ── §2.3 SPACING (mobile) ── */
-  --spacing-inset-xs: 4px;  --spacing-inset-md: 8px;  --spacing-inset-lg: 12px;
+  --spacing-inset-xs: 4px;  --spacing-inset-md: 8px;  --spacing-inset-lg: 12px; --spacing-inset-xl: 16px; --spacing-inset-xxl: 22px;
   --spacing-inline-sm: 4px; --spacing-inline-md: 8px; --spacing-inline-lg: 12px;
   --spacing-stack-xs: 8px; --spacing-stack-md: 12px;
   --spacing-stack-lg: 14px; --spacing-stack-xl: 20px; --spacing-stack-xxl: 24px;
@@ -2080,9 +2101,9 @@ html.in-app .bs { --bs-safe: 0px; --bs-safe-top: 0px; }
   --spacing-layout-sm: 24px;
 
   /* ── §2.4 SIZE ── */
-  --size-stroke-thin: 1px; --size-stroke-thick: 2px;
-  --size-radius-full: 1024px;
-  --size-icon-xs: 12px;
+  --size-stroke-thin: 1px; --size-stroke-default: 1.5px; --size-stroke-thick: 2px;
+  --size-radius-lg: 12px; --size-radius-full: 1024px;
+  --size-icon-xs: 12px; --size-icon-2xl: 32px;
   /* size.control.* — proposed in component-system.md §A.02.9 */
   --size-control-sm: 40px;
   --size-dial-w: 280px;     /* strength dial width on phones (reference mobile size) */
@@ -2270,27 +2291,68 @@ html.in-app { --pf-safe-top: 0px; }
 .pf-radio:has(input:checked) .pf-radio-dot { box-shadow: inset 0 0 0 6px var(--stroke-brand); }
 .pf-radio:has(input:focus-visible) { box-shadow: inset 0 0 0 1.5px var(--stroke-neutral-focus), var(--elevation-focus-default); }
 
-/* PAGE-LOCAL · photo — preview disc (A.08 Avatar, 2xl 96), crop viewport + zoom (no component in the DS yet) */
-.pf-photo { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-stack-md); }
+/* PAGE-LOCAL · photo (v1.19 — rebuilt to profile-index.html's mobile photo modal; no component in the DS yet):
+   preview disc · dashed drop target · circular crop + zoom slider · outlined Remove. The three states sit centred in the
+   screen (#pfPhoto's body is a column; .pf-photo takes margin auto). Upload + committed have no bottom section. */
+#pfPhoto > .bs-body { display: flex; flex-direction: column; }
+.pf-photo { display: flex; flex-direction: column; align-items: stretch; width: 100%; margin: auto 0; }
 .pf-photo-preview {
-  position: relative; display: grid; place-items: center; width: 96px; height: 96px; overflow: hidden; border-radius: var(--size-radius-full);
-  background: var(--surface-brand-brand-intense); color: var(--content-on-fill-dark-base);
-  font: var(--weight-bold) var(--type-display-sm-size)/1 var(--font-brand);
+  position: relative; display: grid; place-items: center; align-self: center; width: 88px; height: 88px; flex: none; overflow: hidden;
+  margin-bottom: var(--spacing-stack-xxl); border-radius: var(--size-radius-full);
+  background: var(--surface-brand-brand-intense); color: var(--content-on-fill-dark-base);   /* the app's avatar (A.08 · brand) */
+  border: var(--size-stroke-default) solid var(--surface-neutral-raised); box-shadow: var(--elevation-neutral-lifted);
+  font: var(--weight-extrabold) 28px/1 var(--font-brand); letter-spacing: var(--type-display-sm-track);
 }
 .pf-photo-preview img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.pf-photo-crop { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-stack-md); width: 100%; }
+.pf-photo-drop {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--spacing-stack-xs); width: 100%;
+  padding: var(--spacing-inset-xxl) var(--spacing-inset-xl); margin: 0;
+  background: var(--surface-neutral-muted); border: var(--size-stroke-default) dashed var(--stroke-neutral-base); border-radius: var(--size-radius-lg);
+  font-family: var(--font-brand); text-align: center; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+.pf-photo-drop:hover, .pf-photo-drop:active { background: var(--surface-neutral-state-hover); }
+.pf-photo-drop:focus-visible { outline: none; border-color: var(--stroke-neutral-focus); box-shadow: var(--elevation-focus-default); }
+.pf-photo-drop.is-dragover { background: var(--surface-brand-brand-subtle); border-color: var(--stroke-brand); border-style: solid; }
+.pf-photo-drop svg { width: var(--size-icon-2xl); height: var(--size-icon-2xl); margin-bottom: 2px; color: var(--content-neutral-faded); }
+.pf-photo-drop-title { font: var(--weight-semibold) var(--type-body-md-size)/var(--type-body-md-line) var(--font-brand); color: var(--content-neutral-base); }
+.pf-photo-drop-link { color: var(--content-neutral-brand); text-decoration: underline; text-underline-offset: 2px; }
+.pf-photo-drop-hint { font: var(--weight-medium) var(--type-body-sm-size)/var(--type-body-sm-line) var(--font-brand); color: var(--content-neutral-faded); }
+.pf-photo-err { margin: var(--spacing-stack-md) 0 0; font: var(--weight-medium) var(--type-body-sm-size)/var(--type-body-sm-line) var(--font-brand); color: var(--content-status-negative); }
+.pf-photo-err:empty { display: none; }
+.pf-photo-remove { margin-top: var(--spacing-stack-md); }
+/* crop: dark circular viewport with a white ring (the ring is the port; the clip inside it is a real circle —
+   iOS ignores overflow + radius for a transformed child, so the clip also takes clip-path + a mask) */
+.pf-photo-crop { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-stack-lg); width: 100%; }
 .pf-photo-port {
-  position: relative; width: min(240px, 100%); aspect-ratio: 1; max-width: 100%; overflow: hidden; border-radius: var(--size-radius-full);
-  background: var(--surface-neutral-muted); box-shadow: inset 0 0 0 1px var(--stroke-neutral-base);
+  position: relative; width: min(240px, 70vw); aspect-ratio: 1; flex: none; border-radius: var(--size-radius-full);
+  background: var(--surface-inverse-base); border: var(--size-stroke-thick) solid var(--surface-neutral-raised); box-shadow: var(--elevation-neutral-lifted);
   cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none;
 }
 .pf-photo-port.is-dragging { cursor: grabbing; }
+.pf-photo-clip {
+  position: absolute; inset: 0; overflow: hidden; border-radius: var(--size-radius-full); isolation: isolate;
+  -webkit-clip-path: circle(50% at 50% 50%); clip-path: circle(50% at 50% 50%);
+  -webkit-mask-image: -webkit-radial-gradient(white, black); mask-image: radial-gradient(white, black);
+}
 .pf-photo-port img { position: absolute; left: 50%; top: 50%; max-width: none; transform-origin: center; pointer-events: none; will-change: transform; }
-.pf-photo-zoom { display: block; width: min(240px, 100%); }
-.pf-range { display: block; width: 100%; height: 24px; margin: 0; accent-color: var(--surface-brand-brand-intense); }
+.pf-photo-zoom { display: block; width: min(240px, 70vw); }
+/* zoom slider — track 4 · stroke.neutral.base, thumb 20 · content.neutral.base with a 2 white ring (profile-index) */
+.pf-range { display: block; width: 100%; height: 20px; margin: 0; background: none; -webkit-appearance: none; appearance: none; cursor: pointer; }
+.pf-range::-webkit-slider-runnable-track { height: 4px; border-radius: var(--size-radius-full); background: var(--stroke-neutral-base); }
+.pf-range::-moz-range-track { height: 4px; border-radius: var(--size-radius-full); background: var(--stroke-neutral-base); }
+.pf-range::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 20px; height: 20px; margin-top: -8px; border-radius: var(--size-radius-full);
+  background: var(--content-neutral-base); border: var(--size-stroke-thick) solid var(--surface-neutral-raised); box-shadow: var(--elevation-neutral-lifted);
+}
+.pf-range::-moz-range-thumb { width: 20px; height: 20px; box-sizing: border-box; border-radius: var(--size-radius-full); background: var(--content-neutral-base); border: var(--size-stroke-thick) solid var(--surface-neutral-raised); box-shadow: var(--elevation-neutral-lifted); }
+.pf-range:focus-visible { outline: none; }
+.pf-range:focus-visible::-webkit-slider-thumb { box-shadow: var(--elevation-focus-default); }
 .pf-note { margin: 0; font: var(--weight-medium) 12px/18px var(--font-brand); color: var(--content-neutral-faded); text-align: center; }
-#pfPhErr:empty { display: none; }
-#pfPhErr { width: 100%; }
+
+/* v1.19 · while a full-screen is up (bottom-sheet v2.8.1 sets html.bs-full) the top bar's fixed pill stays out of the
+   status bar's way — iOS takes the bar's colour from the fixed element at the top edge */
+html.bs-full .stp { visibility: hidden; }
 
 /* PAGE-LOCAL · a multi-line field (project description): the field-base box, grown to 3 lines — the input-fields
    components have no textarea yet */
@@ -3333,7 +3395,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
   </main>
 
     <!-- ═════════════════════════════════════════════════════════════════════════════════════════════════════
-       ACTION FLOWS (v1.18) — the modal component (app-components/bottom-sheet, v2.8.0) in its two variations:
+       ACTION FLOWS (v1.19) — the modal component (app-components/bottom-sheet, v2.8.1) in its two variations:
        FULL-SCREEN (.bs--full) for the editors — photo, professional, personal (✎), contact, key skills, employment,
        education, links, job preferences; BOTTOM SHEET for one answer — status, OTP verify, the hero's asks, item
        options, delete, and every list a field opens (the combo box's own sheet stacks over the full-screen).
@@ -3387,19 +3449,21 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
       <div class="pf-photo">
         <div class="pf-photo-preview" data-ph="upload committed"><span class="pf-photo-initials" id="pfPhInitials">RM</span><img id="pfPhPreview" alt="" hidden></div>
         <div class="pf-photo-crop" data-ph="crop" hidden>
-          <div class="pf-photo-port" id="pfPhPort"><img id="pfPhCropImg" alt="Your photo — drag to reposition" draggable="false"></div>
+          <div class="pf-photo-port" id="pfPhPort"><div class="pf-photo-clip"><img id="pfPhCropImg" alt="Your photo — drag to reposition" draggable="false"></div></div>
           <label class="pf-photo-zoom"><span class="pf-sr">Zoom</span><input type="range" class="pf-range" id="pfPhZoom" min="0" max="100" value="0"></label>
-          <p class="pf-note">Drag to reposition · slide to zoom</p>
         </div>
-        <p class="pf-note" data-ph="upload committed">PNG, JPG or WebP · Max 5 MB</p>
-        <div id="pfPhErr"></div>
+        <button class="pf-photo-drop" type="button" id="pfPhDrop" data-act="photo-pick" data-ph="upload committed">
+          <svg aria-hidden="true" focusable="false" data-icon="ic_upload-outline" viewBox="0 0 20 20" fill="none"><path d="M17 11.438V16.438C17 16.6038 16.9342 16.7627 16.8169 16.8799C16.6997 16.9971 16.5408 17.063 16.375 17.063H2.625C2.45924 17.063 2.30027 16.9971 2.18306 16.8799C2.06585 16.7627 2 16.6038 2 16.438V11.438C2 11.2722 2.06585 11.1133 2.18306 10.996C2.30027 10.8788 2.45924 10.813 2.625 10.813C2.79076 10.813 2.94973 10.8788 3.06694 10.996C3.18415 11.1133 3.25 11.2722 3.25 11.438V15.813H15.75V11.438C15.75 11.2722 15.8158 11.1133 15.9331 10.996C16.0503 10.8788 16.2092 10.813 16.375 10.813C16.5408 10.813 16.6997 10.8788 16.8169 10.996C16.9342 11.1133 17 11.2722 17 11.438ZM6.375 7.37549H8.875V12.3755C8.875 12.5413 8.94085 12.7002 9.05806 12.8174C9.17527 12.9346 9.33424 13.0005 9.5 13.0005C9.66576 13.0005 9.82473 12.9346 9.94194 12.8174C10.0592 12.7002 10.125 12.5413 10.125 12.3755V7.37549H12.625C12.7487 7.37559 12.8696 7.33899 12.9725 7.27032C13.0754 7.20165 13.1555 7.104 13.2029 6.98974C13.2502 6.87547 13.2626 6.74973 13.2385 6.62842C13.2143 6.50712 13.1547 6.39571 13.0672 6.3083L9.94219 3.1833C9.88414 3.12519 9.81521 3.07909 9.73934 3.04764C9.66346 3.01619 9.58213 3 9.5 3C9.41787 3 9.33654 3.01619 9.26066 3.04764C9.18479 3.07909 9.11586 3.12519 9.05781 3.1833L5.93281 6.3083C5.84531 6.39571 5.7857 6.50712 5.76154 6.62842C5.73739 6.74973 5.74977 6.87547 5.79711 6.98974C5.84446 7.104 5.92464 7.20165 6.02751 7.27032C6.13038 7.33899 6.25132 7.37559 6.375 7.37549Z" fill="currentColor"/></svg>
+          <span class="pf-photo-drop-title" id="pfPhDropTitle">Drag a photo here or <span class="pf-photo-drop-link">browse files</span></span>
+          <span class="pf-photo-drop-hint">PNG, JPG or WebP · Max 5 MB</span>
+        </button>
+        <p class="pf-photo-err" id="pfPhErr" role="alert"></p>
+        <button class="btn btn--secondary btn--destructive btn--md btn--block pf-photo-remove" type="button" data-act="photo-remove" data-ph="committed" hidden>Remove photo</button>
       </div>
       <input type="file" id="pfPhFile" accept="image/png,image/jpeg,image/webp" hidden>
     </div>
-    <div class="bs-bottom">
-      <div class="bs-actions" data-ph="upload"><button class="btn btn--primary btn--lg btn--block" type="button" data-act="photo-pick"><svg aria-hidden="true" focusable="false" data-icon="ic_upload-outline" viewBox="0 0 20 20" fill="none"><path d="M17 11.438V16.438C17 16.6038 16.9342 16.7627 16.8169 16.8799C16.6997 16.9971 16.5408 17.063 16.375 17.063H2.625C2.45924 17.063 2.30027 16.9971 2.18306 16.8799C2.06585 16.7627 2 16.6038 2 16.438V11.438C2 11.2722 2.06585 11.1133 2.18306 10.996C2.30027 10.8788 2.45924 10.813 2.625 10.813C2.79076 10.813 2.94973 10.8788 3.06694 10.996C3.18415 11.1133 3.25 11.2722 3.25 11.438V15.813H15.75V11.438C15.75 11.2722 15.8158 11.1133 15.9331 10.996C16.0503 10.8788 16.2092 10.813 16.375 10.813C16.5408 10.813 16.6997 10.8788 16.8169 10.996C16.9342 11.1133 17 11.2722 17 11.438ZM6.375 7.37549H8.875V12.3755C8.875 12.5413 8.94085 12.7002 9.05806 12.8174C9.17527 12.9346 9.33424 13.0005 9.5 13.0005C9.66576 13.0005 9.82473 12.9346 9.94194 12.8174C10.0592 12.7002 10.125 12.5413 10.125 12.3755V7.37549H12.625C12.7487 7.37559 12.8696 7.33899 12.9725 7.27032C13.0754 7.20165 13.1555 7.104 13.2029 6.98974C13.2502 6.87547 13.2626 6.74973 13.2385 6.62842C13.2143 6.50712 13.1547 6.39571 13.0672 6.3083L9.94219 3.1833C9.88414 3.12519 9.81521 3.07909 9.73934 3.04764C9.66346 3.01619 9.58213 3 9.5 3C9.41787 3 9.33654 3.01619 9.26066 3.04764C9.18479 3.07909 9.11586 3.12519 9.05781 3.1833L5.93281 6.3083C5.84531 6.39571 5.7857 6.50712 5.76154 6.62842C5.73739 6.74973 5.74977 6.87547 5.79711 6.98974C5.84446 7.104 5.92464 7.20165 6.02751 7.27032C6.13038 7.33899 6.25132 7.37559 6.375 7.37549Z" fill="currentColor"/></svg>Upload photo</button></div>
-      <div class="bs-actions bs-actions--row" data-ph="crop" hidden><button class="btn btn--secondary btn--lg btn--fill" type="button" data-act="photo-retake">Retake</button><button class="btn btn--primary btn--lg btn--fill" type="button" data-act="photo-save">Save photo</button></div>
-      <div class="bs-actions bs-actions--row" data-ph="committed" hidden><button class="btn btn--secondary btn--destructive btn--lg btn--fill" type="button" data-act="photo-remove">Remove</button><button class="btn btn--primary btn--lg btn--fill" type="button" data-act="photo-pick">Upload new</button></div>
+    <div class="bs-bottom" data-ph="crop" hidden>
+      <div class="bs-actions bs-actions--row"><button class="btn btn--secondary btn--lg btn--fill" type="button" data-act="photo-retake">Retake</button><button class="btn btn--primary btn--lg btn--fill" type="button" data-act="photo-save">Save photo</button></div>
     </div>
   </div>
 
@@ -3966,10 +4030,10 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 })(window);
 </script>
 <!-- ▲ COMPONENT · bottom-tab-bar -->
-<!-- ▼ COMPONENT · bottom-sheet v2.8.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.js — do not edit here -->
+<!-- ▼ COMPONENT · bottom-sheet v2.8.1 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.js — do not edit here -->
 <script data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BOTTOM SHEET  (app component · App-login)            v2.8.0
+   SHINE · BOTTOM SHEET  (app component · App-login)            v2.8.1
    Pair with bottom-sheet.css. Zero dependencies, no build step.
    Engine = App-logout's ShineSheet v1.2.1; v2.0 adds the three-section anatomy;
    v2.1 aligns every value with design-system/DESIGN-SYSTEM.md.
@@ -4213,38 +4277,69 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     else if (!top.contains(a)) { e.preventDefault(); first.focus(); }
   });
 
-  /* ── on-screen keyboard (v1.2) ────────────────────────────────────
+  /* ── on-screen keyboard (v1.2 · v2.8.1) ──────────────────────────────
      iOS Safari never resizes the page for the keyboard — it slides over fixed
-     content, so a bottom sheet ends up underneath it. While any sheet is open we
-     follow visualViewport; the CSS pads the sheet's content up by the keyboard
-     height (the surface itself stays on the bottom edge, behind the keyboard):
-       --bs-kb   = layout-viewport bottom − visible-area bottom   (keyboard height)
-       --bs-vvh  = visible height (caps the sheet so its head never hides)
-     Android WebView/Chrome resize the page instead → --bs-kb stays 0 there. */
-  var kb = { on: false, raf: 0, px: 0 };
-  function kbSet(px, h) {
-    var r = doc.documentElement;
-    var vv = global.visualViewport, vt = vv ? Math.max(0, Math.round(vv.offsetTop)) : 0;
-    if (px > 0) { r.style.setProperty('--bs-kb', px + 'px'); r.style.setProperty('--bs-vvh', Math.round(h) + 'px'); r.style.setProperty('--bs-vvt', vt + 'px'); r.classList.add('bs-kb'); }
-    else { r.style.removeProperty('--bs-kb'); r.style.removeProperty('--bs-vvh'); r.style.removeProperty('--bs-vvt'); r.classList.remove('bs-kb'); }
-    if (px !== kb.px) {
-      kb.px = px;
-      stack.forEach(function (el) { if (el.__bs && el.__bs.bottom) { syncCta(el); syncScroll(el); } });
-      var a = doc.activeElement;                         // keep the focused field in view inside the sheet
-      if (px > 0 && a && a.closest && a.closest('.bs') && a.scrollIntoView) setTimeout(function () { try { a.scrollIntoView({ block: 'nearest' }); } catch (e) {} }, 260);
+     content and pans the visible area (visualViewport) to keep the field in view.
+     Android (Chrome, the app's adjustResize WebView) resizes the page instead.
+     While any sheet is open we follow both and set, on <html>:
+       .bs-kb    the keyboard is up (either platform)
+       --bs-kb   = layout-viewport bottom − visible-area bottom (what the keyboard still covers of a
+                   bottom-anchored sheet; 0 on Android and once iOS has panned all the way)
+       --bs-vvh  = visible height  ·  --bs-vvt = how far iOS panned the visible area down
+       --bs-kbh  = the keyboard's own height on iOS (innerHeight − visible height; 0 on Android)
+     v2.8.1: "keyboard up" is decided by the visible height alone (innerHeight − visualViewport.height
+     > 80 on iOS; the page shrinking by > 150 under a focused field on Android) — the old test
+     (minus the pan) read "no keyboard" as soon as iOS panned, which dropped a full-screen's title
+     off the top and let its bottom ride on the keyboard. */
+  var kb = { on: false, raf: 0, key: '', base: 0, w: 0, y: 0 };
+  function editable(a) {
+    if (!a || a === doc.body) return false;
+    if (a.isContentEditable || a.tagName === 'TEXTAREA') return true;
+    return a.tagName === 'INPUT' && !/^(button|checkbox|radio|range|file|submit|reset|color|image|hidden)$/i.test(a.type || '');
+  }
+  function kbSet(on, px, h, t, k) {
+    var r = doc.documentElement, key = on ? [px, h, t, k].join() : '';
+    if (key === kb.key) return;
+    var was = r.classList.contains('bs-kb');
+    kb.key = key;
+    if (on) { r.style.setProperty('--bs-kb', px + 'px'); r.style.setProperty('--bs-vvh', h + 'px'); r.style.setProperty('--bs-vvt', t + 'px'); r.style.setProperty('--bs-kbh', k + 'px'); r.classList.add('bs-kb'); }
+    else { ['--bs-kb', '--bs-vvh', '--bs-vvt', '--bs-kbh'].forEach(function (n) { r.style.removeProperty(n); }); r.classList.remove('bs-kb'); }
+    stack.forEach(function (el) { if (el.__bs && el.__bs.bottom) { syncCta(el); syncScroll(el); } });
+    if (on && !was) {                                    // keep the focused field in view inside its sheet
+      var a = doc.activeElement;
+      if (a && a.closest && a.closest('.bs') && a.scrollIntoView) setTimeout(function () { try { a.scrollIntoView({ block: 'nearest' }); } catch (e) {} }, 260);
     }
+    // iOS can leave the (locked) page scrolled after the keyboard goes — fixed sheets then sit too high
+    if (!on && was && stack.length && Math.abs((global.scrollY || 0) - kb.y) > 1) { try { global.scrollTo(0, kb.y); } catch (e) {} }
   }
   function kbMeasure() {
     kb.raf = 0;
-    var vv = global.visualViewport; if (!vv || !stack.length) return kbSet(0);
-    var px = Math.round(global.innerHeight - vv.height - vv.offsetTop);
-    kbSet(px > 80 ? px : 0, vv.height);                  // < 80 px = browser chrome moving, not a keyboard
+    var vv = global.visualViewport; if (!stack.length) return kbSet(false);
+    var ih = global.innerHeight, iw = global.innerWidth, focused = editable(doc.activeElement);
+    if (iw !== kb.w) { kb.w = iw; kb.base = ih; }        // rotation → new baseline
+    if (!focused || ih > kb.base) kb.base = Math.max(focused ? kb.base : 0, ih);
+    var vh = vv ? vv.height : ih, vt = vv ? Math.max(0, vv.offsetTop) : 0;
+    var overlay = ih - vh > 80;                          // iOS: keyboard over the page (< 80 = browser chrome moving)
+    var resized = focused && kb.base - ih > 150;          // Android: the page itself shrank for it
+    if (!overlay && !resized) return kbSet(false);
+    kbSet(true, Math.max(0, Math.round(ih - vh - vt)), Math.round(vh), Math.round(vt), Math.max(0, Math.round(ih - vh)));
   }
   function kbSchedule() { if (!kb.raf) kb.raf = requestAnimationFrame(kbMeasure); }
+  function kbLater() { kbSchedule(); [120, 360].forEach(function (t) { setTimeout(kbSchedule, t); }); }   // focus moves before the keyboard does
   function keyboard(on) {
-    var vv = global.visualViewport; if (!vv) return;
-    if (on && !kb.on) { vv.addEventListener('resize', kbSchedule); vv.addEventListener('scroll', kbSchedule); }
-    if (!on && kb.on) { vv.removeEventListener('resize', kbSchedule); vv.removeEventListener('scroll', kbSchedule); kbSet(0); }
+    var vv = global.visualViewport;
+    if (on && !kb.on) {
+      kb.y = global.scrollY || 0; kb.w = global.innerWidth; kb.base = global.innerHeight;
+      if (vv) { vv.addEventListener('resize', kbSchedule); vv.addEventListener('scroll', kbSchedule); }
+      global.addEventListener('resize', kbSchedule);
+      doc.addEventListener('focusin', kbLater); doc.addEventListener('focusout', kbLater);
+    }
+    if (!on && kb.on) {
+      if (vv) { vv.removeEventListener('resize', kbSchedule); vv.removeEventListener('scroll', kbSchedule); }
+      global.removeEventListener('resize', kbSchedule);
+      doc.removeEventListener('focusin', kbLater); doc.removeEventListener('focusout', kbLater);
+      kbSet(false);
+    }
     kb.on = on; if (on) kbSchedule();
   }
 
@@ -4253,15 +4348,23 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
      fixed element's background-color at the top edge). Scrims paint with an image
      layer, so while one is up we give html/body the page colour dimmed by it —
      the status bar dims together with the page, and is restored on close. */
-  var tintSaved = null;
+  var tintSaved = null, themeSaved = null;
   function rgba(s) { var m = /rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:[,\s/]+([\d.]+))?/.exec(s || ''); return m ? [+m[1], +m[2], +m[3], m[4] === undefined ? 1 : +m[4]] : null; }
+  function theme(col) {                                  // v2.8.1: theme-color follows a full-screen too (iOS / Android chrome)
+    var m = doc.querySelector('meta[name="theme-color"]'); if (!m) return;
+    if (col) { if (themeSaved === null) themeSaved = m.getAttribute('content') || ''; m.setAttribute('content', col); }
+    else if (themeSaved !== null) { m.setAttribute('content', themeSaved); themeSaved = null; }
+  }
   function tint() {
     var r = doc.documentElement, b = doc.body; if (!b) return;
     // v2.8.0: a full-screen on a phone covers the status bar area with its surface → the bar takes that colour;
     // a sheet stacked over it dims that colour with its own scrim
     var layers = stack.filter(function (el) { return !isNested(el) && (el.__bs.scrim || fullScreen(el)); });
+    var full = stack.some(function (el) { return fullScreen(el) && el.__bs.up; });
+    r.classList.toggle('bs-full', full);                 // v2.8.1: a full-screen is up → pages hide their own fixed top bars
     if (!layers.length) {
       if (tintSaved) { r.style.backgroundColor = tintSaved[0]; b.style.backgroundColor = tintSaved[1]; tintSaved = null; }
+      theme(null);
       return;
     }
     if (!tintSaved) {
@@ -4270,15 +4373,25 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
       if (!base || base[3] < 0.5) base = [255, 255, 255, 1];
       tintSaved = [r.style.backgroundColor, b.style.backgroundColor, base];
     }
-    var col = tintSaved[2].slice(0, 3);
+    var col = tintSaved[2].slice(0, 3), fullCol = null;
     layers.forEach(function (el) {                       // stacked scrims compound; a full-screen resets to its surface
-      if (fullScreen(el)) { var f = rgba(getComputedStyle(el).backgroundColor); if (f && f[3] > 0.5) { col = f.slice(0, 3); return; } }
+      if (fullScreen(el)) { var f = rgba(getComputedStyle(el).backgroundColor); if (f && f[3] > 0.5) { col = f.slice(0, 3); fullCol = col; return; } }
       var sc = el.__bs.scrim; if (!sc) return;
       var c = rgba(getComputedStyle(sc).getPropertyValue('--bs-scrim-c')) || [13, 17, 23, 0.24];
       col = [0, 1, 2].map(function (k) { return c[k] * c[3] + col[k] * (1 - c[3]); });
     });
     var css = 'rgb(' + col.map(Math.round).join(',') + ')';
     r.style.backgroundColor = css; b.style.backgroundColor = css;
+    theme(fullCol ? '#' + fullCol.map(function (v) { return ('0' + Math.round(v).toString(16)).slice(-2); }).join('').toUpperCase() : null);
+  }
+  /* v2.8.1 · iOS takes the status-bar colour from the fixed element at the top edge. While a full-screen
+     slides up its scrim is that element (a gradient → sampled from pixels → the dimmed page stuck in the bar).
+     Once the screen is up, its scrim is covered anyway: hide it so the screen itself (no transform once open,
+     solid background-color) is what Safari reads; it comes back for the slide down. */
+  function cover(el, on) {
+    var st = el.__bs; if (!st) return;
+    st.up = !!on && fullScreen(el);
+    if (st.scrim) st.scrim.classList.toggle('bs-scrim--covered', st.up);
   }
   function scrimMs(sc) { var d = getComputedStyle(sc).transitionDuration; return (parseFloat(d) || 0) * (/ms/.test(d) ? 1 : 1000); }
 
@@ -4321,7 +4434,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 
     var af = el.querySelector('[data-bs-autofocus]');
     try { (af || el).focus({ preventScroll: true }); } catch (e) { (af || el).focus(); }
-    st.timer = setTimeout(function () { syncScroll(el); emit(el, 'shine:sheet-opened', {}); }, durationOf(el));
+    st.timer = setTimeout(function () { syncScroll(el); cover(el, true); tint(); emit(el, 'shine:sheet-opened', {}); }, durationOf(el));
     return true;
   }
 
@@ -4335,6 +4448,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     for (var k = stack.length - 1; k > i; k--) close(stack[k], 'parent');
 
     stack.splice(stack.indexOf(el), 1);
+    cover(el, false);
     el.classList.remove('is-open', 'is-dragging');
     el.style.transform = '';
     if (st.scrim) {
@@ -4408,7 +4522,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
   // re-measure an auto sheet after the page swaps its content (optional — a MutationObserver already does this)
   function refresh(target) { var el = $(target); if (el && el.__bs) { syncCta(el); syncScroll(el); } }
 
-  global.ShineSheet = { open: open, close: close, toggle: toggle, isOpen: isOpen, top: top, closeAll: closeAll, init: init, refresh: refresh, version: '2.8.0' };
+  global.ShineSheet = { open: open, close: close, toggle: toggle, isOpen: isOpen, top: top, closeAll: closeAll, init: init, refresh: refresh, version: '2.8.1' };
 })(window);
 </script>
 <!-- ▲ COMPONENT · bottom-sheet -->
@@ -5314,7 +5428,8 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 <!-- ▲ COMPONENT · alert -->
 
   <script>
-/* SHINE APP · PROFILE — page script (v1.18 · 2026-10-25)
+/* SHINE APP · PROFILE — page script (v1.19 · 2026-10-25)
+   v1.19: photo flow as profile-index (drop target + drag-and-drop, no subtitle while cropping, a red error line).
    v1.18: the editors open as the modal's FULL-SCREEN variation (bottom-sheet v2.8.0, .bs--full) — photo, professional,
    personal (✎ only), contact, key skills, employment, education, links, job preferences (new: add + edit). Everything
    that asks one thing stays a BOTTOM SHEET: status, OTP, the hero's asks, item options, delete, and every list a field
@@ -5608,18 +5723,21 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
   /* ════ PROFILE PHOTO · the top bar's photo ══════════════════════════════════════════════════════════════ */
   var PH = $('#pfPhoto'), phFile = $('#pfPhFile'), phPort = $('#pfPhPort'), phImg = $('#pfPhCropImg'), phZoom = $('#pfPhZoom');
   var staged = null, crop = { min: 1, max: 3, scale: 1, tx: 0, ty: 0, w: 0, h: 0, port: 240 };
-  var PH_COPY = {
-    upload: ['Add a face to your <span class="accent">profile</span>', 'Profiles with a photo get 3× more recruiter messages. Use a recent, clear photo where you’re easy to recognise.'],
-    crop: ['Adjust your <span class="accent">photo</span>', 'Keep your face in the middle of the circle.'],
-    committed: ['Your <span class="accent">profile photo</span>', 'Looking sharp. You can upload a different photo any time or remove this one to go back to your initials.']
+  var PH_COPY = {                                           // profile-index's per-state copy (v1.19: + the drop target's line)
+    upload: ['Add a face to your <span class="accent">profile</span>', 'Profiles with a photo get 3× more recruiter messages. Use a recent, clear photo where you’re easy to recognise.', 'Drag a photo here or <span class="pf-photo-drop-link">browse files</span>'],
+    crop: ['Adjust your <span class="accent">photo</span>', '', ''],
+    committed: ['Your <span class="accent">profile photo</span>', 'Looking sharp. You can upload a different photo any time or remove this one to go back to your initials.', 'Upload a new photo or <span class="pf-photo-drop-link">browse files</span>']
   };
   function phState(s) {
     PH.setAttribute('data-photo-state', s);
     $$('[data-ph]', PH).forEach(function (el) { el.hidden = el.getAttribute('data-ph').split(' ').indexOf(s) < 0; });
-    $('#pfPhTitle').innerHTML = PH_COPY[s][0]; $('#pfPhSub').textContent = PH_COPY[s][1];
+    $('#pfPhTitle').innerHTML = PH_COPY[s][0];
+    var sub = $('#pfPhSub'); sub.textContent = PH_COPY[s][1]; sub.hidden = !PH_COPY[s][1];   // crop: no subtitle (profile-index)
+    if (PH_COPY[s][2]) $('#pfPhDropTitle').innerHTML = PH_COPY[s][2];
+    PH.classList.toggle('bs--pad-bottom', s !== 'crop');    // upload + committed: no bottom section → clear the home indicator
     S.refresh(PH);
   }
-  function phErr(t) { $('#pfPhErr').innerHTML = t ? AL.html({ intent: 'negative', text: t, live: true }) : ''; }
+  function phErr(t) { $('#pfPhErr').textContent = t || ''; }   // a red line under the drop target (profile-index)
   function initials() { return window.ShineTopBar ? ShineTopBar.initials(avatar.getAttribute('data-name')) : ''; }
   function phPreview() {
     var img = avatar.querySelector('img'), p = $('#pfPhPreview');
@@ -5634,8 +5752,9 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     crop.tx = Math.max(-(hw - hp), Math.min(hw - hp, crop.tx)); crop.ty = Math.max(-(hh - hp), Math.min(hh - hp, crop.ty));
     phImg.style.transform = 'translate(-50%, -50%) translate(' + crop.tx + 'px, ' + crop.ty + 'px) scale(' + crop.scale + ')';
   }
-  phFile.addEventListener('change', function () {
-    var f = phFile.files && phFile.files[0]; if (!f) return;
+  phFile.addEventListener('change', function () { phTake(phFile.files && phFile.files[0]); });
+  function phTake(f) {
+    if (!f) return;
     if (['image/png', 'image/jpeg', 'image/webp'].indexOf(f.type) < 0) { phErr('Only PNG, JPG or WebP files are supported.'); return; }
     if (f.size > 5 * 1024 * 1024) { phErr('This file is ' + (f.size / 1048576).toFixed(1) + ' MB. The maximum size is 5 MB.'); return; }
     phErr(''); unstage(); staged = URL.createObjectURL(f);
@@ -5648,7 +5767,13 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     };
     phImg.onerror = function () { phErr('We couldn’t read this image. Try another photo.'); };
     phImg.src = staged;
-  });
+  }
+  (function () {                                            // desktop: drop a file on the drop target
+    var dz = $('#pfPhDrop'); if (!dz) return;
+    ['dragenter', 'dragover'].forEach(function (t) { dz.addEventListener(t, function (e) { e.preventDefault(); dz.classList.add('is-dragover'); }); });
+    ['dragleave', 'dragend'].forEach(function (t) { dz.addEventListener(t, function () { dz.classList.remove('is-dragover'); }); });
+    dz.addEventListener('drop', function (e) { e.preventDefault(); dz.classList.remove('is-dragover'); phTake(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]); });
+  })();
   phZoom.addEventListener('input', function () { crop.scale = crop.min + (+phZoom.value / 100) * (crop.max - crop.min); applyCrop(); });
   (function () {                                            // drag to reposition
     var on = false, sx = 0, sy = 0, ox = 0, oy = 0;
