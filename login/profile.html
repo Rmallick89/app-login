@@ -11,7 +11,7 @@
   })();
 </script>
 <meta name="theme-color" content="#161B22" />
-<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.19 (2026-10-25) — photo flow rebuilt to profile-index · full-screen keyboard + status bar fixes (modal v2.8.1)
+<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.20 (2026-10-25) — status-bar strip (modal v2.8.2) · short lists without search · lists never behind the keyboard (combo box v3.1.0)
      Built from the mobile view (≤ 480 px) of <Shine Revamp>/profile-index.html, on the design system
      (design-system/DESIGN-SYSTEM.md + component-system.md): semantic tokens only, the buttons atom (atoms/buttons), DS atoms (A.04 Badge,
      A.05 Tag, A.08 Avatar, A.09 Toast). No menu / title on this tab (v1.1, user): the full-bleed hero starts at the top
@@ -1112,10 +1112,10 @@ legend.field-label--hidden { float: none; width: 1px; }
 @media (prefers-reduced-motion: reduce) { .field-control, .field-trailing, .field-icon { transition: none; } }
 </style>
 <!-- ▲ COMPONENT · field-base -->
-<!-- ▼ COMPONENT · combo-box v3.0.5 · verbatim copy of App-login/app-components/atoms/input-fields/combo-box/combo-box.css — do not edit here -->
+<!-- ▼ COMPONENT · combo-box v3.1.0 · verbatim copy of App-login/app-components/atoms/input-fields/combo-box/combo-box.css — do not edit here -->
 <style data-component="combo-box">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · INPUT FIELDS · COMBO BOX  (atoms/input-fields/combo-box/)      v3.0.5
+   SHINE · INPUT FIELDS · COMBO BOX  (atoms/input-fields/combo-box/)      v3.1.0
    Search, then pick one from a list — the list opens INLINE (a dropdown under the box) or in a BOTTOM SHEET.
    Needs field-base.css first (the box, its tokens); the sheet mode also needs the bottom-sheet component
    (bottom-sheet.css + .js). Behaviour: combo-box.js.
@@ -1196,6 +1196,11 @@ legend.field-label--hidden { float: none; width: 1px; }
 
 /* the sheet (bottom-sheet component) — only the body's content is styled here ─────────────── */
 .field-combo-sheet { gap: 0; }
+/* v3.1.0 · the sheet keeps its opening height while the list narrows (--fld-sheet-h, set by the script); with the
+   keyboard up it fills the visible area above it (the bottom-sheet engine's --bs-vvh / --bs-kb), so the search box
+   and as many options as fit stay in view — never behind the keyboard */
+.bs.field-sheet { height: var(--fld-sheet-h, auto); }
+.bs-kb .bs.field-sheet:not(.bs--nested):not(.field-sheet--plain) { height: calc(var(--bs-vvh, 100vh) - 16px + var(--bs-kb, 0px)); }
 .field-sheet-search {
   position: sticky; top: 0; z-index: 1; padding: 4px 0 8px;                                /* room for the focus ring · spacing.stack.xs */
   background: var(--bs-surface-neutral-raised, var(--fld-bg));
@@ -1418,10 +1423,10 @@ legend.field-label--hidden { float: none; width: 1px; }
 @media (prefers-reduced-motion: reduce) { .alert-close-col, .alert-close-col svg { transition: none; } }
 </style>
 <!-- ▲ COMPONENT · alert -->
-<!-- ▼ COMPONENT · bottom-sheet v2.8.1 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
+<!-- ▼ COMPONENT · bottom-sheet v2.8.2 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
 <style data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BOTTOM SHEET  (app component · App-login)            v2.8.1
+   SHINE · BOTTOM SHEET  (app component · App-login)            v2.8.2
    The one container behind every slide-up panel in the logged-in app — in TWO VARIATIONS:
      1 · BOTTOM SHEET  .bs            slides up from the bottom edge, the page shows above it
                                       (pickers, confirmations, nudges, OTP, short asks)
@@ -1466,7 +1471,7 @@ legend.field-label--hidden { float: none; width: 1px; }
    ═══════════════════════════════════════════════════════════════════════ */
 
 /* ── Token layer ───────────────────────────────────────────────────── */
-.bs, .bs-scrim {
+.bs, .bs-scrim, .bs-statusbar {
   /* PRIMITIVES — DESIGN-SYSTEM.md §1 (backing values only; never used in rules) */
   --bs-p-white: #FFFFFF;
   --bs-p-cn-50: #F7F9FB;  --bs-p-cn-100: #EEF1F5; --bs-p-cn-200: #E4E7EC; --bs-p-cn-300: #C8CED7;
@@ -1601,11 +1606,11 @@ legend.field-label--hidden { float: none; width: 1px; }
   /* stacking — ShineSheet assigns z = --bs-z + 2·depth (+1 for the sheet) */
   --bs-z: 100;
 }
-html.in-app .bs { --bs-safe: 0px; --bs-safe-top: 0px; }
+html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px; }
 
 /* desktop breakpoint (≥768px) — responsive tokens per §2.1 / §2.3 */
 @media (min-width: 768px) {
-  .bs, .bs-scrim {
+  .bs, .bs-scrim, .bs-statusbar {
     --bs-display-sm-size: 32px; --bs-display-sm-lh: 36px; --bs-display-sm-ls: -0.4px;
     --bs-heading-lg-size: 24px; --bs-heading-lg-lh: 28px; --bs-heading-lg-ls: -0.3px;
     --bs-title-lg-size: var(--bs-heading-lg-size); --bs-title-lg-lh: var(--bs-heading-lg-lh); --bs-title-lg-ls: var(--bs-heading-lg-ls);
@@ -1671,6 +1676,15 @@ html.in-app .bs { --bs-safe: 0px; --bs-safe-top: 0px; }
 }
 .bs-scrim[hidden] { display: none !important; }
 .bs-scrim.bs-scrim--covered { visibility: hidden; }        /* v2.8.1: under an open full-screen (status bar, see the JS) */
+/* v2.8.2 · status-bar strip (made by ShineSheet while a sheet is open; colour set by the script = what is under it).
+   The box is 10 px deeper than what is painted: Safari reads a fixed box's background-color only above 10 px tall. */
+.bs-statusbar {
+  display: none; position: fixed; top: 0; left: 0; right: 0; z-index: calc(var(--bs-z) + 80); pointer-events: none;
+  height: calc(var(--bs-safe-top) + 16px);
+  -webkit-clip-path: inset(0 0 10px 0); clip-path: inset(0 0 10px 0);          /* painted: status-bar area + 6 */
+}
+.bs-statusbar.is-on { display: block; }
+@media (min-width: 768px) { .bs-statusbar.is-on { display: none; } }           /* phones only */
 .bs-scrim.is-open { opacity: 1; pointer-events: auto; }
 .bs-scrim--strong { --bs-scrim-c: var(--bs-surface-neutral-state-overlay-strong); -webkit-backdrop-filter: blur(var(--bs-blur-overlay)); backdrop-filter: blur(var(--bs-blur-overlay)); }
 .bs-scrim--nested { position: absolute; border-radius: var(--bs-radius-2xl) var(--bs-radius-2xl) 0 0; }
@@ -1999,7 +2013,7 @@ html.in-app .bs { --bs-safe: 0px; --bs-safe-top: 0px; }
 <!-- ▲ COMPONENT · bottom-sheet -->
 <style>
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE APP · PROFILE (Me tab) — page styles · v1.19 (2026-10-25)
+   SHINE APP · PROFILE (Me tab) — page styles · v1.20 (2026-10-25)
    Built from the mobile view of <Shine Revamp>/profile-index.html (≤ 480 px):
    hero (status strip · strength dial · next step) → Your Resume → Profile
    Overview → Key Skills → Employment History → Education History → Links.
@@ -4030,10 +4044,10 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 })(window);
 </script>
 <!-- ▲ COMPONENT · bottom-tab-bar -->
-<!-- ▼ COMPONENT · bottom-sheet v2.8.1 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.js — do not edit here -->
+<!-- ▼ COMPONENT · bottom-sheet v2.8.2 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.js — do not edit here -->
 <script data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BOTTOM SHEET  (app component · App-login)            v2.8.1
+   SHINE · BOTTOM SHEET  (app component · App-login)            v2.8.2
    Pair with bottom-sheet.css. Zero dependencies, no build step.
    Engine = App-logout's ShineSheet v1.2.1; v2.0 adds the three-section anatomy;
    v2.1 aligns every value with design-system/DESIGN-SYSTEM.md.
@@ -4355,16 +4369,27 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     if (col) { if (themeSaved === null) themeSaved = m.getAttribute('content') || ''; m.setAttribute('content', col); }
     else if (themeSaved !== null) { m.setAttribute('content', themeSaved); themeSaved = null; }
   }
+  /* v2.8.2 · the status-bar strip. On the user's iPhone (home-screen app) the bar stayed the page colour under every
+     sheet: Safari had sampled the scrim's pixels mid-fade and never looked again — body / html colour changes are not
+     re-read. What it does re-read (the top app bar proved it) is the background-color of a fixed, opaque, full-width
+     box at the top edge, taller than 10 px. So while a sheet is open the engine keeps one there — above every sheet
+     and scrim, painted the exact colour of what is under it (the page dimmed by the scrims, a full-screen's white, a
+     full-screen dimmed by a sheet stacked on it), so it never shows; only its top (status-bar area + 6) is painted. */
+  var bar = null;
+  function strip(css) {
+    if (!bar) { bar = doc.createElement('div'); bar.className = 'bs-statusbar'; bar.setAttribute('aria-hidden', 'true'); doc.body.appendChild(bar); }
+    if (css) { bar.style.backgroundColor = css; bar.classList.add('is-on'); } else bar.classList.remove('is-on');
+  }
   function tint() {
     var r = doc.documentElement, b = doc.body; if (!b) return;
-    // v2.8.0: a full-screen on a phone covers the status bar area with its surface → the bar takes that colour;
-    // a sheet stacked over it dims that colour with its own scrim
+    // a full-screen that is UP sets the colour to its surface; while it slides it is just its scrim.
+    // A sheet stacked over it dims that colour with its own scrim.
     var layers = stack.filter(function (el) { return !isNested(el) && (el.__bs.scrim || fullScreen(el)); });
     var full = stack.some(function (el) { return fullScreen(el) && el.__bs.up; });
     r.classList.toggle('bs-full', full);                 // v2.8.1: a full-screen is up → pages hide their own fixed top bars
     if (!layers.length) {
       if (tintSaved) { r.style.backgroundColor = tintSaved[0]; b.style.backgroundColor = tintSaved[1]; tintSaved = null; }
-      theme(null);
+      theme(null); strip(null);
       return;
     }
     if (!tintSaved) {
@@ -4374,16 +4399,18 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
       tintSaved = [r.style.backgroundColor, b.style.backgroundColor, base];
     }
     var col = tintSaved[2].slice(0, 3), fullCol = null;
-    layers.forEach(function (el) {                       // stacked scrims compound; a full-screen resets to its surface
-      if (fullScreen(el)) { var f = rgba(getComputedStyle(el).backgroundColor); if (f && f[3] > 0.5) { col = f.slice(0, 3); fullCol = col; return; } }
+    layers.forEach(function (el) {                       // stacked scrims compound; a full-screen (once up) resets to its surface
+      if (fullScreen(el) && el.__bs.up) { var f = rgba(getComputedStyle(el).backgroundColor); if (f && f[3] > 0.5) { col = f.slice(0, 3); fullCol = col; return; } }
       var sc = el.__bs.scrim; if (!sc) return;
       var c = rgba(getComputedStyle(sc).getPropertyValue('--bs-scrim-c')) || [13, 17, 23, 0.24];
       col = [0, 1, 2].map(function (k) { return c[k] * c[3] + col[k] * (1 - c[3]); });
     });
     var css = 'rgb(' + col.map(Math.round).join(',') + ')';
     r.style.backgroundColor = css; b.style.backgroundColor = css;
-    theme(fullCol ? '#' + fullCol.map(function (v) { return ('0' + Math.round(v).toString(16)).slice(-2); }).join('').toUpperCase() : null);
+    strip(css);
+    theme(col === fullCol ? hex(col) : null);
   }
+  function hex(c) { return '#' + c.map(function (v) { return ('0' + Math.round(v).toString(16)).slice(-2); }).join('').toUpperCase(); }
   /* v2.8.1 · iOS takes the status-bar colour from the fixed element at the top edge. While a full-screen
      slides up its scrim is that element (a gradient → sampled from pixels → the dimmed page stuck in the bar).
      Once the screen is up, its scrim is covered anyway: hide it so the screen itself (no transform once open,
@@ -4522,7 +4549,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
   // re-measure an auto sheet after the page swaps its content (optional — a MutationObserver already does this)
   function refresh(target) { var el = $(target); if (el && el.__bs) { syncCta(el); syncScroll(el); } }
 
-  global.ShineSheet = { open: open, close: close, toggle: toggle, isOpen: isOpen, top: top, closeAll: closeAll, init: init, refresh: refresh, version: '2.8.1' };
+  global.ShineSheet = { open: open, close: close, toggle: toggle, isOpen: isOpen, top: top, closeAll: closeAll, init: init, refresh: refresh, version: '2.8.2' };
 })(window);
 </script>
 <!-- ▲ COMPONENT · bottom-sheet -->
@@ -4764,9 +4791,9 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 })(window.ShineField);
 </script>
 <!-- ▲ COMPONENT · normal-field -->
-<!-- ▼ COMPONENT · combo-box v3.0.5 · verbatim copy of App-login/app-components/atoms/input-fields/combo-box/combo-box.js — do not edit here -->
+<!-- ▼ COMPONENT · combo-box v3.1.0 · verbatim copy of App-login/app-components/atoms/input-fields/combo-box/combo-box.js — do not edit here -->
 <script data-component="combo-box">
-/* SHINE · INPUT FIELDS · COMBO BOX  (atoms/input-fields/combo-box/)      v3.0.5
+/* SHINE · INPUT FIELDS · COMBO BOX  (atoms/input-fields/combo-box/)      v3.1.0
    Needs field-base.css + field-base.js and combo-box.css. The sheet mode also needs the bottom-sheet component
    (app-components/bottom-sheet: bottom-sheet.css + bottom-sheet.js); without it the list opens inline.
    Search, then pick one:
@@ -4785,6 +4812,9 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
                            a server), otherwise inline
    data-combo-free          the person may keep their own words: a last row "Use “…”"
    data-combo-title         the sheet's title (default: the label) · data-combo-placeholder  the sheet's search box
+   data-combo-search        the sheet's search box (v3.1.0): auto (default) — only for a long list (more than 8), a
+                            server search or data-combo-free; a short list (Grading system, notice period) opens as
+                            plain rows with no search and no keyboard · true / false force it
    data-combo-heading       a small heading over the list before anything is typed ("Popular cities")
    data-combo-min           letters before a server search starts (default 2)
    data-name                adds a hidden input with that name holding the chosen value (for a plain form post)
@@ -4940,15 +4970,32 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
       if (up) { pop.style.top = 'auto'; pop.style.bottom = (el.clientHeight - ctl.offsetTop + gap) + 'px'; }
       else { pop.style.bottom = 'auto'; pop.style.top = (ctl.offsetTop + ctl.offsetHeight + gap) + 'px'; }
     }
+    /* v3.1.0 · inside a scrolling sheet (a full-screen form) the box scrolls up until its list fits above the
+       keyboard — the box and its options always show together; run on open and whenever the visible area changes */
+    function reveal() {
+      if (mode !== 'inline' || !isOpen) return;
+      var sc = el.closest('.bs-body'); if (!sc || sc.scrollHeight <= sc.clientHeight) return;
+      var vv = win.visualViewport, vb = vv ? vv.offsetTop + vv.height : win.innerHeight;
+      var b = sc.getBoundingClientRect(), r = ctl.getBoundingClientRect(), top = el.getBoundingClientRect().top;
+      var gap = parseFloat(getComputedStyle(el).getPropertyValue('--fld-pop-gap')) || 4, max = parseFloat(getComputedStyle(el).getPropertyValue('--fld-pop-max')) || 272;
+      var want = Math.min(max, lb.scrollHeight + 10) + gap + 12, room = Math.min(b.bottom, vb) - r.bottom;
+      if (room >= want) return;
+      var d = Math.min(want - room, top - b.top - 8); if (d <= 1) return;
+      var spare = sc.scrollHeight - sc.clientHeight - sc.scrollTop;   // the last fields of a form: make the room to scroll into
+      if (spare < d) { el.style.marginBottom = Math.ceil(d - spare + 4 + (parseFloat(el.style.marginBottom) || 0)) + 'px'; el.__rvm = true; }
+      sc.scrollTop += d; place();
+    }
+    var rvT = 0;
+    function revealSoon() { clearTimeout(rvT); rvT = setTimeout(reveal, 60); }
     function openInline() {
       if (isOpen || input.disabled || input.readOnly) return;
       isOpen = true; pop.hidden = false; el.classList.add('field--open'); input.setAttribute('aria-expanded', 'true');
-      update();
+      update(); revealSoon(); setTimeout(reveal, 420);      // again once the keyboard has slid up
     }
     function close() {
       if (!isOpen) return; isOpen = false; clearTimeout(tm); token++;
       if (mode === 'sheet') { if (sheet && win.ShineSheet && ShineSheet.isOpen(sheet)) ShineSheet.close(sheet); }
-      else { pop.hidden = true; input.setAttribute('aria-expanded', 'false'); input.removeAttribute('aria-activedescendant'); }
+      else { pop.hidden = true; input.setAttribute('aria-expanded', 'false'); input.removeAttribute('aria-activedescendant'); if (el.__rvm) { el.style.marginBottom = ''; el.__rvm = false; } }
       el.classList.remove('field--open');
     }
     function sync() {
@@ -4992,16 +5039,25 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
       sIn.addEventListener('keydown', keys);
       sLb.addEventListener('click', function (e) { var li = e.target.closest('.field-option'); if (li) choose(shown[+li.getAttribute('data-k')], true); });
       sheet.addEventListener('shine:sheet-close', function () { isOpen = false; el.classList.remove('field--open'); clearTimeout(tm); token++; });
-      sheet.addEventListener('shine:sheet-closed', function () { sheet.style.height = ''; });
+      sheet.addEventListener('shine:sheet-closed', function () { sheet.style.removeProperty('--fld-sheet-h'); });
+      sheet.addEventListener('keydown', function (e) { if (e.target !== sIn) keys(e); });   // plain rows (no search box): ↑ ↓ Enter
+    }
+    function wantSearch() {                               // v3.1.0: a short list needs no search box (and no keyboard)
+      var a = el.getAttribute('data-combo-search') || 'auto';
+      return a === 'true' ? true : a === 'false' ? false : (options.length > 8 || !!remote || free);
     }
     function openSheet() {
       if (isOpen || input.disabled) return;
       buildSheet(); isOpen = true; el.classList.add('field--open');
+      var srch = wantSearch(), box = sheet.querySelector('.field-sheet-search');
+      box.hidden = !srch; sheet.classList.toggle('field-sheet--plain', !srch);
+      if (srch) sIn.setAttribute('data-bs-autofocus', ''); else sIn.removeAttribute('data-bs-autofocus');
       sIn.value = ''; sheet.querySelector('[data-combo-btn]').hidden = true;
       update();
       if (!ShineSheet.open(sheet, { trigger: input })) { isOpen = false; el.classList.remove('field--open'); return; }
-      sheet.style.height = '';
-      sheet.style.height = Math.ceil(sheet.getBoundingClientRect().height) + 'px';   // keep its height while the list narrows
+      sheet.style.removeProperty('--fld-sheet-h');
+      // keep its height while the list narrows (a CSS variable, so the keyboard rule in combo-box.css can still grow it)
+      if (srch) sheet.style.setProperty('--fld-sheet-h', Math.ceil(sheet.getBoundingClientRect().height) + 'px');
       var s = sLb.querySelector('[aria-selected="true"]'); if (s) scrollTo(s, true);
     }
 
@@ -5051,7 +5107,8 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     });
     win.addEventListener('resize', function () { place(); }, { passive: true });
     win.addEventListener('scroll', function () { place(); }, { passive: true, capture: true });
-    if (win.visualViewport) win.visualViewport.addEventListener('resize', function () { place(); });
+    if (win.visualViewport) win.visualViewport.addEventListener('resize', function () { place(); revealSoon(); });
+    win.addEventListener('resize', revealSoon, { passive: true });
     doc.addEventListener('pointerdown', function (e) { if (isOpen && mode === 'inline' && !el.contains(e.target)) close(); });
     onMq(applyMode);
 
@@ -5428,7 +5485,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 <!-- ▲ COMPONENT · alert -->
 
   <script>
-/* SHINE APP · PROFILE — page script (v1.19 · 2026-10-25)
+/* SHINE APP · PROFILE — page script (v1.20 · 2026-10-25) — v1.20: modal v2.8.2 (status-bar strip) + combo box v3.1.0 (no search on short lists, lists above the keyboard)
    v1.19: photo flow as profile-index (drop target + drag-and-drop, no subtitle while cropping, a red error line).
    v1.18: the editors open as the modal's FULL-SCREEN variation (bottom-sheet v2.8.0, .bs--full) — photo, professional,
    personal (✎ only), contact, key skills, employment, education, links, job preferences (new: add + edit). Everything

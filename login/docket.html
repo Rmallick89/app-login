@@ -2221,10 +2221,10 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 @media (prefers-reduced-motion: reduce) { .ncard { transition: none; } }
 </style>
 <!-- ▲ COMPONENT · nav-card -->
-<!-- ▼ COMPONENT · bottom-sheet v2.8.1 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
+<!-- ▼ COMPONENT · bottom-sheet v2.8.2 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
 <style data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BOTTOM SHEET  (app component · App-login)            v2.8.1
+   SHINE · BOTTOM SHEET  (app component · App-login)            v2.8.2
    The one container behind every slide-up panel in the logged-in app — in TWO VARIATIONS:
      1 · BOTTOM SHEET  .bs            slides up from the bottom edge, the page shows above it
                                       (pickers, confirmations, nudges, OTP, short asks)
@@ -2269,7 +2269,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
    ═══════════════════════════════════════════════════════════════════════ */
 
 /* ── Token layer ───────────────────────────────────────────────────── */
-.bs, .bs-scrim {
+.bs, .bs-scrim, .bs-statusbar {
   /* PRIMITIVES — DESIGN-SYSTEM.md §1 (backing values only; never used in rules) */
   --bs-p-white: #FFFFFF;
   --bs-p-cn-50: #F7F9FB;  --bs-p-cn-100: #EEF1F5; --bs-p-cn-200: #E4E7EC; --bs-p-cn-300: #C8CED7;
@@ -2404,11 +2404,11 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
   /* stacking — ShineSheet assigns z = --bs-z + 2·depth (+1 for the sheet) */
   --bs-z: 100;
 }
-html.in-app .bs { --bs-safe: 0px; --bs-safe-top: 0px; }
+html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px; }
 
 /* desktop breakpoint (≥768px) — responsive tokens per §2.1 / §2.3 */
 @media (min-width: 768px) {
-  .bs, .bs-scrim {
+  .bs, .bs-scrim, .bs-statusbar {
     --bs-display-sm-size: 32px; --bs-display-sm-lh: 36px; --bs-display-sm-ls: -0.4px;
     --bs-heading-lg-size: 24px; --bs-heading-lg-lh: 28px; --bs-heading-lg-ls: -0.3px;
     --bs-title-lg-size: var(--bs-heading-lg-size); --bs-title-lg-lh: var(--bs-heading-lg-lh); --bs-title-lg-ls: var(--bs-heading-lg-ls);
@@ -2474,6 +2474,15 @@ html.in-app .bs { --bs-safe: 0px; --bs-safe-top: 0px; }
 }
 .bs-scrim[hidden] { display: none !important; }
 .bs-scrim.bs-scrim--covered { visibility: hidden; }        /* v2.8.1: under an open full-screen (status bar, see the JS) */
+/* v2.8.2 · status-bar strip (made by ShineSheet while a sheet is open; colour set by the script = what is under it).
+   The box is 10 px deeper than what is painted: Safari reads a fixed box's background-color only above 10 px tall. */
+.bs-statusbar {
+  display: none; position: fixed; top: 0; left: 0; right: 0; z-index: calc(var(--bs-z) + 80); pointer-events: none;
+  height: calc(var(--bs-safe-top) + 16px);
+  -webkit-clip-path: inset(0 0 10px 0); clip-path: inset(0 0 10px 0);          /* painted: status-bar area + 6 */
+}
+.bs-statusbar.is-on { display: block; }
+@media (min-width: 768px) { .bs-statusbar.is-on { display: none; } }           /* phones only */
 .bs-scrim.is-open { opacity: 1; pointer-events: auto; }
 .bs-scrim--strong { --bs-scrim-c: var(--bs-surface-neutral-state-overlay-strong); -webkit-backdrop-filter: blur(var(--bs-blur-overlay)); backdrop-filter: blur(var(--bs-blur-overlay)); }
 .bs-scrim--nested { position: absolute; border-radius: var(--bs-radius-2xl) var(--bs-radius-2xl) 0 0; }
@@ -3725,10 +3734,10 @@ html.in-app .bs { --bs-safe: 0px; --bs-safe-top: 0px; }
     <span id="toastMsg">Done</span>
   </div>
 
-<!-- ▼ COMPONENT · bottom-sheet v2.8.1 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.js — do not edit here -->
+<!-- ▼ COMPONENT · bottom-sheet v2.8.2 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.js — do not edit here -->
 <script data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BOTTOM SHEET  (app component · App-login)            v2.8.1
+   SHINE · BOTTOM SHEET  (app component · App-login)            v2.8.2
    Pair with bottom-sheet.css. Zero dependencies, no build step.
    Engine = App-logout's ShineSheet v1.2.1; v2.0 adds the three-section anatomy;
    v2.1 aligns every value with design-system/DESIGN-SYSTEM.md.
@@ -4050,16 +4059,27 @@ html.in-app .bs { --bs-safe: 0px; --bs-safe-top: 0px; }
     if (col) { if (themeSaved === null) themeSaved = m.getAttribute('content') || ''; m.setAttribute('content', col); }
     else if (themeSaved !== null) { m.setAttribute('content', themeSaved); themeSaved = null; }
   }
+  /* v2.8.2 · the status-bar strip. On the user's iPhone (home-screen app) the bar stayed the page colour under every
+     sheet: Safari had sampled the scrim's pixels mid-fade and never looked again — body / html colour changes are not
+     re-read. What it does re-read (the top app bar proved it) is the background-color of a fixed, opaque, full-width
+     box at the top edge, taller than 10 px. So while a sheet is open the engine keeps one there — above every sheet
+     and scrim, painted the exact colour of what is under it (the page dimmed by the scrims, a full-screen's white, a
+     full-screen dimmed by a sheet stacked on it), so it never shows; only its top (status-bar area + 6) is painted. */
+  var bar = null;
+  function strip(css) {
+    if (!bar) { bar = doc.createElement('div'); bar.className = 'bs-statusbar'; bar.setAttribute('aria-hidden', 'true'); doc.body.appendChild(bar); }
+    if (css) { bar.style.backgroundColor = css; bar.classList.add('is-on'); } else bar.classList.remove('is-on');
+  }
   function tint() {
     var r = doc.documentElement, b = doc.body; if (!b) return;
-    // v2.8.0: a full-screen on a phone covers the status bar area with its surface → the bar takes that colour;
-    // a sheet stacked over it dims that colour with its own scrim
+    // a full-screen that is UP sets the colour to its surface; while it slides it is just its scrim.
+    // A sheet stacked over it dims that colour with its own scrim.
     var layers = stack.filter(function (el) { return !isNested(el) && (el.__bs.scrim || fullScreen(el)); });
     var full = stack.some(function (el) { return fullScreen(el) && el.__bs.up; });
     r.classList.toggle('bs-full', full);                 // v2.8.1: a full-screen is up → pages hide their own fixed top bars
     if (!layers.length) {
       if (tintSaved) { r.style.backgroundColor = tintSaved[0]; b.style.backgroundColor = tintSaved[1]; tintSaved = null; }
-      theme(null);
+      theme(null); strip(null);
       return;
     }
     if (!tintSaved) {
@@ -4069,16 +4089,18 @@ html.in-app .bs { --bs-safe: 0px; --bs-safe-top: 0px; }
       tintSaved = [r.style.backgroundColor, b.style.backgroundColor, base];
     }
     var col = tintSaved[2].slice(0, 3), fullCol = null;
-    layers.forEach(function (el) {                       // stacked scrims compound; a full-screen resets to its surface
-      if (fullScreen(el)) { var f = rgba(getComputedStyle(el).backgroundColor); if (f && f[3] > 0.5) { col = f.slice(0, 3); fullCol = col; return; } }
+    layers.forEach(function (el) {                       // stacked scrims compound; a full-screen (once up) resets to its surface
+      if (fullScreen(el) && el.__bs.up) { var f = rgba(getComputedStyle(el).backgroundColor); if (f && f[3] > 0.5) { col = f.slice(0, 3); fullCol = col; return; } }
       var sc = el.__bs.scrim; if (!sc) return;
       var c = rgba(getComputedStyle(sc).getPropertyValue('--bs-scrim-c')) || [13, 17, 23, 0.24];
       col = [0, 1, 2].map(function (k) { return c[k] * c[3] + col[k] * (1 - c[3]); });
     });
     var css = 'rgb(' + col.map(Math.round).join(',') + ')';
     r.style.backgroundColor = css; b.style.backgroundColor = css;
-    theme(fullCol ? '#' + fullCol.map(function (v) { return ('0' + Math.round(v).toString(16)).slice(-2); }).join('').toUpperCase() : null);
+    strip(css);
+    theme(col === fullCol ? hex(col) : null);
   }
+  function hex(c) { return '#' + c.map(function (v) { return ('0' + Math.round(v).toString(16)).slice(-2); }).join('').toUpperCase(); }
   /* v2.8.1 · iOS takes the status-bar colour from the fixed element at the top edge. While a full-screen
      slides up its scrim is that element (a gradient → sampled from pixels → the dimmed page stuck in the bar).
      Once the screen is up, its scrim is covered anyway: hide it so the screen itself (no transform once open,
@@ -4217,7 +4239,7 @@ html.in-app .bs { --bs-safe: 0px; --bs-safe-top: 0px; }
   // re-measure an auto sheet after the page swaps its content (optional — a MutationObserver already does this)
   function refresh(target) { var el = $(target); if (el && el.__bs) { syncCta(el); syncScroll(el); } }
 
-  global.ShineSheet = { open: open, close: close, toggle: toggle, isOpen: isOpen, top: top, closeAll: closeAll, init: init, refresh: refresh, version: '2.8.1' };
+  global.ShineSheet = { open: open, close: close, toggle: toggle, isOpen: isOpen, top: top, closeAll: closeAll, init: init, refresh: refresh, version: '2.8.2' };
 })(window);
 </script>
 <!-- ▲ COMPONENT · bottom-sheet -->
