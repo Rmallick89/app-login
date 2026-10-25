@@ -947,10 +947,10 @@
 
 </style>
 <!-- ▲ COMPONENT · company-card -->
-<!-- ▼ COMPONENT · field-base v3.1.0 · verbatim copy of App-login/app-components/atoms/input-fields/field-base/field-base.css — do not edit here -->
+<!-- ▼ COMPONENT · field-base v3.2.0 · verbatim copy of App-login/app-components/atoms/input-fields/field-base/field-base.css — do not edit here -->
 <style data-component="field-base">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · INPUT FIELDS · FIELD BASE  (app component · App-login · atoms/input-fields/)      v3.1.0
+   SHINE · INPUT FIELDS · FIELD BASE  (app component · App-login · atoms/input-fields/)      v3.2.0
    The shared layer under the five input field components — not a field on its own. Load it FIRST, then the
    component(s) the page uses:  normal-field · password-field · otp-field · combo-box · multi-input.
    Built on design-system A.01 Input (component-system.md), semantic tokens only, light and dark.
@@ -964,7 +964,7 @@
    Classes (on the wrapper .field unless noted)
      .field[data-field="…"]         wrapper — which component it is: text · email · phone · password · otp · combo ·
                                     date · experience (field-base.js wires it; the component script does the rest)
-     .field--sm 40 | --md 44 (default) | --lg 48 | --xl 56      size (A.01 · size.control.*)
+     .field--sm 40 | --md 44 (default) | --lg 48 | --xl 56      size (A.01 · size.control.*) — Small's label is 12 (v3.2.0)
      .field--invalid | --valid      state — set by ShineField.set(); also aria-invalid="true" on the input
      .field--disabled               disabled look — also put disabled on the input
      [data-state="hover|focus"]     shows a state statically — guidelines and screenshots only
@@ -993,6 +993,7 @@
   --fld-ring: rgba(26, 86, 255, .10);       /* elevation.focus.default — 0 0 0 4px brand-500 10 % */
   --fld-text: #0D1117;                      /* content.neutral.base — typed text */
   --fld-label: #344054;                     /* content.neutral.muted — label, helper, prefix */
+  --fld-label-fs: 14px; --fld-label-lh: 20px;   /* typography.body.md — the label (Small: body.sm 12 / 18, v3.2.0) */
   --fld-faded: #667085;                     /* content.neutral.faded — placeholder, eye, rules */
   --fld-dis-bg: #EEF1F5;                    /* surface.neutral.muted */
   --fld-dis-edge: rgba(13, 17, 23, .08);    /* stroke.neutral.disabled (black-25) */
@@ -1032,15 +1033,15 @@ legend.field-label + * { clear: both; }
 legend.field-label--hidden { float: none; width: 1px; }
 
 /* sizes — A.01.4 (one control scale with the buttons) */
-.field--sm { --fld-h: 40px; }                                                     /* size.control.sm */
+.field--sm { --fld-h: 40px; --fld-label-fs: 12px; --fld-label-lh: 18px; }        /* size.control.sm · label Body / sm (v3.2.0) */
 .field--md { --fld-h: 44px; }                                                     /* size.control.md */
 .field--lg { --fld-h: 48px; --fld-px: 16px; --fld-fs: 16px; --fld-lh: 24px; --fld-eye: 32px; --fld-eye-ic: 20px; }   /* size.control.lg · inset.xl · Body / lg */
 .field--xl { --fld-h: 56px; --fld-px: 16px; --fld-fs: 16px; --fld-lh: 24px; --fld-eye: 32px; --fld-eye-ic: 20px; }   /* size.control.xl */
 
-/* label — Body / md medium, muted, 8 above the box */
+/* label — Body / md medium (Small: Body / sm), muted, 8 above the box */
 .field-label {
   margin: 0 0 var(--fld-stack); color: var(--fld-label);
-  font: 500 14px/20px var(--fld-font);                                             /* Body / md · weight medium — every size */
+  font: 500 var(--fld-label-fs, 14px)/var(--fld-label-lh, 20px) var(--fld-font);  /* Body / md medium · Small: Body / sm 12 / 18 (v3.2.0) */
 }
 .field-label--hidden, .field .sr-only {                                            /* still read out — never drop the label */
   position: absolute !important; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0;
@@ -3763,10 +3764,10 @@ button { font-family: inherit; }
 })();
 </script>
 <!-- ▲ PAGE · share-sheet -->
-<!-- ▼ COMPONENT · field-base v3.1.0 · verbatim copy of App-login/app-components/atoms/input-fields/field-base/field-base.js — do not edit here -->
+<!-- ▼ COMPONENT · field-base v3.2.0 · verbatim copy of App-login/app-components/atoms/input-fields/field-base/field-base.js — do not edit here -->
 <script data-component="field-base">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · INPUT FIELDS · FIELD BASE  (app component · App-login · atoms/input-fields/)      v3.1.0
+   SHINE · INPUT FIELDS · FIELD BASE  (app component · App-login · atoms/input-fields/)      v3.2.0
    Pair with field-base.css. The shared engine under the five components — load it FIRST, then the script of each
    component the page uses: normal-field.js · password-field.js · otp-field.js · combo-box.js · multi-input.js.
    No dependencies (combo-box.js also uses the bottom sheet for its sheet mode).
