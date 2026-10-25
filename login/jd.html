@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <script data-ios-nozoom>(function () { var iOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); var m = document.querySelector('meta[name="viewport"]'); if (iOS && m && !/maximum-scale/.test(m.content)) m.content += ', maximum-scale=1'; })();</script>
 <meta name="theme-color" content="#FAF9F6" />
-<!-- SHINE APP · JOB DETAILS (JD) — App-login/JD Page/  · v2.0 (2026-10-25) — Similar Jobs is a fanned card stack of 4 (swipe the front card; dots) — the Tools-promo stack of company-index2.html with the job card inside · v1.9: 20 between a card heading and its body (skills, description) · an 8 section band before Similar Jobs · v1.8: bottom sheets get the new look: floating ×, corners 32, darker scrim (bottom-sheet v3.0.0) · v1.7: the field you tap lands 20 below the lifted heading (bottom-sheet v2.12.0) · v1.6: Edit your details uses Small fields (40 tall · label 12), the app size · v1.5 (2026-10-23) — for review · opened from the job cards on My Jobs and Docket
+<!-- SHINE APP · JOB DETAILS (JD) — App-login/JD Page/  · v2.1 (2026-10-25) — Similar Jobs: View all is a Secondary button; the front card is wider; the cards in the stack are compact (smaller text and buttons, role in two lines at most — this section only) · v2.0: Similar Jobs is a fanned card stack of 4 (swipe the front card; dots) — the Tools-promo stack of company-index2.html with the job card inside · v1.9: 20 between a card heading and its body (skills, description) · an 8 section band before Similar Jobs · v1.8: bottom sheets get the new look: floating ×, corners 32, darker scrim (bottom-sheet v3.0.0) · v1.7: the field you tap lands 20 below the lifted heading (bottom-sheet v2.12.0) · v1.6: Edit your details uses Small fields (40 tall · label 12), the app size · v1.5 (2026-10-23) — for review · opened from the job cards on My Jobs and Docket
      v1.1: the job and the company are components now — job card 2.5 JD job card (ShineJobCard.jd) and company card (ShineCompanyCard).
      Built from the mobile responsive view of <Shine Revamp>/jd-page3.html: the same sections, copy and flow —
      the job (badges · role · posted · meta · Apply Now · save · share · similar-jobs strip), Skills For This Role,
@@ -2451,7 +2451,7 @@ button { font-family: inherit; }
    Apply now stay on one row; up / down still scrolls the page; lighter shadow and dark dots on the light page; the
    back cards' 90 % / 82 % fade drawn as a page-colour veil (no text showing through); a 4th card waits hidden. */
 .jdp-fan { display: flex; flex-direction: column; align-items: center; gap: 18px; padding-top: 16px; }
-.jdp-fan-stage { position: relative; display: grid; width: min(100%, max(274px, min(calc(100% - 56px), 320px))); margin: 0 auto; perspective: 1000px; }   /* 274 = the narrowest a job card keeps its three buttons on one row */
+.jdp-fan-stage { position: relative; display: grid; width: min(100%, max(260px, min(calc(100% - 32px), 336px))); margin: 0 auto; perspective: 1000px; }   /* v2.1: screen − 32 (was − 56), 260–336 — 260 = the narrowest the compact card keeps its three buttons on one row */
 .jdp-fan-card {
   grid-area: 1 / 1; position: relative; display: flex; min-width: 0;
   border-radius: var(--card-radius, 16px);
@@ -2477,6 +2477,25 @@ button { font-family: inherit; }
 .jdp-fan-dot::after { content: ""; position: absolute; left: -6px; right: -6px; top: -17px; bottom: -17px; }   /* 40 tall touch target, nothing drawn */
 .jdp-fan-dot:focus-visible { outline: 2px solid var(--jdp-stroke-neutral-focus); outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { .jdp-fan-card, .jdp-fan-dot { transition-duration: 1ms !important; } }
+/* v2.1 · the compact job card — this section only (user: smaller text and buttons, role in two lines at most; the job
+   card component itself is not changed). Every value one DS step down from the card's own:
+     padding inset.xxl 22 → inset.xl 16 · section gaps stack.lg 14 → stack.md 12 · meta rows stack.md 12 → stack.xs 8
+     company Label / lg 14 bold → Body / sm 12 semibold · logo 40 → 32 · role Heading / md 18/22 → Heading / sm 16/20,
+     two lines then … · meta Body / md 14/20 → Body / sm 12/18, icon frame 28 → 24, icon size.icon.sm 14 → size.icon.xs 12
+     skills Label / lg 14 → Label / md 12 · buttons A.02 xl 56 → md 44 (Label / md 12, icon-only glyph 20), 12 → 8 apart
+     (inline.md). Already the smallest step and kept: time Body / sm 12, badges Label / md 12, "Required:" 12. */
+.jdp-fan-card > .jcard { --card-inset: 16px; --jc-stack: 12px; --jc-row-gap: 8px; --jc-btn-gap: 8px; }
+.jdp-fan-card .jcard-name { font: 600 12px/18px var(--jc-font); }
+.jdp-fan-card .jcard-av .jcard-logo { width: 32px; height: 32px; }
+.jdp-fan-card .jcard-role {
+  font: 700 16px/20px var(--jc-font); letter-spacing: 0;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden;   /* two lines at most, then … */
+}
+.jdp-fan-card .jcard-meta li { font: 500 12px/18px var(--jc-font); }
+.jdp-fan-card .jcard-ico { width: 24px; height: 24px; }
+.jdp-fan-card .jcard-ico svg { width: 12px; height: 12px; }
+.jdp-fan-card .jcard-skills-list { font: 700 12px/12px var(--jc-font); }
+.jdp-fan-card .jcard-actions .btn--xl { --_h: 44px; --_px: 16px; --_fs: 12px; --_lh: 12px; --_ic: 16px; --_ic-only: 20px; }   /* = .btn--md (size.control.md) */
 
 /* ── bottom action bar (shows once the hero's Apply now leaves the screen) ── */
 .jdp-bar {
@@ -2955,9 +2974,9 @@ button { font-family: inherit; }
   <hr class="jdp-band" aria-hidden="true">
 
   <!-- ═══ 5 · SIMILAR JOBS · job-card component (2.1 Job card, as My Jobs › Recommended) in a fanned card stack (v2.0, page part: .jdp-fan — fanHTML / wireFan);
-       View all = buttons atom Link · lg · flush (label 14, to sit with the 20 title) ═══ -->
+       View all = buttons atom Secondary · sm (v2.1, user) ═══ -->
   <section class="jdp-similar" id="jdSimilar" aria-labelledby="jdSimilarH">
-    <div class="jdp-similar-hd"><h2 class="jdp-similar-h" id="jdSimilarH">Similar Jobs</h2><button class="btn btn--link btn--lg btn--flush" type="button" data-jd="view-all" aria-label="View all 12 similar jobs">View all</button></div>
+    <div class="jdp-similar-hd"><h2 class="jdp-similar-h" id="jdSimilarH">Similar Jobs</h2><button class="btn btn--secondary btn--sm" type="button" data-jd="view-all" aria-label="View all 12 similar jobs">View all</button></div>
     <div class="jdp-list" id="jdSimilarList"></div>
   </section>
 </main>
