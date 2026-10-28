@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <script data-ios-nozoom>(function () { var iOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); var m = document.querySelector('meta[name="viewport"]'); if (iOS && m && !/maximum-scale/.test(m.content)) m.content += ', maximum-scale=1'; })();</script>
 <meta name="theme-color" content="#FAF9F6" />
-<!-- SHINE APP · JOB DETAILS (JD) — App-login/JD Page/  · v3.1 (2026-10-28) — the similar-jobs nudge shows only when the person comes back to a job applied earlier and scrolls; never right after applying here, and gone once they tap Explore Similar Jobs (job card) or the nudge · v3.0: Apply is the new apply-flow component (pu-modal4's flow: Update & apply form with "Use last" → error → Apply again → success); the old review · edit · accuracy-check sheets are gone; every Apply Now on the page opens it — the job card, the bar and each similar job · v2.8: every job shows Industry · Department at the end of its full description (a job opened from My Jobs / Docket gets sample values read off its role and company) · v2.7: company card: on a two-line company name the verified tick follows the last word instead of sitting at the card's edge (company-card v1.2.3) · v2.6: Job Description: no "~X% shown" / "Full description" note beside the heading (the Read full description button already says it) · v2.5: a job opened from My Jobs / Docket shows the full company card (sample about, socials, Founded, Headquarters, website, brand wash) · v2.4: the top bar's byline: the name is the job card's company style (12 semibold, muted), POSTED BY smaller (top app bar v3.2.0) · v2.3: Similar Jobs: the stacked job cards are back to the job card's own sizes and spacing (the v2.1 compact sizes undone); kept: Secondary View all, the wider front card, the role in two lines at most · v2.2: Similar Jobs: more room between the parts of the stacked cards (sections 14, meta rows 12, buttons 12) · v2.1: Similar Jobs: View all is a Secondary button; the front card is wider; the cards in the stack are compact (smaller text and buttons, role in two lines at most — this section only) · v2.0: Similar Jobs is a fanned card stack of 4 (swipe the front card; dots) — the Tools-promo stack of company-index2.html with the job card inside · v1.9: 20 between a card heading and its body (skills, description) · an 8 section band before Similar Jobs · v1.8: bottom sheets get the new look: floating ×, corners 32, darker scrim (bottom-sheet v3.0.0) · v1.7: the field you tap lands 20 below the lifted heading (bottom-sheet v2.12.0) · v1.6: Edit your details uses Small fields (40 tall · label 12), the app size · v1.5 (2026-10-23) — for review · opened from the job cards on My Jobs and Docket
+<!-- SHINE APP · JOB DETAILS (JD) — App-login/JD Page/  · v3.2 (2026-10-28) — Similar Jobs › View all opens the Similar Jobs page: ../Similar Jobs/similar-jobs.html while the job is not applied, similar-job2.html once it is (the job handed over in sessionStorage 'shine:similar:<id>' + ?job=<id>); Back from it returns to this job as you left it (applied / saved, same scroll, no nudge) · v3.1: the similar-jobs nudge shows only when the person comes back to a job applied earlier and scrolls; never right after applying here, and gone once they tap Explore Similar Jobs (job card) or the nudge · v3.0: Apply is the new apply-flow component (pu-modal4's flow: Update & apply form with "Use last" → error → Apply again → success); the old review · edit · accuracy-check sheets are gone; every Apply Now on the page opens it — the job card, the bar and each similar job · v2.8: every job shows Industry · Department at the end of its full description (a job opened from My Jobs / Docket gets sample values read off its role and company) · v2.7: company card: on a two-line company name the verified tick follows the last word instead of sitting at the card's edge (company-card v1.2.3) · v2.6: Job Description: no "~X% shown" / "Full description" note beside the heading (the Read full description button already says it) · v2.5: a job opened from My Jobs / Docket shows the full company card (sample about, socials, Founded, Headquarters, website, brand wash) · v2.4: the top bar's byline: the name is the job card's company style (12 semibold, muted), POSTED BY smaller (top app bar v3.2.0) · v2.3: Similar Jobs: the stacked job cards are back to the job card's own sizes and spacing (the v2.1 compact sizes undone); kept: Secondary View all, the wider front card, the role in two lines at most · v2.2: Similar Jobs: more room between the parts of the stacked cards (sections 14, meta rows 12, buttons 12) · v2.1: Similar Jobs: View all is a Secondary button; the front card is wider; the cards in the stack are compact (smaller text and buttons, role in two lines at most — this section only) · v2.0: Similar Jobs is a fanned card stack of 4 (swipe the front card; dots) — the Tools-promo stack of company-index2.html with the job card inside · v1.9: 20 between a card heading and its body (skills, description) · an 8 section band before Similar Jobs · v1.8: bottom sheets get the new look: floating ×, corners 32, darker scrim (bottom-sheet v3.0.0) · v1.7: the field you tap lands 20 below the lifted heading (bottom-sheet v2.12.0) · v1.6: Edit your details uses Small fields (40 tall · label 12), the app size · v1.5 (2026-10-23) — for review · opened from the job cards on My Jobs and Docket
      v1.1: the job and the company are components now — job card 2.5 JD job card (ShineJobCard.jd) and company card (ShineCompanyCard).
      Built from the mobile responsive view of <Shine Revamp>/jd-page3.html: the same sections, copy and flow —
      the job (badges · role · posted · meta · Apply Now · save · share · similar-jobs strip), Skills For This Role,
@@ -3505,7 +3505,7 @@ button { font-family: inherit; }
   <!-- ═══ 5 · SIMILAR JOBS · job-card component (2.1 Job card, as My Jobs › Recommended) in a fanned card stack (v2.0, page part: .jdp-fan — fanHTML / wireFan);
        View all = buttons atom Secondary · sm (v2.1, user) ═══ -->
   <section class="jdp-similar" id="jdSimilar" aria-labelledby="jdSimilarH">
-    <div class="jdp-similar-hd"><h2 class="jdp-similar-h" id="jdSimilarH">Similar Jobs</h2><button class="btn btn--secondary btn--sm" type="button" data-jd="view-all" aria-label="View all 12 similar jobs">View all</button></div>
+    <div class="jdp-similar-hd"><h2 class="jdp-similar-h" id="jdSimilarH">Similar Jobs</h2><button class="btn btn--secondary btn--sm" type="button" data-jd="view-all" data-href-similar="similar-jobs.html" data-href-similarapplied="similar-job2.html" aria-label="View all 12 similar jobs">View all</button></div>
     <div class="jdp-list" id="jdSimilarList"></div>
   </section>
 </main>
@@ -6424,8 +6424,9 @@ button { font-family: inherit; }
   /* ── the job handed over by a job card (My Jobs, Docket) ─────────────── */
   var P = null;
   try {
-    var qid = new URLSearchParams(location.search).get('job'), raw = sessionStorage.getItem('shine:jd');
-    if (qid && raw) { var o = JSON.parse(raw); if (o && o.id === qid) P = o; }
+    var qid = new URLSearchParams(location.search).get('job'), o = JSON.parse(sessionStorage.getItem('shine:jd') || 'null');
+    if (qid && (!o || o.id !== qid)) o = JSON.parse(sessionStorage.getItem('shine:jd:' + qid) || 'null');   // v3.2: per job — a later job opened from Similar Jobs replaced 'shine:jd'
+    if (qid && o && o.id === qid) { P = o; sessionStorage.setItem('shine:jd:' + qid, JSON.stringify(o)); }
   } catch (e) {}
   var esc = function (t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); };
   var slug = function (t) { return String(t).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); };
@@ -6501,6 +6502,15 @@ button { font-family: inherit; }
     $('.stp-byline-name', bl).textContent = POSTER.name;
   })();
   var heroSlot = $('#jdHero');
+  /* v3.2 · back from the Similar Jobs page (View all): this visit goes on where you left it — applied / saved as they
+     were, the same scroll, and no similar-jobs nudge (you have just seen them). Set by openSimilar() below. */
+  var RET = null;
+  try { RET = JSON.parse(sessionStorage.getItem('shine:return:jd') || 'null'); } catch (e) {}
+  if (RET && RET.id === HERO.id) {
+    try { sessionStorage.removeItem('shine:return:jd'); } catch (e) {}
+    HERO.saved = !!RET.saved;
+    if (RET.applied) { HERO.state = 'applied'; HERO.when = RET.when || HERO.when || 'just now'; }
+  } else RET = null;
   heroSlot.innerHTML = ShineJobCard.jd(HERO);
   if (P) {
     /* skills: the job's own (a short list fits — the expandable card then shows no button: it only folds when long) */
@@ -6597,7 +6607,7 @@ button { font-family: inherit; }
          once they scroll the job card away — until they act on it (the nudge's View Similar Jobs, or the job card's
          Explore Similar Jobs: they have found similar jobs, the nudge has done its job) */
   var bar = $('#jdBar'), main = $('#jdHero [data-jc-act="apply"]') || $('#jdHero .jcard-actions'), applied = HERO.state === 'applied', heroGone = false;
-  var nudge = applied, nudged = false;                                       // nudge: only for a job applied before this visit
+  var nudge = applied && !RET, nudged = false;                               // nudge: only for a job applied before this visit (v3.2: not when back from Similar Jobs)
   if (nudge) {
     $('#jdBarRow').hidden = true; $('#jdMomentum').hidden = false;
     var whenEl = $('#jdMomentum [data-jd-when]'); if (whenEl && HERO.when) whenEl.textContent = HERO.when;
@@ -6809,11 +6819,36 @@ button { font-family: inherit; }
       case 'similar':
         if (b.hasAttribute('data-jd-nudge')) { nudged = true; paintBar(); }
         toSimilar(); break;
-      case 'view-all': say('Opens all 12 similar jobs'); break;
+      case 'view-all': openSimilar(b); break;                                /* v3.2: the Similar Jobs page */
       case 'poster':  say(POSTER.kind === 'recruiter' ? 'Opens ' + POSTER.name + '\'s profile' : 'Opens the ' + POSTER.name + ' page'); break;   /* the byline: who posted it */
     }
   });
   window.addEventListener('resize', paintBar);
+
+  /* ── v3.2 · View all → the Similar Jobs page ─────────────────────────────────────────────────────────────────
+     Not applied → similar-jobs.html (count pill · "Similar to <role>"); applied → similar-job2.html ("12 jobs found
+     similar to" + this job's Applied ticket). The job goes over in 'shine:similar:<id>'; this visit's state in
+     'shine:return:jd', so Back finds the page as you left it (above). */
+  function openSimilar(btn) {
+    var href = btn.getAttribute(applied ? 'data-href-similarapplied' : 'data-href-similar');
+    if (!href) return say('Opens all 12 similar jobs');
+    var h = { id: HERO.id, role: HERO.role, company: HERO.company, logo: CO.logo, applied: applied, when: HERO.when || '' };
+    try {
+      sessionStorage.setItem('shine:similar', JSON.stringify(h));
+      sessionStorage.setItem('shine:similar:' + HERO.id, JSON.stringify(h));
+      sessionStorage.setItem('shine:return:jd', JSON.stringify({ id: HERO.id, saved: !!HERO.saved, applied: applied, when: HERO.when || '', scroll: window.scrollY || 0 }));
+    } catch (e) {}
+    location.href = href + '?job=' + encodeURIComponent(HERO.id);
+  }
+  if (RET) {
+    if (RET.applied) report({ applied: true });                               // the list you came from still learns it
+    report({ saved: !!HERO.saved });
+    window.scrollTo(0, RET.scroll || 0); paintBar();
+  }
+  window.addEventListener('pageshow', function (e) {                          // back from the back-forward cache: nothing to restore
+    if (!e.persisted) return;
+    try { var r = JSON.parse(sessionStorage.getItem('shine:return:jd') || 'null'); if (r && r.id === HERO.id) sessionStorage.removeItem('shine:return:jd'); } catch (x) {}
+  });
 })();
 </script>
 <!-- ▲ PAGE · jd -->
