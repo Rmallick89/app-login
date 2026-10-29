@@ -298,10 +298,10 @@
 }
 </style>
 <!-- ▲ COMPONENT · buttons -->
-<!-- ▼ COMPONENT · tags v1.2.1 · verbatim copy of App-login/app-components/atoms/tags/tags.css — do not edit here -->
+<!-- ▼ COMPONENT · tags v1.2.2 · verbatim copy of App-login/app-components/atoms/tags/tags.css — do not edit here -->
 <style data-component="tags">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TAGS  (app component · App-login · atoms/)          v1.2.1
+   SHINE · TAGS  (app component · App-login · atoms/)          v1.2.2
    A label for a skill, a place, a role or any attribute — with an optional leading icon and an optional remove ×.
    Built from the user's reference (2026-10-21: Large · Medium · Small × Default · Hover · Focused · Disabled ·
    Highlighted) on design-system A.05 Tag (component-system.md), semantic tokens only.
@@ -317,8 +317,8 @@
      .tag--highlighted            highlighted: notice tint, notice edge, leading icon in the notice colour
                                   (use the icons atom's star-filled)
      .tag--matched                matched (v1.2.0): the person has this — e.g. a job's skill that is on their profile.
-                                  Positive (green) tint + edge, label and leading tick (icons atom ic_check-outline) in
-                                  green (v1.2.1 — was brand blue). Any number in a row (unlike highlighted).
+                                  Positive (green) tint + a soft green edge (v1.2.2), label and leading tick (icons atom
+                                  ic_check-outline) in green (v1.2.1 — was brand blue). Any number in a row (unlike highlighted).
      .tag--disabled               disabled (with its × as <button disabled>) — also [aria-disabled="true"]
      .tag-label                   the label (one line, ends with … when it doesn't fit)
      .tag-sr                      words for screen readers only (v1.2.0 — a matched tag: “, on your profile”)
@@ -350,7 +350,8 @@
   --tag-hi-edge: #D97706;                   /* stroke.status.notice */
   --tag-hi-icon: #A35A04;                   /* content.status.notice — the highlighted leading icon */
   --tag-match-bg: #EAFAF0;                  /* surface.status.positive-subtle (green/50) — matched (v1.2.1: green, was brand blue) */
-  --tag-match-edge: #0E9A5A;                /* stroke.status.positive (green/600) */
+  --tag-match-edge: #A8F5C8;                /* stroke.status.positive-subtle — PROPOSED: green/200 (v1.2.2, user: the green/600
+                                               edge was too heavy — as soft as the brand/200 edge the blue version had) */
   --tag-match-fg: #027A48;                  /* content.status.positive (green/700) — matched label and tick */
   /* SIZE · SPACE — §2.3 / §2.4 (md) */
   --tag-h: 36px;                            /* A.05 lg height */
@@ -406,8 +407,8 @@
 .tag--highlighted { --_bg: var(--tag-hi-bg); --_edge: var(--tag-hi-edge); }
 .tag--highlighted > svg:first-child { color: var(--tag-hi-icon); }
 /* matched (v1.2.0, user 2026-10-29: "show a tick inside the skill tag as the lead icon and highlight it" — a job's
-   skill the person has on their profile) — positive green tint and edge, label and tick in green (v1.2.1, user: "green
-   theme", was brand blue); any number in a row */
+   skill the person has on their profile) — positive green tint, a soft green edge (v1.2.2), label and tick in green
+   (v1.2.1, user: "green theme", was brand blue); any number in a row */
 .tag--matched { --_bg: var(--tag-match-bg); --_edge: var(--tag-match-edge); --_fg: var(--tag-match-fg); --_ic-c: var(--tag-match-fg); }
 .tag--matched > svg:first-child { color: var(--tag-match-fg); }
 /* disabled — sunken grey, faint edge, disabled text and icons; the × doesn't act */
@@ -432,7 +433,7 @@
   --tag-hi-edge: #FAB663;                   /* stroke.status.notice · amber-400 */
   --tag-hi-icon: #FAB663;                   /* content.status.notice · amber-400 */
   --tag-match-bg: #011A10;                  /* surface.status.positive-subtle · green-950 */
-  --tag-match-edge: #34D77F;                /* stroke.status.positive · green-400 */
+  --tag-match-edge: #045A36;                /* stroke.status.positive-subtle (PROPOSED) · green-800 — soft on the dark fill */
   --tag-match-fg: #34D77F;                  /* content.status.positive · green-400 */
 }
 @media (prefers-reduced-motion: reduce) { .tag { transition: none; } }

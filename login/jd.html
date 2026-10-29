@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <script data-ios-nozoom>(function () { var iOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); var m = document.querySelector('meta[name="viewport"]'); if (iOS && m && !/maximum-scale/.test(m.content)) m.content += ', maximum-scale=1'; })();</script>
 <meta name="theme-color" content="#FAF9F6" />
-<!-- SHINE APP · JOB DETAILS (JD) — App-login/JD Page/  · v3.3 (2026-10-29) — Skills For This Role: the skills that are on the person's profile show as Matched tags (tags atom v1.2.1: a tick as the lead icon, green — v1.2.0 was brand blue) and come first · v3.2: Similar Jobs › View all opens the Similar Jobs page: ../Similar Jobs/similar-jobs.html while the job is not applied, similar-job2.html once it is (the job handed over in sessionStorage 'shine:similar:<id>' + ?job=<id>); Back from it returns to this job as you left it (applied / saved, same scroll, no nudge) · v3.1: the similar-jobs nudge shows only when the person comes back to a job applied earlier and scrolls; never right after applying here, and gone once they tap Explore Similar Jobs (job card) or the nudge · v3.0: Apply is the new apply-flow component (pu-modal4's flow: Update & apply form with "Use last" → error → Apply again → success); the old review · edit · accuracy-check sheets are gone; every Apply Now on the page opens it — the job card, the bar and each similar job · v2.8: every job shows Industry · Department at the end of its full description (a job opened from My Jobs / Docket gets sample values read off its role and company) · v2.7: company card: on a two-line company name the verified tick follows the last word instead of sitting at the card's edge (company-card v1.2.3) · v2.6: Job Description: no "~X% shown" / "Full description" note beside the heading (the Read full description button already says it) · v2.5: a job opened from My Jobs / Docket shows the full company card (sample about, socials, Founded, Headquarters, website, brand wash) · v2.4: the top bar's byline: the name is the job card's company style (12 semibold, muted), POSTED BY smaller (top app bar v3.2.0) · v2.3: Similar Jobs: the stacked job cards are back to the job card's own sizes and spacing (the v2.1 compact sizes undone); kept: Secondary View all, the wider front card, the role in two lines at most · v2.2: Similar Jobs: more room between the parts of the stacked cards (sections 14, meta rows 12, buttons 12) · v2.1: Similar Jobs: View all is a Secondary button; the front card is wider; the cards in the stack are compact (smaller text and buttons, role in two lines at most — this section only) · v2.0: Similar Jobs is a fanned card stack of 4 (swipe the front card; dots) — the Tools-promo stack of company-index2.html with the job card inside · v1.9: 20 between a card heading and its body (skills, description) · an 8 section band before Similar Jobs · v1.8: bottom sheets get the new look: floating ×, corners 32, darker scrim (bottom-sheet v3.0.0) · v1.7: the field you tap lands 20 below the lifted heading (bottom-sheet v2.12.0) · v1.6: Edit your details uses Small fields (40 tall · label 12), the app size · v1.5 (2026-10-23) — for review · opened from the job cards on My Jobs and Docket
+<!-- SHINE APP · JOB DETAILS (JD) — App-login/JD Page/  · v3.3 (2026-10-29) — Skills For This Role: the skills that are on the person's profile show as Matched tags (tags atom v1.2.2: a tick as the lead icon, green with a soft edge — v1.2.0 was brand blue) and come first · v3.2: Similar Jobs › View all opens the Similar Jobs page: ../Similar Jobs/similar-jobs.html while the job is not applied, similar-job2.html once it is (the job handed over in sessionStorage 'shine:similar:<id>' + ?job=<id>); Back from it returns to this job as you left it (applied / saved, same scroll, no nudge) · v3.1: the similar-jobs nudge shows only when the person comes back to a job applied earlier and scrolls; never right after applying here, and gone once they tap Explore Similar Jobs (job card) or the nudge · v3.0: Apply is the new apply-flow component (pu-modal4's flow: Update & apply form with "Use last" → error → Apply again → success); the old review · edit · accuracy-check sheets are gone; every Apply Now on the page opens it — the job card, the bar and each similar job · v2.8: every job shows Industry · Department at the end of its full description (a job opened from My Jobs / Docket gets sample values read off its role and company) · v2.7: company card: on a two-line company name the verified tick follows the last word instead of sitting at the card's edge (company-card v1.2.3) · v2.6: Job Description: no "~X% shown" / "Full description" note beside the heading (the Read full description button already says it) · v2.5: a job opened from My Jobs / Docket shows the full company card (sample about, socials, Founded, Headquarters, website, brand wash) · v2.4: the top bar's byline: the name is the job card's company style (12 semibold, muted), POSTED BY smaller (top app bar v3.2.0) · v2.3: Similar Jobs: the stacked job cards are back to the job card's own sizes and spacing (the v2.1 compact sizes undone); kept: Secondary View all, the wider front card, the role in two lines at most · v2.2: Similar Jobs: more room between the parts of the stacked cards (sections 14, meta rows 12, buttons 12) · v2.1: Similar Jobs: View all is a Secondary button; the front card is wider; the cards in the stack are compact (smaller text and buttons, role in two lines at most — this section only) · v2.0: Similar Jobs is a fanned card stack of 4 (swipe the front card; dots) — the Tools-promo stack of company-index2.html with the job card inside · v1.9: 20 between a card heading and its body (skills, description) · an 8 section band before Similar Jobs · v1.8: bottom sheets get the new look: floating ×, corners 32, darker scrim (bottom-sheet v3.0.0) · v1.7: the field you tap lands 20 below the lifted heading (bottom-sheet v2.12.0) · v1.6: Edit your details uses Small fields (40 tall · label 12), the app size · v1.5 (2026-10-23) — for review · opened from the job cards on My Jobs and Docket
      v1.1: the job and the company are components now — job card 2.5 JD job card (ShineJobCard.jd) and company card (ShineCompanyCard).
      Built from the mobile responsive view of <Shine Revamp>/jd-page3.html: the same sections, copy and flow —
      the job (badges · role · posted · meta · Apply Now · save · share · similar-jobs strip), Skills For This Role,
@@ -283,10 +283,10 @@
 
 </style>
 <!-- ▲ COMPONENT · buttons -->
-<!-- ▼ COMPONENT · tags v1.2.1 · verbatim copy of App-login/app-components/atoms/tags/tags.css — do not edit here -->
+<!-- ▼ COMPONENT · tags v1.2.2 · verbatim copy of App-login/app-components/atoms/tags/tags.css — do not edit here -->
 <style data-component="tags">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TAGS  (app component · App-login · atoms/)          v1.2.1
+   SHINE · TAGS  (app component · App-login · atoms/)          v1.2.2
    A label for a skill, a place, a role or any attribute — with an optional leading icon and an optional remove ×.
    Built from the user's reference (2026-10-21: Large · Medium · Small × Default · Hover · Focused · Disabled ·
    Highlighted) on design-system A.05 Tag (component-system.md), semantic tokens only.
@@ -302,8 +302,8 @@
      .tag--highlighted            highlighted: notice tint, notice edge, leading icon in the notice colour
                                   (use the icons atom's star-filled)
      .tag--matched                matched (v1.2.0): the person has this — e.g. a job's skill that is on their profile.
-                                  Positive (green) tint + edge, label and leading tick (icons atom ic_check-outline) in
-                                  green (v1.2.1 — was brand blue). Any number in a row (unlike highlighted).
+                                  Positive (green) tint + a soft green edge (v1.2.2), label and leading tick (icons atom
+                                  ic_check-outline) in green (v1.2.1 — was brand blue). Any number in a row (unlike highlighted).
      .tag--disabled               disabled (with its × as <button disabled>) — also [aria-disabled="true"]
      .tag-label                   the label (one line, ends with … when it doesn't fit)
      .tag-sr                      words for screen readers only (v1.2.0 — a matched tag: “, on your profile”)
@@ -335,7 +335,8 @@
   --tag-hi-edge: #D97706;                   /* stroke.status.notice */
   --tag-hi-icon: #A35A04;                   /* content.status.notice — the highlighted leading icon */
   --tag-match-bg: #EAFAF0;                  /* surface.status.positive-subtle (green/50) — matched (v1.2.1: green, was brand blue) */
-  --tag-match-edge: #0E9A5A;                /* stroke.status.positive (green/600) */
+  --tag-match-edge: #A8F5C8;                /* stroke.status.positive-subtle — PROPOSED: green/200 (v1.2.2, user: the green/600
+                                               edge was too heavy — as soft as the brand/200 edge the blue version had) */
   --tag-match-fg: #027A48;                  /* content.status.positive (green/700) — matched label and tick */
   /* SIZE · SPACE — §2.3 / §2.4 (md) */
   --tag-h: 36px;                            /* A.05 lg height */
@@ -391,8 +392,8 @@
 .tag--highlighted { --_bg: var(--tag-hi-bg); --_edge: var(--tag-hi-edge); }
 .tag--highlighted > svg:first-child { color: var(--tag-hi-icon); }
 /* matched (v1.2.0, user 2026-10-29: "show a tick inside the skill tag as the lead icon and highlight it" — a job's
-   skill the person has on their profile) — positive green tint and edge, label and tick in green (v1.2.1, user: "green
-   theme", was brand blue); any number in a row */
+   skill the person has on their profile) — positive green tint, a soft green edge (v1.2.2), label and tick in green
+   (v1.2.1, user: "green theme", was brand blue); any number in a row */
 .tag--matched { --_bg: var(--tag-match-bg); --_edge: var(--tag-match-edge); --_fg: var(--tag-match-fg); --_ic-c: var(--tag-match-fg); }
 .tag--matched > svg:first-child { color: var(--tag-match-fg); }
 /* disabled — sunken grey, faint edge, disabled text and icons; the × doesn't act */
@@ -417,7 +418,7 @@
   --tag-hi-edge: #FAB663;                   /* stroke.status.notice · amber-400 */
   --tag-hi-icon: #FAB663;                   /* content.status.notice · amber-400 */
   --tag-match-bg: #011A10;                  /* surface.status.positive-subtle · green-950 */
-  --tag-match-edge: #34D77F;                /* stroke.status.positive · green-400 */
+  --tag-match-edge: #045A36;                /* stroke.status.positive-subtle (PROPOSED) · green-800 — soft on the dark fill */
   --tag-match-fg: #34D77F;                  /* content.status.positive · green-400 */
 }
 @media (prefers-reduced-motion: reduce) { .tag { transition: none; } }
