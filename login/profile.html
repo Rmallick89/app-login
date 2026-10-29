@@ -2797,10 +2797,10 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
 }
 </style>
 <!-- ▲ COMPONENT · bottom-tab-bar -->
-<!-- ▼ COMPONENT · top-app-bar v3.3.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v3.4.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
 <style data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v3.3.0
+   SHINE · TOP APP BAR  (app component · App-login)              v3.4.0
    One top bar for every logged-in screen: ONE floating bar (any items, light
    or dark) and the title bar, on one shared frame, so the leading item, the
    logo / title and the trailing action sit on exactly the same spot — and
@@ -2823,17 +2823,18 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
               ←  Similar Jobs.                             the title bar once it has scrolled away
 
    Shared frame (every bar, both platforms)
-     gutter G 24 (spacing.layout.sm): glyphs and text start / end on it
+     gutter G 24 (spacing.layout.sm): the container edge
      row 48 (size.control.lg) · 8 above / below (spacing.inset.md) → bar 64
-     leading slot 14 → 54 (40, size.control.sm): the menu (.stp-menu) · the photo
+     container edge 24 (v3.4.0): the outermost shape of every bar sits on it — nothing runs past
+     leading slot 24 → 64 (40, size.control.sm; 30 → 70 inside the pill): the menu (.stp-menu) · the photo
      (.stp-avatar) · on a sub-view the back button .stp-back
-     anchor (logo / title) at 62 = leading 54 + 8 (spacing.inline.md)
-     trailing hit areas end at screen − 14 (icon / text on G)
+     anchor: title at 72 = leading 64 + 8 (spacing.inline.md) · logo 54 inside the pill
+     trailing: the last disc / the pill ends on the 24 container edge
 
    Floating bar  .stp--float  (v2.0.0 — Home and Me share it exactly)
      a pill that wraps the 40 items with ONE inset all round — 6
      (spacing.inset.sm) — so every item sits concentric: pill 52 = 40 + 6 + 6,
-     6 above / below it (bar 64), 8 from the screen (spacing.inset.md).
+     6 above / below it (bar 64), its edge on the 24 container edge (v3.4.0, was 8 from the screen).
      Items, any mix: leading .stp-menu (menu) or .stp-avatar (photo, A.08 lg 40);
      anchor .stp-logo (optional); end .stp-cta (Search Jobs) or .stp-status
      (status picker, chevron) or .stp-byline (v3.1.0: who a detail screen is from —
@@ -2856,7 +2857,7 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
               scroll (with data-stp-hide the menu row slides away, as on Android). Opaque page surface in both
               states, so iOS's status bar (painted from the page surface) is
               always the same colour as the bar; a hairline fades in at the
-              edge (scroll-linked, 40 px). Title start-aligned at 62
+              edge (scroll-linked, 40 px). Title start-aligned at 72
      float    floating pill on both; it already sits on its own surface
 
    Hide on scroll — title bar with data-stp-hide (v1.1.0, both platforms)
@@ -2952,20 +2953,23 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
   --stp-edge-fade: 16px;                                   /* the edge fades out over its last 16 (spacing.inset.xl) */
 
   /* SPACE · SIZE — §2.3 / §2.4 */
-  --stp-gutter: 24px;              /* spacing.layout.sm — glyphs + text on it */
+  --stp-gutter: 24px;              /* spacing.layout.sm — the container edge (v3.4.0): the outermost shape of every bar sits on it */
   --stp-pad-y: 8px;                /* spacing.inset.md — above / below the row */
   --stp-row: 48px;                 /* size.control.lg */
   --stp-row-ios: 44px;             /* size.control.md — iOS standard navigation bar 44 pt */
   --stp-hit: 40px;                 /* size.control.sm — the bar's buttons (atom .btn--sm) and the photo */
-  --stp-icon: 20px;                /* size.icon.lg — menu / back glyph (atom .btn--icon-lg): it sits on the gutter */
-  --stp-hit-edge: calc(var(--stp-gutter) - (var(--stp-hit) - var(--stp-icon)) / 2);   /* 14 */
-  --stp-pill-margin: 8px;          /* spacing.inset.md — pill to screen edge */
-  --stp-pill-inset: calc(var(--stp-hit-edge) - var(--stp-pill-margin));                 /* 6 = spacing.inset.sm — all four sides */
+  --stp-icon: 20px;                /* size.icon.lg — menu / back glyph (atom .btn--icon-lg) */
+  /* v3.4.0 (user: "the bars must not go past the container — the outermost icon / shape edge aligns with it"):
+     the title bar's first / last button and the floating pill both sit ON the 24 container edge (were 14 and 8,
+     so the glyph — not the shape — met the gutter) */
+  --stp-hit-edge: var(--stp-gutter);                       /* 24 — title bar: the buttons' disc edge on the container edge (was 14) */
+  --stp-pill-margin: var(--stp-gutter);                    /* 24 — the floating pill's edge on the container edge (was 8) */
+  --stp-pill-inset: 6px;                                   /* spacing.inset.sm — all four sides, items concentric (unchanged) */
   --stp-inset-lg: 12px;            /* spacing.inset.lg — the byline's pressed pill, before the text */
   --stp-inset-xl: 16px;            /* spacing.inset.xl — the byline's text to its end (v3.1.3) */
   --stp-pill-h: calc(var(--stp-hit) + var(--stp-pill-inset) * 2);                        /* 52 */
   --stp-pill-pad-y: calc((var(--stp-row) + var(--stp-pad-y) * 2 - var(--stp-pill-h)) / 2); /* 6 — keeps the bar at 64 */
-  --stp-anchor: calc(var(--stp-hit-edge) + var(--stp-hit) + 8px);                       /* 62 — logo / title start (spacing.inline.md after the menu) */
+  --stp-anchor: calc(var(--stp-hit-edge) + var(--stp-hit) + 8px);                       /* 72 — title start (spacing.inline.md after the menu) — was 62 */
   --stp-logo-h: 36px;              /* brand asset — the DS has no logo size (proposed size.logo.md) */
   --stp-radius-full: 1024px;       /* size.radius.full */
 
@@ -3007,7 +3011,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 /* menu ☰ (.stp-menu) and back ← (.stp-back, the menu's slot on a sub-view): atom Muted · sm · icon-only · icon-lg ·
    pill — the grey disc on every tab (v3.0.0, user: phones have no hover, so the resting fill shows it is a button).
    A tap on the menu fires `shine:menu` on document (top-app-bar.js). Nothing here styles them. */
-.stp-anchor {                                     /* logo or title — starts at 62 */
+.stp-anchor {                                     /* title — starts at 72 (the floating logo: 54 inside the pill, below) */
   position: absolute; left: var(--stp-anchor); top: 50%; transform: translateY(-50%);
   display: flex; align-items: center; min-width: 0; max-width: calc(100% - var(--stp-anchor) - var(--stp-hit-edge));
 }
@@ -3016,7 +3020,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 /* ── Floating bar · one pill for any items (Home, Me, any screen) ─── */
 .stp--float .stp-row {
   height: var(--stp-pill-h);                        /* 52 */
-  margin: var(--stp-pill-pad-y) var(--stp-pill-margin);   /* 6 above / below · 8 from the screen */
+  margin: var(--stp-pill-pad-y) var(--stp-pill-margin);   /* 6 above / below · on the 24 container edge (v3.4.0, was 8) */
   padding: 0 var(--stp-pill-inset);                 /* = the vertical inset: (52 − 40) / 2 */
   border-radius: var(--stp-radius-full);
   background: var(--stp-surface-neutral-raised-translucent);
@@ -3038,14 +3042,14 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
   opacity: 0; transition: opacity var(--stp-dur) var(--stp-ease);
 }
 .stp--float.is-scrolled::before { opacity: 1; }
-.stp--float .stp-anchor { left: calc(var(--stp-anchor) - var(--stp-pill-margin)); }
+.stp--float .stp-anchor { left: calc(var(--stp-pill-inset) + var(--stp-hit) + 8px); }   /* 54 inside the pill (= 78 from the screen) */
 .stp-logo { display: block; height: var(--stp-logo-h); line-height: 0; text-decoration: none; border-radius: 8px; }
 .stp-logo img { display: block; height: 100%; width: auto; }
 .stp-logo:focus-visible { outline: 2px solid var(--stp-stroke-neutral-focus); outline-offset: 2px; box-shadow: var(--stp-elevation-focus-default); }   /* radius.md 8 */
 
 /* Search Jobs (.stp-cta): atom Primary · accent · sm · pill — the exception tone, A.02 Primary · Brand, search only */
 
-/* photo — DS A.08 Avatar · lg 40, in the leading slot (14 → 54, like the menu): initials (Label / md bold 12) until
+/* photo — DS A.08 Avatar · lg 40, in the leading slot (30 → 70 inside the pill, like the menu): initials (Label / md bold 12) until
    there is a photo (an <img> inside). Colour (v2.2.0, user): the brand fill — surface.brand.brand-intense with
    content.on-fill-dark.base initials — on both tones, never white. DS exception: A.08 keeps user avatars neutral;
    the user asked for the brand colour on the profile photo (documented in README.md). */
@@ -3072,7 +3076,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
    A JD is posted by a company, a recruiter or a consultancy; a recruiter's invite comes from a recruiter; a shared job
    from a friend. The byline names them on the right of the pill, opposite the back button — text only, no logo:
        [eyebrow  Eyebrow / sm 10 caps · faded]      right-aligned, the text ends spacing.inset.xl 16 inside
-       [name     Label / lg bold 14 / 16     ]      the 14 hit edge → 22 from the pill's end, 30 from the screen
+       [name     Label / lg bold 14 / 16     ]      its hit edge → 22 from the pill's end, 46 from the screen
    A <button> or <a> when it opens their page (pressed: a soft pill behind it, 48 touch target, focus ring); a <div>
    when it only informs. The name ellipsises; the eyebrow is one line. One end item: never with Search Jobs / status. */
 .stp-byline {
@@ -3182,7 +3186,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
    the full-bleed section, only the back arrow; once the user scrolls past it the title bar appears".
    Over the section: no bar — only the back button (buttons atom Muted · sm · icon · pill + .btn--on-dark, the white
    disc) in the title bar's leading slot. Once the section has scrolled away under the row (.is-past, set by the
-   script): the title bar — the same as My Jobs / Docket (surface, title at 62, hairline) — appears around the back
+   script): the title bar — the same as My Jobs / Docket (surface, title at 72, hairline) — appears around the back
    button, which never moves; back over the section → it goes again.
      · Takes no room (fixed): the section starts at the very top and pads its content by --stp-float-h.
      · Android: surface fades in (--stp-dur) and the title slides up 6 · iPhone: the surface switches on the frame it is
@@ -3241,10 +3245,10 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
       <div class="stp-end"><button class="btn btn--muted btn--sm btn--pill btn--on-dark stp-status" type="button" data-pf="status" aria-haspopup="dialog" aria-expanded="false">Actively Looking<svg aria-hidden="true" focusable="false" data-icon="ic_caret-down-outline" viewBox="0 0 20 20" fill="none"><path d="M16.0006 5.95728C16.2657 5.95733 16.5198 6.0625 16.7073 6.24999C16.8947 6.43747 16.9999 6.69157 17 6.95673C17 7.22196 16.8948 7.47688 16.7073 7.66443L16.6957 7.67598H16.6938L10.7067 13.664C10.614 13.757 10.5036 13.8313 10.3823 13.8816C10.2609 13.9321 10.1305 13.9577 9.99904 13.9577C9.86783 13.9577 9.73799 13.9319 9.61678 13.8816C9.49536 13.8313 9.38504 13.757 9.2923 13.664L3.29271 7.66443C3.10524 7.47689 3 7.22285 3 6.95769C3.00001 6.69251 3.10523 6.43848 3.29271 6.25095C3.4802 6.06345 3.7343 5.95734 3.99945 5.95728C4.26469 5.95728 4.5196 6.06339 4.70715 6.25095L9.99904 11.5428L15.2928 6.24999C15.4804 6.06243 15.7353 5.95728 16.0006 5.95728Z" fill="currentColor"/></svg></button></div>
     </div>
   </header>
-  <!-- ▼ COMPONENT · top-app-bar v3.3.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
+  <!-- ▼ COMPONENT · top-app-bar v3.4.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
 <script data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v3.3.0
+   SHINE · TOP APP BAR  (app component · App-login)              v3.4.0
    Pair with top-app-bar.css. The menu button is part of this component (v2.3.0). Its buttons (menu, back,
    Search Jobs, status) are the buttons atom (atoms/buttons, inlined before this component) — v3.0.0.
 
@@ -3570,7 +3574,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     doc.dispatchEvent(new CustomEvent('shine:menu', { detail: { button: b, page: b.getAttribute('data-page') || '' } }));
   });
   global.ShineTopBar = {
-    version: '3.3.0', mount: mount, initials: initials,
+    version: '3.4.0', mount: mount, initials: initials,
     update: function () { bars.forEach(function (b) { if (b.__stpT) paint(b); }); },
     reveal: function () { bars.forEach(function (b) { if (b.__stpReveal) b.__stpReveal(); }); }   // bring a tucked row back
   };
