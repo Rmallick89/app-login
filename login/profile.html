@@ -2797,10 +2797,10 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
 }
 </style>
 <!-- ▲ COMPONENT · bottom-tab-bar -->
-<!-- ▼ COMPONENT · top-app-bar v3.1.4 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v3.3.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
 <style data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v3.2.0
+   SHINE · TOP APP BAR  (app component · App-login)              v3.3.0
    One top bar for every logged-in screen: ONE floating bar (any items, light
    or dark) and the title bar, on one shared frame, so the leading item, the
    logo / title and the trailing action sit on exactly the same spot — and
@@ -2818,6 +2818,9 @@ body.stb-host { padding-bottom: calc(var(--stb-bar-h) + 4px) !important; }
             ╰──────────────────────────────────────────╯
      title    ☰  My Jobs.                                  My Jobs · Docket
               [ Recommended | Saved | Applied ]            (slot below)
+     title    (←)                                          Similar Jobs (v3.3.0, .stp--over):
+     over       ...the dark section...                     only the back arrow over a dark section,
+              ←  Similar Jobs.                             the title bar once it has scrolled away
 
    Shared frame (every bar, both platforms)
      gutter G 24 (spacing.layout.sm): glyphs and text start / end on it
@@ -3174,6 +3177,41 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 [data-platform="ios"] .stp--title.is-scrolled::after { opacity: var(--stp-p); }
 [data-platform="ios"] .stp-row > .stp-menu::after, [data-platform="ios"] .stp-row > .stp-back::after { inset: -2px; }    /* 44 touch target */
 
+/* ── Title bar · over a dark section (.stp--over · data-stp-over · v3.3.0) ──────
+   For a screen that starts with a full-bleed dark section (Similar Jobs) — user, 2026-10-29: "remove the float nav on
+   the full-bleed section, only the back arrow; once the user scrolls past it the title bar appears".
+   Over the section: no bar — only the back button (buttons atom Muted · sm · icon · pill + .btn--on-dark, the white
+   disc) in the title bar's leading slot. Once the section has scrolled away under the row (.is-past, set by the
+   script): the title bar — the same as My Jobs / Docket (surface, title at 62, hairline) — appears around the back
+   button, which never moves; back over the section → it goes again.
+     · Takes no room (fixed): the section starts at the very top and pads its content by --stp-float-h.
+     · Android: surface fades in (--stp-dur) and the title slides up 6 · iPhone: the surface switches on the frame it is
+       needed (iOS paints the status bar from it); while the section is under the bar the page background is the
+       section's top colour (html.stp-top-dark), as with the dark floating bar. */
+.stp--title.stp--over { position: fixed; top: 0; left: 0; right: 0; }
+.stp--title.stp--over:not(.is-past),
+[data-platform="ios"] .stp--title.stp--over:not(.is-past) {
+  background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+.stp--title.stp--over:not(.is-past)::after { opacity: 0; }
+.stp--title.stp--over.is-past {                      /* = the title bar scrolled (Android): frosted raised surface + hairline */
+  background: var(--stp-surface-neutral-raised-translucent);
+  -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%);
+}
+.stp--title.stp--over.is-past::after { opacity: 1; }
+[data-platform="ios"] .stp--title.stp--over.is-past {   /* iPhone: opaque page surface — the status bar matches it */
+  background: var(--stp-surface-neutral-base); -webkit-backdrop-filter: none; backdrop-filter: none; transition: none;
+}
+[data-platform="ios"] .stp--title.stp--over.is-past::after { opacity: 1; }
+.stp--over .stp-anchor {
+  opacity: 0; transform: translateY(calc(-50% + 6px)); pointer-events: none;
+  transition: opacity var(--stp-dur) var(--stp-ease), transform var(--stp-dur) var(--stp-ease);
+}
+.stp--over.is-past .stp-anchor { opacity: 1; transform: translateY(-50%); pointer-events: auto; }
+@media (prefers-reduced-motion: reduce) {
+  .stp--over, .stp--over::after, .stp--over .stp-anchor { transition: none; }
+}
+
 /* ── Hide on scroll (title bar · data-stp-hide · v1.1.0) ─────────────
    .stp--hides is set by the script once it has padded the list, so without
    the script the bar stays the plain sticky header. The inline transform
@@ -3203,10 +3241,10 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
       <div class="stp-end"><button class="btn btn--muted btn--sm btn--pill btn--on-dark stp-status" type="button" data-pf="status" aria-haspopup="dialog" aria-expanded="false">Actively Looking<svg aria-hidden="true" focusable="false" data-icon="ic_caret-down-outline" viewBox="0 0 20 20" fill="none"><path d="M16.0006 5.95728C16.2657 5.95733 16.5198 6.0625 16.7073 6.24999C16.8947 6.43747 16.9999 6.69157 17 6.95673C17 7.22196 16.8948 7.47688 16.7073 7.66443L16.6957 7.67598H16.6938L10.7067 13.664C10.614 13.757 10.5036 13.8313 10.3823 13.8816C10.2609 13.9321 10.1305 13.9577 9.99904 13.9577C9.86783 13.9577 9.73799 13.9319 9.61678 13.8816C9.49536 13.8313 9.38504 13.757 9.2923 13.664L3.29271 7.66443C3.10524 7.47689 3 7.22285 3 6.95769C3.00001 6.69251 3.10523 6.43848 3.29271 6.25095C3.4802 6.06345 3.7343 5.95734 3.99945 5.95728C4.26469 5.95728 4.5196 6.06339 4.70715 6.25095L9.99904 11.5428L15.2928 6.24999C15.4804 6.06243 15.7353 5.95728 16.0006 5.95728Z" fill="currentColor"/></svg></button></div>
     </div>
   </header>
-  <!-- ▼ COMPONENT · top-app-bar v3.1.4 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
+  <!-- ▼ COMPONENT · top-app-bar v3.3.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
 <script data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v3.2.0
+   SHINE · TOP APP BAR  (app component · App-login)              v3.3.0
    Pair with top-app-bar.css. The menu button is part of this component (v2.3.0). Its buttons (menu, back,
    Search Jobs, status) are the buttons atom (atoms/buttons, inlined before this component) — v3.0.0.
 
@@ -3287,6 +3325,11 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
    ios, anything else → android) unless the page already set it.
    Menu (.stp-menu, v2.3.0): a tap fires `shine:menu` on document, detail { button, page } (page = data-page).
      The menu itself isn't built yet — pages show a placeholder on that event.
+   Title bar over a dark section (v3.3.0): <header class="stp stp--title stp--over" data-shine-topbar data-stp-over="#hero">
+     with .stp-back (start it with .btn--on-dark) + .stp-anchor > .stp-title (aria-hidden="true" in the markup). Over
+     the section only the back button shows; once the section has scrolled away under the row the bar gets .is-past
+     (the title bar appears, the title is announced, the back button loses .btn--on-dark); iPhone: html.stp-top-dark
+     while the section is under the bar; theme-color follows.
    Dark bar (v3.0.0): its buttons carry .btn--on-dark (atom: white pill) while the bar is over its dark section;
      the script takes it off while the bar is lifted (the light pill) and puts it back when the section returns.
      Start them with .btn--on-dark in the markup (the bar starts over the section — no flash).
@@ -3335,6 +3378,20 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
       if (html.getAttribute('data-platform') === 'ios') html.classList.toggle('stp-top-dark', dark);
       var tc = doc.querySelector('meta[name="theme-color"]');
       if (tc) { if (!tc.__stpBase) tc.__stpBase = tc.getAttribute('content'); tc.setAttribute('content', dark ? tc.__stpBase : '#FAF9F6'); }   /* surface.neutral.base */
+    }
+    if (el.classList.contains('stp--over')) {              // v3.3.0 · title bar over a dark section: appears once it has left
+      var o2 = el.getAttribute('data-stp-over'), s2 = o2 && doc.querySelector(o2), r2 = el.querySelector('.stp-row');
+      var b2 = s2 && s2.getBoundingClientRect();
+      var past = b2 && r2 ? b2.bottom <= r2.getBoundingClientRect().bottom : v > 0;
+      el.classList.toggle('is-past', past);
+      if (el.__stpPast !== past) {
+        el.__stpPast = past;
+        el.querySelectorAll('.stp-row .btn').forEach(function (b) { b.classList.toggle('btn--on-dark', !past); });
+        var an = el.querySelector('.stp-anchor'); if (an) an.setAttribute('aria-hidden', past ? 'false' : 'true');
+        if (html.getAttribute('data-platform') === 'ios') html.classList.toggle('stp-top-dark', !past);
+        var tc2 = doc.querySelector('meta[name="theme-color"]');
+        if (tc2) { if (!tc2.__stpBase) tc2.__stpBase = tc2.getAttribute('content'); tc2.setAttribute('content', past ? '#FAF9F6' : tc2.__stpBase); }   /* surface.neutral.base */
+      }
     }
   }
   // v3.0.3/4: the status-bar strip — one per page, made for the first floating bar (top-app-bar.css .stp-strip)
@@ -3491,7 +3548,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     el.__stp = true; bars.push(el);
     avatars(el);
     listen(el);
-    if (el.classList.contains('stp--dark')) {              // its dark section usually comes after the bar in the page:
+    if (el.classList.contains('stp--dark') || el.classList.contains('stp--over')) {   // its dark section usually comes after the bar in the page:
       var again = function () { if (el.__stpT) paint(el); };   // repaint once it exists (first frame at the top: dark status bar on iPhone)
       if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', again, { once: true });
       global.addEventListener('load', again); global.addEventListener('pageshow', again); global.addEventListener('resize', again);
@@ -3513,7 +3570,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     doc.dispatchEvent(new CustomEvent('shine:menu', { detail: { button: b, page: b.getAttribute('data-page') || '' } }));
   });
   global.ShineTopBar = {
-    version: '3.1.4', mount: mount, initials: initials,
+    version: '3.3.0', mount: mount, initials: initials,
     update: function () { bars.forEach(function (b) { if (b.__stpT) paint(b); }); },
     reveal: function () { bars.forEach(function (b) { if (b.__stpReveal) b.__stpReveal(); }); }   // bring a tucked row back
   };

@@ -5,14 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <script data-ios-nozoom>(function () { var iOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); var m = document.querySelector('meta[name="viewport"]'); if (iOS && m && !/maximum-scale/.test(m.content)) m.content += ', maximum-scale=1'; })();</script>
 <meta name="theme-color" content="#161B22" />
-<!-- SHINE APP · SIMILAR JOBS — App-login/Similar Jobs/similar-jobs.html · v1.0 (2026-10-28)
+<!-- SHINE APP · SIMILAR JOBS — App-login/Similar Jobs/similar-jobs.html · v1.1 (2026-10-29)
+     v1.1 (user): the top bar over the hero is only the back arrow; past the hero the title bar "Similar Jobs." appears (top app bar v3.3.0 · title bar over a dark section) — was the dark floating pill.
      Opens from the JD page's Similar Jobs › View all when the job on the JD page is NOT applied yet — count pill "● 12 jobs found" + "Similar to <role>" (the website's similar-jobs.html).
      The pair: similar-jobs.html (job not applied) · similar-job2.html (job applied) — the same page apart from the hero.
      Built from the mobile responsive view of <Shine Revamp>/similar jobs/similar-jobs.html and similar-job2.html:
      the dark hero and the list of job cards. Dropped for the app: the website's nav (logo · menu · Register) → the
      app's top bar with Back; the pagination → one list of all 12 jobs (as My Jobs); the site footer and breadcrumb.
      Built on the App-login components, inlined verbatim: buttons atom · tags atom · icons atom (through the job card) ·
-     card container · job card (2.1 Job card) · top app bar (floating · dark tone · back) · bottom sheet (share sheet) ·
+     card container · job card (2.1 Job card) · top app bar (title bar over a dark section · back) · bottom sheet (share sheet) ·
      apply flow (+ input fields: field base · normal field · multi input · combo box · inline dropdown).
      Page parts (no component yet — flagged): the dark hero (count pill · heading · the applied job's ticket card) and the
      toast. DS semantic tokens (design-system/DESIGN-SYSTEM.md + component-system.md); light only (a page build).
@@ -1367,10 +1368,10 @@ legend.field-label--hidden { float: none; width: 1px; }
 @media (prefers-reduced-motion: reduce) { .dropdown { transition: none; } .dropdown.is-entering { transform: none; } .dropdown-spin { animation-duration: 2s; } }
 </style>
 <!-- ▲ COMPONENT · inline-dropdown -->
-<!-- ▼ COMPONENT · top-app-bar v3.2.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v3.3.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.css — do not edit here -->
 <style data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v3.2.0
+   SHINE · TOP APP BAR  (app component · App-login)              v3.3.0
    One top bar for every logged-in screen: ONE floating bar (any items, light
    or dark) and the title bar, on one shared frame, so the leading item, the
    logo / title and the trailing action sit on exactly the same spot — and
@@ -1388,6 +1389,9 @@ legend.field-label--hidden { float: none; width: 1px; }
             ╰──────────────────────────────────────────╯
      title    ☰  My Jobs.                                  My Jobs · Docket
               [ Recommended | Saved | Applied ]            (slot below)
+     title    (←)                                          Similar Jobs (v3.3.0, .stp--over):
+     over       ...the dark section...                     only the back arrow over a dark section,
+              ←  Similar Jobs.                             the title bar once it has scrolled away
 
    Shared frame (every bar, both platforms)
      gutter G 24 (spacing.layout.sm): glyphs and text start / end on it
@@ -1743,6 +1747,41 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 }
 [data-platform="ios"] .stp--title.is-scrolled::after { opacity: var(--stp-p); }
 [data-platform="ios"] .stp-row > .stp-menu::after, [data-platform="ios"] .stp-row > .stp-back::after { inset: -2px; }    /* 44 touch target */
+
+/* ── Title bar · over a dark section (.stp--over · data-stp-over · v3.3.0) ──────
+   For a screen that starts with a full-bleed dark section (Similar Jobs) — user, 2026-10-29: "remove the float nav on
+   the full-bleed section, only the back arrow; once the user scrolls past it the title bar appears".
+   Over the section: no bar — only the back button (buttons atom Muted · sm · icon · pill + .btn--on-dark, the white
+   disc) in the title bar's leading slot. Once the section has scrolled away under the row (.is-past, set by the
+   script): the title bar — the same as My Jobs / Docket (surface, title at 62, hairline) — appears around the back
+   button, which never moves; back over the section → it goes again.
+     · Takes no room (fixed): the section starts at the very top and pads its content by --stp-float-h.
+     · Android: surface fades in (--stp-dur) and the title slides up 6 · iPhone: the surface switches on the frame it is
+       needed (iOS paints the status bar from it); while the section is under the bar the page background is the
+       section's top colour (html.stp-top-dark), as with the dark floating bar. */
+.stp--title.stp--over { position: fixed; top: 0; left: 0; right: 0; }
+.stp--title.stp--over:not(.is-past),
+[data-platform="ios"] .stp--title.stp--over:not(.is-past) {
+  background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+.stp--title.stp--over:not(.is-past)::after { opacity: 0; }
+.stp--title.stp--over.is-past {                      /* = the title bar scrolled (Android): frosted raised surface + hairline */
+  background: var(--stp-surface-neutral-raised-translucent);
+  -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%);
+}
+.stp--title.stp--over.is-past::after { opacity: 1; }
+[data-platform="ios"] .stp--title.stp--over.is-past {   /* iPhone: opaque page surface — the status bar matches it */
+  background: var(--stp-surface-neutral-base); -webkit-backdrop-filter: none; backdrop-filter: none; transition: none;
+}
+[data-platform="ios"] .stp--title.stp--over.is-past::after { opacity: 1; }
+.stp--over .stp-anchor {
+  opacity: 0; transform: translateY(calc(-50% + 6px)); pointer-events: none;
+  transition: opacity var(--stp-dur) var(--stp-ease), transform var(--stp-dur) var(--stp-ease);
+}
+.stp--over.is-past .stp-anchor { opacity: 1; transform: translateY(-50%); pointer-events: auto; }
+@media (prefers-reduced-motion: reduce) {
+  .stp--over, .stp--over::after, .stp--over .stp-anchor { transition: none; }
+}
 
 /* ── Hide on scroll (title bar · data-stp-hide · v1.1.0) ─────────────
    .stp--hides is set by the script once it has padded the list, so without
@@ -2788,7 +2827,7 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
    Built from the mobile view of <Shine Revamp>/similar jobs/similar-jobs.html and similar-job2.html, on the
    design system (design-system/DESIGN-SYSTEM.md + component-system.md). Light only (a page build) — the hero is
    a dark section by design, as on the website and the Me tab.
-   Everything that has a component is the component: the top bar (top app bar · floating · dark tone), the cards
+   Everything that has a component is the component: the top bar (top app bar · title bar over a dark section), the cards
    (job card 2.1), the buttons, the sheets (bottom sheet · apply flow · share). This file only lays the page out and
    draws the parts no component has yet: the dark hero (count pill · heading · the applied job's ticket) and the toast.
    Semantic tokens only, through the --sjp-* layer.
@@ -2831,7 +2870,7 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
 
   /* SPACING — §2.3 (mobile) */
   --sjp-gutter: 24px;          /* spacing.layout.sm — screen gutter (the app's rule) */
-  --sjp-hero-top: 32px;        /* spacing.section.lg — under the floating bar */
+  --sjp-hero-top: 32px;        /* spacing.section.lg — under the top bar's row */
   --sjp-hero-bottom: 40px;     /* spacing.section.xl — the website's hero bottom */
 
   /* SIZE */
@@ -2852,8 +2891,9 @@ button { font-family: inherit; }
 .sjp-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
 /* ── hero · page part (the website's dark band, mobile) ─────────────────
-   Starts at the very top, under the floating bar (top app bar · dark tone: the bar takes no room, the hero pads
-   its content by --stp-float-h). Top colour = the status-bar strip's dark tone, so the status bar runs on into it. */
+   Starts at the very top, under the top bar (top app bar v3.3.0 · title bar over a dark section: only the back arrow
+   here, it takes no room — the hero pads its content by --stp-float-h). Top colour = surface.inverse.muted, the colour
+   iOS paints the status bar while the hero is under the bar (html.stp-top-dark). */
 .sjp-hero {
   position: relative; overflow: hidden; isolation: isolate;
   padding: calc(var(--stp-float-h, 64px) + var(--sjp-hero-top)) var(--sjp-gutter) var(--sjp-hero-bottom);
@@ -2969,17 +3009,19 @@ button { font-family: inherit; }
 <link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Shine Login"><meta name="apple-mobile-web-app-status-bar-style" content="default"><link rel="apple-touch-icon" href="icons/icon-180.png"><link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png"><link rel="apple-touch-startup-image" href="icons/launch-640x1136.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-750x1334.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1242x2208.png" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1125x2436.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-828x1792.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1242x2688.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1170x2532.png" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1284x2778.png" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1179x2556.png" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1290x2796.png" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1206x2622.png" media="(device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1320x2868.png" media="(device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><link rel="apple-touch-startup-image" href="icons/launch-1260x2736.png" media="(device-width: 420px) and (device-height: 912px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"><script>if("serviceWorker" in navigator)addEventListener("load",function(){navigator.serviceWorker.register("sw.js")})</script>
 </head>
 <body data-sj-variant="open">
-<!-- ▼ TOP APP BAR · floating bar (dark tone, over the hero) — back. The component, not page markup
-     (top-app-bar README: Floating bar · dark tone — the bar takes no room; the hero pads its content by --stp-float-h) -->
-<header class="stp stp--float stp--dark" data-shine-topbar data-stp-over="#sjHero">
+<!-- ▼ TOP APP BAR · title bar over a dark section (v3.3.0, user 2026-10-29) — over the hero only the back arrow; once the hero
+     has scrolled away the title bar "Similar Jobs." appears around it. The component, not page markup (top-app-bar README:
+     Title bar over a dark section — it takes no room; the hero pads its content by --stp-float-h) -->
+<header class="stp stp--title stp--over" data-shine-topbar data-stp-over="#sjHero">
   <div class="stp-row">
     <button class="btn btn--muted btn--sm btn--icon btn--icon-lg btn--pill btn--on-dark stp-back" type="button" data-sj="back" aria-label="Back to the job"><svg aria-hidden="true" focusable="false" data-icon="ic_arrow-left-outline" viewBox="0 0 20 20" fill="none"><path d="M8.28818 4C8.06711 4 7.85504 4.08781 7.69869 4.24414L2.24414 9.69869C2.16676 9.77603 2.1058 9.86783 2.06392 9.96857C2.02209 10.0696 2 10.1786 2 10.2882C2.00002 10.3976 2.0213 10.506 2.06303 10.6069C2.1049 10.7077 2.16655 10.8002 2.24414 10.8777L7.69869 16.3322C7.85507 16.4885 8.06724 16.5763 8.28818 16.5763C8.50916 16.5763 8.7213 16.4885 8.87766 16.3322C9.03392 16.176 9.12171 15.9637 9.1218 15.7427C9.1218 15.5217 9.03387 15.3095 8.87766 15.1532L4.84624 11.1218H16.1664C16.3873 11.1218 16.5997 11.0337 16.7559 10.8777C16.9121 10.7214 17 10.5091 17 10.2882C17 10.0672 16.9121 9.85496 16.7559 9.69869C16.5996 9.54246 16.3873 9.45455 16.1664 9.45455H4.84535L8.87766 5.42312C9.03398 5.26679 9.1218 5.05473 9.1218 4.83363C9.1218 4.61252 9.03399 4.40046 8.87766 4.24414C8.72133 4.08782 8.50929 4 8.28818 4Z" fill="currentColor"/></svg></button>
+    <div class="stp-anchor" aria-hidden="true"><p class="stp-title">Similar Jobs.</p></div>
   </div>
 </header>
-<!-- ▼ COMPONENT · top-app-bar v3.2.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
+<!-- ▼ COMPONENT · top-app-bar v3.3.0 · verbatim copy of App-login/app-components/top-app-bar/top-app-bar.js — do not edit here -->
 <script data-component="top-app-bar">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TOP APP BAR  (app component · App-login)              v3.2.0
+   SHINE · TOP APP BAR  (app component · App-login)              v3.3.0
    Pair with top-app-bar.css. The menu button is part of this component (v2.3.0). Its buttons (menu, back,
    Search Jobs, status) are the buttons atom (atoms/buttons, inlined before this component) — v3.0.0.
 
@@ -3060,6 +3102,11 @@ button { font-family: inherit; }
    ios, anything else → android) unless the page already set it.
    Menu (.stp-menu, v2.3.0): a tap fires `shine:menu` on document, detail { button, page } (page = data-page).
      The menu itself isn't built yet — pages show a placeholder on that event.
+   Title bar over a dark section (v3.3.0): <header class="stp stp--title stp--over" data-shine-topbar data-stp-over="#hero">
+     with .stp-back (start it with .btn--on-dark) + .stp-anchor > .stp-title (aria-hidden="true" in the markup). Over
+     the section only the back button shows; once the section has scrolled away under the row the bar gets .is-past
+     (the title bar appears, the title is announced, the back button loses .btn--on-dark); iPhone: html.stp-top-dark
+     while the section is under the bar; theme-color follows.
    Dark bar (v3.0.0): its buttons carry .btn--on-dark (atom: white pill) while the bar is over its dark section;
      the script takes it off while the bar is lifted (the light pill) and puts it back when the section returns.
      Start them with .btn--on-dark in the markup (the bar starts over the section — no flash).
@@ -3108,6 +3155,20 @@ button { font-family: inherit; }
       if (html.getAttribute('data-platform') === 'ios') html.classList.toggle('stp-top-dark', dark);
       var tc = doc.querySelector('meta[name="theme-color"]');
       if (tc) { if (!tc.__stpBase) tc.__stpBase = tc.getAttribute('content'); tc.setAttribute('content', dark ? tc.__stpBase : '#FAF9F6'); }   /* surface.neutral.base */
+    }
+    if (el.classList.contains('stp--over')) {              // v3.3.0 · title bar over a dark section: appears once it has left
+      var o2 = el.getAttribute('data-stp-over'), s2 = o2 && doc.querySelector(o2), r2 = el.querySelector('.stp-row');
+      var b2 = s2 && s2.getBoundingClientRect();
+      var past = b2 && r2 ? b2.bottom <= r2.getBoundingClientRect().bottom : v > 0;
+      el.classList.toggle('is-past', past);
+      if (el.__stpPast !== past) {
+        el.__stpPast = past;
+        el.querySelectorAll('.stp-row .btn').forEach(function (b) { b.classList.toggle('btn--on-dark', !past); });
+        var an = el.querySelector('.stp-anchor'); if (an) an.setAttribute('aria-hidden', past ? 'false' : 'true');
+        if (html.getAttribute('data-platform') === 'ios') html.classList.toggle('stp-top-dark', !past);
+        var tc2 = doc.querySelector('meta[name="theme-color"]');
+        if (tc2) { if (!tc2.__stpBase) tc2.__stpBase = tc2.getAttribute('content'); tc2.setAttribute('content', past ? '#FAF9F6' : tc2.__stpBase); }   /* surface.neutral.base */
+      }
     }
   }
   // v3.0.3/4: the status-bar strip — one per page, made for the first floating bar (top-app-bar.css .stp-strip)
@@ -3264,7 +3325,7 @@ button { font-family: inherit; }
     el.__stp = true; bars.push(el);
     avatars(el);
     listen(el);
-    if (el.classList.contains('stp--dark')) {              // its dark section usually comes after the bar in the page:
+    if (el.classList.contains('stp--dark') || el.classList.contains('stp--over')) {   // its dark section usually comes after the bar in the page:
       var again = function () { if (el.__stpT) paint(el); };   // repaint once it exists (first frame at the top: dark status bar on iPhone)
       if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', again, { once: true });
       global.addEventListener('load', again); global.addEventListener('pageshow', again); global.addEventListener('resize', again);
@@ -3286,7 +3347,7 @@ button { font-family: inherit; }
     doc.dispatchEvent(new CustomEvent('shine:menu', { detail: { button: b, page: b.getAttribute('data-page') || '' } }));
   });
   global.ShineTopBar = {
-    version: '3.1.4', mount: mount, initials: initials,
+    version: '3.3.0', mount: mount, initials: initials,
     update: function () { bars.forEach(function (b) { if (b.__stpT) paint(b); }); },
     reveal: function () { bars.forEach(function (b) { if (b.__stpReveal) b.__stpReveal(); }); }   // bring a tucked row back
   };
