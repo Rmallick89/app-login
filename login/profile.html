@@ -298,10 +298,10 @@
 }
 </style>
 <!-- ▲ COMPONENT · buttons -->
-<!-- ▼ COMPONENT · tags v1.1.1 · verbatim copy of App-login/app-components/atoms/tags/tags.css — do not edit here -->
+<!-- ▼ COMPONENT · tags v1.2.0 · verbatim copy of App-login/app-components/atoms/tags/tags.css — do not edit here -->
 <style data-component="tags">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · TAGS  (app component · App-login · atoms/)          v1.1.1
+   SHINE · TAGS  (app component · App-login · atoms/)          v1.2.0
    A label for a skill, a place, a role or any attribute — with an optional leading icon and an optional remove ×.
    Built from the user's reference (2026-10-21: Large · Medium · Small × Default · Hover · Focused · Disabled ·
    Highlighted) on design-system A.05 Tag (component-system.md), semantic tokens only.
@@ -316,8 +316,12 @@
      .tag--lg | --md | --sm | --xs  size (xs = extra small, v1.1.0)
      .tag--highlighted            highlighted: notice tint, notice edge, leading icon in the notice colour
                                   (use the icons atom's star-filled)
+     .tag--matched                matched (v1.2.0): the person has this — e.g. a job's skill that is on their profile.
+                                  Brand tint + brand edge, label and leading tick (icons atom ic_check-outline) in
+                                  brand. Any number in a row (unlike highlighted).
      .tag--disabled               disabled (with its × as <button disabled>) — also [aria-disabled="true"]
      .tag-label                   the label (one line, ends with … when it doesn't fit)
+     .tag-sr                      words for screen readers only (v1.2.0 — a matched tag: “, on your profile”)
      .tag-x                       the remove ×: a <button type="button" aria-label="Remove …"> holding the close icon
      [data-state="hover|focus"]   shows a state statically — guidelines and screenshots only
    States: a tag on its own is a label, not a control (A.05) — it has no hover or focus. A tag WITH a remove × gets
@@ -345,6 +349,9 @@
   --tag-hi-bg: #FFF4ED;                     /* surface.status.notice-subtle */
   --tag-hi-edge: #D97706;                   /* stroke.status.notice */
   --tag-hi-icon: #A35A04;                   /* content.status.notice — the highlighted leading icon */
+  --tag-match-bg: #EBF0FF;                  /* surface.brand.brand-subtle (brand/100) — matched (v1.2.0) */
+  --tag-match-edge: #C9DBFF;                /* stroke.brand.subtle — PROPOSED: brand/200 (the DS has no brand stroke) */
+  --tag-match-fg: #0B3FCC;                  /* content.neutral.brand (brand/600) — matched label and tick */
   /* SIZE · SPACE — §2.3 / §2.4 (md) */
   --tag-h: 36px;                            /* A.05 lg height */
   --tag-px: 12px;                           /* spacing.inset.lg */
@@ -369,6 +376,7 @@
 }
 .tag *, .tag *::before, .tag *::after { box-sizing: border-box; }
 .tag > svg, .tag-x > svg { display: block; flex: none; width: var(--tag-ic); height: var(--tag-ic); color: var(--_ic-c); }
+.tag-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }   /* v1.2.0: words for screen readers only (a matched tag says “, on your profile”) */
 .tag-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; line-height: var(--tag-lh); }   /* it clips for the …, so it needs room for g, p, y */
 
 /* sizes — Large · Medium · Small (reference), label the same in all three */
@@ -387,7 +395,7 @@
 
 /* hover — only a tag with a remove ×, only with a mouse or trackpad */
 @media (hover: hover) {
-  .tag:not(.tag--highlighted):not(.tag--disabled):not([aria-disabled="true"]):not(:has(.tag-x:focus-visible)):has(.tag-x:not(:disabled)):hover { --_bg: var(--tag-bg-hover); --_edge: var(--tag-edge-hover); }
+  .tag:not(.tag--highlighted):not(.tag--matched):not(.tag--disabled):not([aria-disabled="true"]):not(:has(.tag-x:focus-visible)):has(.tag-x:not(:disabled)):hover { --_bg: var(--tag-bg-hover); --_edge: var(--tag-edge-hover); }
 }
 .tag[data-state="hover"] { --_bg: var(--tag-bg-hover); --_edge: var(--tag-edge-hover); }
 /* focus — keyboard on the ×: 2 px focus edge + 4 px grey ring, on the hover fill */
@@ -397,6 +405,10 @@
 /* highlighted — notice tint and edge; the leading icon (star-filled) takes the notice colour */
 .tag--highlighted { --_bg: var(--tag-hi-bg); --_edge: var(--tag-hi-edge); }
 .tag--highlighted > svg:first-child { color: var(--tag-hi-icon); }
+/* matched (v1.2.0, user 2026-10-29: "show a tick inside the skill tag as the lead icon and highlight it" — a job's
+   skill the person has on their profile) — brand tint and edge, label and tick in brand; any number in a row */
+.tag--matched { --_bg: var(--tag-match-bg); --_edge: var(--tag-match-edge); --_fg: var(--tag-match-fg); --_ic-c: var(--tag-match-fg); }
+.tag--matched > svg:first-child { color: var(--tag-match-fg); }
 /* disabled — sunken grey, faint edge, disabled text and icons; the × doesn't act */
 .tag--disabled, .tag[aria-disabled="true"] { --_bg: var(--tag-dis-bg); --_edge: var(--tag-dis-edge); --_fg: var(--tag-dis-fg); --_ic-c: var(--tag-dis-fg); --_ring: 0 0 0 0 transparent; }
 .tag--disabled > svg:first-child, .tag[aria-disabled="true"] > svg:first-child { color: var(--tag-dis-fg); }
@@ -418,6 +430,10 @@
   --tag-hi-bg: #211100;                     /* surface.status.notice-subtle · amber-950 */
   --tag-hi-edge: #FAB663;                   /* stroke.status.notice · amber-400 */
   --tag-hi-icon: #FAB663;                   /* content.status.notice · amber-400 */
+  --tag-match-bg: #082478;                  /* surface.brand.brand-subtle is brand-900 — one step lighter (brand-800) so it
+                                               stays apart from the default tag's brand-900 fill */
+  --tag-match-edge: #4D7CFF;                /* stroke.brand.subtle (PROPOSED) · brand-400 */
+  --tag-match-fg: #7EA3FF;                  /* content.neutral.brand · brand-300 */
 }
 @media (prefers-reduced-motion: reduce) { .tag { transition: none; } }
 </style>
