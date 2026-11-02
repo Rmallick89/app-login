@@ -11,7 +11,7 @@
   })();
 </script>
 <meta name="theme-color" content="#161B22" />
-<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.35 (2026-11-02) — date of birth and last working day are picked, not typed (user: "both field will have 3 boxes … each boxes will function as dropdown … a bottom sheet will appear", the App-logout sign-up's last working day): DD ⌄ · MM ⌄ · YYYY ⌄, a tap opens the day / month / year sheet, which moves on to the next empty part and closes when the date is complete (multi input v3.3.0). Date of birth: 1950 to 15 years ago, newest year first · last working day: today to a year ahead · v1.34 (2026-11-02) — notice period (user): six options — Immediate Joiner · Serving Notice Period · 15 Days · 1 Month · 2 Months · 3 Months — in the job search status, the Professional details editor and the recruiter-ready ask; Serving Notice Period asks for the last working day in three boxes with a caret (multi input v3.2.0, data-pick="sheet"): a tap opens the bottom sheet's day / month / year grid, today or later, impossible dates can't be made. Card: "1 Month Notice Period" · "Serving till 15 Dec 2026" · v1.33 (2026-10-25) — top app bar v3.2.0 (byline type; Profile has no byline, nothing changes on screen) · v1.32: bottom sheets get the new look: the × floats above the sheet, corners 32, darker scrim (bottom-sheet v3.0.0 · combo box v4.1.1) · v1.31: the field you tap lands one field gap (20) below the lifted heading, not flush against it (bottom-sheet v2.12.0) · v1.30: every input field is Small (40 tall · label 12), the app's size · v1.29: input fields v3.2.0 (a Small field's label is 12) · v1.28: tapping a field puts a thin caret after its text instead of selecting it (input fields v3.1.0) · v1.27: the field you tap glides up to the first field's place and stays there (bottom-sheet v2.11.0 focus anchor) · v1.26: Small dropdown shows 3½ rows (inline-dropdown v1.5.0) · v1.25: Small dropdown rows get room for a finger (38, inline-dropdown v1.4.1) · v1.24: every inline list is the inline dropdown component (Small · combo box v4.0.0); chips fields show “Added” · v1.23: full-screen headings: Display · Large (modal v2.10.0) · v1.22: full-screens fade through (modal v2.9.0, the user's option C) · v1.21: iPhone status bar on full-screens (modal v2.8.3: page pinned at scroll 0 while a full-screen is up · strip hit-testable) · status-bar strip (modal v2.8.2) · short lists without search · lists never behind the keyboard (combo box v3.1.0)
+<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.36 (2026-11-02) — the Professional details card reads "Serving notice till 24th Feb" (user: no year — it is in the coming year, so it is assumed); the hero asks "Still leaving on 24th Feb?" · v1.35 (2026-11-02) — date of birth and last working day are picked, not typed (user: "both field will have 3 boxes … each boxes will function as dropdown … a bottom sheet will appear", the App-logout sign-up's last working day): DD ⌄ · MM ⌄ · YYYY ⌄, a tap opens the day / month / year sheet, which moves on to the next empty part and closes when the date is complete (multi input v3.3.0). Date of birth: 1950 to 15 years ago, newest year first · last working day: today to a year ahead · v1.34 (2026-11-02) — notice period (user): six options — Immediate Joiner · Serving Notice Period · 15 Days · 1 Month · 2 Months · 3 Months — in the job search status, the Professional details editor and the recruiter-ready ask; Serving Notice Period asks for the last working day in three boxes with a caret (multi input v3.2.0, data-pick="sheet"): a tap opens the bottom sheet's day / month / year grid, today or later, impossible dates can't be made. Card: "1 Month Notice Period" · "Serving till 15 Dec 2026" · v1.33 (2026-10-25) — top app bar v3.2.0 (byline type; Profile has no byline, nothing changes on screen) · v1.32: bottom sheets get the new look: the × floats above the sheet, corners 32, darker scrim (bottom-sheet v3.0.0 · combo box v4.1.1) · v1.31: the field you tap lands one field gap (20) below the lifted heading, not flush against it (bottom-sheet v2.12.0) · v1.30: every input field is Small (40 tall · label 12), the app's size · v1.29: input fields v3.2.0 (a Small field's label is 12) · v1.28: tapping a field puts a thin caret after its text instead of selecting it (input fields v3.1.0) · v1.27: the field you tap glides up to the first field's place and stays there (bottom-sheet v2.11.0 focus anchor) · v1.26: Small dropdown shows 3½ rows (inline-dropdown v1.5.0) · v1.25: Small dropdown rows get room for a finger (38, inline-dropdown v1.4.1) · v1.24: every inline list is the inline dropdown component (Small · combo box v4.0.0); chips fields show “Added” · v1.23: full-screen headings: Display · Large (modal v2.10.0) · v1.22: full-screens fade through (modal v2.9.0, the user's option C) · v1.21: iPhone status bar on full-screens (modal v2.8.3: page pinned at scroll 0 while a full-screen is up · strip hit-testable) · status-bar strip (modal v2.8.2) · short lists without search · lists never behind the keyboard (combo box v3.1.0)
      Built from the mobile view (≤ 480 px) of <Shine Revamp>/profile-index.html, on the design system
      (design-system/DESIGN-SYSTEM.md + component-system.md): semantic tokens only, the buttons atom (atoms/buttons), DS atoms (A.04 Badge,
      A.05 Tag, A.08 Avatar, A.09 Toast). No menu / title on this tab (v1.1, user): the full-bleed hero starts at the top
@@ -6772,16 +6772,32 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
   function noticeOf(t) {                                    // card text → { code, lwd } (older "30 Days" texts map to the nearest option)
     var s = (t || '').toLowerCase();
     if (/immediate/.test(s)) return { code: 'immediate', lwd: '' };
-    if (/serving/.test(s)) return { code: 'serving', lwd: dmyToIso(t) };
+    if (/serving/.test(s)) { var r = rowEl(PROF, P.notice); return { code: 'serving', lwd: (r && r.getAttribute('data-lwd')) || dmyToIso(t) || dmToIso(t) }; }
     var m = /(\d+)\s*month/.exec(s); if (m) return { code: +m[1] <= 1 ? '1m' : +m[1] === 2 ? '2m' : '3m', lwd: '' };
     m = /(\d+)\s*day/.exec(s); if (!m) return { code: '', lwd: '' };
     var n = +m[1]; return { code: n <= 15 ? '15' : n <= 30 ? '1m' : n <= 60 ? '2m' : '3m', lwd: '' };
   }
   function noticeText(code, lwd) {
     if (code === 'immediate') return 'Immediate Joiner';
-    if (code === 'serving') return lwd ? 'Serving till ' + isoToDmy(lwd) : 'Serving Notice Period';
+    if (code === 'serving') return lwd ? 'Serving notice till ' + dayMon(lwd) : 'Serving Notice Period';
     return (NOTICE_CARD[code] || code) + ' Notice Period';
+  }  /* v1.36 (user, 2026-11-02): the last working day reads "Serving notice till 24th Feb" — no year: it is always within
+     the next year, so the person assumes it. The exact date rides on the row (data-lwd) for the editors. */
+  function ordinal(n) { var t = n % 100; return n + (t >= 11 && t <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th'); }
+  function dayMon(iso) { var t = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ''); return t ? ordinal(+t[3]) + ' ' + MON[+t[2] - 1] : ''; }
+  function dmToIso(txt) {                                  // "24th Feb" → the next 24 Feb from today (a row without data-lwd)
+    var t = /(\d{1,2})(?:st|nd|rd|th)?\s+([A-Za-z]{3})/.exec(txt || ''); if (!t) return '';
+    var m = MON.indexOf(t[2].charAt(0).toUpperCase() + t[2].slice(1, 3).toLowerCase()); if (m < 0) return '';
+    var now = new Date(), y = now.getFullYear(), d = new Date(y, m, +t[1]);
+    if (d < new Date(y, now.getMonth(), now.getDate())) y++;
+    return y + '-' + pad(m + 1) + '-' + pad(+t[1]);
   }
+  function setNoticeRow(code, lwd) {                         // the card row: its words + the exact date
+    setRow(PROF, P.notice, noticeText(code, lwd));
+    var r = rowEl(PROF, P.notice); if (!r) return;
+    if (code === 'serving' && lwd) r.setAttribute('data-lwd', lwd); else r.removeAttribute('data-lwd');
+  }
+
   // the last-working-day date that comes with "Serving notice period"
   function lwdShow(sheet, on, iso) { var f = $('[data-lwd]', sheet); show(f, on); if (on && iso !== undefined) F(f).set(iso || ''); }
 
@@ -6841,7 +6857,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
         if (!meta.salaryAdded) hero('You’ve joined a new company. Update your salary.', 'It helps recruiters offer you the right package.', cta('Update salary', 'data-hero="rr-salary"', '+10'));
         else if (!meta.noticeAdded) {
           var nt = getRow(PROF, P.notice), nc = noticeOf(nt), q, yes;   // the question follows what the card says
-          if (nc.code === 'serving') { q = nc.lwd ? 'Still leaving on <b>' + esc(isoToDmy(nc.lwd)) + '</b>?' : 'Still <b>serving your notice</b>?'; yes = 'Yes, still serving'; }
+          if (nc.code === 'serving') { q = nc.lwd ? 'Still leaving on <b>' + esc(dayMon(nc.lwd)) + '</b>?' : 'Still <b>serving your notice</b>?'; yes = 'Yes, still serving'; }
           else if (nc.code === 'immediate') { q = 'Still an <b>immediate joiner</b>?'; yes = 'Yes, still immediate'; }
           else { var n = nt.replace(/\s*Notice Period\s*$/i, '').toLowerCase() || 'your'; q = 'Still on a <b>' + esc(n) + '</b> notice?'; yes = 'Yes, still ' + n; }
           hero(q, 'Confirms when you can join a new role.', cta(yes, 'data-hero="ok-notice"', '+10') + ghost('Update notice', 'data-hero="rr-notice"'));
@@ -6911,7 +6927,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     if (pill) for (var i = 0; i < pill.childNodes.length; i++) { var t = pill.childNodes[i]; if (t.nodeType === 3 && t.textContent.trim()) { t.textContent = STATUS[stCommitted]; break; } }
     if (stStep === 'notice') {                              // Actively Looking: the notice period goes to the Professional details card
       var code = getChoice(stNotice), lwd = code === 'serving' ? F($('[data-lwd]', ST)).value() : '';
-      setRow(PROF, P.notice, noticeText(code, lwd));
+      setNoticeRow(code, lwd);
     }
     closeSheet(ST); say('Search intent updated'); updated();
   }
@@ -7047,7 +7063,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     if (!e.target.closest('[data-act="rr-notice"]')) return;
     var code = getChoice(rrNotice); if (!code) { msg(rrNotice, 'Choose your notice period'); return; }
     var lf = $('[data-lwd]', RR.notice); if (code === 'serving' && !FLD.validate(lf)) return;
-    setRow(PROF, P.notice, noticeText(code, code === 'serving' ? F(lf).value() : ''));
+    setNoticeRow(code, code === 'serving' ? F(lf).value() : '');
     meta.noticeAdded = true; closeSheet(RR.notice); say('Notice period updated'); updated();
   });
   RR.location.addEventListener('click', function (e) {
@@ -7091,7 +7107,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     setRow(PROF, P.salary, numToLpa(+digits($('#pfPrSalary').value)));
     var y = ev ? ev.years : 0, mo = ev ? ev.months : 0;
     setRow(PROF, P.exp, exp === 'no' ? 'Fresher' : !mo ? y + (y === 1 ? ' Year' : ' Years') : !y ? mo + (mo === 1 ? ' Month' : ' Months') : String(Math.round((y + mo / 12) * 10) / 10) + ' Years');
-    setRow(PROF, P.notice, noticeText(code, code === 'serving' ? F($('[data-lwd]', PR)).value() : ''));
+    setNoticeRow(code, code === 'serving' ? F($('[data-lwd]', PR)).value() : '');
     setRow(PROF, P.loc, loc.label() || loc.value());
     meta.salaryAdded = meta.noticeAdded = meta.locationAdded = meta.salaryConfirmed = true;   // one save covers every recruiter-ready ask
     closeSheet(PR); say('Professional details updated'); updated();
