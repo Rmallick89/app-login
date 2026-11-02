@@ -1077,10 +1077,10 @@ legend.field-label--hidden { float: none; width: 1px; }
 @media (prefers-reduced-motion: reduce) { .field-control, .field-trailing, .field-icon { transition: none; } }
 </style>
 <!-- ▲ COMPONENT · field-base -->
-<!-- ▼ COMPONENT · multi-input v3.2.0 · verbatim copy of App-login/app-components/atoms/input-fields/multi-input/multi-input.css — do not edit here -->
+<!-- ▼ COMPONENT · multi-input v3.3.0 · verbatim copy of App-login/app-components/atoms/input-fields/multi-input/multi-input.css — do not edit here -->
 <style data-component="multi-input">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · INPUT FIELDS · MULTI INPUT  (atoms/input-fields/multi-input/)      v3.2.0
+   SHINE · INPUT FIELDS · MULTI INPUT  (atoms/input-fields/multi-input/)      v3.3.0
    One answer typed into 2 or 3 boxes in a row: a DATE (day · month · year, or month · year) or WORK EXPERIENCE
    (years · months). Needs field-base.css first — every box is a field-base box. Behaviour: multi-input.js.
 
@@ -1096,8 +1096,8 @@ legend.field-label--hidden { float: none; width: 1px; }
             .bs-body › .field.field-pick › .field-pick-grid[data-part="d | m | y"] › .field-pick-decade · .field-pick-chip
             ([aria-selected="true"] picked · [aria-disabled="true"] can't be picked)
 
-     [ Day    ⌄ ] [ Month  ⌄ ] [ Year   ⌄ ]   →   Select day                       ✕
-                                                  [01][02][03][04][05][06][07]      7 a row · months 3 · years 4
+     [ DD     ⌄ ] [ MM     ⌄ ] [ YYYY   ⌄ ]   →   Select day                       ✕
+                                                  [ 1][ 2][ 3][ 4][ 5][ 6][ 7]      7 a row · months 3 · years 4
                                                   [08][09]…                         faded: outside the range / not in the month
    ═══════════════════════════════════════════════════════════════════════ */
 
@@ -1162,12 +1162,12 @@ legend.field-label--hidden { float: none; width: 1px; }
   cursor: pointer; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none;
   transition: background-color var(--fld-dur), color var(--fld-dur), transform var(--fld-dur);
 }
-.field-pick-grid[data-part="y"] .field-pick-chip { height: var(--fld-pick-h-year); }
+.field-pick-grid[data-part="y"] .field-pick-chip { height: var(--fld-pick-h-year); font-size: 12px; }   /* Body / sm — 4-digit years, 4 a row */
 @media (hover: hover) { .field-pick-chip:not([aria-disabled="true"]):not([aria-selected="true"]):hover { background: var(--fld-pick-hover); } }
 .field-pick-chip:active { transform: scale(.97); background: var(--fld-pick-hover); }
 .field-pick-chip[aria-selected="true"] { background: var(--fld-pick-on); color: var(--fld-pick-on-text); }
 /* can't be picked — outside the range, or a day the month hasn't got: kept in place so the grid stays a calendar */
-.field-pick-chip[aria-disabled="true"] { background: transparent; color: var(--fld-dis-text); cursor: default; pointer-events: none; }
+.field-pick-chip[aria-disabled="true"] { background: transparent; color: var(--fld-faded); opacity: .45; cursor: not-allowed; pointer-events: none; }   /* the reference: content.neutral.faded at 45 % */
 .field-pick-chip[aria-disabled="true"][aria-selected="true"] { background: var(--fld-dis-bg); box-shadow: inset 0 0 0 1px var(--fld-dis-edge); }   /* a stored date now out of range */
 .field-pick-chip:focus { outline: none; }
 .field-pick-chip:focus-visible { outline: 2px solid var(--fld-focus); outline-offset: 2px; }
@@ -1175,7 +1175,7 @@ legend.field-label--hidden { float: none; width: 1px; }
 .field-pick-note[hidden] { display: none; }
 .field-pick-decade {                                                            /* Eyebrow / sm — a decade over its years */
   grid-column: 1 / -1; padding: 8px 0 0;
-  font: 700 10px/10px var(--fld-font); letter-spacing: 1px; text-transform: uppercase; color: var(--fld-faded);
+  font: 700 10px/10px var(--fld-font); letter-spacing: 1px; color: var(--fld-faded);   /* "1990s" — not upper-cased (it would read 1990S) */
 }
 .field-pick-decade:first-child { padding-top: 0; }
 [data-theme="dark"] .field-pick {
@@ -4885,9 +4885,9 @@ button { font-family: inherit; }
 
 </script>
 <!-- ▲ COMPONENT · normal-field -->
-<!-- ▼ COMPONENT · multi-input v3.2.0 · verbatim copy of App-login/app-components/atoms/input-fields/multi-input/multi-input.js — do not edit here -->
+<!-- ▼ COMPONENT · multi-input v3.3.0 · verbatim copy of App-login/app-components/atoms/input-fields/multi-input/multi-input.js — do not edit here -->
 <script data-component="multi-input">
-/* SHINE · INPUT FIELDS · MULTI INPUT  (atoms/input-fields/multi-input/)      v3.2.0
+/* SHINE · INPUT FIELDS · MULTI INPUT  (atoms/input-fields/multi-input/)      v3.3.0
    Needs field-base.css + field-base.js and multi-input.css. One answer in 2 or 3 boxes — the page writes only the
    group and its label; the boxes are drawn here:
 
@@ -4903,7 +4903,8 @@ button { font-family: inherit; }
                data-autocomplete="bday"   lets the phone fill a date of birth
    experience  data-max-years (default 50) — months are 0 to 11
    data-name   adds a hidden input with that name: the ISO date (1995-05-12 · 2021-08) or the total months (54)
-   data-error-range   the words when the date is outside data-min / data-max
+   data-error-range   the words when the date is outside data-min / data-max (v3.3.0: data-error-max / data-error-min for one side —
+                      date of birth: data-error-max="You need to be at least 15 years old")
    data-trailing      a trailing icon — an icons-atom name (ic_calendar-outline · ic_caret-down-outline · ic_clock-outline · ic_job-outline
                       are built in; any
                       other icon the page has added to ShineField.icons from icons.json); never drawn here
@@ -4914,18 +4915,21 @@ button { font-family: inherit; }
                           button names its part: "Pick from a list" → "Pick from a list: day" …, or give one label
                           per box, split by |: "Pick a day|Pick a month|Pick a year"
 
-   data-pick="sheet"  (date · v3.2.0) PICKED, NOT TYPED — each box reads Day · Month · Year with a caret
-                      (ic_caret-down-outline in each box, unless data-trailing says otherwise; placeholders DD · MM · YYYY
-                      as typed boxes — they fit three boxes in a 320 phone's form panel); a tap on a box (or Enter ·
-                      Space · ↓ on it) opens a bottom sheet — the bottom-sheet component (bottom-sheet.css + .js) — with that
-                      part as a grid: days 7 a row, months 3, years 4 (decade headings when the range is longer than ten
-                      years). A tap on a value puts it in the box and closes the sheet (a short hold, so the pick is seen).
-                      Edge cases: years outside data-min … data-max are not shown; a value that can't make a date in the
-                      range together with the parts already picked is faded and can't be picked (last working day: no
-                      past date); a day the picked month hasn't got (30 Feb, 31 Apr — 29 Feb outside a leap year) is
-                      faded too. Changing the month or year afterwards never clears the day: if the date no longer
-                      exists the day box turns red with the reason ("April has 30 days", "2027 isn't a leap year —
-                      February has 28 days"). Backspace / Delete on a box empties it.
+   data-pick="sheet"  (date · v3.2.0 · behaviour v3.3.0 = the App-logout sign-up's last working day) PICKED, NOT TYPED —
+                      DD ⌄ · MM ⌄ · YYYY ⌄ boxes (read-only, a caret in each; a pick shows as 15 · 12 · 2026). A tap on a
+                      box (or Enter · Space · ↓) opens a bottom sheet — the bottom-sheet component — on that part as a grid:
+                      days 1–31, 7 a row · Jan–Dec, 3 a row · the years of data-min … data-max, 4 a row (decade headings
+                      over ten years). A tap picks; the sheet then moves to the next empty part (day › month › year, round)
+                      and closes once the date is complete. Rules, the same for every date — only data-min / data-max change:
+                        · a value is faded (can't be picked) when no real date in the range can come of it, judged on the
+                          parts ABOVE it only (year › month › day): months of a year outside the range, days a month hasn't
+                          got (31 Apr · 30 Feb · 29 Feb outside a leap year), days outside the range in its first / last month
+                        · picking a year or a month that rules out a part already picked below it (31 → Feb, 29 Feb → 2027)
+                          clears that part and goes back to it — never a dead end, never an impossible date
+                      Last working day: data-min="today" data-max="today+1y" (years ascending). Date of birth:
+                      data-min="1950-01-01" data-max="today-15y" data-pick-order="desc" (newest year first).
+                      Backspace / Delete on a box empties it.
+     data-pick-order  desc — the year grid newest first (date of birth); default asc (last working day)
      data-pick-title  the word after "Select" in the sheet's title — default: day · month · year
 
    Typing: numbers only, numeric keyboard; a box moves on by itself when it is full (a day of 4–9 or a month of
@@ -5001,7 +5005,7 @@ button { font-family: inherit; }
       var k = ins[i].getAttribute('data-part') || keys[i]; v = v === '' || v == null ? '' : String(+v);
       if (v && k !== 'y') v = pad(v);
       if (v) ins[i].setAttribute('data-v', v); else ins[i].removeAttribute('data-v');
-      ins[i].value = !v ? '' : k === 'm' ? MON[+v - 1] : v;
+      ins[i].value = v;                                   // 15 · 12 · 2026 — the boxes' own DD · MM · YYYY (v3.3.0)
       ins[i].setAttribute('aria-label', PART[k].label + (v ? ', ' + (k === 'm' ? MONTHS[+v - 1] : +v) : ', not picked'));
     }
     function mark(idx) { ins.forEach(function (inp, i) { inp.closest('.field-control').classList.toggle('is-invalid', idx.indexOf(i) > -1); }); }
@@ -5030,8 +5034,8 @@ button { font-family: inherit; }
       var lo = when(el.getAttribute('data-min')), hi = when(el.getAttribute('data-max')), me = Y * 10000 + M * 100 + (id > -1 ? D : 1);
       var fmt = function (w) { return (id > -1 ? w.d + ' ' : '') + MONTHS[w.m - 1].slice(0, 3) + ' ' + w.y; };
       var key = function (w) { return w.y * 10000 + w.m * 100 + (id > -1 ? w.d : 1); }, custom = el.getAttribute('data-error-range');
-      if (hi && me > key(hi)) return { text: custom || (hi.today ? 'The date can’t be in the future' : 'Enter a date up to ' + fmt(hi)), at: [] };
-      if (lo && me < key(lo)) return { text: custom || (lo.today ? 'The date can’t be before today' : 'Enter a date from ' + fmt(lo) + ' onwards'), at: [] };
+      if (hi && me > key(hi)) return { text: el.getAttribute('data-error-max') || custom || (hi.today ? 'The date can’t be in the future' : 'Enter a date up to ' + fmt(hi)), at: [] };
+      if (lo && me < key(lo)) return { text: el.getAttribute('data-error-min') || custom || (lo.today ? 'The date can’t be before today' : 'Enter a date from ' + fmt(lo) + ' onwards'), at: [] };
       return null;
     }
     function value() {
@@ -5085,22 +5089,33 @@ button { font-family: inherit; }
         } else if (g.length > 1) { fill(i, g); e.preventDefault(); }
       });
     });
-    /* ── v3.2.0 · picker mode — a bottom sheet with one part as a grid of values ─────────────────────── */
-    var sheet = null, grid = null, word = null, live = null, at = -1;
-    function bounds() {                                   // the range as keys (yyyymmdd) + the years to list
+    /* ── picker mode (v3.2.0 · v3.3.0: the App-logout sign-up's last working day) — a bottom sheet, one part at a time ── */
+    var sheet = null, grid = null, word = null, live = null, at = -1, closing = false;
+    function bounds() {                                   // the range as keys (yyyymmdd) + its years
       var lo = when(el.getAttribute('data-min')), hi = when(el.getAttribute('data-max')), ty = new Date().getFullYear();
       var k = function (w) { return w.y * 10000 + w.m * 100 + w.d; };
       return { lo: lo ? k(lo) : 0, hi: hi ? k(hi) : 99991231, y0: lo ? lo.y : ty - 100, y1: hi ? hi.y : ty + 10 };
     }
-    /* can y · m · d (null = not picked yet) still make a date in the range? cal: the day must exist in that month
-       (the day grid) — the month and year grids only weigh the range, so a later month change is never blocked */
-    function fits(b, y, m, d, cal) {
-      for (var Y = y || b.y0; Y <= (y || b.y1); Y++) for (var M = m || 1; M <= (m || 12); M++) {
-        var dim = daysIn(M, Y), base = Y * 10000 + M * 100;
-        if (d) { if (cal && d > dim) continue; if (base + d >= b.lo && base + d <= b.hi) return true; }
-        else if (base + dim >= b.lo && base + 1 <= b.hi) return true;
+    /* is there a real date in the range with these parts? (null = not picked yet: any value) */
+    function possible(b, q) {
+      for (var y = b.y0; y <= b.y1; y++) {
+        if (q.y != null && q.y !== y) continue;
+        for (var m = 1; m <= 12; m++) {
+          if (q.m != null && q.m !== m) continue;
+          var base = y * 10000 + m * 100, dim = daysIn(m, y);
+          if (base + dim < b.lo || base + 1 > b.hi) continue;
+          if (q.d == null) return true;
+          if (q.d <= dim && base + q.d >= b.lo && base + q.d <= b.hi) return true;
+        }
       }
       return false;
+    }
+    function picked() { var v = vals(), o = { d: null, m: null, y: null }; keys.forEach(function (k, i) { o[k] = v[i] ? +v[i] : null; }); return o; }
+    /* a value is off when nothing in the range can come of it — judged on the parts ABOVE it only (year › month › day) */
+    function off(b, k, v, q) {
+      var t = { y: q.y, m: q.m, d: q.d }; t[k] = v;
+      if (k === 'y') { t.m = null; t.d = null; } else if (k === 'm') t.d = null;
+      return !possible(b, t);
     }
     function buildSheet() {
       if (sheet) return;
@@ -5125,51 +5140,63 @@ button { font-family: inherit; }
         all[i].tabIndex = -1; all[j].tabIndex = 0; all[j].focus();
       });
       sheet.addEventListener('shine:sheet-close', function () { if (at > -1) ins[at].closest('.field-control').classList.remove('is-open'); at = -1; el.classList.remove('field--open'); });
+      sheet.addEventListener('shine:sheet-closed', function () { closing = false; });
     }
-    function draw(i) {
-      var k = ins[i].getAttribute('data-part') || keys[i], v = vals(), b = bounds(), h = '', first = null;
-      var di = keys.indexOf('d'), mi = keys.indexOf('m'), yi = keys.indexOf('y');
-      var pd = di > -1 && v[di] ? +v[di] : null, pm = v[mi] ? +v[mi] : null, py = v[yi] ? +v[yi] : null, cur = v[i] ? +v[i] : null;
-      var items = [], x;
-      if (k === 'd') for (x = 1; x <= 31; x++) items.push({ v: x, t: pad(String(x)), say: String(x), off: !fits(b, py, pm, x, true) });
-      if (k === 'm') for (x = 1; x <= 12; x++) items.push({ v: x, t: MON[x - 1], say: MONTHS[x - 1], off: !fits(b, py, x, pd, false) });
-      if (k === 'y') for (x = b.y0; x <= b.y1; x++) items.push({ v: x, t: String(x), say: String(x), off: !fits(b, x, pm, pd, false) });
-      var decades = k === 'y' && b.y1 - b.y0 >= 10;
-      items.forEach(function (it, j) {
-        if (decades && (j === 0 || it.v % 10 === 0)) h += '<span class="field-pick-decade" role="presentation">' + (it.v - it.v % 10) + 's</span>';
-        var on = it.v === cur;
-        if (!it.off && first === null) first = it.v;          // where the keys start when nothing usable is picked yet
-        h += '<button class="field-pick-chip" type="button" role="option" data-v="' + it.v + '" aria-selected="' + on + '"' + (it.off ? ' aria-disabled="true"' : '') +
+    function draw(i) {                                    // the grid for box i's part
+      var k = ins[i].getAttribute('data-part') || keys[i], b = bounds(), q = picked(), h = '', first = null, items = [], x;
+      if (k === 'd') for (x = 1; x <= 31; x++) items.push({ v: x, t: String(x), say: String(x) });                 // 1 … 31 (the reference: no leading zero)
+      if (k === 'm') for (x = 1; x <= 12; x++) items.push({ v: x, t: MON[x - 1], say: MONTHS[x - 1] });
+      if (k === 'y') for (x = b.y0; x <= b.y1; x++) items.push({ v: x, t: String(x), say: String(x) });
+      if (k === 'y' && el.getAttribute('data-pick-order') === 'desc') items.reverse();                            // date of birth: newest first
+      var decades = k === 'y' && b.y1 - b.y0 >= 10, desc = items.length > 1 && items[0].v > items[1].v, dec = null;
+      items.forEach(function (it) {
+        var dc = it.v - it.v % 10;
+        if (decades && dc !== dec) { dec = dc; h += '<span class="field-pick-decade" role="presentation">' + dc + 's</span>'; }
+        var on = it.v === q[k], no = off(b, k, it.v, q);
+        if (!no && first === null) first = it.v;
+        h += '<button class="field-pick-chip" type="button" role="option" data-v="' + it.v + '" aria-selected="' + on + '"' + (no ? ' aria-disabled="true"' : '') +
              ' aria-label="' + it.say + '" tabindex="-1">' + it.t + '</button>';
       });
       grid.setAttribute('data-part', k); grid.setAttribute('aria-label', PART[k].label);
-      var note = sheet.querySelector('.field-pick-note'), other = keys.filter(function (q, j) { return j !== i && v[j]; }).map(function (q) { return PART[q].label.toLowerCase(); });
-      note.hidden = first !== null || !other.length;                                 // nothing can be picked: say what to change
-      note.textContent = note.hidden ? '' : 'None of these fit the ' + list(other) + ' you picked — change ' + (other.length > 1 ? 'one of them' : 'it') + ' first';
       grid.innerHTML = h;
       var start = grid.querySelector('.field-pick-chip[aria-selected="true"]:not([aria-disabled])') || grid.querySelector('.field-pick-chip[data-v="' + first + '"]');
-      [].forEach.call(grid.querySelectorAll('[data-bs-autofocus]'), function (c) { c.removeAttribute('data-bs-autofocus'); });
       if (start) { start.tabIndex = 0; start.setAttribute('data-bs-autofocus', ''); }
       word.textContent = (el.getAttribute('data-pick-title') || '').split('|')[i] || PART[k].label.toLowerCase();
+      var note = sheet.querySelector('.field-pick-note'), other = keys.filter(function (p, j) { return j !== i && q[p] != null; }).map(function (p) { return PART[p].label.toLowerCase(); });
+      note.hidden = first !== null || !other.length;     // a saved date now out of range: say what to change
+      note.textContent = note.hidden ? '' : 'None of these fit the ' + list(other) + ' you picked — change ' + (other.length > 1 ? 'one of them' : 'it') + ' first';
+      var body = sheet.querySelector('.bs-body'); if (body) body.scrollTop = 0;
+      var s = grid.querySelector('.field-pick-chip[aria-selected="true"]'); if (s && s.scrollIntoView) try { s.scrollIntoView({ block: 'nearest' }); } catch (e) {}
     }
     function openPick(i) {
       if (at > -1 || el.classList.contains('field--disabled') || ins[i].disabled) return;
       if (!window.ShineSheet) { console.warn('multi-input.js: data-pick="sheet" needs the bottom-sheet component'); return; }
-      buildSheet(); draw(i); at = i;
+      buildSheet(); at = i; closing = false; draw(i);
       ins[i].closest('.field-control').classList.add('is-open'); el.classList.add('field--open');
       if (!ShineSheet.open(sheet, { trigger: ins[i] })) { ins[i].closest('.field-control').classList.remove('is-open'); el.classList.remove('field--open'); at = -1; return; }
-      var s = grid.querySelector('.field-pick-chip[aria-selected="true"]') || grid.querySelector('.field-pick-chip[tabindex="0"]');
-      if (s && s.scrollIntoView) try { s.scrollIntoView({ block: 'nearest' }); } catch (e) {}
+      var s = grid.querySelector('.field-pick-chip[aria-selected="true"]'); if (s && s.scrollIntoView) try { s.scrollIntoView({ block: 'nearest' }); } catch (e) {}
+    }
+    function moveTo(i) {                                  // the sheet stays up and shows the next part
+      ins[at].closest('.field-control').classList.remove('is-open'); at = i;
+      ins[i].closest('.field-control').classList.add('is-open'); draw(i);
+      var f = grid.querySelector('.field-pick-chip[tabindex="0"]'); if (f && sheet.contains(doc.activeElement)) try { f.focus({ preventScroll: true }); } catch (e) {}
     }
     function choose(c) {
-      if (at < 0 || c.getAttribute('aria-disabled') === 'true') return;
-      var i = at;
+      if (at < 0 || closing || c.getAttribute('aria-disabled') === 'true') return;
+      var i = at, k = keys[i], b = bounds(), v = +c.getAttribute('data-v');
       [].forEach.call(grid.querySelectorAll('.field-pick-chip'), function (x) { x.setAttribute('aria-selected', x === c ? 'true' : 'false'); });
-      put(i, c.getAttribute('data-v')); changed();
-      var p = problem(), all = vals().every(Boolean);
-      if (p && (all || p.conflict)) show(p); else if (F.isInvalid(el)) show(null);   // a wrong date shows at once; "Enter the …" waits for leaving the group
-      live.textContent = c.getAttribute('aria-label') + ' picked';
-      setTimeout(function () { if (sheet && ShineSheet.isOpen(sheet)) ShineSheet.close(sheet); }, 140);   // a short hold, so the pick is seen (profile-index)
+      put(i, v); live.textContent = c.getAttribute('aria-label') + ' picked';
+      var q = picked(), back = null, im = keys.indexOf('m'), id = keys.indexOf('d');
+      // a higher part picked: drop what it rules out below it, and go back to it (the reference's rule)
+      if (k === 'y' && q.m != null && !possible(b, { y: q.y, m: q.m, d: null })) { put(im, ''); q.m = null; back = im; }
+      if (k !== 'd' && id > -1 && q.d != null && !possible(b, q)) { put(id, ''); q.d = null; back = id; }
+      recheck(); changed();
+      var to = back;
+      if (to === null) for (var j = 1; j < keys.length; j++) { var p = (i + j) % keys.length; if (q[keys[p]] == null) { to = p; break; } }   // the next empty part, round
+      if (to !== null) { setTimeout(function () { if (at === i && sheet && ShineSheet.isOpen(sheet)) moveTo(to); }, 140); return; }
+      closing = true;
+      var pr = problem(); if (pr) show(pr); else if (F.isInvalid(el)) show(null);
+      setTimeout(function () { if (sheet && ShineSheet.isOpen(sheet)) ShineSheet.close(sheet); }, 160);   // complete: the pick shows, then the sheet goes
     }
     if (pick) ins.forEach(function (inp, i) {
       inp.closest('.field-control').addEventListener('click', function () { openPick(i); });
@@ -5190,7 +5217,7 @@ button { font-family: inherit; }
     });
     el.addEventListener('focusout', function () {
       setTimeout(function () { if (el.contains(doc.activeElement) || at > -1 || (sheet && sheet.contains(doc.activeElement))) return; ins.forEach(function (inp, i) { var k = inp.getAttribute('data-part') || keys[i]; if (!pick && (k === 'd' || k === 'm') && inp.value.length === 1 && +inp.value > 0) inp.value = pad(inp.value); });
-        changed(); var p = problem(); if (p) show(p); else if (F.isInvalid(el)) show(null); }, 0);
+        changed(); var p = problem(); if (p) show(p); else if (F.isInvalid(el) && vals().some(Boolean)) show(null); }, 0);   // v3.3.0: an empty group keeps the submit's "Enter your …"
     });
 
     var api = { input: ins[0], type: kind };
