@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <script data-ios-nozoom>(function () { var iOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); var m = document.querySelector('meta[name="viewport"]'); if (iOS && m && !/maximum-scale/.test(m.content)) m.content += ', maximum-scale=1'; })();</script>
 <meta name="theme-color" content="#161B22" />
-<!-- SHINE APP · SIMILAR JOBS — App-login/Similar Jobs/similar-job2.html · v1.1 (2026-10-29)
+<!-- SHINE APP · SIMILAR JOBS — App-login/Similar Jobs/similar-job2.html · v1.2 (2026-11-02)
+     v1.2: apply flow v1.1.0 — Serving Notice Period asks for the last working day, picked from a sheet (multi input v3.2.0).
      v1.1 (user): the top bar over the hero is only the back arrow; past the hero the title bar "Similar Jobs." appears (top app bar v3.3.0 · title bar over a dark section) — was the dark floating pill.
      Opens from the JD page's Similar Jobs › View all when the job on the JD page IS applied — "12 jobs found similar to" + the applied job's ticket card (the website's similar-job2.html).
      The pair: similar-jobs.html (job not applied) · similar-job2.html (job applied) — the same page apart from the hero.
@@ -1076,10 +1077,10 @@ legend.field-label--hidden { float: none; width: 1px; }
 @media (prefers-reduced-motion: reduce) { .field-control, .field-trailing, .field-icon { transition: none; } }
 </style>
 <!-- ▲ COMPONENT · field-base -->
-<!-- ▼ COMPONENT · multi-input v3.1.0 · verbatim copy of App-login/app-components/atoms/input-fields/multi-input/multi-input.css — do not edit here -->
+<!-- ▼ COMPONENT · multi-input v3.2.0 · verbatim copy of App-login/app-components/atoms/input-fields/multi-input/multi-input.css — do not edit here -->
 <style data-component="multi-input">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · INPUT FIELDS · MULTI INPUT  (atoms/input-fields/multi-input/)      v3.1.0
+   SHINE · INPUT FIELDS · MULTI INPUT  (atoms/input-fields/multi-input/)      v3.2.0
    One answer typed into 2 or 3 boxes in a row: a DATE (day · month · year, or month · year) or WORK EXPERIENCE
    (years · months). Needs field-base.css first — every box is a field-base box. Behaviour: multi-input.js.
 
@@ -1090,6 +1091,14 @@ legend.field-label--hidden { float: none; width: 1px; }
    Classes: fieldset.field.field-multi[data-field="date | experience"] › legend.field-label · .field-multi-boxes ›
             .field-control (.is-invalid: the box at fault) › .field-input (+ .field-suffix, experience) (+ .field-trailing,
             data-trailing: an icons-atom icon in the last box, or in each) · one message
+   Picker mode (v3.2.0, data-pick="sheet"): .field-multi--pick › .field-control.field-pick-box (.is-open while its sheet
+            is up) › .field-input[readonly] + .field-trailing--icon (caret) — the sheet: .bs.field-sheet.field-pick-sheet ›
+            .bs-body › .field.field-pick › .field-pick-grid[data-part="d | m | y"] › .field-pick-decade · .field-pick-chip
+            ([aria-selected="true"] picked · [aria-disabled="true"] can't be picked)
+
+     [ Day    ⌄ ] [ Month  ⌄ ] [ Year   ⌄ ]   →   Select day                       ✕
+                                                  [01][02][03][04][05][06][07]      7 a row · months 3 · years 4
+                                                  [08][09]…                         faded: outside the range / not in the month
    ═══════════════════════════════════════════════════════════════════════ */
 
 .field-multi-boxes {
@@ -1113,6 +1122,69 @@ legend.field-label--hidden { float: none; width: 1px; }
 .field-multi.field--invalid .field-control.is-invalid,
 .field-multi.field--invalid .field-control.is-invalid:focus-within { --_edge: var(--fld-neg); --_ring: 0 0 0 var(--fld-ring-w) var(--fld-neg-ring); }
 .field-multi.field--invalid:not(:has(.is-invalid)) .field-control:focus-within { --_edge: var(--fld-neg); --_ring: 0 0 0 var(--fld-ring-w) var(--fld-neg-ring); }
+
+/* ── v3.2.0 · picker mode (data-pick="sheet") ───────────────────────────────────────────────────────────────
+   The boxes are field-base boxes that open a sheet: the read-only text shows the pick (05 · Nov · 2026) or the part's
+   name as the placeholder, the caret sits in each box. The box being picked keeps the focus look while its sheet is up. */
+.field-multi--pick .field-control { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.field-multi--pick .field-input { cursor: pointer; caret-color: transparent; -webkit-user-select: none; user-select: none; }
+.field-multi--pick .field-trailing--icon { cursor: pointer; color: var(--fld-faded); }
+/* the caret is only a sign here: its glyph's own width (no +4), so a year still fits three boxes in a 320 phone's
+   form panel (74 wide: 8 · text 40 · 4 · caret 16 · 6) */
+.field-multi--pick .field-multi-boxes .field-trailing { width: var(--fld-eye-ic); height: var(--fld-eye-ic); }
+@media (max-width: 420px) { .field-multi--pick .field-control { padding: 0 6px 0 8px; } }
+.field-multi--pick .field-control.is-open { --_edge: var(--fld-focus); --_ring: 0 0 0 var(--fld-ring-w) var(--fld-ring); }
+.field-multi--pick .field-control.is-open .field-trailing--icon svg { transform: rotate(180deg); }
+.field-multi--pick .field-trailing--icon svg { transition: transform var(--fld-dur); }
+.field-multi--pick.field--disabled .field-control { cursor: not-allowed; }
+
+/* the picker sheet's grid — the bottom-sheet component draws the sheet; this is its body */
+.field-pick {
+  /* COLOUR — DESIGN-SYSTEM.md §2.2 (light) */
+  --fld-pick-bg: #EEF1F5;                   /* surface.neutral.muted — a value */
+  --fld-pick-hover: #E4E7EC;                /* surface.neutral-state.pressed — under the pointer / finger */
+  --fld-pick-on: #1A56FF;                   /* surface.brand.brand-intense — the picked value */
+  --fld-pick-on-text: #FFFFFF;              /* content.neutral.on-fill-dark */
+  /* SIZE · SPACE · TYPE */
+  --fld-pick-h: 44px;                       /* size.control.md — a day / a month */
+  --fld-pick-h-year: 40px;                  /* size.control.sm — a year (4 digits, 4 a row) */
+  --fld-pick-gap: 8px;                      /* spacing.inline.md */
+  --fld-pick-radius: 12px;                  /* size.radius.lg */
+  gap: 0;
+}
+.field-pick-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: var(--fld-pick-gap); align-content: start; }
+.field-pick-grid[data-part="m"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.field-pick-grid[data-part="y"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.field-pick-chip {
+  display: grid; place-items: center; min-width: 0; height: var(--fld-pick-h); margin: 0; padding: 0;
+  border: 0; border-radius: var(--fld-pick-radius); background: var(--fld-pick-bg); color: var(--fld-text);
+  font: 600 var(--fld-fs)/var(--fld-lh) var(--fld-font); font-variant-numeric: tabular-nums; letter-spacing: 0;  /* Body / md semibold */
+  cursor: pointer; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none;
+  transition: background-color var(--fld-dur), color var(--fld-dur), transform var(--fld-dur);
+}
+.field-pick-grid[data-part="y"] .field-pick-chip { height: var(--fld-pick-h-year); }
+@media (hover: hover) { .field-pick-chip:not([aria-disabled="true"]):not([aria-selected="true"]):hover { background: var(--fld-pick-hover); } }
+.field-pick-chip:active { transform: scale(.97); background: var(--fld-pick-hover); }
+.field-pick-chip[aria-selected="true"] { background: var(--fld-pick-on); color: var(--fld-pick-on-text); }
+/* can't be picked — outside the range, or a day the month hasn't got: kept in place so the grid stays a calendar */
+.field-pick-chip[aria-disabled="true"] { background: transparent; color: var(--fld-dis-text); cursor: default; pointer-events: none; }
+.field-pick-chip[aria-disabled="true"][aria-selected="true"] { background: var(--fld-dis-bg); box-shadow: inset 0 0 0 1px var(--fld-dis-edge); }   /* a stored date now out of range */
+.field-pick-chip:focus { outline: none; }
+.field-pick-chip:focus-visible { outline: 2px solid var(--fld-focus); outline-offset: 2px; }
+.field-pick-note { margin: 0 0 12px; font: 500 var(--fld-msg-fs)/var(--fld-msg-lh) var(--fld-font); color: var(--fld-label); }   /* Body / sm · spacing.stack.sm */
+.field-pick-note[hidden] { display: none; }
+.field-pick-decade {                                                            /* Eyebrow / sm — a decade over its years */
+  grid-column: 1 / -1; padding: 8px 0 0;
+  font: 700 10px/10px var(--fld-font); letter-spacing: 1px; text-transform: uppercase; color: var(--fld-faded);
+}
+.field-pick-decade:first-child { padding-top: 0; }
+[data-theme="dark"] .field-pick {
+  --fld-pick-bg: #161B22;                   /* surface.neutral.muted · cool-900 */
+  --fld-pick-hover: #4A5260;                /* surface.neutral-state.pressed · cool-600 */
+  --fld-pick-on: #1A56FF;                   /* surface.brand.brand-intense · brand-500 */
+  --fld-pick-on-text: #FFFFFF;              /* content.neutral.on-fill-dark */
+}
+@media (prefers-reduced-motion: reduce) { .field-pick-chip, .field-multi--pick .field-trailing--icon svg { transition: none; } }
 </style>
 <!-- ▲ COMPONENT · multi-input -->
 <!-- ▼ COMPONENT · combo-box v4.1.1 · verbatim copy of App-login/app-components/atoms/input-fields/combo-box/combo-box.css — do not edit here -->
@@ -2458,10 +2530,10 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
 
 </style>
 <!-- ▲ COMPONENT · bottom-sheet -->
-<!-- ▼ COMPONENT · apply-flow v1.0.0 · verbatim copy of App-login/app-components/apply-flow/apply-flow.css — do not edit here -->
+<!-- ▼ COMPONENT · apply-flow v1.1.0 · verbatim copy of App-login/app-components/apply-flow/apply-flow.css — do not edit here -->
 <style data-component="apply-flow">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · APPLY FLOW  (app component · App-login)                 v1.0.0
+   SHINE · APPLY FLOW  (app component · App-login)                 v1.1.0
    The job apply flow — one component for every "Apply Now" in the app (JD page first; My Jobs, Docket … next).
    From <Shine Revamp>/pu-modal4.html (the user's chosen flow): a form sheet that collects the five details a recruiter
    needs → the application goes out → an error screen (Apply again) or the success screen.
@@ -2478,6 +2550,7 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
      │ │ [ 4  Years ] [ 0  Months ]   multi input · (◷ Use last: 4 Years)                         │ │
      │ │ Annual salary  [₹ │ 15,00,000 ]  Fifteen lakh rupees   normal field · reuse            │ │
      │ │ Notice period  (Immediate Joiner)(Serving notice)(15 Days)(1 Month)…   .apf-chip      │ │
+     │ │   Serving → Last working day [ Day ⌄ ][ Month ⌄ ][ Year ⌄ ]  multi input · picked (v1.1.0) │ │
      │ │ Location       [ Search your city ]   combo box · inline · free text · reuse          │ │
      │ └────────────────────────────────────────────────────────────────────────────────────────┘ │
      │  [ 5 details left to fill ]  → [ Complete my application → ]      buttons atom · lg · block  │
@@ -2665,6 +2738,7 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
 @media (hover: hover) { .apf-chip:hover { box-shadow: inset 0 0 0 1px var(--apf-ink); color: var(--apf-ink); } }
 .apf-chip:active { background: var(--apf-muted-bg); }
 .apf-chip[aria-checked="true"] { background: var(--apf-selected); color: var(--apf-brand); box-shadow: inset 0 0 0 1.5px var(--apf-stroke-brand); }
+.apf fieldset.apf-lwd { margin-top: var(--apf-gap); }                                                                         /* v1.1.0 · last working day: spacing.stack.xl under the chips */
 .apf-chip:focus { outline: none; }
 .apf-chip:focus-visible { box-shadow: inset 0 0 0 1.5px var(--apf-focus), var(--apf-ring); }
 
@@ -4811,9 +4885,9 @@ button { font-family: inherit; }
 
 </script>
 <!-- ▲ COMPONENT · normal-field -->
-<!-- ▼ COMPONENT · multi-input v3.1.0 · verbatim copy of App-login/app-components/atoms/input-fields/multi-input/multi-input.js — do not edit here -->
+<!-- ▼ COMPONENT · multi-input v3.2.0 · verbatim copy of App-login/app-components/atoms/input-fields/multi-input/multi-input.js — do not edit here -->
 <script data-component="multi-input">
-/* SHINE · INPUT FIELDS · MULTI INPUT  (atoms/input-fields/multi-input/)      v3.1.0
+/* SHINE · INPUT FIELDS · MULTI INPUT  (atoms/input-fields/multi-input/)      v3.2.0
    Needs field-base.css + field-base.js and multi-input.css. One answer in 2 or 3 boxes — the page writes only the
    group and its label; the boxes are drawn here:
 
@@ -4840,6 +4914,20 @@ button { font-family: inherit; }
                           button names its part: "Pick from a list" → "Pick from a list: day" …, or give one label
                           per box, split by |: "Pick a day|Pick a month|Pick a year"
 
+   data-pick="sheet"  (date · v3.2.0) PICKED, NOT TYPED — each box reads Day · Month · Year with a caret
+                      (ic_caret-down-outline in each box, unless data-trailing says otherwise; placeholders DD · MM · YYYY
+                      as typed boxes — they fit three boxes in a 320 phone's form panel); a tap on a box (or Enter ·
+                      Space · ↓ on it) opens a bottom sheet — the bottom-sheet component (bottom-sheet.css + .js) — with that
+                      part as a grid: days 7 a row, months 3, years 4 (decade headings when the range is longer than ten
+                      years). A tap on a value puts it in the box and closes the sheet (a short hold, so the pick is seen).
+                      Edge cases: years outside data-min … data-max are not shown; a value that can't make a date in the
+                      range together with the parts already picked is faded and can't be picked (last working day: no
+                      past date); a day the picked month hasn't got (30 Feb, 31 Apr — 29 Feb outside a leap year) is
+                      faded too. Changing the month or year afterwards never clears the day: if the date no longer
+                      exists the day box turns red with the reason ("April has 30 days", "2027 isn't a leap year —
+                      February has 28 days"). Backspace / Delete on a box empties it.
+     data-pick-title  the word after "Select" in the sheet's title — default: day · month · year
+
    Typing: numbers only, numeric keyboard; a box moves on by itself when it is full (a day of 4–9 or a month of
    2–9 is complete at one digit, so it becomes 04 / 09); / - . or space also move on; Backspace in an empty box
    goes back; ← → cross between boxes; a pasted "12/05/1995", "12051995" or "4 years 6 months" fills every box.
@@ -4851,7 +4939,7 @@ button { font-family: inherit; }
 (function (F) {
   'use strict';
   if (!F) { console.warn('multi-input.js: load field-base.js first'); return; }
-  var doc = document, _ = F._, uid = 0, IC = {"ic_calendar-outline": "<svg aria-hidden=\"true\" focusable=\"false\" data-icon=\"ic_calendar-outline\" viewBox=\"0 0 20 20\" fill=\"none\"><path d=\"M6.66667 1.04175C7.01184 1.04175 7.29167 1.32157 7.29167 1.66675V2.29175H12.7083V1.66675C12.7083 1.32157 12.9882 1.04175 13.3333 1.04175C13.6785 1.04175 13.9583 1.32157 13.9583 1.66675V2.31696C15.2383 2.42348 16.2532 2.86703 16.9684 3.6373C17.7886 4.52062 18.125 5.7376 18.125 7.08341V14.1668C18.125 15.5126 17.7886 16.7296 16.9684 17.6129C16.1404 18.5046 14.9108 18.9584 13.3333 18.9584H6.66667C5.08921 18.9584 3.8596 18.5046 3.03159 17.6129C2.21136 16.7296 1.875 15.5126 1.875 14.1668V7.08341C1.875 5.7376 2.21136 4.52062 3.03159 3.6373C3.74683 2.86703 4.76174 2.42348 6.04167 2.31696V1.66675C6.04167 1.32157 6.32149 1.04175 6.66667 1.04175ZM6.04167 3.57198C5.05418 3.67231 4.38677 4.01489 3.94758 4.48786C3.4344 5.04052 3.14782 5.86229 3.12631 6.95008H16.8737C16.8522 5.86229 16.5656 5.04052 16.0524 4.48786C15.6132 4.01489 14.9458 3.67231 13.9583 3.57198V4.16675C13.9583 4.51192 13.6785 4.79175 13.3333 4.79175C12.9882 4.79175 12.7083 4.51192 12.7083 4.16675V3.54175H7.29167V4.16675C7.29167 4.51192 7.01184 4.79175 6.66667 4.79175C6.32149 4.79175 6.04167 4.51192 6.04167 4.16675V3.57198ZM16.875 8.20008H3.125V14.1668C3.125 15.3209 3.41364 16.1873 3.94758 16.7623C4.47373 17.3289 5.32746 17.7084 6.66667 17.7084H13.3333C14.6725 17.7084 15.5263 17.3289 16.0524 16.7623C16.5864 16.1873 16.875 15.3209 16.875 14.1668V8.20008ZM6.28693 11.4168C6.28693 11.0716 6.56675 10.7918 6.91193 10.7918H6.91941C7.26459 10.7918 7.54441 11.0716 7.54441 11.4168C7.54441 11.7619 7.26459 12.0418 6.91941 12.0418H6.91193C6.56675 12.0418 6.28693 11.7619 6.28693 11.4168ZM9.37124 11.4168C9.37124 11.0716 9.65106 10.7918 9.99624 10.7918H10.0037C10.3489 10.7918 10.6287 11.0716 10.6287 11.4168C10.6287 11.7619 10.3489 12.0418 10.0037 12.0418H9.99624C9.65106 12.0418 9.37124 11.7619 9.37124 11.4168ZM12.4539 11.4168C12.4539 11.0716 12.7337 10.7918 13.0789 10.7918H13.0864C13.4316 10.7918 13.7114 11.0716 13.7114 11.4168C13.7114 11.7619 13.4316 12.0418 13.0864 12.0418H13.0789C12.7337 12.0418 12.4539 11.7619 12.4539 11.4168ZM6.28693 13.9168C6.28693 13.5716 6.56675 13.2918 6.91193 13.2918H6.91941C7.26459 13.2918 7.54441 13.5716 7.54441 13.9168C7.54441 14.2619 7.26459 14.5418 6.91941 14.5418H6.91193C6.56675 14.5418 6.28693 14.2619 6.28693 13.9168ZM9.37124 13.9168C9.37124 13.5716 9.65106 13.2918 9.99624 13.2918H10.0037C10.3489 13.2918 10.6287 13.5716 10.6287 13.9168C10.6287 14.2619 10.3489 14.5418 10.0037 14.5418H9.99624C9.65106 14.5418 9.37124 14.2619 9.37124 13.9168ZM12.4539 13.9168C12.4539 13.5716 12.7337 13.2918 13.0789 13.2918H13.0864C13.4316 13.2918 13.7114 13.5716 13.7114 13.9168C13.7114 14.2619 13.4316 14.5418 13.0864 14.5418H13.0789C12.7337 14.5418 12.4539 14.2619 12.4539 13.9168Z\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" fill=\"currentColor\"/></svg>", "ic_caret-down-outline": "<svg aria-hidden=\"true\" focusable=\"false\" data-icon=\"ic_caret-down-outline\" viewBox=\"0 0 20 20\" fill=\"none\"><path d=\"M16.0006 5.95728C16.2657 5.95733 16.5198 6.0625 16.7073 6.24999C16.8947 6.43747 16.9999 6.69157 17 6.95673C17 7.22196 16.8948 7.47688 16.7073 7.66443L16.6957 7.67598H16.6938L10.7067 13.664C10.614 13.757 10.5036 13.8313 10.3823 13.8816C10.2609 13.9321 10.1305 13.9577 9.99904 13.9577C9.86783 13.9577 9.73799 13.9319 9.61678 13.8816C9.49536 13.8313 9.38504 13.757 9.2923 13.664L3.29271 7.66443C3.10524 7.47689 3 7.22285 3 6.95769C3.00001 6.69251 3.10523 6.43848 3.29271 6.25095C3.4802 6.06345 3.7343 5.95734 3.99945 5.95728C4.26469 5.95728 4.5196 6.06339 4.70715 6.25095L9.99904 11.5428L15.2928 6.24999C15.4804 6.06243 15.7353 5.95728 16.0006 5.95728Z\" fill=\"currentColor\"/></svg>", "ic_clock-outline": "<svg aria-hidden=\"true\" focusable=\"false\" data-icon=\"ic_clock-outline\" viewBox=\"0 0 20 20\" fill=\"none\"><path d=\"M9.72865 6.04408C10.0933 6.04427 10.3892 6.33994 10.3892 6.70462V9.71402C10.3893 9.80308 10.4246 9.94758 10.513 10.1028C10.6017 10.2581 10.708 10.3621 10.784 10.4072L10.7865 10.409L10.7883 10.4098L13.0614 11.7662C13.3746 11.9531 13.4772 12.3595 13.2902 12.6727C13.1032 12.9856 12.6977 13.0874 12.3846 12.9006L10.1105 11.5443C9.83078 11.3783 9.60151 11.1308 9.43364 10.87L9.36569 10.7573C9.19401 10.4563 9.06825 10.0872 9.06811 9.71402V6.70462C9.06811 6.33982 9.36384 6.04408 9.72865 6.04408Z\" fill=\"currentColor\"/><path d=\"M9.99957 2C14.4156 2 17.9998 5.58359 18 9.99957C17.9999 14.4156 14.4156 18 9.99957 18C5.58368 17.9999 2.00012 14.4155 2 9.99957C2.00015 5.58368 5.5837 2.00014 9.99957 2ZM9.99957 3.32108C6.31331 3.32122 3.32123 6.31329 3.32108 9.99957C3.32119 13.6859 6.31329 16.6788 9.99957 16.6789C13.686 16.6789 16.6788 13.686 16.6789 9.99957C16.6788 6.31321 13.686 3.32108 9.99957 3.32108Z\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" fill=\"currentColor\"/></svg>", "ic_job-outline": "<svg aria-hidden=\"true\" focusable=\"false\" data-icon=\"ic_job-outline\" viewBox=\"0 0 20 20\" fill=\"none\"><path d=\"M6.91186 3.16702C6.87646 3.43818 6.87546 3.74633 6.87546 4.12504V4.16671H12.2921V4.12504C12.2921 3.74633 12.2911 3.43818 12.2557 3.16702C12.221 2.90149 12.1587 2.72274 12.0696 2.59393C11.9169 2.37296 11.525 2.08337 10.2505 2.08337H8.91712C7.64253 2.08337 7.25066 2.37296 7.09794 2.59393C7.00891 2.72274 6.94653 2.90149 6.91186 3.16702ZM13.5421 4.16671V4.10339C13.5421 3.75045 13.5422 3.36495 13.4952 3.0052C13.4465 2.63244 13.3422 2.23671 13.0979 1.88323C12.584 1.13962 11.6425 0.833374 10.2505 0.833374H8.91712C7.52505 0.833374 6.58358 1.13962 6.06964 1.88323C5.82533 2.23671 5.72105 2.63244 5.67238 3.0052C5.62541 3.36494 5.62544 3.75044 5.62545 4.10338L5.62546 4.16671H5.41698C3.56445 4.16671 2.29944 4.59552 1.56159 5.47273C0.830911 6.34143 0.761412 7.48268 0.878519 8.54682L1.50304 15.2083L1.50387 15.2166C1.59566 16.0733 1.81069 17.0126 2.57563 17.7114C3.33492 18.4051 4.51127 18.75 6.25031 18.75H12.917C14.656 18.75 15.8324 18.4051 16.5917 17.7114C17.3566 17.0126 17.5716 16.0733 17.6634 15.2166L18.239 9.07731C18.2468 9.0371 18.2507 8.99616 18.2505 8.95511L18.2888 8.5468C18.4059 7.48267 18.3364 6.34143 17.6057 5.47273C16.8679 4.59552 15.6028 4.16671 13.7503 4.16671H13.5421ZM5.41698 5.41671C3.71118 5.41671 2.90535 5.81706 2.5182 6.27735C2.12509 6.74471 2.01444 7.44695 2.12152 8.41463L2.12267 8.42503L2.14704 8.68593C3.72877 9.76288 5.48759 10.4608 7.29212 10.7649V10.625C7.29212 10.6159 7.29212 10.6068 7.29212 10.5976C7.29208 10.4134 7.29203 10.2266 7.30897 10.0742C7.32622 9.91892 7.37237 9.66091 7.57935 9.45393C7.78632 9.24696 8.04434 9.20081 8.19967 9.18355C8.35205 9.16662 8.5388 9.16666 8.72308 9.1667C8.73221 9.1667 8.74134 9.16671 8.75046 9.16671H10.4171C10.4262 9.16671 10.4354 9.1667 10.4445 9.1667C10.6288 9.16666 10.8155 9.16662 10.9679 9.18355C11.1232 9.20081 11.3813 9.24696 11.5882 9.45393C11.7952 9.66091 11.8414 9.91892 11.8586 10.0742C11.8755 10.2266 11.8755 10.4134 11.8755 10.5976C11.8755 10.6068 11.8755 10.6159 11.8755 10.625V10.7473C13.6887 10.4198 15.4493 9.7129 17.0267 8.61722L17.0457 8.41462C17.1528 7.44694 17.0422 6.74471 16.6491 6.27735C16.2619 5.81706 15.4561 5.41671 13.7503 5.41671H5.41698ZM16.8785 10.1974C15.309 11.1285 13.6041 11.7328 11.8614 12.018C11.8568 12.0789 11.8507 12.1398 11.8426 12.1998C11.8085 12.4519 11.7338 12.7381 11.5509 12.9992C11.161 13.556 10.4725 13.75 9.58379 13.75C8.69998 13.75 8.01322 13.5585 7.6218 13.0062C7.43775 12.7465 7.36157 12.4614 7.32647 12.2092C7.31838 12.151 7.31219 12.0922 7.30747 12.0332C5.56665 11.7688 3.8635 11.1721 2.29425 10.2562L2.74719 15.0875C2.83056 15.8619 3.00316 16.4089 3.41874 16.7886C3.8407 17.1741 4.63935 17.5 6.25031 17.5H12.917C14.5279 17.5 15.3266 17.1741 15.7485 16.7886C16.1641 16.4089 16.3367 15.8619 16.4201 15.0875L16.8785 10.1974ZM8.54279 10.4173C8.54214 10.4768 8.54212 10.5446 8.54212 10.625V11.4833C8.54212 11.7179 8.54417 11.8905 8.56454 12.0369C8.58413 12.1777 8.61525 12.2462 8.64162 12.2834C8.67102 12.3249 8.81759 12.5 9.58379 12.5C10.3534 12.5 10.4983 12.3232 10.5271 12.2821C10.5536 12.2442 10.5846 12.1746 10.6039 12.0322C10.6239 11.8841 10.6255 11.7108 10.6255 11.475V10.625C10.6255 10.5446 10.6254 10.4768 10.6248 10.4173C10.5653 10.4167 10.4975 10.4167 10.4171 10.4167H8.75046C8.67008 10.4167 8.60227 10.4167 8.54279 10.4173Z\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" fill=\"currentColor\"/></svg>"};   // icons atom: ic_calendar-outline · ic_caret-down-outline · ic_clock-outline · ic_job-outline
+  var doc = document, _ = F._, uid = 0, IC = {"ic_close-outline": "<svg aria-hidden=\"true\" focusable=\"false\" data-icon=\"ic_close-outline\" viewBox=\"0 0 20 20\" fill=\"none\"><path d=\"M16.2528 3.00257L16.3599 3.01371L16.3814 3.01543L16.4028 3.02228L16.5056 3.05313L16.5253 3.05999L16.5433 3.06942L16.6582 3.12941L16.6753 3.14398L16.7584 3.21254L16.7747 3.22625L16.7884 3.24253L16.857 3.32566L16.8716 3.3428L16.9316 3.45764L16.941 3.47564L16.947 3.49535L16.9787 3.59819L16.9855 3.61876L16.9873 3.64104L16.9984 3.74816L17.0001 3.76959L16.9984 3.79101L16.9873 3.89814L16.9855 3.92042L16.9787 3.94099L16.947 4.04383L16.941 4.06354L16.9316 4.08154L16.8716 4.19638L16.857 4.21352L16.7884 4.29665L16.7816 4.30522L11.0859 10L16.7816 15.6956L16.7884 15.7042L16.857 15.7873L16.8716 15.8045L16.9316 15.9193L16.941 15.9373L16.947 15.957L16.9787 16.0599L16.9855 16.0804L16.9873 16.1027L16.9984 16.2098L17.0001 16.2313L16.9984 16.2527L16.9873 16.3598L16.9855 16.3812L16.9787 16.4027L16.947 16.5055L16.941 16.5252L16.9316 16.5432L16.8716 16.6581L16.857 16.6752L16.7884 16.7583L16.7747 16.7746L16.7584 16.7883L16.6753 16.8569L16.6582 16.8714L16.5433 16.9314L16.5253 16.9409L16.5056 16.9469L16.4028 16.9786L16.3814 16.9854L16.3599 16.9871L16.2528 16.9983L16.2314 17L16.21 16.9983L16.1028 16.9871L16.0806 16.9854L16.06 16.9786L15.9571 16.9469L15.9374 16.9409L15.9194 16.9314L15.8046 16.8714L15.7875 16.8569L15.7043 16.7883L15.6958 16.7815L10.0001 11.0858L4.30534 16.7815L4.29676 16.7883L4.21364 16.8569L4.1965 16.8714L4.08166 16.9314L4.06366 16.9409L4.04395 16.9469L3.94111 16.9786L3.92054 16.9854L3.89826 16.9871L3.79113 16.9983L3.76971 17L3.74828 16.9983L3.64116 16.9871L3.61888 16.9854L3.59831 16.9786L3.49547 16.9469L3.47576 16.9409L3.45776 16.9314L3.34292 16.8714L3.32578 16.8569L3.24265 16.7883L3.22637 16.7746L3.21266 16.7583L3.1441 16.6752L3.12953 16.6581L3.06954 16.5432L3.06011 16.5252L3.05325 16.5055L3.0224 16.4027L3.01555 16.3812L3.01383 16.3598L3.00269 16.2527L3.00098 16.2313L3.00269 16.2098L3.01383 16.1027L3.01555 16.0804L3.0224 16.0599L3.05325 15.957L3.06011 15.9373L3.06954 15.9193L3.12953 15.8045L3.1441 15.7873L3.21266 15.7042L3.21951 15.6956L3.22637 15.6879L8.91344 10L3.21866 4.30522L3.21266 4.29665L3.1441 4.21352L3.12953 4.19638L3.06954 4.08154L3.06011 4.06354L3.05325 4.04383L3.0224 3.94099L3.01555 3.92042L3.01383 3.89814L3.00269 3.79101L3.00098 3.76959L3.00269 3.74816L3.01383 3.64104L3.01555 3.61876L3.0224 3.59819L3.05325 3.49535L3.06011 3.47564L3.06954 3.45764L3.12953 3.3428L3.1441 3.32566L3.21266 3.24253L3.22637 3.22625L3.24265 3.21254L3.32578 3.14398L3.34292 3.12941L3.45776 3.06942L3.47576 3.05999L3.49547 3.05313L3.59831 3.02228L3.61888 3.01543L3.64116 3.01371L3.74828 3.00257L3.76971 3L3.79113 3.00257L3.89826 3.01371L3.92054 3.01543L3.94111 3.02228L4.04395 3.05313L4.06366 3.05999L4.08166 3.06942L4.1965 3.12941L4.21364 3.14398L4.29676 3.21254L4.30534 3.21854L10.0001 8.91332L15.688 3.22625L15.6958 3.21939L15.7043 3.21254L15.7875 3.14398L15.8046 3.12941L15.9194 3.06942L15.9374 3.05999L15.9571 3.05313L16.06 3.02228L16.0806 3.01543L16.1028 3.01371L16.21 3.00257L16.2314 3L16.2528 3.00257Z\" fill=\"currentColor\"/></svg>", "ic_calendar-outline": "<svg aria-hidden=\"true\" focusable=\"false\" data-icon=\"ic_calendar-outline\" viewBox=\"0 0 20 20\" fill=\"none\"><path d=\"M6.66667 1.04175C7.01184 1.04175 7.29167 1.32157 7.29167 1.66675V2.29175H12.7083V1.66675C12.7083 1.32157 12.9882 1.04175 13.3333 1.04175C13.6785 1.04175 13.9583 1.32157 13.9583 1.66675V2.31696C15.2383 2.42348 16.2532 2.86703 16.9684 3.6373C17.7886 4.52062 18.125 5.7376 18.125 7.08341V14.1668C18.125 15.5126 17.7886 16.7296 16.9684 17.6129C16.1404 18.5046 14.9108 18.9584 13.3333 18.9584H6.66667C5.08921 18.9584 3.8596 18.5046 3.03159 17.6129C2.21136 16.7296 1.875 15.5126 1.875 14.1668V7.08341C1.875 5.7376 2.21136 4.52062 3.03159 3.6373C3.74683 2.86703 4.76174 2.42348 6.04167 2.31696V1.66675C6.04167 1.32157 6.32149 1.04175 6.66667 1.04175ZM6.04167 3.57198C5.05418 3.67231 4.38677 4.01489 3.94758 4.48786C3.4344 5.04052 3.14782 5.86229 3.12631 6.95008H16.8737C16.8522 5.86229 16.5656 5.04052 16.0524 4.48786C15.6132 4.01489 14.9458 3.67231 13.9583 3.57198V4.16675C13.9583 4.51192 13.6785 4.79175 13.3333 4.79175C12.9882 4.79175 12.7083 4.51192 12.7083 4.16675V3.54175H7.29167V4.16675C7.29167 4.51192 7.01184 4.79175 6.66667 4.79175C6.32149 4.79175 6.04167 4.51192 6.04167 4.16675V3.57198ZM16.875 8.20008H3.125V14.1668C3.125 15.3209 3.41364 16.1873 3.94758 16.7623C4.47373 17.3289 5.32746 17.7084 6.66667 17.7084H13.3333C14.6725 17.7084 15.5263 17.3289 16.0524 16.7623C16.5864 16.1873 16.875 15.3209 16.875 14.1668V8.20008ZM6.28693 11.4168C6.28693 11.0716 6.56675 10.7918 6.91193 10.7918H6.91941C7.26459 10.7918 7.54441 11.0716 7.54441 11.4168C7.54441 11.7619 7.26459 12.0418 6.91941 12.0418H6.91193C6.56675 12.0418 6.28693 11.7619 6.28693 11.4168ZM9.37124 11.4168C9.37124 11.0716 9.65106 10.7918 9.99624 10.7918H10.0037C10.3489 10.7918 10.6287 11.0716 10.6287 11.4168C10.6287 11.7619 10.3489 12.0418 10.0037 12.0418H9.99624C9.65106 12.0418 9.37124 11.7619 9.37124 11.4168ZM12.4539 11.4168C12.4539 11.0716 12.7337 10.7918 13.0789 10.7918H13.0864C13.4316 10.7918 13.7114 11.0716 13.7114 11.4168C13.7114 11.7619 13.4316 12.0418 13.0864 12.0418H13.0789C12.7337 12.0418 12.4539 11.7619 12.4539 11.4168ZM6.28693 13.9168C6.28693 13.5716 6.56675 13.2918 6.91193 13.2918H6.91941C7.26459 13.2918 7.54441 13.5716 7.54441 13.9168C7.54441 14.2619 7.26459 14.5418 6.91941 14.5418H6.91193C6.56675 14.5418 6.28693 14.2619 6.28693 13.9168ZM9.37124 13.9168C9.37124 13.5716 9.65106 13.2918 9.99624 13.2918H10.0037C10.3489 13.2918 10.6287 13.5716 10.6287 13.9168C10.6287 14.2619 10.3489 14.5418 10.0037 14.5418H9.99624C9.65106 14.5418 9.37124 14.2619 9.37124 13.9168ZM12.4539 13.9168C12.4539 13.5716 12.7337 13.2918 13.0789 13.2918H13.0864C13.4316 13.2918 13.7114 13.5716 13.7114 13.9168C13.7114 14.2619 13.4316 14.5418 13.0864 14.5418H13.0789C12.7337 14.5418 12.4539 14.2619 12.4539 13.9168Z\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" fill=\"currentColor\"/></svg>", "ic_caret-down-outline": "<svg aria-hidden=\"true\" focusable=\"false\" data-icon=\"ic_caret-down-outline\" viewBox=\"0 0 20 20\" fill=\"none\"><path d=\"M16.0006 5.95728C16.2657 5.95733 16.5198 6.0625 16.7073 6.24999C16.8947 6.43747 16.9999 6.69157 17 6.95673C17 7.22196 16.8948 7.47688 16.7073 7.66443L16.6957 7.67598H16.6938L10.7067 13.664C10.614 13.757 10.5036 13.8313 10.3823 13.8816C10.2609 13.9321 10.1305 13.9577 9.99904 13.9577C9.86783 13.9577 9.73799 13.9319 9.61678 13.8816C9.49536 13.8313 9.38504 13.757 9.2923 13.664L3.29271 7.66443C3.10524 7.47689 3 7.22285 3 6.95769C3.00001 6.69251 3.10523 6.43848 3.29271 6.25095C3.4802 6.06345 3.7343 5.95734 3.99945 5.95728C4.26469 5.95728 4.5196 6.06339 4.70715 6.25095L9.99904 11.5428L15.2928 6.24999C15.4804 6.06243 15.7353 5.95728 16.0006 5.95728Z\" fill=\"currentColor\"/></svg>", "ic_clock-outline": "<svg aria-hidden=\"true\" focusable=\"false\" data-icon=\"ic_clock-outline\" viewBox=\"0 0 20 20\" fill=\"none\"><path d=\"M9.72865 6.04408C10.0933 6.04427 10.3892 6.33994 10.3892 6.70462V9.71402C10.3893 9.80308 10.4246 9.94758 10.513 10.1028C10.6017 10.2581 10.708 10.3621 10.784 10.4072L10.7865 10.409L10.7883 10.4098L13.0614 11.7662C13.3746 11.9531 13.4772 12.3595 13.2902 12.6727C13.1032 12.9856 12.6977 13.0874 12.3846 12.9006L10.1105 11.5443C9.83078 11.3783 9.60151 11.1308 9.43364 10.87L9.36569 10.7573C9.19401 10.4563 9.06825 10.0872 9.06811 9.71402V6.70462C9.06811 6.33982 9.36384 6.04408 9.72865 6.04408Z\" fill=\"currentColor\"/><path d=\"M9.99957 2C14.4156 2 17.9998 5.58359 18 9.99957C17.9999 14.4156 14.4156 18 9.99957 18C5.58368 17.9999 2.00012 14.4155 2 9.99957C2.00015 5.58368 5.5837 2.00014 9.99957 2ZM9.99957 3.32108C6.31331 3.32122 3.32123 6.31329 3.32108 9.99957C3.32119 13.6859 6.31329 16.6788 9.99957 16.6789C13.686 16.6789 16.6788 13.686 16.6789 9.99957C16.6788 6.31321 13.686 3.32108 9.99957 3.32108Z\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" fill=\"currentColor\"/></svg>", "ic_job-outline": "<svg aria-hidden=\"true\" focusable=\"false\" data-icon=\"ic_job-outline\" viewBox=\"0 0 20 20\" fill=\"none\"><path d=\"M6.91186 3.16702C6.87646 3.43818 6.87546 3.74633 6.87546 4.12504V4.16671H12.2921V4.12504C12.2921 3.74633 12.2911 3.43818 12.2557 3.16702C12.221 2.90149 12.1587 2.72274 12.0696 2.59393C11.9169 2.37296 11.525 2.08337 10.2505 2.08337H8.91712C7.64253 2.08337 7.25066 2.37296 7.09794 2.59393C7.00891 2.72274 6.94653 2.90149 6.91186 3.16702ZM13.5421 4.16671V4.10339C13.5421 3.75045 13.5422 3.36495 13.4952 3.0052C13.4465 2.63244 13.3422 2.23671 13.0979 1.88323C12.584 1.13962 11.6425 0.833374 10.2505 0.833374H8.91712C7.52505 0.833374 6.58358 1.13962 6.06964 1.88323C5.82533 2.23671 5.72105 2.63244 5.67238 3.0052C5.62541 3.36494 5.62544 3.75044 5.62545 4.10338L5.62546 4.16671H5.41698C3.56445 4.16671 2.29944 4.59552 1.56159 5.47273C0.830911 6.34143 0.761412 7.48268 0.878519 8.54682L1.50304 15.2083L1.50387 15.2166C1.59566 16.0733 1.81069 17.0126 2.57563 17.7114C3.33492 18.4051 4.51127 18.75 6.25031 18.75H12.917C14.656 18.75 15.8324 18.4051 16.5917 17.7114C17.3566 17.0126 17.5716 16.0733 17.6634 15.2166L18.239 9.07731C18.2468 9.0371 18.2507 8.99616 18.2505 8.95511L18.2888 8.5468C18.4059 7.48267 18.3364 6.34143 17.6057 5.47273C16.8679 4.59552 15.6028 4.16671 13.7503 4.16671H13.5421ZM5.41698 5.41671C3.71118 5.41671 2.90535 5.81706 2.5182 6.27735C2.12509 6.74471 2.01444 7.44695 2.12152 8.41463L2.12267 8.42503L2.14704 8.68593C3.72877 9.76288 5.48759 10.4608 7.29212 10.7649V10.625C7.29212 10.6159 7.29212 10.6068 7.29212 10.5976C7.29208 10.4134 7.29203 10.2266 7.30897 10.0742C7.32622 9.91892 7.37237 9.66091 7.57935 9.45393C7.78632 9.24696 8.04434 9.20081 8.19967 9.18355C8.35205 9.16662 8.5388 9.16666 8.72308 9.1667C8.73221 9.1667 8.74134 9.16671 8.75046 9.16671H10.4171C10.4262 9.16671 10.4354 9.1667 10.4445 9.1667C10.6288 9.16666 10.8155 9.16662 10.9679 9.18355C11.1232 9.20081 11.3813 9.24696 11.5882 9.45393C11.7952 9.66091 11.8414 9.91892 11.8586 10.0742C11.8755 10.2266 11.8755 10.4134 11.8755 10.5976C11.8755 10.6068 11.8755 10.6159 11.8755 10.625V10.7473C13.6887 10.4198 15.4493 9.7129 17.0267 8.61722L17.0457 8.41462C17.1528 7.44694 17.0422 6.74471 16.6491 6.27735C16.2619 5.81706 15.4561 5.41671 13.7503 5.41671H5.41698ZM16.8785 10.1974C15.309 11.1285 13.6041 11.7328 11.8614 12.018C11.8568 12.0789 11.8507 12.1398 11.8426 12.1998C11.8085 12.4519 11.7338 12.7381 11.5509 12.9992C11.161 13.556 10.4725 13.75 9.58379 13.75C8.69998 13.75 8.01322 13.5585 7.6218 13.0062C7.43775 12.7465 7.36157 12.4614 7.32647 12.2092C7.31838 12.151 7.31219 12.0922 7.30747 12.0332C5.56665 11.7688 3.8635 11.1721 2.29425 10.2562L2.74719 15.0875C2.83056 15.8619 3.00316 16.4089 3.41874 16.7886C3.8407 17.1741 4.63935 17.5 6.25031 17.5H12.917C14.5279 17.5 15.3266 17.1741 15.7485 16.7886C16.1641 16.4089 16.3367 15.8619 16.4201 15.0875L16.8785 10.1974ZM8.54279 10.4173C8.54214 10.4768 8.54212 10.5446 8.54212 10.625V11.4833C8.54212 11.7179 8.54417 11.8905 8.56454 12.0369C8.58413 12.1777 8.61525 12.2462 8.64162 12.2834C8.67102 12.3249 8.81759 12.5 9.58379 12.5C10.3534 12.5 10.4983 12.3232 10.5271 12.2821C10.5536 12.2442 10.5846 12.1746 10.6039 12.0322C10.6239 11.8841 10.6255 11.7108 10.6255 11.475V10.625C10.6255 10.5446 10.6254 10.4768 10.6248 10.4173C10.5653 10.4167 10.4975 10.4167 10.4171 10.4167H8.75046C8.67008 10.4167 8.60227 10.4167 8.54279 10.4173Z\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" fill=\"currentColor\"/></svg>"};   // icons atom: ic_calendar-outline · ic_caret-down-outline · ic_clock-outline · ic_job-outline
   var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   var PART = {
     d: { label: 'Day', ph: 'DD', len: 2, ac: 'bday-day' },
@@ -4860,6 +4948,9 @@ button { font-family: inherit; }
     yrs: { label: 'Years', ph: '0', len: 2, unit: ['Year', 'Years'] },
     mos: { label: 'Months', ph: '0', len: 2, unit: ['Month', 'Months'] }
   };
+  var MON = MONTHS.map(function (m) { return m.slice(0, 3); });
+  var DMAX = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];       // the most days a month can have (29 Feb: leap years)
+  var COLS = { d: 7, m: 3, y: 4 };                                    // the picker grid: a week of days · a quarter of months · 4 years
   function pad(v) { return v.length === 1 ? '0' + v : v; }
   function daysIn(m, y) { return new Date(y, m, 0).getDate(); }
   function list(a) { return a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1]; }
@@ -4874,7 +4965,9 @@ button { font-family: inherit; }
     var keys = kind === 'experience' ? ['yrs', 'mos'] : (el.getAttribute('data-parts') || 'dmy') === 'my' ? ['m', 'y'] : ['d', 'm', 'y'];
     var wrap = el.querySelector('.field-multi-boxes'), bday = el.getAttribute('data-autocomplete') === 'bday';
     el.classList.add('field-multi');
+    var pick = kind === 'date' && el.getAttribute('data-pick') === 'sheet';   // v3.2.0: the boxes are picked from a sheet
     var tName = el.getAttribute('data-trailing'), tEach = el.getAttribute('data-trailing-at') === 'each', tLabel = el.getAttribute('data-trailing-label');
+    if (pick) { if (!tName) { tName = 'ic_caret-down-outline'; tEach = true; } tLabel = null; el.classList.add('field-multi--pick'); }   // the whole box is the button: the caret is a sign
     var tSvg = tName ? (F.icons[tName] || IC[tName]) : null;
     if (tName && !tSvg) console.warn('multi-input.js: "' + tName + '" is not an icons-atom icon on this page — add it to ShineField.icons from icons.json');
     var tLabels = tLabel ? tLabel.split('|').map(function (x) { return x.trim(); }) : [];
@@ -4891,6 +4984,8 @@ button { font-family: inherit; }
       wrap = doc.createElement('div'); wrap.className = 'field-multi-boxes';
       wrap.innerHTML = keys.map(function (k, i) {
         var p = PART[k];
+        if (pick) return '<div class="field-control field-pick-box"><input class="field-input" id="fld-multi-' + n + '-' + k + '" type="text" readonly inputmode="none" placeholder="' + p.ph +
+               '" aria-label="' + p.label + '" aria-haspopup="dialog" autocomplete="off" data-part="' + k + '">' + trailing(k, i === keys.length - 1, i) + '</div>';
         return '<div class="field-control"><input class="field-input" id="fld-multi-' + n + '-' + k + '" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="' + p.len +
                '" placeholder="' + p.ph + '" aria-label="' + p.label + '" autocomplete="' + (bday && p.ac ? p.ac : 'off') + '" data-part="' + k + '">' +
                (p.unit ? '<span class="field-suffix" aria-hidden="true">' + p.unit[1] + '</span>' : '') + trailing(k, i === keys.length - 1, i) + '</div>';
@@ -4901,7 +4996,14 @@ button { font-family: inherit; }
     var hidden = null;
     if (el.getAttribute('data-name')) { hidden = doc.createElement('input'); hidden.type = 'hidden'; hidden.name = el.getAttribute('data-name'); el.appendChild(hidden); }
 
-    function vals() { return ins.map(function (i) { return i.value; }); }
+    function vals() { return ins.map(function (i) { return pick ? (i.getAttribute('data-v') || '') : i.value; }); }
+    function put(i, v) {                                  // picker mode: the value lives on the box (data-v), the box shows its words
+      var k = ins[i].getAttribute('data-part') || keys[i]; v = v === '' || v == null ? '' : String(+v);
+      if (v && k !== 'y') v = pad(v);
+      if (v) ins[i].setAttribute('data-v', v); else ins[i].removeAttribute('data-v');
+      ins[i].value = !v ? '' : k === 'm' ? MON[+v - 1] : v;
+      ins[i].setAttribute('aria-label', PART[k].label + (v ? ', ' + (k === 'm' ? MONTHS[+v - 1] : +v) : ', not picked'));
+    }
     function mark(idx) { ins.forEach(function (inp, i) { inp.closest('.field-control').classList.toggle('is-invalid', idx.indexOf(i) > -1); }); }
     function units() { ins.forEach(function (inp, i) { var p = part(i), u = inp.parentNode.querySelector('.field-suffix'); if (p.unit && u) u.textContent = inp.value === '1' || inp.value === '01' ? p.unit[0] : p.unit[1]; }); }
 
@@ -4914,6 +5016,8 @@ button { font-family: inherit; }
         if (m > 11) return { text: 'Enter 0 to 11 months', at: [1] };
         return null;
       }
+      var cd = keys.indexOf('d'), cm = keys.indexOf('m');           // v3.2.0: a day the month never has — said at once, before what is missing
+      if (cd > -1 && v[cd] && v[cm] && +v[cm] >= 1 && +v[cm] <= 12 && +v[cd] > DMAX[+v[cm] - 1]) return { text: MONTHS[+v[cm] - 1] + ' has ' + DMAX[+v[cm] - 1] + ' days', at: [cd], conflict: true };
       var miss = [], at = [];
       keys.forEach(function (k, i) { if (!v[i]) { miss.push(PART[k].label.toLowerCase()); at.push(i); } });
       if (miss.length) return { text: 'Enter the ' + list(miss), at: at };
@@ -4922,12 +5026,12 @@ button { font-family: inherit; }
       if (v[iy].length < 4) return { text: 'Enter the year in full, like 1995', at: [iy] };
       if (M < 1 || M > 12) return { text: 'Enter a month from 1 to 12', at: [im] };
       if (id > -1 && (D < 1 || D > 31)) return { text: 'Enter a day from 1 to 31', at: [id] };
-      if (id > -1 && D > daysIn(M, Y)) return { text: MONTHS[M - 1] + ' ' + Y + ' has ' + daysIn(M, Y) + ' days', at: [id] };
+      if (id > -1 && D > daysIn(M, Y)) return { text: M === 2 && D === 29 ? Y + ' isn’t a leap year — February has 28 days' : MONTHS[M - 1] + ' ' + Y + ' has ' + daysIn(M, Y) + ' days', at: [id] };
       var lo = when(el.getAttribute('data-min')), hi = when(el.getAttribute('data-max')), me = Y * 10000 + M * 100 + (id > -1 ? D : 1);
       var fmt = function (w) { return (id > -1 ? w.d + ' ' : '') + MONTHS[w.m - 1].slice(0, 3) + ' ' + w.y; };
       var key = function (w) { return w.y * 10000 + w.m * 100 + (id > -1 ? w.d : 1); }, custom = el.getAttribute('data-error-range');
       if (hi && me > key(hi)) return { text: custom || (hi.today ? 'The date can’t be in the future' : 'Enter a date up to ' + fmt(hi)), at: [] };
-      if (lo && me < key(lo)) return { text: custom || 'Enter a date from ' + fmt(lo) + ' onwards', at: [] };
+      if (lo && me < key(lo)) return { text: custom || (lo.today ? 'The date can’t be before today' : 'Enter a date from ' + fmt(lo) + ' onwards'), at: [] };
       return null;
     }
     function value() {
@@ -4945,7 +5049,7 @@ button { font-family: inherit; }
     function recheck() { if (F.isInvalid(el) && !problem()) show(null); }
 
     function go(i, at) { var t = ins[i]; if (!t) return; t.focus(); try { var c = at === 'end' ? t.value.length : 0; t.setSelectionRange(c, at === 'all' ? t.value.length : c); } catch (e) {} }
-    ins.forEach(function (inp, i) {
+    if (!pick) ins.forEach(function (inp, i) {             // typing (picker mode has none: the boxes are read-only)
       var p = part(i), k = inp.getAttribute('data-part') || keys[i];
       inp.addEventListener('input', function () {
         var d = inp.value.replace(/\D/g, '').slice(0, p.len), full = d.length >= p.len;
@@ -4981,6 +5085,101 @@ button { font-family: inherit; }
         } else if (g.length > 1) { fill(i, g); e.preventDefault(); }
       });
     });
+    /* ── v3.2.0 · picker mode — a bottom sheet with one part as a grid of values ─────────────────────── */
+    var sheet = null, grid = null, word = null, live = null, at = -1;
+    function bounds() {                                   // the range as keys (yyyymmdd) + the years to list
+      var lo = when(el.getAttribute('data-min')), hi = when(el.getAttribute('data-max')), ty = new Date().getFullYear();
+      var k = function (w) { return w.y * 10000 + w.m * 100 + w.d; };
+      return { lo: lo ? k(lo) : 0, hi: hi ? k(hi) : 99991231, y0: lo ? lo.y : ty - 100, y1: hi ? hi.y : ty + 10 };
+    }
+    /* can y · m · d (null = not picked yet) still make a date in the range? cal: the day must exist in that month
+       (the day grid) — the month and year grids only weigh the range, so a later month change is never blocked */
+    function fits(b, y, m, d, cal) {
+      for (var Y = y || b.y0; Y <= (y || b.y1); Y++) for (var M = m || 1; M <= (m || 12); M++) {
+        var dim = daysIn(M, Y), base = Y * 10000 + M * 100;
+        if (d) { if (cal && d > dim) continue; if (base + d >= b.lo && base + d <= b.hi) return true; }
+        else if (base + dim >= b.lo && base + 1 <= b.hi) return true;
+      }
+      return false;
+    }
+    function buildSheet() {
+      if (sheet) return;
+      var tid = 'fld-multi-' + n + '-pick';
+      sheet = doc.createElement('div'); sheet.className = 'bs bs--pad-bottom field-sheet field-pick-sheet'; sheet.hidden = true;
+      sheet.setAttribute('aria-labelledby', tid);
+      sheet.innerHTML = '<div class="bs-top"><div class="bs-handle" aria-hidden="true"></div><div class="bs-head bs-head--md"><div class="bs-heading"><h2 class="bs-title" id="' + tid + '">Select <span class="accent"></span></h2></div>' +
+        '<button class="bs-close" type="button" data-bs-close aria-label="Close">' + (F.icons['ic_close-outline'] || IC['ic_close-outline']) + '</button></div></div>' +
+        '<div class="bs-body bs-body--gutter"><div class="field field--' + ((el.className.match(/\bfield--(sm|md|lg|xl)\b/) || [])[1] || 'md') + ' field-pick">' +
+        '<p class="field-pick-note" hidden></p><div class="field-pick-grid" role="listbox" aria-labelledby="' + tid + '"></div><span class="sr-only" aria-live="polite"></span></div></div>';
+      doc.body.appendChild(sheet);
+      grid = sheet.querySelector('.field-pick-grid'); word = sheet.querySelector('.bs-title .accent'); live = sheet.querySelector('[aria-live]');
+      grid.addEventListener('click', function (e) { var c = e.target.closest('.field-pick-chip'); if (c) choose(c); });
+      grid.addEventListener('keydown', function (e) {     // ← → one value · ↑ ↓ one row · Home / End — faded values are skipped
+        var c = e.target.closest('.field-pick-chip'); if (!c) return;
+        var all = [].slice.call(grid.querySelectorAll('.field-pick-chip')), i = all.indexOf(c), k = grid.getAttribute('data-part');
+        var step = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -COLS[k], ArrowDown: COLS[k] }[e.key], j;
+        if (e.key === 'Home' || e.key === 'End') { e.preventDefault(); var ok = all.filter(function (x) { return x.getAttribute('aria-disabled') !== 'true'; }); j = all.indexOf(ok[e.key === 'Home' ? 0 : ok.length - 1]); }
+        else if (step) { e.preventDefault(); j = i + step; while (j >= 0 && j < all.length && all[j].getAttribute('aria-disabled') === 'true') j += step > 0 ? 1 : -1; }
+        else return;
+        if (j < 0 || j >= all.length || j === i) return;
+        all[i].tabIndex = -1; all[j].tabIndex = 0; all[j].focus();
+      });
+      sheet.addEventListener('shine:sheet-close', function () { if (at > -1) ins[at].closest('.field-control').classList.remove('is-open'); at = -1; el.classList.remove('field--open'); });
+    }
+    function draw(i) {
+      var k = ins[i].getAttribute('data-part') || keys[i], v = vals(), b = bounds(), h = '', first = null;
+      var di = keys.indexOf('d'), mi = keys.indexOf('m'), yi = keys.indexOf('y');
+      var pd = di > -1 && v[di] ? +v[di] : null, pm = v[mi] ? +v[mi] : null, py = v[yi] ? +v[yi] : null, cur = v[i] ? +v[i] : null;
+      var items = [], x;
+      if (k === 'd') for (x = 1; x <= 31; x++) items.push({ v: x, t: pad(String(x)), say: String(x), off: !fits(b, py, pm, x, true) });
+      if (k === 'm') for (x = 1; x <= 12; x++) items.push({ v: x, t: MON[x - 1], say: MONTHS[x - 1], off: !fits(b, py, x, pd, false) });
+      if (k === 'y') for (x = b.y0; x <= b.y1; x++) items.push({ v: x, t: String(x), say: String(x), off: !fits(b, x, pm, pd, false) });
+      var decades = k === 'y' && b.y1 - b.y0 >= 10;
+      items.forEach(function (it, j) {
+        if (decades && (j === 0 || it.v % 10 === 0)) h += '<span class="field-pick-decade" role="presentation">' + (it.v - it.v % 10) + 's</span>';
+        var on = it.v === cur;
+        if (!it.off && first === null) first = it.v;          // where the keys start when nothing usable is picked yet
+        h += '<button class="field-pick-chip" type="button" role="option" data-v="' + it.v + '" aria-selected="' + on + '"' + (it.off ? ' aria-disabled="true"' : '') +
+             ' aria-label="' + it.say + '" tabindex="-1">' + it.t + '</button>';
+      });
+      grid.setAttribute('data-part', k); grid.setAttribute('aria-label', PART[k].label);
+      var note = sheet.querySelector('.field-pick-note'), other = keys.filter(function (q, j) { return j !== i && v[j]; }).map(function (q) { return PART[q].label.toLowerCase(); });
+      note.hidden = first !== null || !other.length;                                 // nothing can be picked: say what to change
+      note.textContent = note.hidden ? '' : 'None of these fit the ' + list(other) + ' you picked — change ' + (other.length > 1 ? 'one of them' : 'it') + ' first';
+      grid.innerHTML = h;
+      var start = grid.querySelector('.field-pick-chip[aria-selected="true"]:not([aria-disabled])') || grid.querySelector('.field-pick-chip[data-v="' + first + '"]');
+      [].forEach.call(grid.querySelectorAll('[data-bs-autofocus]'), function (c) { c.removeAttribute('data-bs-autofocus'); });
+      if (start) { start.tabIndex = 0; start.setAttribute('data-bs-autofocus', ''); }
+      word.textContent = (el.getAttribute('data-pick-title') || '').split('|')[i] || PART[k].label.toLowerCase();
+    }
+    function openPick(i) {
+      if (at > -1 || el.classList.contains('field--disabled') || ins[i].disabled) return;
+      if (!window.ShineSheet) { console.warn('multi-input.js: data-pick="sheet" needs the bottom-sheet component'); return; }
+      buildSheet(); draw(i); at = i;
+      ins[i].closest('.field-control').classList.add('is-open'); el.classList.add('field--open');
+      if (!ShineSheet.open(sheet, { trigger: ins[i] })) { ins[i].closest('.field-control').classList.remove('is-open'); el.classList.remove('field--open'); at = -1; return; }
+      var s = grid.querySelector('.field-pick-chip[aria-selected="true"]') || grid.querySelector('.field-pick-chip[tabindex="0"]');
+      if (s && s.scrollIntoView) try { s.scrollIntoView({ block: 'nearest' }); } catch (e) {}
+    }
+    function choose(c) {
+      if (at < 0 || c.getAttribute('aria-disabled') === 'true') return;
+      var i = at;
+      [].forEach.call(grid.querySelectorAll('.field-pick-chip'), function (x) { x.setAttribute('aria-selected', x === c ? 'true' : 'false'); });
+      put(i, c.getAttribute('data-v')); changed();
+      var p = problem(), all = vals().every(Boolean);
+      if (p && (all || p.conflict)) show(p); else if (F.isInvalid(el)) show(null);   // a wrong date shows at once; "Enter the …" waits for leaving the group
+      live.textContent = c.getAttribute('aria-label') + ' picked';
+      setTimeout(function () { if (sheet && ShineSheet.isOpen(sheet)) ShineSheet.close(sheet); }, 140);   // a short hold, so the pick is seen (profile-index)
+    }
+    if (pick) ins.forEach(function (inp, i) {
+      inp.closest('.field-control').addEventListener('click', function () { openPick(i); });
+      inp.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown' || e.key === 'F4') { e.preventDefault(); openPick(i); }
+        else if ((e.key === 'Backspace' || e.key === 'Delete') && vals()[i]) { e.preventDefault(); put(i, ''); recheck(); changed(); }
+        else if (e.key === 'ArrowLeft' && i > 0) { e.preventDefault(); ins[i - 1].focus(); }
+        else if (e.key === 'ArrowRight' && i < ins.length - 1) { e.preventDefault(); ins[i + 1].focus(); }
+      });
+    });
     function fill(from, g) {
       for (var j = 0; j < g.length && from + j < ins.length; j++) ins[from + j].value = g[j].slice(0, part(from + j).len);
       go(Math.min(from + g.length, ins.length) - 1, 'end'); recheck(); changed();
@@ -4990,7 +5189,7 @@ button { font-family: inherit; }
       _.emit(el, 'shine:multi-trailing', { part: b.getAttribute('data-multi-trailing'), type: kind });
     });
     el.addEventListener('focusout', function () {
-      setTimeout(function () { if (el.contains(doc.activeElement)) return; ins.forEach(function (inp, i) { var k = inp.getAttribute('data-part') || keys[i]; if ((k === 'd' || k === 'm') && inp.value.length === 1 && +inp.value > 0) inp.value = pad(inp.value); });
+      setTimeout(function () { if (el.contains(doc.activeElement) || at > -1 || (sheet && sheet.contains(doc.activeElement))) return; ins.forEach(function (inp, i) { var k = inp.getAttribute('data-part') || keys[i]; if (!pick && (k === 'd' || k === 'm') && inp.value.length === 1 && +inp.value > 0) inp.value = pad(inp.value); });
         changed(); var p = problem(); if (p) show(p); else if (F.isInvalid(el)) show(null); }, 0);
     });
 
@@ -5005,17 +5204,19 @@ button { font-family: inherit; }
         ins[0].value = y; ins[1].value = m;
       } else {
         var s = v instanceof Date ? v.toISOString().slice(0, 10) : String(v || ''), t = /^(\d{4})-(\d{1,2})(?:-(\d{1,2}))?/.exec(s) || [];
-        keys.forEach(function (k, i) { ins[i].value = k === 'y' ? (t[1] || '') : k === 'm' ? (t[2] ? pad(t[2]) : '') : (t[3] ? pad(t[3]) : ''); });
+        keys.forEach(function (k, i) { var x = k === 'y' ? (t[1] || '') : k === 'm' ? (t[2] ? pad(t[2]) : '') : (t[3] ? pad(t[3]) : ''); if (pick) put(i, x); else ins[i].value = x; });
       }
       show(null); changed();
     };
-    api.clear = function () { ins.forEach(function (i) { i.value = ''; }); show(null); changed(); };
+    api.clear = function () { ins.forEach(function (inp, i) { if (pick) put(i, ''); else inp.value = ''; }); show(null); changed(); };
+    if (pick) { api.open = function (part) { var i = keys.indexOf(part || 'd'); openPick(i < 0 ? 0 : i); }; api.close = function () { if (sheet && ShineSheet.isOpen(sheet)) ShineSheet.close(sheet); }; }
     api.check = function (submit) {
       if (!vals().some(Boolean)) return submit && _.required(el) ? _.emptyText(el) : '';
       var p = problem(); return p ? p.text : '';
     };
     api.showError = function (text) { var p = problem(); show(p || { text: text, at: [] }); };
     api.focusTarget = function () { var p = problem(); return ins[p && p.at.length ? p.at[0] : 0]; };
+    if (pick) ins.forEach(function (inp, i) { put(i, ''); });
     units();
     return api;
   }
@@ -5405,10 +5606,10 @@ button { font-family: inherit; }
 })(window.ShineField);
 </script>
 <!-- ▲ COMPONENT · combo-box -->
-<!-- ▼ COMPONENT · apply-flow v1.0.0 · verbatim copy of App-login/app-components/apply-flow/apply-flow.js — do not edit here -->
+<!-- ▼ COMPONENT · apply-flow v1.1.0 · verbatim copy of App-login/app-components/apply-flow/apply-flow.js — do not edit here -->
 <script data-component="apply-flow">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · APPLY FLOW  (app component · App-login)                 v1.0.0
+   SHINE · APPLY FLOW  (app component · App-login)                 v1.1.0
    Pair with apply-flow.css. Load AFTER: buttons.css · field-base · normal-field · multi-input · combo-box ·
    inline-dropdown · bottom-sheet (CSS and scripts). One flow for every "Apply Now" in the app.
 
@@ -5420,6 +5621,7 @@ button { font-family: inherit; }
          experience: { years: 4, months: 0 },
          salary:     1500000,                                    // rupees a year
          notice:     '1 Month',                                  // one of ShineApply.notice
+         lastWorkingDay: '2026-12-15',                           // with notice 'Serving Notice Period' (v1.1.0) — ISO
          location:   'Bengaluru, Karnataka'
        },                                                        // leave a part out and its chip is not shown
        lastUpdated: '90 days',                                   // "You last updated these details 90 days ago" (none → line hidden)
@@ -5435,7 +5637,11 @@ button { font-family: inherit; }
    Event 'shine:apply' on document — detail { stage: 'open' | 'submit' | 'failed' | 'applied' | 'similar' | 'cancel', job, data }
 
    data (what is sent) = { resume: { name, size }, fresher, experience: { years, months } | null,
-                           salary: 1500000 | null, notice: '1 Month' | null, location }
+                           salary: 1500000 | null, notice: '1 Month' | null, lastWorkingDay: '2026-12-15' | null, location }
+   Notice period (v1.1.0): six chips — Immediate Joiner · Serving Notice Period · 15 Days · 1 Month · 2 Months · 3 Months.
+   Serving Notice Period opens "Last working day" under the chips: a multi input picked from a sheet (multi-input v3.2.0,
+   data-pick="sheet" — Day · Month · Year boxes with a caret, the bottom-sheet day / month / year grid), today or later
+   (up to a year ahead). The notice period counts as given only with a right last working day.
    The form opens EMPTY every time (a fresh application, as pu-modal4); "Use last" fills a field in one tap.
    Submit stays locked — "N details left to fill" — until all five are given; a fresher needs resume + location only.
    ═══════════════════════════════════════════════════════════════════════ */
@@ -5453,7 +5659,9 @@ button { font-family: inherit; }
     'ic_job-outline': '<svg aria-hidden="true" focusable="false" data-icon="ic_job-outline" viewBox="0 0 20 20" fill="none"><path d="M6.91186 3.16702C6.87646 3.43818 6.87546 3.74633 6.87546 4.12504V4.16671H12.2921V4.12504C12.2921 3.74633 12.2911 3.43818 12.2557 3.16702C12.221 2.90149 12.1587 2.72274 12.0696 2.59393C11.9169 2.37296 11.525 2.08337 10.2505 2.08337H8.91712C7.64253 2.08337 7.25066 2.37296 7.09794 2.59393C7.00891 2.72274 6.94653 2.90149 6.91186 3.16702ZM13.5421 4.16671V4.10339C13.5421 3.75045 13.5422 3.36495 13.4952 3.0052C13.4465 2.63244 13.3422 2.23671 13.0979 1.88323C12.584 1.13962 11.6425 0.833374 10.2505 0.833374H8.91712C7.52505 0.833374 6.58358 1.13962 6.06964 1.88323C5.82533 2.23671 5.72105 2.63244 5.67238 3.0052C5.62541 3.36494 5.62544 3.75044 5.62545 4.10338L5.62546 4.16671H5.41698C3.56445 4.16671 2.29944 4.59552 1.56159 5.47273C0.830911 6.34143 0.761412 7.48268 0.878519 8.54682L1.50304 15.2083L1.50387 15.2166C1.59566 16.0733 1.81069 17.0126 2.57563 17.7114C3.33492 18.4051 4.51127 18.75 6.25031 18.75H12.917C14.656 18.75 15.8324 18.4051 16.5917 17.7114C17.3566 17.0126 17.5716 16.0733 17.6634 15.2166L18.239 9.07731C18.2468 9.0371 18.2507 8.99616 18.2505 8.95511L18.2888 8.5468C18.4059 7.48267 18.3364 6.34143 17.6057 5.47273C16.8679 4.59552 15.6028 4.16671 13.7503 4.16671H13.5421ZM5.41698 5.41671C3.71118 5.41671 2.90535 5.81706 2.5182 6.27735C2.12509 6.74471 2.01444 7.44695 2.12152 8.41463L2.12267 8.42503L2.14704 8.68593C3.72877 9.76288 5.48759 10.4608 7.29212 10.7649V10.625C7.29212 10.6159 7.29212 10.6068 7.29212 10.5976C7.29208 10.4134 7.29203 10.2266 7.30897 10.0742C7.32622 9.91892 7.37237 9.66091 7.57935 9.45393C7.78632 9.24696 8.04434 9.20081 8.19967 9.18355C8.35205 9.16662 8.5388 9.16666 8.72308 9.1667C8.73221 9.1667 8.74134 9.16671 8.75046 9.16671H10.4171C10.4262 9.16671 10.4354 9.1667 10.4445 9.1667C10.6288 9.16666 10.8155 9.16662 10.9679 9.18355C11.1232 9.20081 11.3813 9.24696 11.5882 9.45393C11.7952 9.66091 11.8414 9.91892 11.8586 10.0742C11.8755 10.2266 11.8755 10.4134 11.8755 10.5976C11.8755 10.6068 11.8755 10.6159 11.8755 10.625V10.7473C13.6887 10.4198 15.4493 9.7129 17.0267 8.61722L17.0457 8.41462C17.1528 7.44694 17.0422 6.74471 16.6491 6.27735C16.2619 5.81706 15.4561 5.41671 13.7503 5.41671H5.41698ZM16.8785 10.1974C15.309 11.1285 13.6041 11.7328 11.8614 12.018C11.8568 12.0789 11.8507 12.1398 11.8426 12.1998C11.8085 12.4519 11.7338 12.7381 11.5509 12.9992C11.161 13.556 10.4725 13.75 9.58379 13.75C8.69998 13.75 8.01322 13.5585 7.6218 13.0062C7.43775 12.7465 7.36157 12.4614 7.32647 12.2092C7.31838 12.151 7.31219 12.0922 7.30747 12.0332C5.56665 11.7688 3.8635 11.1721 2.29425 10.2562L2.74719 15.0875C2.83056 15.8619 3.00316 16.4089 3.41874 16.7886C3.8407 17.1741 4.63935 17.5 6.25031 17.5H12.917C14.5279 17.5 15.3266 17.1741 15.7485 16.7886C16.1641 16.4089 16.3367 15.8619 16.4201 15.0875L16.8785 10.1974ZM8.54279 10.4173C8.54214 10.4768 8.54212 10.5446 8.54212 10.625V11.4833C8.54212 11.7179 8.54417 11.8905 8.56454 12.0369C8.58413 12.1777 8.61525 12.2462 8.64162 12.2834C8.67102 12.3249 8.81759 12.5 9.58379 12.5C10.3534 12.5 10.4983 12.3232 10.5271 12.2821C10.5536 12.2442 10.5846 12.1746 10.6039 12.0322C10.6239 11.8841 10.6255 11.7108 10.6255 11.475V10.625C10.6255 10.5446 10.6254 10.4768 10.6248 10.4173C10.5653 10.4167 10.4975 10.4167 10.4171 10.4167H8.75046C8.67008 10.4167 8.60227 10.4167 8.54279 10.4173Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/></svg>',
     'ic_upload-outline': '<svg aria-hidden="true" focusable="false" data-icon="ic_upload-outline" viewBox="0 0 20 20" fill="none"><path d="M17 11.438V16.438C17 16.6038 16.9342 16.7627 16.8169 16.8799C16.6997 16.9971 16.5408 17.063 16.375 17.063H2.625C2.45924 17.063 2.30027 16.9971 2.18306 16.8799C2.06585 16.7627 2 16.6038 2 16.438V11.438C2 11.2722 2.06585 11.1133 2.18306 10.996C2.30027 10.8788 2.45924 10.813 2.625 10.813C2.79076 10.813 2.94973 10.8788 3.06694 10.996C3.18415 11.1133 3.25 11.2722 3.25 11.438V15.813H15.75V11.438C15.75 11.2722 15.8158 11.1133 15.9331 10.996C16.0503 10.8788 16.2092 10.813 16.375 10.813C16.5408 10.813 16.6997 10.8788 16.8169 10.996C16.9342 11.1133 17 11.2722 17 11.438ZM6.375 7.37549H8.875V12.3755C8.875 12.5413 8.94085 12.7002 9.05806 12.8174C9.17527 12.9346 9.33424 13.0005 9.5 13.0005C9.66576 13.0005 9.82473 12.9346 9.94194 12.8174C10.0592 12.7002 10.125 12.5413 10.125 12.3755V7.37549H12.625C12.7487 7.37559 12.8696 7.33899 12.9725 7.27032C13.0754 7.20165 13.1555 7.104 13.2029 6.98974C13.2502 6.87547 13.2626 6.74973 13.2385 6.62842C13.2143 6.50712 13.1547 6.39571 13.0672 6.3083L9.94219 3.1833C9.88414 3.12519 9.81521 3.07909 9.73934 3.04764C9.66346 3.01619 9.58213 3 9.5 3C9.41787 3 9.33654 3.01619 9.26066 3.04764C9.18479 3.07909 9.11586 3.12519 9.05781 3.1833L5.93281 6.3083C5.84531 6.39571 5.7857 6.50712 5.76154 6.62842C5.73739 6.74973 5.74977 6.87547 5.79711 6.98974C5.84446 7.104 5.92464 7.20165 6.02751 7.27032C6.13038 7.33899 6.25132 7.37559 6.375 7.37549Z" fill="currentColor"/></svg>'
   };   // from atoms/icons (icons.json, verbatim) — this component draws no icon of its own
-  var NOTICE = ['Immediate Joiner', 'Serving Notice Period', '15 Days', '1 Month', '2 Months', '3 Months'];
+  var NOTICE = ['Immediate Joiner', 'Serving Notice Period', '15 Days', '1 Month', '2 Months', '3 Months'], SERVING = NOTICE[1];
+  var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  function dmy(iso) { var t = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ''); return t ? (+t[3]) + ' ' + MON[+t[2] - 1] + ' ' + t[1] : ''; }
   var CITIES = ['Bengaluru, Karnataka', 'Mumbai, Maharashtra', 'Pune, Maharashtra', 'New Delhi, Delhi', 'Gurugram, Haryana', 'Noida, Uttar Pradesh',
     'Hyderabad, Telangana', 'Chennai, Tamil Nadu', 'Kolkata, West Bengal', 'Ahmedabad, Gujarat', 'Surat, Gujarat', 'Jaipur, Rajasthan',
     'Lucknow, Uttar Pradesh', 'Kanpur, Uttar Pradesh', 'Nagpur, Maharashtra', 'Indore, Madhya Pradesh', 'Bhopal, Madhya Pradesh', 'Chandigarh',
@@ -5543,6 +5751,9 @@ button { font-family: inherit; }
               '<div class="apf-chips" role="radiogroup" aria-label="Notice period">' +
                 NOTICE.map(function (n, i) { return '<button class="apf-chip" type="button" role="radio" aria-checked="false" tabindex="' + (i ? -1 : 0) + '" data-value="' + esc(n) + '">' + esc(n) + '</button>'; }).join('') +
               '</div></fieldset>' +
+            /* v1.1.0 · Serving Notice Period → the last working day, picked from a sheet (multi-input v3.2.0) */
+            '<fieldset class="field field--sm field-multi apf-lwd" data-field="date" data-parts="dmy" data-pick="sheet" data-min="today" data-max="today+1y" data-required' +
+              ' data-error-empty="Please select your last working day" data-apf-field="lwd" hidden><legend class="field-label">Last working day</legend></fieldset>' +
             '<div class="apf-reuse-row" data-apf-row="notice">' + reuseChip('notice') + '</div>' +
           '</div>' +
           /* 5 · location */
@@ -5598,7 +5809,7 @@ button { font-family: inherit; }
     S.form = $('#apfForm'); S.preview = $('#apfPreview'); S.fail = $('#apfFail'); S.done = $('#apfDone');
     S.resume = $('.apf-resume', S.form); S.drop = $('[data-apf="upload"]', S.form); S.file = $('[data-apf-file]', S.form);
     S.fileIn = $('[data-apf-file-input]', S.form); S.exp = $('[data-apf-field="experience"]', S.form);
-    S.salary = $('[data-apf-field="salary"]', S.form); S.salaryIn = $('#apfSalary'); S.notice = $('[data-apf-field="notice"]', S.form);
+    S.salary = $('[data-apf-field="salary"]', S.form); S.salaryIn = $('#apfSalary'); S.notice = $('[data-apf-field="notice"]', S.form); S.lwd = $('[data-apf-field="lwd"]', S.form);
     S.loc = $('[data-apf-field="location"]', S.form); S.locIn = $('#apfLocation'); S.fresher = $('[data-apf="fresher"]', S.form);
     S.submit = $('[data-apf="submit"]', S.form); S.cta = $('[data-apf-cta]', S.form);
     if (global.ShineField) global.ShineField.init(S.form);
@@ -5623,8 +5834,11 @@ button { font-family: inherit; }
     var chips = $$('.apf-chip', S.notice), any = false;
     chips.forEach(function (c) { var on = c.getAttribute('data-value') === v; any = any || on; c.setAttribute('aria-checked', on ? 'true' : 'false'); c.tabIndex = on ? 0 : -1; });
     if (!any && chips[0]) chips[0].tabIndex = 0;
+    var serving = v === SERVING;                        // v1.1.0: the last working day comes with Serving Notice Period
+    if (S.lwd.hidden === serving) { S.lwd.hidden = !serving; if (!serving && global.ShineField) global.ShineField.set(S.lwd, null); }
     refresh();
   }
+  function lwdVal() { var api = F(S.lwd); return api ? api.value() : ''; }
   function salaryHelp() {
     var n = +digits(S.salaryIn.value);
     if (global.ShineField && !global.ShineField.isInvalid(S.salaryIn)) global.ShineField.set(S.salaryIn, n ? 'helper' : null, n ? words(n) : '');
@@ -5643,7 +5857,7 @@ button { font-family: inherit; }
   }
   function state() {
     var fr = S.fresher.checked;
-    return { resume: !!resume, experience: fr || !!expVal(), salary: fr || +digits(S.salaryIn.value) > 0, notice: fr || !!noticeVal(), location: !!locVal() };
+    return { resume: !!resume, experience: fr || !!expVal(), salary: fr || +digits(S.salaryIn.value) > 0, notice: fr || (!!noticeVal() && (noticeVal() !== SERVING || !!lwdVal())), location: !!locVal() };
   }
   function refresh() {
     if (!S.submit) return;
@@ -5660,7 +5874,8 @@ button { font-family: inherit; }
     var fr = S.fresher.checked, e = expVal();
     return { resume: resume ? { name: resume.name, size: resume.size || '' } : null, fresher: fr,
              experience: fr ? null : (e ? { years: e.years, months: e.months } : null),
-             salary: fr ? null : (+digits(S.salaryIn.value) || null), notice: fr ? null : (noticeVal() || null), location: locVal() };
+             salary: fr ? null : (+digits(S.salaryIn.value) || null), notice: fr ? null : (noticeVal() || null),
+             lastWorkingDay: !fr && noticeVal() === SERVING ? (lwdVal() || null) : null, location: locVal() };
   }
 
   /* "Use last" — fill the field, say "Added", then bow out (pu-modal4: one way, no undo — change it in the field) */
@@ -5669,7 +5884,11 @@ button { font-family: inherit; }
     if (kind === 'resume' && L.resume) setResume({ name: L.resume.name, size: L.resume.size, when: 'Uploaded ' + (cur.lastUpdated || 'earlier') + ' ago' });
     if (kind === 'experience' && L.experience) { var api = F(S.exp); if (api) api.set({ years: +L.experience.years || 0, months: +L.experience.months || 0 }); }
     if (kind === 'salary' && L.salary) setSalary(L.salary);
-    if (kind === 'notice' && L.notice) setNotice(L.notice);
+    if (kind === 'notice' && L.notice) {
+      setNotice(L.notice);
+      var la = F(S.lwd);
+      if (la && L.notice === SERVING && L.lastWorkingDay) { la.set(L.lastWorkingDay); var lm = la.check(false); if (lm && la.showError) la.showError(lm); }   // a last day now past says so
+    }
     if (kind === 'location' && L.location) { var lapi = F(S.loc); if (lapi) lapi.set(L.location); else S.locIn.value = L.location; }
     refresh();
     chip.classList.add('is-done'); chip.innerHTML = AT['ic_check-outline'] + '<span>Added</span>';
@@ -5686,7 +5905,7 @@ button { font-family: inherit; }
       resume: L.resume && L.resume.name,
       experience: L.experience && years(+L.experience.years || 0, +L.experience.months || 0),
       salary: L.salary && '₹' + grouping(String(L.salary)),
-      notice: L.notice, location: L.location
+      notice: L.notice && (L.notice === SERVING && L.lastWorkingDay ? L.notice + ' · till ' + dmy(L.lastWorkingDay) : L.notice), location: L.location
     };
     $$('.apf-reuse-row', S.form).forEach(function (row) {
       var kind = row.getAttribute('data-apf-row'), chip = $('[data-apf-reuse]', row);
@@ -5702,6 +5921,7 @@ button { font-family: inherit; }
     var s = F(S.salary); if (s) s.clear(); else S.salaryIn.value = '';
     if (global.ShineField) { global.ShineField.set(S.salaryIn, null); global.ShineField.set(S.exp, null); global.ShineField.set(S.loc, null); }
     var l = F(S.loc); if (l) l.clear(); else S.locIn.value = '';
+    var lw = F(S.lwd); if (lw) lw.clear();
     setNotice('');
     try { S.fileIn.value = ''; } catch (x) {}
     setResume(null);
@@ -5833,7 +6053,7 @@ button { font-family: inherit; }
   function close() { if (global.ShineSheet && built) [S.done, S.fail, S.preview, S.form].forEach(function (s) { if (global.ShineSheet.isOpen(s)) global.ShineSheet.close(s, 'api'); }); }
   function isOpen() { return !!(built && global.ShineSheet && [S.form, S.fail, S.done].some(function (s) { return global.ShineSheet.isOpen(s); })); }
 
-  global.ShineApply = { version: '1.0.0', open: open, close: close, isOpen: isOpen, notice: NOTICE.slice(), cities: CITIES.slice() };
+  global.ShineApply = { version: '1.1.0', open: open, close: close, isOpen: isOpen, notice: NOTICE.slice(), cities: CITIES.slice() };
 })(window);
 </script>
 <!-- ▲ COMPONENT · apply-flow -->
