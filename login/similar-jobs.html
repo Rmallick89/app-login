@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#161B22" />
 <!-- SHINE APP · SIMILAR JOBS — App-login/Similar Jobs/similar-jobs.html · v1.3 (2026-11-03)
      v1.3 (user: chips Small / Medium by screen · tags Small · badges Small · pills): the job cards' badges are the badges atom, Small;
-     the résumé preview's skills the tags atom, Small; the share sheet's networks and the apply flow's notice period the chips atom,
+     the résumé preview's skills the tags atom, Extra small (Small looked odd); the share sheet's networks and the apply flow's notice period the chips atom,
      Medium, "Use last" Small; the sheets' eyebrow badge Small. Over the dark hero the "● 12 jobs found" count stays a page part
      (the badges atom has no on-dark intent yet).
      v1.2: apply flow v1.1.0 — Serving Notice Period asks for the last working day, picked from a sheet (multi input v3.2.0).
@@ -6834,7 +6834,7 @@ button { font-family: inherit; }
       '<div class="apf-cv-item"><h4>Senior UX Designer · Snapmint</h4><p>Mar 2026 – Present · Bengaluru</p><p>Led design for the credit-card onboarding flow, lifting conversion 18% quarter-on-quarter.</p></div>' +
       '<div class="apf-cv-item"><h4>Product Designer · Freshworks</h4><p>Jul 2023 – Feb 2026 · Chennai</p><p>Shaped the reporting suite across Freshdesk and Freshsales.</p></div></div>' +
     '<div class="apf-cv-sec"><p>Skills</p><div class="apf-cv-tags">' + ['Product Design', 'Figma', 'Design Systems', 'User Research', 'Prototyping', 'Accessibility'].map(function (t) {
-      return '<span class="tag tag--sm"><span class="tag-label">' + t + '</span></span>'; }).join('') + '</div></div>' +
+      return '<span class="tag tag--xs"><span class="tag-label">' + t + '</span></span>'; }).join('') + '</div></div>' +
     '<div class="apf-cv-sec"><p>Education</p><div class="apf-cv-item"><h4>B.Des · Human-Centred Design · IIT Bombay</h4><p>2019 – 2023</p></div></div>';
   function apply(j, card, trigger) {
     if (!window.ShineApply) return say('Apply isn’t available right now');
