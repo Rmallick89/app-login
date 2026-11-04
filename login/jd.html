@@ -2943,10 +2943,10 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
 }
 </style>
 <!-- ▲ COMPONENT · bottom-sheet -->
-<!-- ▼ COMPONENT · apply-flow v1.2.0 · verbatim copy of App-login/app-components/apply-flow/apply-flow.css — do not edit here -->
+<!-- ▼ COMPONENT · apply-flow v1.2.2 · verbatim copy of App-login/app-components/apply-flow/apply-flow.css — do not edit here -->
 <style data-component="apply-flow">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · APPLY FLOW  (app component · App-login)                 v1.2.0
+   SHINE · APPLY FLOW  (app component · App-login)                 v1.2.2
    The job apply flow — one component for every "Apply Now" in the app (JD page first; My Jobs, Docket … next).
    From <Shine Revamp>/pu-modal4.html (the user's chosen flow): a form sheet that collects the five details a recruiter
    needs → the application goes out → an error screen (Apply again) or the success screen.
@@ -6230,10 +6230,10 @@ button { font-family: inherit; }
 })(window.ShineField);
 </script>
 <!-- ▲ COMPONENT · combo-box -->
-<!-- ▼ COMPONENT · apply-flow v1.2.0 · verbatim copy of App-login/app-components/apply-flow/apply-flow.js — do not edit here -->
+<!-- ▼ COMPONENT · apply-flow v1.2.2 · verbatim copy of App-login/app-components/apply-flow/apply-flow.js — do not edit here -->
 <script data-component="apply-flow">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · APPLY FLOW  (app component · App-login)                 v1.2.0
+   SHINE · APPLY FLOW  (app component · App-login)                 v1.2.2
    Pair with apply-flow.css. Load AFTER: buttons.css · the badges atom (the eyebrow) · the chips atom (chips.css + chips.js — ShineChips, v1.2.0) · field-base · normal-field · multi-input · combo-box ·
    inline-dropdown · bottom-sheet (CSS and scripts). One flow for every "Apply Now" in the app.
 
@@ -6308,13 +6308,13 @@ button { font-family: inherit; }
   function grouping(v) { var n = digits(v).replace(/^0+(?=\d)/, ''); if (!n) return ''; var l3 = n.slice(-3), r = n.slice(0, -3); return r ? r.replace(/\B(?=(\d{2})+(?!\d))/g, ',') + ',' + l3 : l3; }
   var ONES = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
   var TENS = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
-  function two(n) { return n < 20 ? ONES[n] : TENS[Math.floor(n / 10)] + (n % 10 ? '-' + ONES[n % 10] : ''); }
+  function two(n) { return n < 20 ? ONES[n] : TENS[Math.floor(n / 10)] + (n % 10 ? ' ' + ONES[n % 10] : ''); }   // no hyphen: "eighty five" (user, 2026-11-04)
   function three(n) { return n >= 100 ? ONES[Math.floor(n / 100)] + ' hundred' + (n % 100 ? ' ' + two(n % 100) : '') : two(n); }
   function words(num) {
     if (!num || num > 9999999999) return '';
     var cr = Math.floor(num / 1e7), lk = Math.floor(num % 1e7 / 1e5), th = Math.floor(num % 1e5 / 1e3), h = num % 1e3, p = [];
     if (cr) p.push(two(cr) + ' crore'); if (lk) p.push(two(lk) + ' lakh'); if (th) p.push(two(th) + ' thousand'); if (h) p.push(three(h));
-    var s = p.join(' '); return s.charAt(0).toUpperCase() + s.slice(1) + ' rupees';
+    var s = p.join(' '); return s.charAt(0).toUpperCase() + s.slice(1) + ' rupees';   // "Nine lakh eighty five thousand eight hundred ninety nine rupees" (user, 2026-11-04)
   }
   function bytes(b) { return b >= 1048576 ? (b / 1048576).toFixed(1).replace(/\.0$/, '') + ' MB' : b >= 1024 ? Math.round(b / 1024) + ' KB' : (b || 0) + ' B'; }
   function ext(name) { var e = String(name || '').split('.').pop().toUpperCase(); return e.indexOf('DOC') === 0 ? 'DOC' : e === 'PDF' ? 'PDF' : 'FILE'; }
@@ -6673,7 +6673,7 @@ button { font-family: inherit; }
   function close() { if (global.ShineSheet && built) [S.done, S.fail, S.preview, S.form].forEach(function (s) { if (global.ShineSheet.isOpen(s)) global.ShineSheet.close(s, 'api'); }); }
   function isOpen() { return !!(built && global.ShineSheet && [S.form, S.fail, S.done].some(function (s) { return global.ShineSheet.isOpen(s); })); }
 
-  global.ShineApply = { version: '1.2.0', open: open, close: close, isOpen: isOpen, notice: NOTICE.slice(), cities: CITIES.slice() };
+  global.ShineApply = { version: '1.2.2', open: open, close: close, isOpen: isOpen, notice: NOTICE.slice(), cities: CITIES.slice() };
 })(window);
 </script>
 <!-- ▲ COMPONENT · apply-flow -->
