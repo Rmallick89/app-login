@@ -2727,10 +2727,11 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 @media (prefers-reduced-motion: reduce) { .ncard { transition: none; } }
 </style>
 <!-- ▲ COMPONENT · nav-card -->
-<!-- ▼ COMPONENT · bottom-sheet v3.1.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
+<!-- ▼ COMPONENT · bottom-sheet v3.2.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.css — do not edit here -->
 <style data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BOTTOM SHEET  (app component · App-login)            v3.1.0
+   SHINE · BOTTOM SHEET  (app component · App-login)            v3.2.0
+   v3.2.0 · the top section can hold the sheet's search box (.bs-search) — title + search are one heading block
    The one container behind every slide-up panel in the logged-in app — in TWO VARIATIONS:
      1 · BOTTOM SHEET  .bs            slides up from the bottom edge, the page shows above it
                                       (pickers, confirmations, nudges, OTP, short asks)
@@ -2741,7 +2742,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
    iOS 26 status-bar tint) and refined into THREE SECTIONS:
 
      ┌──────────────────────────────┐
-     │ 1 · TOP       .bs-top        │  handle · heading · close
+     │ 1 · TOP       .bs-top        │  handle · heading · close · search (v3.2.0)
      ├──────────────────────────────┤
      │ 2 · BODY      .bs-body       │  the content — scrolls
      ├──────────────────────────────┤
@@ -2883,6 +2884,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
   --bs-handle-top: var(--bs-spacing-inset-lg);           /* sheet edge → handle (v2.4: 8 → 12) */
   --bs-head-pad-top: var(--bs-spacing-inset-xl);         /* handle → heading               */
   --bs-head-pad-bottom: var(--bs-spacing-stack-xxl);     /* title bar → content (v2.6: 20 → 24) */
+  --bs-search-pad-bottom: var(--bs-spacing-stack-md);    /* search in the heading → content (v3.2.0) */
   --bs-display-pad-top: var(--bs-spacing-inset-xxl);     /* handle → display heading (v2.4: 16 → 22) */
   --bs-display-to-body: var(--bs-spacing-section-lg);    /* display heading → content (v2.6: 24 → 32) */
   --bs-close-offset: var(--bs-spacing-inset-xl);         /* display close from top / right */
@@ -3246,6 +3248,17 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
 
 /* top section lifts (elevation.neutral.lifted — "sticky headers") only once content scrolls under it */
 .bs.is-scrolled > .bs-top { box-shadow: var(--bs-elevation-neutral-lifted); }
+
+/* v3.2.0 · SEARCH IN THE HEADING (user, 2026-11-04 — "search input field should be part of heading section of bottom
+   sheets and when user start to scroll then shadow appear below its container where input field & heading text placed").
+   A sheet whose content is searched (a list of options, a picker) keeps its search box in the TOP section, right under
+   the title bar: <div class="bs-top"> handle · .bs-head · <div class="bs-search">…a search field…</div> </div>.
+   Title + search are one block that never scrolls; the body (the list) scrolls under it, and the top section's lift
+   above shows BELOW the search — never between the title and the box, no rows peeking above the box.
+   Title → box = the title bar's own bottom (stack.xxl 24) · box → content = stack.md 12 · sides = the gutter.
+   Dragging the top section still dismisses the sheet; a tap in the box focuses it (the drag skips inputs). */
+.bs-search { flex-shrink: 0; position: relative; padding: 0 var(--bs-gutter) var(--bs-search-pad-bottom); }
+.bs-search[hidden] { display: none !important; }
 
 /* sheets without a bottom section still clear the home indicator */
 .bs--pad-bottom { padding-bottom: max(var(--bs-inline-end), calc(var(--bs-safe) + var(--bs-sticky-pad))); }   /* v2.5.1: same end as an inline bottom (24 · safe area + 16) */
@@ -4464,10 +4477,10 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
     </div>
   </div>
 
-<!-- ▼ COMPONENT · bottom-sheet v3.1.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.js — do not edit here -->
+<!-- ▼ COMPONENT · bottom-sheet v3.2.0 · verbatim copy of App-login/app-components/bottom-sheet/bottom-sheet.js — do not edit here -->
 <script data-component="bottom-sheet">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · BOTTOM SHEET  (app component · App-login)            v3.1.0
+   SHINE · BOTTOM SHEET  (app component · App-login)            v3.2.0
    Pair with bottom-sheet.css. Zero dependencies, no build step.
    Engine = App-logout's ShineSheet v1.2.1; v2.0 adds the three-section anatomy;
    v2.1 aligns every value with design-system/DESIGN-SYSTEM.md.
@@ -4488,6 +4501,8 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
            </div>
            <button class="bs-close" data-bs-close aria-label="Close">…</button>   optional
          </div>
+         <div class="bs-search">…search field…</div>          optional (v3.2.0): a searched list's box — part of
+                                                              the heading, the shadow falls below it on scroll
        </div>
        <div class="bs-body">…content, scrolls…</div>          2 · BODY
        <div class="bs-bottom">                                3 · BOTTOM
