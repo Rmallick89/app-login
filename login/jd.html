@@ -1618,10 +1618,11 @@ legend.field-label--hidden { float: none; width: 1px; }
 @media (prefers-reduced-motion: reduce) { .field-pick-chip, .field-multi--pick .field-trailing--icon svg { transition: none; } }
 </style>
 <!-- ▲ COMPONENT · multi-input -->
-<!-- ▼ COMPONENT · combo-box v4.1.1 · verbatim copy of App-login/app-components/atoms/input-fields/combo-box/combo-box.css — do not edit here -->
+<!-- ▼ COMPONENT · combo-box v4.2.0 · verbatim copy of App-login/app-components/atoms/input-fields/combo-box/combo-box.css — do not edit here -->
 <style data-component="combo-box">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · INPUT FIELDS · COMBO BOX  (atoms/input-fields/combo-box/)      v4.1.1
+   SHINE · INPUT FIELDS · COMBO BOX  (atoms/input-fields/combo-box/)      v4.2.0
+   v4.2.0 · list bottom sheet: more room between the options — rows 56 tall, 16 above / below the text (were 48 / 12).
    v4.0.0 · with the inline dropdown component loaded (app-components/inline-dropdown), the inline list is that component
    (Small by default); the .field-pop list below is the fallback when it isn't loaded.
    Search, then pick one from a list — the list opens INLINE (a dropdown under the box) or in a BOTTOM SHEET.
@@ -1655,7 +1656,9 @@ legend.field-label--hidden { float: none; width: 1px; }
   --fld-pop-radius: 12px;                   /* size.radius.lg — "modals, popovers" */
   --fld-pop-max: 272px;                     /* six rows + padding, then it scrolls */
   --fld-opt-h: 44px;                        /* size.control.md — a row in the dropdown */
-  --fld-opt-h-sheet: 48px;                  /* size.control.lg — a row in the sheet */
+  --fld-opt-h-sheet: 56px;                  /* size.control.xl — a row in the sheet (v4.2.0 · was lg 48) */
+  --fld-opt-py-sheet: 16px;                 /* spacing.inset.xl — above / below a row's text in the sheet (v4.2.0 · was inset.lg 12):
+                                               more room between the options (user, 2026-11-04) */
   --fld-opt-px: 8px;                        /* spacing.inset.md — row text lines up with the box's text */
   --fld-opt-radius: 8px;                    /* size.radius.md */
 }
@@ -1713,7 +1716,7 @@ legend.field-label--hidden { float: none; width: 1px; }
   position: sticky; top: 0; z-index: 1; padding: 4px 0 8px;                                /* room for the focus ring · spacing.stack.xs */
   background: var(--bs-surface-neutral-raised, var(--fld-bg));
 }
-.field-listbox--sheet .field-option { position: relative; min-height: var(--fld-opt-h-sheet); padding: 12px var(--fld-opt-px); margin: 0 calc(-1 * var(--fld-opt-px)); border-radius: var(--fld-opt-radius); }
+.field-listbox--sheet .field-option { position: relative; min-height: var(--fld-opt-h-sheet); padding: var(--fld-opt-py-sheet) var(--fld-opt-px); margin: 0 calc(-1 * var(--fld-opt-px)); border-radius: var(--fld-opt-radius); }
 .field-listbox--sheet .field-option + .field-option::before {                            /* A.11 separator between rows (size.stroke.thin · stroke.neutral.muted) */
   content: ""; position: absolute; top: 0; left: var(--fld-opt-px); right: var(--fld-opt-px); height: 1px; background: var(--fld-row-line); pointer-events: none;
 }
@@ -2943,10 +2946,10 @@ html.in-app .bs, html.in-app .bs-statusbar { --bs-safe: 0px; --bs-safe-top: 0px;
 }
 </style>
 <!-- ▲ COMPONENT · bottom-sheet -->
-<!-- ▼ COMPONENT · apply-flow v1.2.2 · verbatim copy of App-login/app-components/apply-flow/apply-flow.css — do not edit here -->
+<!-- ▼ COMPONENT · apply-flow v1.2.3 · verbatim copy of App-login/app-components/apply-flow/apply-flow.css — do not edit here -->
 <style data-component="apply-flow">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · APPLY FLOW  (app component · App-login)                 v1.2.2
+   SHINE · APPLY FLOW  (app component · App-login)                 v1.2.3
    The job apply flow — one component for every "Apply Now" in the app (JD page first; My Jobs, Docket … next).
    From <Shine Revamp>/pu-modal4.html (the user's chosen flow): a form sheet that collects the five details a recruiter
    needs → the application goes out → an error screen (Apply again) or the success screen.
@@ -6230,10 +6233,10 @@ button { font-family: inherit; }
 })(window.ShineField);
 </script>
 <!-- ▲ COMPONENT · combo-box -->
-<!-- ▼ COMPONENT · apply-flow v1.2.2 · verbatim copy of App-login/app-components/apply-flow/apply-flow.js — do not edit here -->
+<!-- ▼ COMPONENT · apply-flow v1.2.3 · verbatim copy of App-login/app-components/apply-flow/apply-flow.js — do not edit here -->
 <script data-component="apply-flow">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · APPLY FLOW  (app component · App-login)                 v1.2.2
+   SHINE · APPLY FLOW  (app component · App-login)                 v1.2.3
    Pair with apply-flow.css. Load AFTER: buttons.css · the badges atom (the eyebrow) · the chips atom (chips.css + chips.js — ShineChips, v1.2.0) · field-base · normal-field · multi-input · combo-box ·
    inline-dropdown · bottom-sheet (CSS and scripts). One flow for every "Apply Now" in the app.
 
@@ -6527,7 +6530,7 @@ button { font-family: inherit; }
     var label = {
       resume: L.resume && L.resume.name,
       experience: L.experience && years(+L.experience.years || 0, +L.experience.months || 0),
-      salary: L.salary && '₹' + grouping(String(L.salary)),
+      salary: L.salary && grouping(String(L.salary)),   // the number only: “Use last: 9,85,899” (user, 2026-11-04)
       notice: L.notice && (L.notice === SERVING && L.lastWorkingDay ? L.notice + ' · till ' + dmy(L.lastWorkingDay) : L.notice), location: L.location
     };
     $$('.apf-reuse-row', S.form).forEach(function (row) {
@@ -6673,7 +6676,7 @@ button { font-family: inherit; }
   function close() { if (global.ShineSheet && built) [S.done, S.fail, S.preview, S.form].forEach(function (s) { if (global.ShineSheet.isOpen(s)) global.ShineSheet.close(s, 'api'); }); }
   function isOpen() { return !!(built && global.ShineSheet && [S.form, S.fail, S.done].some(function (s) { return global.ShineSheet.isOpen(s); })); }
 
-  global.ShineApply = { version: '1.2.2', open: open, close: close, isOpen: isOpen, notice: NOTICE.slice(), cities: CITIES.slice() };
+  global.ShineApply = { version: '1.2.3', open: open, close: close, isOpen: isOpen, notice: NOTICE.slice(), cities: CITIES.slice() };
 })(window);
 </script>
 <!-- ▲ COMPONENT · apply-flow -->
