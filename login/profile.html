@@ -11,7 +11,7 @@
   })();
 </script>
 <meta name="theme-color" content="#161B22" />
-<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.43 (2026-11-04) — Professional details card: the current salary is the number only, 15,00,000 (no ₹ before, no "a year" after) · v1.42 (2026-11-04) — the salary helper starts with a capital ("Nine lakh eighty five thousand eight hundred ninety nine rupees"); Job preferences › Expected salary is a list in lakhs picked from a bottom sheet (1 Lac · 1.5 Lacs … 50 Lacs · 51 … 99 Lacs · 1 Cr+, with search) and the card reads "₹35 Lacs" — the same as sign-up · v1.41 (2026-11-04) — standard fields (user, App-login + App-logout): the salary helper is the amount in words, lowercase, no hyphens ("nine lakh eighty five thousand eight hundred ninety nine rupees"); the Professional details card shows the current salary in full (₹9,85,899, was ₹15 LPA); job type chips Full time · Part time · Contractual · Freelance · Internship; work mode Remote · In Office · Hybrid; disability = the combo box (sheet) as in sign-up — None · Loco Motor Disability · Visual Impairment · Hearing Impairment · Other, with their subtext · v1.40 (2026-11-03) — OTP (user): 4 digits; the OTP field one size up (Medium 44 — the input fields' next size; other fields unchanged); a verified code closes the sheet with a toast (or moves to the next contact to verify) — no green "verified" alert in the sheet · v1.39 (2026-11-03) — the strength widget follows <Shine Revamp>/Shine Profile/C1-S1-U.html (user): the PRD weightage (Primary 65 · Secondary 30 · Tertiary 5, score = Σ captured × weight − the 180-day penalty) and scenario C1-S1-U — fresh, every onboarding step done, the email not verified. Starts at 87; one nudge at a time, copy as C1-S1-U: Verify now +3 (email only · the phone is always verified) → Add photo +5 → Add link +5 → Add details +3 (DOB · languages · disability) → You’re all set, Rakesh · See recommended jobs. What a nudge asks for is missing on the page (initials, the Links empty state, no DOB / languages / disability rows, no tick on the email); the beam and the nudge words are blue while a nudge is open and green when all set. The personal sheet gains the disability chips; the verify sheet asks only what is unverified; the contact rows carry the verified tick (profile-info-card v1.4.0) · v1.38 (2026-11-03) — tags Extra small (28) again (user: Small looks odd) · v1.37 (2026-11-03) — the atoms (user 2026-11-03: chips Small / Medium by screen · tags Small · badges Small · pills Small / Medium): every choice chip in the sheets and full-screen editors is the chips atom, Medium (ShineChips); skills, languages and locations the tags atom, Extra small (v1.38: Small looked odd); the hero's +22 / +10 and the links card's promise the badges atom, Small; the Me tab's Docket dot the pills atom, Small · v1.36 (2026-11-02) — the Professional details card reads "Serving notice till 24th Feb" (user: no year — it is in the coming year, so it is assumed); the hero asks "Still leaving on 24th Feb?" · v1.35 (2026-11-02) — date of birth and last working day are picked, not typed (user: "both field will have 3 boxes … each boxes will function as dropdown … a bottom sheet will appear", the App-logout sign-up's last working day): DD ⌄ · MM ⌄ · YYYY ⌄, a tap opens the day / month / year sheet, which moves on to the next empty part and closes when the date is complete (multi input v3.3.0). Date of birth: 1950 to 15 years ago, newest year first · last working day: today to a year ahead · v1.34 (2026-11-02) — notice period (user): six options — Immediate Joiner · Serving Notice Period · 15 Days · 1 Month · 2 Months · 3 Months — in the job search status, the Professional details editor and the recruiter-ready ask; Serving Notice Period asks for the last working day in three boxes with a caret (multi input v3.2.0, data-pick="sheet"): a tap opens the bottom sheet's day / month / year grid, today or later, impossible dates can't be made. Card: "1 Month Notice Period" · "Serving till 15 Dec 2026" · v1.33 (2026-10-25) — top app bar v3.2.0 (byline type; Profile has no byline, nothing changes on screen) · v1.32: bottom sheets get the new look: the × floats above the sheet, corners 32, darker scrim (bottom-sheet v3.0.0 · combo box v4.1.1) · v1.31: the field you tap lands one field gap (20) below the lifted heading, not flush against it (bottom-sheet v2.12.0) · v1.30: every input field is Small (40 tall · label 12), the app's size · v1.29: input fields v3.2.0 (a Small field's label is 12) · v1.28: tapping a field puts a thin caret after its text instead of selecting it (input fields v3.1.0) · v1.27: the field you tap glides up to the first field's place and stays there (bottom-sheet v2.11.0 focus anchor) · v1.26: Small dropdown shows 3½ rows (inline-dropdown v1.5.0) · v1.25: Small dropdown rows get room for a finger (38, inline-dropdown v1.4.1) · v1.24: every inline list is the inline dropdown component (Small · combo box v4.0.0); chips fields show “Added” · v1.23: full-screen headings: Display · Large (modal v2.10.0) · v1.22: full-screens fade through (modal v2.9.0, the user's option C) · v1.21: iPhone status bar on full-screens (modal v2.8.3: page pinned at scroll 0 while a full-screen is up · strip hit-testable) · status-bar strip (modal v2.8.2) · short lists without search · lists never behind the keyboard (combo box v3.1.0)
+<!-- SHINE APP · PROFILE (Me tab) — App-login/Profile/  · v1.44 (2026-11-05) — the current annual salary (Professional details · the "Add your new salary" sheet) is the input fields atom's amount field: Indian commas as you type, digits only, the amount in words in green ("Seventy-Eight Lakh … Rupees"), ₹1 lakh – ₹1 crore, errors "₹3 is too low. Annual salary must be at least ₹1 lakh." · "Enter your annual salary." · v1.43 (2026-11-04) — Professional details card: the current salary is the number only, 15,00,000 (no ₹ before, no "a year" after) · v1.42 (2026-11-04) — the salary helper starts with a capital ("Nine lakh eighty five thousand eight hundred ninety nine rupees"); Job preferences › Expected salary is a list in lakhs picked from a bottom sheet (1 Lac · 1.5 Lacs … 50 Lacs · 51 … 99 Lacs · 1 Cr+, with search) and the card reads "₹35 Lacs" — the same as sign-up · v1.41 (2026-11-04) — standard fields (user, App-login + App-logout): the salary helper is the amount in words, lowercase, no hyphens ("nine lakh eighty five thousand eight hundred ninety nine rupees"); the Professional details card shows the current salary in full (₹9,85,899, was ₹15 LPA); job type chips Full time · Part time · Contractual · Freelance · Internship; work mode Remote · In Office · Hybrid; disability = the combo box (sheet) as in sign-up — None · Loco Motor Disability · Visual Impairment · Hearing Impairment · Other, with their subtext · v1.40 (2026-11-03) — OTP (user): 4 digits; the OTP field one size up (Medium 44 — the input fields' next size; other fields unchanged); a verified code closes the sheet with a toast (or moves to the next contact to verify) — no green "verified" alert in the sheet · v1.39 (2026-11-03) — the strength widget follows <Shine Revamp>/Shine Profile/C1-S1-U.html (user): the PRD weightage (Primary 65 · Secondary 30 · Tertiary 5, score = Σ captured × weight − the 180-day penalty) and scenario C1-S1-U — fresh, every onboarding step done, the email not verified. Starts at 87; one nudge at a time, copy as C1-S1-U: Verify now +3 (email only · the phone is always verified) → Add photo +5 → Add link +5 → Add details +3 (DOB · languages · disability) → You’re all set, Rakesh · See recommended jobs. What a nudge asks for is missing on the page (initials, the Links empty state, no DOB / languages / disability rows, no tick on the email); the beam and the nudge words are blue while a nudge is open and green when all set. The personal sheet gains the disability chips; the verify sheet asks only what is unverified; the contact rows carry the verified tick (profile-info-card v1.4.0) · v1.38 (2026-11-03) — tags Extra small (28) again (user: Small looks odd) · v1.37 (2026-11-03) — the atoms (user 2026-11-03: chips Small / Medium by screen · tags Small · badges Small · pills Small / Medium): every choice chip in the sheets and full-screen editors is the chips atom, Medium (ShineChips); skills, languages and locations the tags atom, Extra small (v1.38: Small looked odd); the hero's +22 / +10 and the links card's promise the badges atom, Small; the Me tab's Docket dot the pills atom, Small · v1.36 (2026-11-02) — the Professional details card reads "Serving notice till 24th Feb" (user: no year — it is in the coming year, so it is assumed); the hero asks "Still leaving on 24th Feb?" · v1.35 (2026-11-02) — date of birth and last working day are picked, not typed (user: "both field will have 3 boxes … each boxes will function as dropdown … a bottom sheet will appear", the App-logout sign-up's last working day): DD ⌄ · MM ⌄ · YYYY ⌄, a tap opens the day / month / year sheet, which moves on to the next empty part and closes when the date is complete (multi input v3.3.0). Date of birth: 1950 to 15 years ago, newest year first · last working day: today to a year ahead · v1.34 (2026-11-02) — notice period (user): six options — Immediate Joiner · Serving Notice Period · 15 Days · 1 Month · 2 Months · 3 Months — in the job search status, the Professional details editor and the recruiter-ready ask; Serving Notice Period asks for the last working day in three boxes with a caret (multi input v3.2.0, data-pick="sheet"): a tap opens the bottom sheet's day / month / year grid, today or later, impossible dates can't be made. Card: "1 Month Notice Period" · "Serving till 15 Dec 2026" · v1.33 (2026-10-25) — top app bar v3.2.0 (byline type; Profile has no byline, nothing changes on screen) · v1.32: bottom sheets get the new look: the × floats above the sheet, corners 32, darker scrim (bottom-sheet v3.0.0 · combo box v4.1.1) · v1.31: the field you tap lands one field gap (20) below the lifted heading, not flush against it (bottom-sheet v2.12.0) · v1.30: every input field is Small (40 tall · label 12), the app's size · v1.29: input fields v3.2.0 (a Small field's label is 12) · v1.28: tapping a field puts a thin caret after its text instead of selecting it (input fields v3.1.0) · v1.27: the field you tap glides up to the first field's place and stays there (bottom-sheet v2.11.0 focus anchor) · v1.26: Small dropdown shows 3½ rows (inline-dropdown v1.5.0) · v1.25: Small dropdown rows get room for a finger (38, inline-dropdown v1.4.1) · v1.24: every inline list is the inline dropdown component (Small · combo box v4.0.0); chips fields show “Added” · v1.23: full-screen headings: Display · Large (modal v2.10.0) · v1.22: full-screens fade through (modal v2.9.0, the user's option C) · v1.21: iPhone status bar on full-screens (modal v2.8.3: page pinned at scroll 0 while a full-screen is up · strip hit-testable) · status-bar strip (modal v2.8.2) · short lists without search · lists never behind the keyboard (combo box v3.1.0)
      Built from the mobile view (≤ 480 px) of <Shine Revamp>/profile-index.html, on the design system
      (design-system/DESIGN-SYSTEM.md + component-system.md): semantic tokens only, the buttons atom (atoms/buttons), DS atoms (A.04 Badge,
      A.05 Tag, A.08 Avatar, A.09 Toast). No menu / title on this tab (v1.1, user): the full-bleed hero starts at the top
@@ -1243,10 +1243,10 @@
 .lcard--empty .lcard-text { margin-bottom: var(--lc-stack-lg); font: var(--card-sub1-font); color: var(--card-sub1-color); }   /* 3 Subtext 1 */
 </style>
 <!-- ▲ COMPONENT · links-card -->
-<!-- ▼ COMPONENT · field-base v3.2.0 · verbatim copy of App-login/app-components/atoms/input-fields/field-base/field-base.css — do not edit here -->
+<!-- ▼ COMPONENT · field-base v3.3.0 · verbatim copy of App-login/app-components/atoms/input-fields/field-base/field-base.css — do not edit here -->
 <style data-component="field-base">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · INPUT FIELDS · FIELD BASE  (app component · App-login · atoms/input-fields/)      v3.2.0
+   SHINE · INPUT FIELDS · FIELD BASE  (app component · App-login · atoms/input-fields/)      v3.3.0
    The shared layer under the five input field components — not a field on its own. Load it FIRST, then the
    component(s) the page uses:  normal-field · password-field · otp-field · combo-box · multi-input.
    Built on design-system A.01 Input (component-system.md), semantic tokens only, light and dark.
@@ -1273,6 +1273,7 @@
      .field-trailing                an icon-only button at the end — eye (password) · clear / caret (combo box) · a multi
                                     input's icon (.field-trailing--icon: a sign only, no button)
      .field-helper · .field-message quiet helper · error / success (icon + text); one at a time
+     .field-helper--positive        a helper in the positive colour, no icon (v3.3.0 — the amount in words under a salary)
      .field-aside                   a row under the field for one link (Forgot password?) — buttons atom Link
 
    ▶ BEFORE CHANGING IT: read README.md here and component-system.md A.01. Semantic tokens only.
@@ -1418,6 +1419,9 @@ legend.field-label--hidden { float: none; width: 1px; }
 }
 .field--invalid .field-message { color: var(--fld-neg-text); font-weight: 600; }
 .field--valid .field-message { color: var(--fld-pos-text); font-weight: 600; }
+/* v3.3.0 · a positive helper — the helper's own type (Body / sm), in content.status.positive, no icon: it confirms what was
+   typed (the amount in words under a salary field, user 2026-11-05) without the weight of a success message */
+.field-helper.field-helper--positive { color: var(--fld-pos-text); }
 
 /* a row for one link under the field (Forgot password?) — the link itself is the buttons atom */
 .field-aside { display: flex; justify-content: flex-end; margin-top: var(--fld-stack); }
@@ -4300,7 +4304,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
           <label class="field-label" for="pfPrRole">Current job role</label>
           <div class="field-control"><input class="field-input" id="pfPrRole" placeholder="e.g. Product Designer" autocomplete="organization-title" required></div>
         </div>
-        <div class="field field--sm" data-field="text" data-error-empty="Enter your annual salary" data-salary data-k="salary">
+        <div class="field field--sm" data-field="amount" data-error-empty="Enter your annual salary." data-salary data-k="salary">
           <label class="field-label" for="pfPrSalary">Annual salary</label>
           <div class="field-control"><span class="field-prefix" aria-hidden="true">₹</span><input class="field-input" id="pfPrSalary" inputmode="numeric" autocomplete="off" placeholder="15,00,000" required></div>
         </div>
@@ -4626,7 +4630,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
       <div class="bs-head bs-head--display bs-head--lg"><div class="bs-heading"><h2 class="bs-title">Add your new <span class="accent">salary</span></h2><p class="bs-sub">Recruiters filter on salary first. Yours stays private till you respond.</p></div><button class="bs-close" type="button" data-bs-close aria-label="Close"><svg aria-hidden="true" focusable="false" data-icon="ic_close-outline" viewBox="0 0 20 20" fill="none"><path d="M16.2528 3.00257L16.3599 3.01371L16.3814 3.01543L16.4028 3.02228L16.5056 3.05313L16.5253 3.05999L16.5433 3.06942L16.6582 3.12941L16.6753 3.14398L16.7584 3.21254L16.7747 3.22625L16.7884 3.24253L16.857 3.32566L16.8716 3.3428L16.9316 3.45764L16.941 3.47564L16.947 3.49535L16.9787 3.59819L16.9855 3.61876L16.9873 3.64104L16.9984 3.74816L17.0001 3.76959L16.9984 3.79101L16.9873 3.89814L16.9855 3.92042L16.9787 3.94099L16.947 4.04383L16.941 4.06354L16.9316 4.08154L16.8716 4.19638L16.857 4.21352L16.7884 4.29665L16.7816 4.30522L11.0859 10L16.7816 15.6956L16.7884 15.7042L16.857 15.7873L16.8716 15.8045L16.9316 15.9193L16.941 15.9373L16.947 15.957L16.9787 16.0599L16.9855 16.0804L16.9873 16.1027L16.9984 16.2098L17.0001 16.2313L16.9984 16.2527L16.9873 16.3598L16.9855 16.3812L16.9787 16.4027L16.947 16.5055L16.941 16.5252L16.9316 16.5432L16.8716 16.6581L16.857 16.6752L16.7884 16.7583L16.7747 16.7746L16.7584 16.7883L16.6753 16.8569L16.6582 16.8714L16.5433 16.9314L16.5253 16.9409L16.5056 16.9469L16.4028 16.9786L16.3814 16.9854L16.3599 16.9871L16.2528 16.9983L16.2314 17L16.21 16.9983L16.1028 16.9871L16.0806 16.9854L16.06 16.9786L15.9571 16.9469L15.9374 16.9409L15.9194 16.9314L15.8046 16.8714L15.7875 16.8569L15.7043 16.7883L15.6958 16.7815L10.0001 11.0858L4.30534 16.7815L4.29676 16.7883L4.21364 16.8569L4.1965 16.8714L4.08166 16.9314L4.06366 16.9409L4.04395 16.9469L3.94111 16.9786L3.92054 16.9854L3.89826 16.9871L3.79113 16.9983L3.76971 17L3.74828 16.9983L3.64116 16.9871L3.61888 16.9854L3.59831 16.9786L3.49547 16.9469L3.47576 16.9409L3.45776 16.9314L3.34292 16.8714L3.32578 16.8569L3.24265 16.7883L3.22637 16.7746L3.21266 16.7583L3.1441 16.6752L3.12953 16.6581L3.06954 16.5432L3.06011 16.5252L3.05325 16.5055L3.0224 16.4027L3.01555 16.3812L3.01383 16.3598L3.00269 16.2527L3.00098 16.2313L3.00269 16.2098L3.01383 16.1027L3.01555 16.0804L3.0224 16.0599L3.05325 15.957L3.06011 15.9373L3.06954 15.9193L3.12953 15.8045L3.1441 15.7873L3.21266 15.7042L3.21951 15.6956L3.22637 15.6879L8.91344 10L3.21866 4.30522L3.21266 4.29665L3.1441 4.21352L3.12953 4.19638L3.06954 4.08154L3.06011 4.06354L3.05325 4.04383L3.0224 3.94099L3.01555 3.92042L3.01383 3.89814L3.00269 3.79101L3.00098 3.76959L3.00269 3.74816L3.01383 3.64104L3.01555 3.61876L3.0224 3.59819L3.05325 3.49535L3.06011 3.47564L3.06954 3.45764L3.12953 3.3428L3.1441 3.32566L3.21266 3.24253L3.22637 3.22625L3.24265 3.21254L3.32578 3.14398L3.34292 3.12941L3.45776 3.06942L3.47576 3.05999L3.49547 3.05313L3.59831 3.02228L3.61888 3.01543L3.64116 3.01371L3.74828 3.00257L3.76971 3L3.79113 3.00257L3.89826 3.01371L3.92054 3.01543L3.94111 3.02228L4.04395 3.05313L4.06366 3.05999L4.08166 3.06942L4.1965 3.12941L4.21364 3.14398L4.29676 3.21254L4.30534 3.21854L10.0001 8.91332L15.688 3.22625L15.6958 3.21939L15.7043 3.21254L15.7875 3.14398L15.8046 3.12941L15.9194 3.06942L15.9374 3.05999L15.9571 3.05313L16.06 3.02228L16.0806 3.01543L16.1028 3.01371L16.21 3.00257L16.2314 3L16.2528 3.00257Z" fill="currentColor"/></svg></button></div>
     </div>
     <div class="bs-body bs-body--gutter">
-      <div class="field field--sm" data-field="text" data-error-empty="Enter your annual salary" data-salary>
+      <div class="field field--sm" data-field="amount" data-error-empty="Enter your annual salary." data-salary>
         <label class="field-label" for="pfRrSalary">Annual salary</label>
         <div class="field-control"><span class="field-prefix" aria-hidden="true">₹</span><input class="field-input" id="pfRrSalary" inputmode="numeric" autocomplete="off" placeholder="15,00,000" required data-bs-autofocus></div>
       </div>
@@ -5931,23 +5935,23 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 })(window);
 </script>
 <!-- ▲ COMPONENT · inline-dropdown -->
-<!-- ▼ COMPONENT · field-base v3.2.0 · verbatim copy of App-login/app-components/atoms/input-fields/field-base/field-base.js — do not edit here -->
+<!-- ▼ COMPONENT · field-base v3.3.0 · verbatim copy of App-login/app-components/atoms/input-fields/field-base/field-base.js — do not edit here -->
 <script data-component="field-base">
 /* ═══════════════════════════════════════════════════════════════════════
-   SHINE · INPUT FIELDS · FIELD BASE  (app component · App-login · atoms/input-fields/)      v3.2.0
+   SHINE · INPUT FIELDS · FIELD BASE  (app component · App-login · atoms/input-fields/)      v3.3.0
    Pair with field-base.css. The shared engine under the five components — load it FIRST, then the script of each
    component the page uses: normal-field.js · password-field.js · otp-field.js · combo-box.js · multi-input.js.
    No dependencies (combo-box.js also uses the bottom sheet for its sheet mode).
 
    One way to write any field:  <div class="field field--md" data-field="email"> … </div>
-     data-field   text · email · phone · email phone (either)   → normal-field.js
+     data-field   text · email · phone · email phone (either) · amount (v3.3.0)   → normal-field.js
                   password (data-password="current | new | confirm")  → password-field.js
                   otp      (maxlength 6 | 4 on the input)        → otp-field.js
                   combo    (data-combo="inline | sheet | auto")   → combo-box.js
                   date · experience  (a <fieldset>)              → multi-input.js
 
    What every field shares:
-     Messages     ShineField.set(input | field, 'invalid' | 'valid' | 'helper' | null, text) — the one slot under the
+     Messages     ShineField.set(input | field, 'invalid' | 'valid' | 'helper' | 'positive' | null, text) — the one slot under the
                   field: icon + text, aria-invalid, aria-describedby; text may hold one link ("Register instead")
      The API      ShineField.get(field | input) → the component's api: { el, input, type, value(), set(v), clear(),
                   check(submit) → '' or the error text }
@@ -5994,8 +5998,8 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     if ((state === 'invalid' || state === 'valid') && html) {
       m.className = 'field-message'; m.innerHTML = (state === 'valid' ? IC['ic_check-circle-solid'] : IC['ic_alert-solid']) + '<span>' + html + '</span>';
       m.hidden = false; m.setAttribute('role', state === 'invalid' ? 'alert' : 'status');
-    } else if (state === 'helper' && html) {
-      m.className = 'field-helper'; m.innerHTML = html; m.hidden = false; m.removeAttribute('role');
+    } else if ((state === 'helper' || state === 'positive') && html) {      // v3.3.0 · 'positive' = the helper in the positive colour
+      m.className = state === 'positive' ? 'field-helper field-helper--positive' : 'field-helper'; m.innerHTML = html; m.hidden = false; m.removeAttribute('role');
     } else { m.hidden = true; m.innerHTML = ''; m.removeAttribute('role'); }
     ins.forEach(function (i) { describe(i, m.id, !m.hidden); });
   }
@@ -6079,21 +6083,23 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     return ok;
   }
 
-  global.ShineField = { version: '3.0.5', set: set, isInvalid: isInvalid, get: get, validate: validate, add: add, init: init,
+  global.ShineField = { version: '3.3.0', set: set, isInvalid: isInvalid, get: get, validate: validate, add: add, init: init,
     types: function () { return Object.keys(types); }, icons: IC,
     _: { fieldOf: fieldOf, idOf: idOf, describe: describe, inputsOf: inputsOf, emptyText: emptyText, nameOf: nameOf, required: required, emit: emit } };
 })(window);
 </script>
 <!-- ▲ COMPONENT · field-base -->
-<!-- ▼ COMPONENT · normal-field v3.0.5 · verbatim copy of App-login/app-components/atoms/input-fields/normal-field/normal-field.js — do not edit here -->
+<!-- ▼ COMPONENT · normal-field v3.1.0 · verbatim copy of App-login/app-components/atoms/input-fields/normal-field/normal-field.js — do not edit here -->
 <script data-component="normal-field">
-/* SHINE · INPUT FIELDS · NORMAL FIELD  (atoms/input-fields/normal-field/)      v3.0.5
+/* SHINE · INPUT FIELDS · NORMAL FIELD  (atoms/input-fields/normal-field/)      v3.1.0
    Needs field-base.css + field-base.js (load them first). No styles of its own (the +91 segment is field-base's).
-   One component, three types — the type is the only difference:
+   One component, four types — the type is the only difference (v3.1.0 adds amount — the annual salary):
 
      <div class="field field--md" data-field="text">    a name, a job title — anything typed once
      <div class="field field--md" data-field="email">   email keyboard, spaces dropped, lower-case
      <div class="field field--md" data-field="phone">   +91 in the field, 98765 43210, numeric keyboard
+     <div class="field field--md" data-field="amount">   ₹ in the field, 78,90,898, numeric keyboard, the amount in words
+                                                       (green) under it, 1 lakh – 1 crore (v3.1.0 · see setupAmount)
      <div class="field field--md" data-field="email phone">   either one (log in): digits bring +91 and the number
                                                        keyboard, letters the email keyboard
        <label class="field-label" for="x">Email address</label>
@@ -6113,7 +6119,7 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
 (function (F) {
   'use strict';
   if (!F) { console.warn('normal-field.js: load field-base.js first'); return; }
-  var doc = document, _ = F._;
+  var doc = document, _ = F._, global = window;
   var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
   function fmtPhone(d) { return d.length > 5 ? d.slice(0, 5) + ' ' + d.slice(5) : d; }
   function attr(i, k, v) { if (!i.hasAttribute(k)) i.setAttribute(k, v); }
@@ -6193,6 +6199,156 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     return api;
   }
   F.add(['text', 'email', 'phone'], setup);
+
+  /* ── v3.1.0 · AMOUNT (user, 2026-11-05) — the current annual salary ─────────────────────────────────────────────
+       <div class="field field--sm" data-field="amount">    ₹ in the field (added when the page leaves it out)
+     · Indian commas as you type — 78,90,898; the commas come and go by themselves (backspace over one takes the
+       digit before it), the caret keeps its place between the digits
+     · digits only — the numeric keypad (inputmode numeric); a letter, a dot or a sign is not taken; a pasted
+       "₹12,34,567.50" / "12 34 567" keeps 12,34,567 (the paise dropped); a leading 0 never stays
+     · never more than data-max (default 1,00,00,000 · ₹1 crore): a digit that would go past it is not taken, a bigger
+       pasted amount is ignored
+     · under the box, live: the amount in words in the positive colour — "Seventy-Eight Lakh Ninety Thousand Eight
+       Hundred Ninety-Eight Rupees" (thousand · lakh · crore)
+     · checked when they leave the box and on submit, then live until it is right (the error takes the helper's place):
+         below data-min (default 1,00,000) → "₹3 is too low. Annual salary must be at least ₹1 lakh."  (data-error-min)
+         empty → "Enter your annual salary."  (data-error-empty; a `required` input — on submit, or when they clear it)
+     → ShineField.get(el) → { value() the digits ('' when empty) · number() · set(n | text) · clear() · valid() ·
+       check(submit) · display() 78,90,898 · words() }                                                              */
+  var ONES = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen',
+    'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+  var TENS = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+  function two(n) { return n < 20 ? ONES[n] : TENS[Math.floor(n / 10)] + (n % 10 ? '-' + ONES[n % 10] : ''); }       // Seventy-Eight
+  function three(n) { return n >= 100 ? ONES[Math.floor(n / 100)] + ' Hundred' + (n % 100 ? ' ' + two(n % 100) : '') : two(n); }
+  function inWords(num) {                                // 7890898 → "Seventy-Eight Lakh Ninety Thousand Eight Hundred Ninety-Eight Rupees"
+    num = Math.floor(+num || 0); if (num <= 0) return '';
+    var cr = Math.floor(num / 1e7), lk = Math.floor(num % 1e7 / 1e5), th = Math.floor(num % 1e5 / 1e3), h = num % 1e3, p = [];
+    if (cr) p.push((cr >= 1000 ? inWords(cr).replace(/ Rupees?$/, '') : cr >= 100 ? three(cr) : two(cr)) + ' Crore');
+    if (lk) p.push(two(lk) + ' Lakh'); if (th) p.push(two(th) + ' Thousand'); if (h) p.push(three(h));
+    return p.join(' ') + (num === 1 ? ' Rupee' : ' Rupees');
+  }
+  function group(d) {                                    // "7890898" → "78,90,898" (Indian: the last three, then twos)
+    if (d.length <= 3) return d;
+    var last = d.slice(-3), rest = d.slice(0, -3), g = [];
+    while (rest.length > 2) { g.unshift(rest.slice(-2)); rest = rest.slice(0, -2); }
+    if (rest) g.unshift(rest); return g.join(',') + ',' + last;
+  }
+  function digitsIn(s) { return String(s == null ? '' : s).replace(/\D/g, ''); }
+  function amountLabel(n) { return n % 1e7 === 0 ? '₹' + n / 1e7 + ' crore' : n % 1e5 === 0 ? '₹' + n / 1e5 + ' lakh' : '₹' + group(String(n)); }   // ₹1 lakh
+
+  function setupAmount(el) {
+    var input = el.querySelector('.field-input'); if (!input) return null;
+    var ctl = el.querySelector('.field-control'), prefix = el.querySelector('.field-prefix');
+    if (!prefix && ctl) { prefix = doc.createElement('span'); prefix.className = 'field-prefix'; prefix.textContent = '₹'; prefix.setAttribute('aria-hidden', 'true'); ctl.insertBefore(prefix, ctl.firstChild); }
+    input.setAttribute('type', 'text'); input.setAttribute('inputmode', 'numeric'); attr(input, 'autocomplete', 'off');
+    input.setAttribute('autocapitalize', 'off'); input.setAttribute('autocorrect', 'off'); input.setAttribute('spellcheck', 'false');
+    var MIN = +(el.getAttribute('data-min') || input.getAttribute('data-min')) || 100000;
+    var MAX = +(el.getAttribute('data-max') || input.getAttribute('data-max')) || 10000000;
+    var api = { input: input, type: 'amount', mode: 'amount', val: '' };
+    var last = '', sel = [0, 0], dirty = false, kind = '';
+
+    function tidy(d) { return digitsIn(d).replace(/^0+/, ''); }
+    function caretAfter(fmt, k) {                         // the place right after the k-th digit of the shown text
+      if (k <= 0) return 0; var seen = 0;
+      for (var i = 0; i < fmt.length; i++) if (/\d/.test(fmt[i]) && ++seen === k) return i + 1;
+      return fmt.length;
+    }
+    function digitsBefore(s, at) { return digitsIn(s.slice(0, at)).length; }
+    function put(d, k) {                                  // show the digits d grouped, the caret after its k-th digit
+      var f = group(d); input.value = f; last = f; api.val = tidy(d);
+      if (doc.activeElement === input) { var c = caretAfter(f, k); try { input.setSelectionRange(c, c); } catch (e) {} }
+      sel = [input.selectionStart || 0, input.selectionEnd || 0];
+    }
+    function restore() {                                  // the change is not taken: back to the last value and caret
+      input.value = last; try { input.setSelectionRange(sel[0], sel[1]); } catch (e) {}
+    }
+    function remember() { try { sel = [input.selectionStart, input.selectionEnd]; } catch (e) {} }
+
+    function problem() {                                  // '' when right · the error text otherwise (empty is handled apart)
+      var n = +api.val || 0; if (!api.val) return '';
+      if (n < MIN) return (input.getAttribute('data-error-min') || el.getAttribute('data-error-min') || '{amount} is too low. Annual salary must be at least {min}.')
+        .replace('{amount}', '₹' + group(api.val)).replace('{min}', amountLabel(MIN));
+      return '';
+    }
+    function emptyText() { return el.getAttribute('data-error-empty') || 'Enter your annual salary.'; }
+    function words() { return inWords(+api.val || 0); }
+    function helper() {                                   // the amount in words, green — or nothing
+      if (api.val) F.set(input, 'positive', words()); else F.set(input, null);
+    }
+    function showError(t) { F.set(input, 'invalid', t); }
+    function live() {                                     // after each change: an error shown stays live until it is right
+      if (F.isInvalid(input)) {
+        var p = problem();
+        if (p) { showError(p); return; }
+        if (!api.val && _.required(el) && dirty) { showError(emptyText()); return; }
+      }
+      helper();
+    }
+    function changed() { _.emit(el, 'shine:field', { type: 'amount', mode: 'amount', value: api.val, valid: !!api.val && !problem() }); }
+
+    input.addEventListener('focus', remember);
+    ['keydown', 'mousedown', 'mouseup', 'touchend', 'select', 'keyup'].forEach(function (n) { input.addEventListener(n, function () { setTimeout(remember, 0); }); });
+    input.addEventListener('beforeinput', function (e) {
+      remember(); kind = e.inputType || '';
+      // a letter, a dot, a sign … typed: not taken (a paste is cleaned in its own handler; a keyboard composing text
+      // may not let us cancel — the input handler below then undoes it)
+      if (/^insert(Text|ReplacementText)?$/.test(kind) && e.data != null && /\D/.test(e.data) && !/^\d[\d,\s]*$/.test(e.data)) { e.preventDefault(); }
+    });
+    input.addEventListener('paste', function (e) {
+      var t = (e.clipboardData || global.clipboardData) ? (e.clipboardData || global.clipboardData).getData('text') : null;
+      if (t == null) return;                              // no clipboard access: the input handler tidies it
+      e.preventDefault(); remember();
+      var cut = String(t).split(/[.]/)[0];               // ₹12,34,567.50 → 12,34,567 (no paise)
+      var add = digitsIn(cut), v = input.value, a = digitsBefore(v, sel[0]), b = digitsBefore(v, sel[1]), cur = digitsIn(v);
+      if (!add) return;
+      var d = tidy(cur.slice(0, a) + add + cur.slice(b));
+      if (+d > MAX) return;                               // a bigger amount is ignored
+      dirty = true; var lead = (cur.slice(0, a) + add).length - tidy(cur.slice(0, a) + add).length;
+      put(d, Math.max(0, a + add.length - lead)); live(); changed();
+    });
+    input.addEventListener('input', function () {
+      var raw = input.value, at = input.selectionStart == null ? raw.length : input.selectionStart;
+      var was = digitsIn(last), now = digitsIn(raw), k = digitsBefore(raw, at);
+      if (now === was && raw.length < last.length) {     // only a comma went: take the digit next to it instead
+        if (/Forward/.test(kind)) now = now.slice(0, k) + now.slice(k + 1);
+        else if (k > 0) { now = now.slice(0, k - 1) + now.slice(k); k -= 1; }
+      } else if (now === was && raw !== last) { restore(); kind = ''; return; }   // a letter or sign slipped in
+      // a 0 typed at the start is not taken; zeros left at the start by a deletion stay while they edit (1,00,000 → delete
+      // the 1 → 00,000, type 2 → 2,00,000) and go when they leave the box
+      var del = /^delete/.test(kind) || raw.length < last.length;
+      var d = del ? now : tidy(now), lead = del ? 0 : now.slice(0, k).length - tidy(now.slice(0, k)).length;
+      if (!del && now !== was && d === tidy(was) && tidy(now) === tidy(was)) { restore(); kind = ''; return; }
+      if (+d > MAX) { restore(); kind = ''; return; }    // past the maximum: not taken
+      kind = ''; dirty = true;
+      put(d, Math.max(0, k - lead)); live(); changed();
+    });
+    input.addEventListener('blur', function () {
+      if (input.disabled) return;
+      var t = tidy(input.value); if (input.value !== group(t)) { input.value = group(t); last = input.value; api.val = t; }   // 00,000 → empty
+      var p = problem();
+      if (p) showError(p);
+      else if (!api.val && dirty && _.required(el)) showError(emptyText());
+    });
+    function read() { api.val = tidy(input.value); }      // the number in the box (the box itself is left as it is)
+    api.value = function () { read(); return api.val; };
+    api.number = function () { read(); return +api.val || 0; };
+    api.valid = function () { read(); return !!api.val && !problem(); };
+    api.check = function (submit) { read(); if (!api.val) return submit && _.required(el) ? emptyText() : ''; return problem(); };
+    api.showError = showError;
+    api.set = function (v) {                              // a number (1400000) or text ("14,00,000", "₹14,00,000") — shown with its words
+      var d = typeof v === 'number' ? String(Math.max(0, Math.floor(v))) : tidy(String(v == null ? '' : v).split('.')[0]);
+      d = tidy(d); input.value = group(d); last = input.value; api.val = d; dirty = false;
+      F.set(input, null); helper(); changed();
+    };
+    api.clear = function () { api.set(''); };
+    api.display = function () { read(); return group(api.val); };
+    api.words = function () { read(); return words(); };
+    api.errorText = function () { read(); return problem(); };
+    read(); if (api.val) helper();
+    return api;
+  }
+  F.words = F.words || inWords;                          // ShineField.words(7890898) — the same words anywhere
+  F.add('amount', setupAmount);
 })(window.ShineField);
 </script>
 <!-- ▲ COMPONENT · normal-field -->
@@ -7189,29 +7345,14 @@ html.bs-lock .stp-strip { display: none; }                 /* a bottom sheet's s
     var last = n.slice(-3), rest = n.slice(0, -3), g = []; while (rest.length > 2) { g.unshift(rest.slice(-2)); rest = rest.slice(0, -2); }
     if (rest) g.unshift(rest); return g.join(',') + ',' + last;
   }
-  var ONES = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
-  var TENS = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
-  function two(n) { return n < 20 ? ONES[n] : TENS[Math.floor(n / 10)] + (n % 10 ? ' ' + ONES[n % 10] : ''); }   // no hyphen: "eighty five" (user, 2026-11-04)
-  function three(n) { return n >= 100 ? ONES[Math.floor(n / 100)] + ' hundred' + (n % 100 ? ' ' + two(n % 100) : '') : two(n); }
-  function words(num) {                                     // 985899 → "nine lakh eighty five thousand eight hundred ninety nine rupees"
-    if (!num || num > 9999999999) return '';
-    var cr = Math.floor(num / 1e7), lk = Math.floor(num % 1e7 / 1e5), th = Math.floor(num % 1e5 / 1e3), h = num % 1e3, p = [];
-    if (cr) p.push(two(cr) + ' crore'); if (lk) p.push(two(lk) + ' lakh'); if (th) p.push(two(th) + ' thousand'); if (h) p.push(three(h));
-    var s = p.join(' '); return s.charAt(0).toUpperCase() + s.slice(1) + ' rupees';   // "Nine lakh eighty five thousand eight hundred ninety nine rupees" (user, 2026-11-04)
-  }
   /* v1.43 · the card shows the current salary in full, Indian grouping, the number only — no ₹ before, no "a year" after:
      9,85,899 (user, 2026-11-04 — the row's rupee icon already says it; v1.41 was ₹9,85,899, before that ₹15 LPA) */
   function lpaToNum(t) { var m = /([\d.]+)\s*LPA/i.exec(t || ''); return m ? Math.round(parseFloat(m[1]) * 1e5) : +digits(t) || 0; }   // reads 9,85,899 (or an old “₹9,85,899” / “15 LPA”)
   function numToLpa(n) { return n ? grouping(String(n)) : ''; }
-  // salary boxes (₹ prefix — field-base): Indian grouping while typing, the amount in words as the helper
-  function salaryHelp(input) { var n = +digits(input.value); if (!FLD.isInvalid(input)) FLD.set(input, n ? 'helper' : null, n ? words(n) : ''); }
-  doc.addEventListener('input', function (e) {
-    var i = e.target; if (!i.closest || !i.closest('[data-salary]')) return;
-    var end = i.selectionStart === i.value.length; i.value = grouping(i.value); if (end) try { i.setSelectionRange(i.value.length, i.value.length); } catch (x) {}
-    salaryHelp(i);
-  });
-  doc.addEventListener('focusout', function (e) { var i = e.target; if (i.closest && i.closest('[data-salary]')) setTimeout(function () { salaryHelp(i); }, 0); });
-  function setSalary(field, n) { var i = $('.field-input', field); F(field).set(n ? grouping(String(n)) : ''); salaryHelp(i); }
+  /* current annual salary = the input fields atom's AMOUNT field (normal-field v3.1.0 · data-field="amount", user 2026-11-05):
+     ₹ prefix, Indian commas as you type, digits only, the amount in words in green under the box ("Seventy-Eight Lakh Ninety
+     Thousand Eight Hundred Ninety-Eight Rupees"), ₹1 lakh – ₹1 crore, its own errors. The page only fills it and reads it. */
+  function setSalary(field, n) { F(field).set(n || ''); }
 
   /* v1.34 (user, 2026-11-02) — six options, the apply flow's: Immediate Joiner · Serving Notice Period · 15 Days · 1 Month ·
      2 Months · 3 Months. Serving Notice Period asks for the last working day — the multi input picked from a sheet
